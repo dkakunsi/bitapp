@@ -4,7 +4,7 @@
 sudo mkdir -p /etc/docker
 
 # Copy daemon configuration
-sudo cp /workspaces/lab/.devcontainer/daemon.json /etc/docker/daemon.json
+sudo cp /workspaces/bitapp/.devcontainer/daemon.json /etc/docker/daemon.json
 
 # Start Docker daemon in the background with custom config
 sudo dockerd > /tmp/dockerd.log 2>&1 &
