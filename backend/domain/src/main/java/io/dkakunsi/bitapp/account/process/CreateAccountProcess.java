@@ -1,33 +1,32 @@
-package io.dkakunsi.money.account.process;
+package io.dkakunsi.bitapp.account.process;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import io.dkakunsi.lab.common.Id;
-import io.dkakunsi.lab.common.process.Process;
-import io.dkakunsi.lab.common.process.ProcessError;
-import io.dkakunsi.lab.common.process.ProcessInput;
-import io.dkakunsi.lab.common.process.ProcessResult;
-import io.dkakunsi.money.account.model.Account;
-import io.dkakunsi.money.account.port.AccountPort;
-import io.dkakunsi.money.user.model.User;
+import io.dkakunsi.bitapp.account.dto.CreateAccountInput;
+import io.dkakunsi.bitapp.account.model.Account;
+import io.dkakunsi.bitapp.account.repository.AccountRepository;
+import io.dkakunsi.bitapp.common.Id;
+import io.dkakunsi.bitapp.common.Input;
+import io.dkakunsi.bitapp.common.Result;
+import io.dkakunsi.bitapp.common.AppError.Code;
+import io.dkakunsi.bitapp.user.model.User;
 
-public final class CreateAccountProcess implements Process<CreateAccountInput, Account> {
+public final class CreateAccountProcess {
 
-  private final AccountPort accountRepository;
+  private final AccountRepository accountRepository;
 
-  public CreateAccountProcess(AccountPort accountRepository) {
+  public CreateAccountProcess(AccountRepository accountRepository) {
     this.accountRepository = accountRepository;
   }
 
-  @Override
-  public Result<Account> process(ProcessInput<CreateAccountInput> input) {
-    final var account = toModel(input.data(), input.requester());
+  public Result<Account> process(Input<CreateAccountInput> input) {
+    final var account = toModel(input.data(), input.context().requester());
     try {
       var result = this.accountRepository.create(account);
       return Result.success(result);
     } catch (Exception e) {
-      return Result.failure(Error.Code.SERVER_ERROR, e.getMessage());
+      return Result.failure(Code.SERVER_ERROR, e.getMessage());
     }
   }
 

@@ -1,4 +1,4 @@
-package io.dkakunsi.money.user.process;
+package io.dkakunsi.bitapp.user.process;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -10,11 +10,13 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import io.dkakunsi.lab.common.Context;
-import io.dkakunsi.lab.common.Id;
-import io.dkakunsi.lab.common.process.ProcessInput;
-import io.dkakunsi.money.user.model.User;
-import io.dkakunsi.money.user.port.UserPort;
+import io.dkakunsi.bitapp.common.Context;
+import io.dkakunsi.bitapp.common.Id;
+import io.dkakunsi.bitapp.common.Input;
+import io.dkakunsi.bitapp.user.dto.UserRetrievalInput;
+import io.dkakunsi.bitapp.user.model.User;
+import io.dkakunsi.bitapp.user.model.User.Language;
+import io.dkakunsi.bitapp.user.repository.UserRepository;
 
 public class UserRetrievalProcessTest {
 
@@ -22,12 +24,12 @@ public class UserRetrievalProcessTest {
 
   private UserRetrievalProcess underTest;
 
-  private UserRepository port;
+  private UserRepository userRepository;
 
   @BeforeEach
   void setUp() {
-    port = mock(UserRepository.class);
-    underTest = new UserRetrievalProcess(port);
+    userRepository = mock(UserRepository.class);
+    underTest = new UserRetrievalProcess(userRepository);
   }
 
   @Test
@@ -39,16 +41,16 @@ public class UserRetrievalProcessTest {
         .name("Existing User")
         .phone("081234567890")
         .photoUrl("http://photo.url/existing_user")
-        .language(User.Language.EN)
+        .language(Language.EN)
         .build();
-    when(port.findByEmail(email)).thenReturn(Optional.of(existingUser));
+    when(userRepository.findByEmail(email)).thenReturn(Optional.of(existingUser));
 
     // When
     var inputData = UserRetrievalInput.builder()
         .email(email)
         .build();
     var context = Context.builder().requester(REQUESTER).build();
-    var input = new ProcessInput<>(inputData, context);
+    var input = new Input<>(inputData, context);
     var result = underTest.process(input);
 
     assertTrue(result.isSuccess());
@@ -65,14 +67,14 @@ public class UserRetrievalProcessTest {
   void returnEmptyData_whenUserNotExists() {
     // Given
     var email = "nonexistent@example.com";
-    when(port.findByEmail(email)).thenReturn(Optional.empty());
+    when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
 
     // When
     var inputData = UserRetrievalInput.builder()
         .email(email)
         .build();
     var context = Context.builder().requester(REQUESTER).build();
-    var input = new ProcessInput<>(inputData, context);
+    var input = new Input<>(inputData, context);
     var result = underTest.process(input);
 
     assertTrue(result.isSuccess());
@@ -83,14 +85,14 @@ public class UserRetrievalProcessTest {
   void returnServerError_whenUserPortThrowsException() {
     // Given
     var email = "error@example.com";
-    when(port.findByEmail(email)).thenThrow(new RuntimeException("Database error"));
+    when(userRepository.findByEmail(email)).thenThrow(new RuntimeException("Database error"));
 
     // When
     var inputData = UserRetrievalInput.builder()
         .email(email)
         .build();
     var context = Context.builder().requester(REQUESTER).build();
-    var input = new ProcessInput<>(inputData, context);
+    var input = new Input<>(inputData, context);
     var result = underTest.process(input);
 
     assertTrue(result.isFailed());

@@ -1,4 +1,4 @@
-package io.dkakunsi.money.account.process;
+package io.dkakunsi.bitapp.account.process;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -15,24 +15,25 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import io.dkakunsi.lab.common.Context;
-import io.dkakunsi.lab.common.process.ProcessError;
-import io.dkakunsi.lab.common.process.ProcessInput;
-import io.dkakunsi.money.account.model.Account;
-import io.dkakunsi.money.account.port.AccountPort;
+import io.dkakunsi.bitapp.account.dto.CreateAccountInput;
+import io.dkakunsi.bitapp.account.model.Account;
+import io.dkakunsi.bitapp.account.repository.AccountRepository;
+import io.dkakunsi.bitapp.common.Context;
+import io.dkakunsi.bitapp.common.Input;
+import io.dkakunsi.bitapp.common.AppError.Code;
 
 public final class CreateAccountProcessTest {
 
   private CreateAccountProcess underTest;
 
-  private AccountPort accountPort;
+  private AccountRepository accountRepository;
 
   private static final String REQUESTER = "Requester";
 
   @BeforeEach
   void setUp() {
-    accountPort = mock(AccountPort.class);
-    underTest = new CreateAccountProcess(accountPort);
+    accountRepository = mock(AccountRepository.class);
+    underTest = new CreateAccountProcess(accountRepository);
   }
 
   @Test
@@ -44,9 +45,9 @@ public final class CreateAccountProcessTest {
         .themeColor("#FF5733")
         .build();
     final var context = Context.builder().requester(REQUESTER).build();
-    final var input = new ProcessInput<>(createRequest, context);
+    final var input = new Input<>(createRequest, context);
 
-    when(accountPort.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
+    when(accountRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
     final var result = underTest.process(input);
@@ -70,7 +71,7 @@ public final class CreateAccountProcessTest {
 
     // verify data passed to port
     var savingAccountCaptor = ArgumentCaptor.forClass(Account.class);
-    verify(accountPort).create(savingAccountCaptor.capture());
+    verify(accountRepository).create(savingAccountCaptor.capture());
     var capturedAccount = savingAccountCaptor.getValue();
     assertEquals(createRequest.name(), capturedAccount.getName());
     assertEquals(createRequest.type(), capturedAccount.getType());
@@ -93,9 +94,9 @@ public final class CreateAccountProcessTest {
         .themeColor("#FF5733")
         .build();
     final var context = Context.builder().requester(REQUESTER).build();
-    final var input = new ProcessInput<>(createRequest, context);
+    final var input = new Input<>(createRequest, context);
 
-    when(accountPort.create(any())).thenThrow(new RuntimeException("An error occurred"));
+    when(accountRepository.create(any())).thenThrow(new RuntimeException("An error occurred"));
 
     // When
     final var result = underTest.process(input);
@@ -104,7 +105,7 @@ public final class CreateAccountProcessTest {
     assertFalse(result.isSuccess());
 
     final var error = result.error().get();
-    assertEquals(ProcessError.Code.SERVER_ERROR, error.code());
+    assertEquals(Code.SERVER_ERROR, error.code());
     assertEquals("An error occurred", error.message());
   }
 }

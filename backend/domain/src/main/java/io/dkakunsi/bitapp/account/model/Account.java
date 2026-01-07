@@ -1,10 +1,10 @@
-package io.dkakunsi.money.account.model;
+package io.dkakunsi.bitapp.account.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import io.dkakunsi.lab.common.Id;
-import io.dkakunsi.money.user.model.User;
+import io.dkakunsi.bitapp.common.Id;
+import io.dkakunsi.bitapp.user.model.User;
 import lombok.Builder;
 import lombok.Getter;
 

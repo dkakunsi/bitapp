@@ -1,4 +1,4 @@
-package io.dkakunsi.money.user.process;
+package io.dkakunsi.bitapp.user.process;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -16,26 +16,27 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import io.dkakunsi.lab.common.Context;
-import io.dkakunsi.lab.common.Id;
-import io.dkakunsi.lab.common.process.ProcessError;
-import io.dkakunsi.lab.common.process.ProcessInput;
-import io.dkakunsi.money.user.model.User;
-import io.dkakunsi.money.user.model.User.Language;
-import io.dkakunsi.money.user.port.UserPort;
+import io.dkakunsi.bitapp.common.Context;
+import io.dkakunsi.bitapp.common.Id;
+import io.dkakunsi.bitapp.common.Input;
+import io.dkakunsi.bitapp.common.AppError.Code;
+import io.dkakunsi.bitapp.user.dto.UserRegistrationInput;
+import io.dkakunsi.bitapp.user.model.User;
+import io.dkakunsi.bitapp.user.model.User.Language;
+import io.dkakunsi.bitapp.user.repository.UserRepository;
 
 public final class UserRegistrationProcessTest {
 
   private UserRegistrationProcess underTest;
 
-  private UserRepository userPort;
+  private UserRepository userRepository;
 
   private static final String REQUESTER = "Requester";
 
   @BeforeEach
   void setUp() {
-    userPort = mock(UserRepository.class);
-    underTest = new UserRegistrationProcess(userPort);
+    userRepository = mock(UserRepository.class);
+    underTest = new UserRegistrationProcess(userRepository);
   }
 
   @Test
@@ -53,10 +54,10 @@ public final class UserRegistrationProcessTest {
         .build();
 
     var context = Context.builder().requester(REQUESTER).build();
-    var processInput = new ProcessInput<>(registerInput, context);
+    var processInput = new Input<>(registerInput, context);
 
-    when(userPort.findByEmail(email)).thenReturn(Optional.empty());
-    when(userPort.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+    when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+    when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
     var result = underTest.process(processInput);
@@ -71,10 +72,10 @@ public final class UserRegistrationProcessTest {
     assertEquals(Language.EN, createdUser.getLanguage());
     assertNotNull(createdUser.getId());
 
-    verify(userPort).findByEmail(email);
+    verify(userRepository).findByEmail(email);
 
     var userCaptor = ArgumentCaptor.forClass(User.class);
-    verify(userPort).save(userCaptor.capture());
+    verify(userRepository).save(userCaptor.capture());
     var savedUser = userCaptor.getValue();
     assertEquals(username, savedUser.getName());
     assertEquals(phone, savedUser.getPhone());
@@ -99,7 +100,7 @@ public final class UserRegistrationProcessTest {
         .build();
 
     var context = Context.builder().requester(REQUESTER).build();
-    var processInput = new ProcessInput<>(registerInput, context);
+    var processInput = new Input<>(registerInput, context);
 
     var existingUser = User.builder()
         .id(Id.of(email))
@@ -109,15 +110,15 @@ public final class UserRegistrationProcessTest {
         .photoUrl(photoUrl)
         .build();
 
-    when(userPort.findByEmail(email)).thenReturn(Optional.of(existingUser));
-    when(userPort.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+    when(userRepository.findByEmail(email)).thenReturn(Optional.of(existingUser));
+    when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
     var result = underTest.process(processInput);
 
     // Then
     assertTrue(result.isSuccess());
-    verify(userPort).findByEmail(email);
+    verify(userRepository).findByEmail(email);
 
     var createdUser = result.data().get();
     assertEquals(email, createdUser.getId().value());
@@ -127,7 +128,7 @@ public final class UserRegistrationProcessTest {
     assertEquals(Language.EN, createdUser.getLanguage());
 
     var userCaptor = ArgumentCaptor.forClass(User.class);
-    verify(userPort).save(userCaptor.capture());
+    verify(userRepository).save(userCaptor.capture());
     var savedUser = userCaptor.getValue();
     assertEquals(email, savedUser.getId().value());
     assertEquals(updatingUserName, savedUser.getName());
@@ -151,7 +152,7 @@ public final class UserRegistrationProcessTest {
         .build();
 
     var context = Context.builder().requester(REQUESTER).build();
-    var processInput = new ProcessInput<>(registerInput, context);
+    var processInput = new Input<>(registerInput, context);
 
     var existingUser = User.builder()
         .id(Id.of(email))
@@ -161,15 +162,15 @@ public final class UserRegistrationProcessTest {
         .photoUrl(photoUrl)
         .build();
 
-    when(userPort.findByEmail(email)).thenReturn(Optional.of(existingUser));
-    when(userPort.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+    when(userRepository.findByEmail(email)).thenReturn(Optional.of(existingUser));
+    when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
     var result = underTest.process(processInput);
 
     // Then
     assertTrue(result.isSuccess());
-    verify(userPort).findByEmail(email);
+    verify(userRepository).findByEmail(email);
 
     var createdUser = result.data().get();
     assertEquals(email, createdUser.getId().value());
@@ -178,24 +179,24 @@ public final class UserRegistrationProcessTest {
     assertEquals(photoUrl, createdUser.getPhotoUrl());
     assertEquals(Language.EN, createdUser.getLanguage());
 
-    verify(userPort, never()).save(any(User.class));
+    verify(userRepository, never()).save(any(User.class));
   }
 
   @Test
   public void givenValidRegisterUserRequestWhenPortThrowsErrorThenShouldFail() {
     // Given
-    when(userPort.save(any())).thenThrow(new RuntimeException("An error occured"));
+    when(userRepository.save(any())).thenThrow(new RuntimeException("An error occured"));
 
     var registerInput = UserRegistrationInput.builder().build();
     var context = Context.builder().requester(REQUESTER).build();
-    var processInput = new ProcessInput<>(registerInput, context);
+    var processInput = new Input<>(registerInput, context);
 
     // When
     var result = underTest.process(processInput);
 
     // Then
     assertFalse(result.isSuccess());
-    assertEquals(ProcessError.Code.SERVER_ERROR, result.error().get().code());
+    assertEquals(Code.SERVER_ERROR, result.error().get().code());
     assertEquals("An error occured", result.error().get().message());
   }
 }

@@ -1,28 +1,27 @@
-package io.dkakunsi.money.user.process;
+package io.dkakunsi.bitapp.user.process;
 
-import io.dkakunsi.lab.common.process.Process;
-import io.dkakunsi.lab.common.process.ProcessError;
-import io.dkakunsi.lab.common.process.ProcessInput;
-import io.dkakunsi.lab.common.process.ProcessResult;
-import io.dkakunsi.money.user.model.User;
-import io.dkakunsi.money.user.port.UserPort;
+import io.dkakunsi.bitapp.common.Input;
+import io.dkakunsi.bitapp.common.Result;
+import io.dkakunsi.bitapp.common.AppError.Code;
+import io.dkakunsi.bitapp.user.dto.UserRetrievalInput;
+import io.dkakunsi.bitapp.user.model.User;
+import io.dkakunsi.bitapp.user.repository.UserRepository;
 
 public final class UserRetrievalProcess {
 
-  private UserRepository userPort;
+  private UserRepository userRepository;
 
-  public UserRetrievalProcess(UserRepository userPort) {
-    this.userPort = userPort;
+  public UserRetrievalProcess(UserRepository userRepository) {
+    this.userRepository = userRepository;
   }
 
-  @Override
-  public Result<User> process(ProcessInput<UserRetrievalInput> input) {
+  public Result<User> process(Input<UserRetrievalInput> input) {
     try {
-      return userPort.findByEmail(input.data().email())
+      return userRepository.findByEmail(input.data().email())
           .map(user -> Result.success(user))
           .orElse(Result.success());
     } catch (Exception e) {
-      return Result.failure(ProcessError.Code.SERVER_ERROR, e.getMessage());
+      return Result.failure(Code.SERVER_ERROR, e.getMessage());
     }
   }
 }

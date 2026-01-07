@@ -34,7 +34,8 @@
         "dart-code.dart-code",
         "dart-code.flutter",
         "ms-vscode-remote.remote-containers",
-        "sst-dev.opencode"
+        "sst-dev.opencode",
+        "dotjoshjohnson.xml"
       ],
       "settings": {
         "java.jdt.ls.java.home": "/usr/lib/jvm/temurin-21-jdk"

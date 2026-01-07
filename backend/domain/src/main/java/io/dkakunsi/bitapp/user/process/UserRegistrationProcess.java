@@ -1,7 +1,8 @@
 package io.dkakunsi.bitapp.user.process;
 
+import io.dkakunsi.bitapp.common.Input;
 import io.dkakunsi.bitapp.common.Result;
-import io.dkakunsi.bitapp.common.AppError;
+import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.user.dto.UserRegistrationInput;
 import io.dkakunsi.bitapp.user.model.User;
 import io.dkakunsi.bitapp.user.repository.UserRepository;
@@ -14,16 +15,16 @@ public final class UserRegistrationProcess {
     this.userRepository = userRepository;
   }
 
-  public Result<User> process(UserRegistrationInput input) {
+  public Result<User> process(Input<UserRegistrationInput> input) {
     try {
-      User user = userRepository.findByEmail(input.email())
-          .map(existing -> update(existing, input))
-          .orElseGet(() -> create(input));
+      User user = userRepository.findByEmail(input.data().email())
+          .map(existing -> update(existing, input.data()))
+          .orElseGet(() -> create(input.data()));
       return Result.success(user);
     } catch (IllegalArgumentException e) {
-      return Result.failure(AppError.Code.BAD_REQUEST, e.getMessage());
+      return Result.failure(Code.BAD_REQUEST, e.getMessage());
     } catch (Exception e) {
-      return Result.failure(AppError.Code.SERVER_ERROR, e.getMessage());
+      return Result.failure(Code.SERVER_ERROR, e.getMessage());
     }
   }
 

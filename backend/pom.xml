@@ -40,6 +40,8 @@
     <!-- Common Dependency Versions -->
     <slf4j.version>2.0.17</slf4j.version>
     <log4j.version>2.25.1</log4j.version>
+    <lombok.version>1.18.42</lombok.version>
+    <commons.lang3.version>3.18.0</commons.lang3.version>
 
     <!-- Github package for maven repository -->
     <github.package.url>https://maven.pkg.github.com/dkakunsi/bitapp</github.package.url>
@@ -51,6 +53,16 @@
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>${lombok.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>${commons.lang3.version}</version>
+      </dependency>
       <!-- Logging Dependencies -->
       <dependency>
         <groupId>org.slf4j</groupId>
@@ -367,7 +379,7 @@
   </distributionManagement>
 
   <modules>
+    <module>test</module>
     <module>domain</module>
-    <module>app</module>
   </modules>
 </project>
