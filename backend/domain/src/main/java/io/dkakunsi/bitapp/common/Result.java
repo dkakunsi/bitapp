@@ -1,0 +1,36 @@
+package io.dkakunsi.bitapp.common;
+
+import java.util.Optional;
+
+import io.dkakunsi.bitapp.common.AppError.Code;
+
+public final record Result<DATA>(
+    Optional<DATA> data,
+    Optional<AppError> error) {
+
+  public boolean isSuccess() {
+    return error.isEmpty();
+  }
+
+  public boolean isFailed() {
+    return !isSuccess();
+  }
+
+  public boolean isEmpty() {
+    return data.isEmpty();
+  }
+
+  public static <DATA> Result<DATA> success() {
+    return new Result<>(Optional.empty(), Optional.empty());
+  }
+
+  public static <DATA> Result<DATA> success(DATA data) {
+    return new Result<>(Optional.of(data), Optional.empty());
+  }
+
+  public static <DATA> Result<DATA> failure(Code serverError, String message) {
+    final var error = new AppError(serverError, message);
+    return new Result<>(Optional.empty(), Optional.of(error));
+  }
+
+}
