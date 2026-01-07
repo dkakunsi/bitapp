@@ -23,6 +23,5 @@
 hs_err_pid*
 replay_pid*
 
-.devcontainer/id_rsa
-.devcontainer/settings.xml
 .devcontainer/.m2/**
+.devcontainer/.ssh/**

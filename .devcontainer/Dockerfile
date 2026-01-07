@@ -153,9 +153,9 @@ RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy private key for cloning from git repositories
-COPY id_rsa /home/vscode/.ssh/id_rsa
+COPY .ssh/* /home/vscode/.ssh/
 RUN chmod 600 /home/vscode/.ssh/id_rsa && \
-    chown vscode:vscode /home/vscode/.ssh/id_rsa
+    chown vscode:vscode /home/vscode/.ssh/*
 
 # Default shell to bash
 SHELL ["/bin/bash", "-c"]
