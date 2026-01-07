@@ -11,11 +11,11 @@ public abstract class Postgres {
   static final String POSTGRES_USERNAME = "postgres.username";
   static final String POSTGRES_PASSWORD = "postgres.password";
 
-  private static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
+  private static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>(
       "postgres:16-alpine");
 
   public static boolean isRunning() {
-    return postgres.isRunning();
+    return postgresContainer.isRunning();
   }
 
   public static boolean isNotRunning() {
@@ -24,26 +24,26 @@ public abstract class Postgres {
 
   public static void startDb() throws Exception {
     if (!isRunning()) {
-      postgres.start();
+      postgresContainer.start();
     }
   }
 
   public static void stopDb() throws Exception {
     if (isRunning()) {
-      postgres.stop();
+      postgresContainer.stop();
     }
   }
 
   public static Map<String, String> getDbConfig() throws Exception {
-    while (!postgres.isRunning()) {
+    while (!postgresContainer.isRunning()) {
       System.out.println("Waiting for Postgres to start...");
       Thread.sleep(1000);
     }
     return Map.of(
-        POSTGRES_HOST, postgres.getHost(),
-        POSTGRES_PORT, postgres.getFirstMappedPort().toString(),
-        POSTGRES_DBNAME, postgres.getDatabaseName(),
-        POSTGRES_USERNAME, postgres.getUsername(),
-        POSTGRES_PASSWORD, postgres.getPassword());
+        POSTGRES_HOST, postgresContainer.getHost(),
+        POSTGRES_PORT, postgresContainer.getFirstMappedPort().toString(),
+        POSTGRES_DBNAME, postgresContainer.getDatabaseName(),
+        POSTGRES_USERNAME, postgresContainer.getUsername(),
+        POSTGRES_PASSWORD, postgresContainer.getPassword());
   }
 }
