@@ -5,39 +5,28 @@ import java.util.Objects;
 import io.dkakunsi.bitapp.common.Id;
 import io.dkakunsi.bitapp.user.dto.UserRegistrationInput;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 @Builder
 @Getter
+@EqualsAndHashCode
+@ToString
 public final class User {
 
   private static final Language DEFAULT_LANGUAGE = Language.EN;
 
   // email as Id
-  private Id id;
-  private String name;
-  private String phone;
-  private String photoUrl;
-  private Language language;
+  private final Id id;
+  private final String name;
+  private final String phone;
+  private final String photoUrl;
+  private final Language language;
 
   public static enum Language {
     EN,
     ID,
-  }
-
-  public User name(String name) {
-    this.name = name;
-    return this;
-  }
-
-  public User phone(String phone) {
-    this.phone = phone;
-    return this;
-  }
-
-  public User photoUrl(String photoUrl) {
-    this.photoUrl = photoUrl;
-    return this;
   }
 
   public boolean needUpdate(UserRegistrationInput userModel) {
@@ -47,13 +36,18 @@ public final class User {
   }
 
   public User update(UserRegistrationInput userInput) {
-    this.name = userInput.name();
-    this.phone = userInput.phone();
-    this.photoUrl = userInput.photoUrl();
-    return this;
+    return User.builder()
+        .id(this.id)
+        .language(this.language)
+        .name(userInput.name())
+        .phone(userInput.phone())
+        .photoUrl(userInput.photoUrl())
+        .build();
   }
 
   public static User createNew(UserRegistrationInput userInput) {
+    Objects.requireNonNull(userInput.email(), "Email cannot be null");
+    Objects.requireNonNull(userInput.name(), "Name cannot be null");
     return User.builder()
         .id(Id.of(userInput.email()))
         .name(userInput.name())

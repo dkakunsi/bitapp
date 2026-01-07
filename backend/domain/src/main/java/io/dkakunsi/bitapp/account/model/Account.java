@@ -6,23 +6,27 @@ import java.time.LocalDateTime;
 import io.dkakunsi.bitapp.common.Id;
 import io.dkakunsi.bitapp.user.model.User;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 @Builder
 @Getter
+@EqualsAndHashCode
+@ToString
 public final class Account {
 
-  private Id id;
-  private String name;
-  private Type type;
-  private String themeColor;
-  private BigDecimal balance;
-  private User user;
+  private final Id id;
+  private final String name;
+  private final Type type;
+  private final String themeColor;
+  private final BigDecimal balance;
+  private final User user;
 
-  private LocalDateTime createdAt;
-  private LocalDateTime updatedAt;
-  private String createdBy;
-  private String updatedBy;
+  private final LocalDateTime createdAt;
+  private final LocalDateTime updatedAt;
+  private final String createdBy;
+  private final String updatedBy;
 
   public static enum Type {
     BANK,
