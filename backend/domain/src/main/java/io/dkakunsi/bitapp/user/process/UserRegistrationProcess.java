@@ -33,6 +33,6 @@ public final class UserRegistrationProcess {
   }
 
   private User create(UserRegistrationInput userInput) {
-    return userRepository.save(User.createNew(userInput));
+    return userRepository.save(User.from(userInput));
   }
 }

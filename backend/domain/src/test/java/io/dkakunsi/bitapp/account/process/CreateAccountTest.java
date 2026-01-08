@@ -22,9 +22,9 @@ import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.Input;
 import io.dkakunsi.bitapp.common.AppError.Code;
 
-public final class CreateAccountProcessTest {
+public final class CreateAccountTest {
 
-  private CreateAccountProcess underTest;
+  private CreateAccount underTest;
 
   private AccountRepository accountRepository;
 
@@ -33,7 +33,7 @@ public final class CreateAccountProcessTest {
   @BeforeEach
   void setUp() {
     accountRepository = mock(AccountRepository.class);
-    underTest = new CreateAccountProcess(accountRepository);
+    underTest = new CreateAccount(accountRepository);
   }
 
   @Test

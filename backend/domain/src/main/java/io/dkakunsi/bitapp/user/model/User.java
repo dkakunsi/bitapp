@@ -45,7 +45,7 @@ public final class User {
         .build();
   }
 
-  public static User createNew(UserRegistrationInput userInput) {
+  public static User from(UserRegistrationInput userInput) {
     Objects.requireNonNull(userInput.email(), "Email cannot be null");
     Objects.requireNonNull(userInput.name(), "Name cannot be null");
     return User.builder()
