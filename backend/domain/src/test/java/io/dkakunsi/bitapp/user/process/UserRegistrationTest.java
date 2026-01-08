@@ -25,9 +25,9 @@ import io.dkakunsi.bitapp.user.model.User;
 import io.dkakunsi.bitapp.user.model.User.Language;
 import io.dkakunsi.bitapp.user.repository.UserRepository;
 
-public final class UserRegistrationProcessTest {
+public final class UserRegistrationTest {
 
-  private UserRegistrationProcess underTest;
+  private UserRegistration underTest;
 
   private UserRepository userRepository;
 
@@ -36,7 +36,7 @@ public final class UserRegistrationProcessTest {
   @BeforeEach
   void setUp() {
     userRepository = mock(UserRepository.class);
-    underTest = new UserRegistrationProcess(userRepository);
+    underTest = new UserRegistration(userRepository);
   }
 
   @Test
@@ -183,11 +183,14 @@ public final class UserRegistrationProcessTest {
   }
 
   @Test
-  public void givenValidRegisterUserRequestWhenPortThrowsErrorThenShouldFail() {
+  public void givenValidRegisterUserRequestWhenRepositoryThrowsErrorThenShouldFail() {
     // Given
-    when(userRepository.save(any())).thenThrow(new RuntimeException("An error occured"));
+    when(userRepository.findByEmail(any())).thenThrow(new RuntimeException("An error occured"));
 
-    var registerInput = UserRegistrationInput.builder().build();
+    var registerInput = UserRegistrationInput.builder()
+        .email("user@email.com")
+        .name("User Name")
+        .build();
     var context = Context.builder().requester(REQUESTER).build();
     var processInput = new Input<>(registerInput, context);
 
@@ -198,5 +201,28 @@ public final class UserRegistrationProcessTest {
     assertFalse(result.isSuccess());
     assertEquals(Code.SERVER_ERROR, result.error().get().code());
     assertEquals("An error occured", result.error().get().message());
+  }
+
+  @Test
+  public void givenInvalidRegisterUserRequestWhenIllegalArgumentExceptionThenShouldReturnBadRequest() {
+    // Given
+    var email = "user@email.com";
+    var registerInput = UserRegistrationInput.builder()
+        .email(email)
+        .name("User Name")
+        .build();
+
+    var context = Context.builder().requester(REQUESTER).build();
+    var processInput = new Input<>(registerInput, context);
+
+    when(userRepository.findByEmail(email)).thenThrow(new IllegalArgumentException("Invalid email format"));
+
+    // When
+    var result = underTest.process(processInput);
+
+    // Then
+    assertFalse(result.isSuccess());
+    assertEquals(Code.BAD_REQUEST, result.error().get().code());
+    assertEquals("Invalid email format", result.error().get().message());
   }
 }

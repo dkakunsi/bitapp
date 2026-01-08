@@ -7,11 +7,11 @@ import io.dkakunsi.bitapp.user.dto.UserRegistrationInput;
 import io.dkakunsi.bitapp.user.model.User;
 import io.dkakunsi.bitapp.user.repository.UserRepository;
 
-public final class UserRegistrationProcess {
+public final class UserRegistration {
 
   private UserRepository userRepository;
 
-  public UserRegistrationProcess(UserRepository userRepository) {
+  public UserRegistration(UserRepository userRepository) {
     this.userRepository = userRepository;
   }
 
