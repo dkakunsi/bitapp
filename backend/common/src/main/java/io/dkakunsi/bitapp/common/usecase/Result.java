@@ -1,7 +1,8 @@
-package io.dkakunsi.bitapp.common;
+package io.dkakunsi.bitapp.common.usecase;
 
 import java.util.Optional;
 
+import io.dkakunsi.bitapp.common.AppError;
 import io.dkakunsi.bitapp.common.AppError.Code;
 
 public final record Result<DATA>(

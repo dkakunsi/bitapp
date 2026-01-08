@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.dkakunsi</groupId>
   <artifactId>bitapp</artifactId>
@@ -259,6 +258,7 @@
             <parallel>classes</parallel>
             <threadCount>10</threadCount>
             <skipTests>${skipTestCondition}</skipTests>
+            <argLine>@{argLine} -javaagent:${org.mockito:mockito-core:jar}</argLine>
           </configuration>
         </plugin>
         <!-- Copy resources to target -->
@@ -379,8 +379,10 @@
   </distributionManagement>
 
   <modules>
+    <module>common</module>
     <module>test</module>
     <module>domain</module>
     <module>mongo</module>
+    <module>javalin</module>
   </modules>
 </project>
