@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import io.dkakunsi.bitapp.common.Id;
 import io.dkakunsi.bitapp.user.dto.UserRegistrationInput;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -18,7 +19,9 @@ public final class User {
   private static final Language DEFAULT_LANGUAGE = Language.EN;
 
   // email as Id
+  @NotBlank
   private final Id id;
+  @NotBlank
   private final String name;
   private final String phone;
   private final String photoUrl;
@@ -46,8 +49,6 @@ public final class User {
   }
 
   public static User from(UserRegistrationInput userInput) {
-    Objects.requireNonNull(userInput.email(), "Email cannot be null");
-    Objects.requireNonNull(userInput.name(), "Name cannot be null");
     return User.builder()
         .id(Id.of(userInput.email()))
         .name(userInput.name())
