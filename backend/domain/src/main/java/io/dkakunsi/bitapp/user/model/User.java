@@ -16,8 +16,6 @@ import lombok.ToString;
 @ToString
 public final class User {
 
-  private static final Language DEFAULT_LANGUAGE = Language.EN;
-
   // email as Id
   @NotBlank
   private final Id id;
@@ -45,16 +43,6 @@ public final class User {
         .name(userInput.name())
         .phone(userInput.phone())
         .photoUrl(userInput.photoUrl())
-        .build();
-  }
-
-  public static User from(UserRegistrationInput userInput) {
-    return User.builder()
-        .id(Id.of(userInput.email()))
-        .name(userInput.name())
-        .phone(userInput.phone())
-        .photoUrl(userInput.photoUrl())
-        .language(DEFAULT_LANGUAGE)
         .build();
   }
 }

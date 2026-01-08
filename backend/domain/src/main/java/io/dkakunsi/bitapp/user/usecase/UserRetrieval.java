@@ -1,13 +1,14 @@
 package io.dkakunsi.bitapp.user.usecase;
 
-import io.dkakunsi.bitapp.common.Input;
-import io.dkakunsi.bitapp.common.Result;
 import io.dkakunsi.bitapp.common.AppError.Code;
+import io.dkakunsi.bitapp.common.usecase.Input;
+import io.dkakunsi.bitapp.common.usecase.Result;
+import io.dkakunsi.bitapp.common.usecase.UseCase;
 import io.dkakunsi.bitapp.user.dto.UserRetrievalInput;
 import io.dkakunsi.bitapp.user.model.User;
 import io.dkakunsi.bitapp.user.repository.UserRepository;
 
-public final class UserRetrieval {
+public final class UserRetrieval implements UseCase<UserRetrievalInput, User> {
 
   private UserRepository userRepository;
 

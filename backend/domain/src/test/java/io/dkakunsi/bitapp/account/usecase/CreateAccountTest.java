@@ -18,9 +18,9 @@ import org.mockito.ArgumentCaptor;
 import io.dkakunsi.bitapp.account.dto.CreateAccountInput;
 import io.dkakunsi.bitapp.account.model.Account;
 import io.dkakunsi.bitapp.account.repository.AccountRepository;
-import io.dkakunsi.bitapp.common.Context;
-import io.dkakunsi.bitapp.common.Input;
 import io.dkakunsi.bitapp.common.AppError.Code;
+import io.dkakunsi.bitapp.common.Context;
+import io.dkakunsi.bitapp.common.usecase.Input;
 
 public final class CreateAccountTest {
 
@@ -58,18 +58,14 @@ public final class CreateAccountTest {
 
     // verify returned data
     final var resultData = result.data().get();
-    assertNotNull(resultData.getId());
-    assertEquals(createRequest.name(), resultData.getName());
-    assertEquals(createRequest.type(), resultData.getType());
-    assertEquals(createRequest.themeColor(), resultData.getThemeColor());
-    assertEquals(BigDecimal.ZERO, resultData.getBalance());
-    assertEquals(REQUESTER, resultData.getCreatedBy());
-    assertEquals(REQUESTER, resultData.getUpdatedBy());
-    assertNotNull(resultData.getCreatedAt());
-    assertNotNull(resultData.getUpdatedAt());
-    assertEquals(REQUESTER, resultData.getUser().getId().value());
+    assertNotNull(resultData.id());
+    assertEquals(createRequest.name(), resultData.name());
+    assertEquals(createRequest.type(), resultData.type());
+    assertEquals(createRequest.themeColor(), resultData.themeColor());
+    assertEquals(BigDecimal.ZERO, resultData.balance());
+    assertEquals(REQUESTER, resultData.user());
 
-    // verify data passed to port
+    // verify data passed to repository
     var savingAccountCaptor = ArgumentCaptor.forClass(Account.class);
     verify(accountRepository).create(savingAccountCaptor.capture());
     var capturedAccount = savingAccountCaptor.getValue();

@@ -55,7 +55,7 @@ public final class UserTest {
         .build();
 
     // When
-    var user = User.from(input);
+    var user = input.toUser();
 
     // Then
     assertNotNull(user);
@@ -79,7 +79,7 @@ public final class UserTest {
         .build();
 
     // When
-    var user = User.from(input);
+    var user = input.toUser();
 
     // Then
     assertNotNull(user);

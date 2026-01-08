@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.Id;
-import io.dkakunsi.bitapp.common.Input;
+import io.dkakunsi.bitapp.common.usecase.Input;
 import io.dkakunsi.bitapp.user.dto.UserRetrievalInput;
 import io.dkakunsi.bitapp.user.model.User;
 import io.dkakunsi.bitapp.user.model.User.Language;
@@ -65,7 +65,7 @@ public final class UserRetrievalTest {
     assertEquals("081234567890", user.getPhone());
     assertEquals("http://photo.url/existing_user", user.getPhotoUrl());
     assertEquals(User.Language.EN, user.getLanguage());
-    
+
     verify(userRepository).findByEmail(email);
   }
 
@@ -86,7 +86,7 @@ public final class UserRetrievalTest {
     // Then
     assertTrue(result.isSuccess());
     assertTrue(result.data().isEmpty());
-    
+
     verify(userRepository).findByEmail(email);
   }
 
@@ -111,7 +111,7 @@ public final class UserRetrievalTest {
     var error = result.error().get();
     assertEquals(Code.SERVER_ERROR, error.code());
     assertEquals("Database error", error.message());
-    
+
     verify(userRepository).findByEmail(email);
   }
 }

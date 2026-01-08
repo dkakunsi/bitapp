@@ -1,13 +1,15 @@
 package io.dkakunsi.bitapp.user.usecase;
 
-import io.dkakunsi.bitapp.common.Input;
-import io.dkakunsi.bitapp.common.Result;
 import io.dkakunsi.bitapp.common.AppError.Code;
+import io.dkakunsi.bitapp.common.usecase.Input;
+import io.dkakunsi.bitapp.common.usecase.Result;
+import io.dkakunsi.bitapp.common.usecase.UseCase;
 import io.dkakunsi.bitapp.user.dto.UserRegistrationInput;
+import io.dkakunsi.bitapp.user.dto.UserRegistrationOutput;
 import io.dkakunsi.bitapp.user.model.User;
 import io.dkakunsi.bitapp.user.repository.UserRepository;
 
-public final class UserRegistration {
+public final class UserRegistration implements UseCase<UserRegistrationInput, UserRegistrationOutput> {
 
   private UserRepository userRepository;
 
@@ -15,12 +17,12 @@ public final class UserRegistration {
     this.userRepository = userRepository;
   }
 
-  public Result<User> process(Input<UserRegistrationInput> input) {
+  public Result<UserRegistrationOutput> process(Input<UserRegistrationInput> input) {
     try {
       User user = userRepository.findByEmail(input.data().email())
           .map(existing -> update(existing, input.data()))
           .orElseGet(() -> create(input.data()));
-      return Result.success(user);
+      return Result.success(UserRegistrationOutput.from(user));
     } catch (IllegalArgumentException e) {
       return Result.failure(Code.BAD_REQUEST, e.getMessage());
     } catch (Exception e) {
@@ -33,6 +35,6 @@ public final class UserRegistration {
   }
 
   private User create(UserRegistrationInput userInput) {
-    return userRepository.save(User.from(userInput));
+    return userRepository.save(userInput.toUser());
   }
 }

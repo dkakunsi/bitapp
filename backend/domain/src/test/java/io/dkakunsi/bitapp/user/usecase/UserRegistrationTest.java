@@ -16,10 +16,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.Id;
-import io.dkakunsi.bitapp.common.Input;
-import io.dkakunsi.bitapp.common.AppError.Code;
+import io.dkakunsi.bitapp.common.usecase.Input;
 import io.dkakunsi.bitapp.user.dto.UserRegistrationInput;
 import io.dkakunsi.bitapp.user.model.User;
 import io.dkakunsi.bitapp.user.model.User.Language;
@@ -43,12 +43,12 @@ public final class UserRegistrationTest {
   public void givenValidRegisterUserRequestWhenUserIsNotExistsThenShouldCreateUserAndSuccess() {
     // Given
     var email = "user@email.com";
-    var username = "User Name";
+    var name = "User Name";
     var phone = "081234567890";
     var photoUrl = "http://photo.url/user";
     var registerInput = UserRegistrationInput.builder()
         .email(email)
-        .name(username)
+        .name(name)
         .phone(phone)
         .photoUrl(photoUrl)
         .build();
@@ -66,18 +66,17 @@ public final class UserRegistrationTest {
     assertTrue(result.isSuccess());
 
     var createdUser = result.data().get();
-    assertEquals(username, createdUser.getName());
-    assertEquals(phone, createdUser.getPhone());
-    assertEquals(photoUrl, createdUser.getPhotoUrl());
-    assertEquals(Language.EN, createdUser.getLanguage());
-    assertNotNull(createdUser.getId());
-
+    assertEquals(email, createdUser.email());
+    assertEquals(name, createdUser.name());
+    assertEquals(phone, createdUser.phone());
+    assertEquals(photoUrl, createdUser.photoUrl());
+    assertEquals(Language.EN, createdUser.language());
     verify(userRepository).findByEmail(email);
 
     var userCaptor = ArgumentCaptor.forClass(User.class);
     verify(userRepository).save(userCaptor.capture());
     var savedUser = userCaptor.getValue();
-    assertEquals(username, savedUser.getName());
+    assertEquals(name, savedUser.getName());
     assertEquals(phone, savedUser.getPhone());
     assertEquals(photoUrl, savedUser.getPhotoUrl());
     assertEquals(Language.EN, savedUser.getLanguage());
@@ -121,12 +120,11 @@ public final class UserRegistrationTest {
     verify(userRepository).findByEmail(email);
 
     var createdUser = result.data().get();
-    assertEquals(email, createdUser.getId().value());
-    assertEquals(updatingUserName, createdUser.getName());
-    assertEquals(phone, createdUser.getPhone());
-    assertEquals(photoUrl, createdUser.getPhotoUrl());
-    assertEquals(Language.EN, createdUser.getLanguage());
-
+    assertEquals(email, createdUser.email());
+    assertEquals(updatingUserName, createdUser.name());
+    assertEquals(phone, createdUser.phone());
+    assertEquals(photoUrl, createdUser.photoUrl());
+    assertEquals(Language.EN, createdUser.language());
     var userCaptor = ArgumentCaptor.forClass(User.class);
     verify(userRepository).save(userCaptor.capture());
     var savedUser = userCaptor.getValue();
@@ -173,12 +171,11 @@ public final class UserRegistrationTest {
     verify(userRepository).findByEmail(email);
 
     var createdUser = result.data().get();
-    assertEquals(email, createdUser.getId().value());
-    assertEquals(username, createdUser.getName());
-    assertEquals(phone, createdUser.getPhone());
-    assertEquals(photoUrl, createdUser.getPhotoUrl());
-    assertEquals(Language.EN, createdUser.getLanguage());
-
+    assertEquals(email, createdUser.email());
+    assertEquals(username, createdUser.name());
+    assertEquals(phone, createdUser.phone());
+    assertEquals(photoUrl, createdUser.photoUrl());
+    assertEquals(Language.EN, createdUser.language());
     verify(userRepository, never()).save(any(User.class));
   }
 
