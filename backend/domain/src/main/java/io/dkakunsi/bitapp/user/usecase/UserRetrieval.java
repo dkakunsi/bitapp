@@ -1,4 +1,4 @@
-package io.dkakunsi.bitapp.user.process;
+package io.dkakunsi.bitapp.user.usecase;
 
 import io.dkakunsi.bitapp.common.Input;
 import io.dkakunsi.bitapp.common.Result;

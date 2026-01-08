@@ -1,4 +1,4 @@
-package io.dkakunsi.bitapp.account.process;
+package io.dkakunsi.bitapp.account.usecase;
 
 import io.dkakunsi.bitapp.account.dto.CreateAccountInput;
 import io.dkakunsi.bitapp.account.model.Account;

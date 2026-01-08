@@ -1,4 +1,4 @@
-package io.dkakunsi.bitapp.account.process;
+package io.dkakunsi.bitapp.account.usecase;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
