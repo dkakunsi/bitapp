@@ -4,13 +4,14 @@ import io.dkakunsi.bitapp.common.Authorizer;
 import io.dkakunsi.bitapp.common.usecase.Input;
 import io.dkakunsi.bitapp.common.usecase.UseCase;
 import io.dkakunsi.bitapp.user.dto.UserRegistrationInput;
+import io.dkakunsi.bitapp.user.dto.UserRegistrationOutput;
 import io.dkakunsi.bitapp.user.model.User;
 import io.javalin.http.Handler;
 import jakarta.validation.constraints.NotNull;
 
-public class UserRegistrationJavalinEndpoint extends JavalinEndpoint<UserRegistrationInput, User> {
+public class UserRegistrationJavalinEndpoint extends JavalinEndpoint<UserRegistrationInput, UserRegistrationOutput> {
 
-  public UserRegistrationJavalinEndpoint(@NotNull UseCase<UserRegistrationInput, User> usecase,
+  public UserRegistrationJavalinEndpoint(@NotNull UseCase<UserRegistrationInput, UserRegistrationOutput> usecase,
       Authorizer authorizer) {
     super(usecase, authorizer);
   }
