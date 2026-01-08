@@ -381,5 +381,6 @@
   <modules>
     <module>test</module>
     <module>domain</module>
+    <module>mongo</module>
   </modules>
 </project>
