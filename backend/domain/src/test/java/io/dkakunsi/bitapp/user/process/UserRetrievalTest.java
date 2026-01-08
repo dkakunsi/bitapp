@@ -1,8 +1,10 @@
 package io.dkakunsi.bitapp.user.process;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -10,6 +12,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.Id;
 import io.dkakunsi.bitapp.common.Input;
@@ -18,18 +21,18 @@ import io.dkakunsi.bitapp.user.model.User;
 import io.dkakunsi.bitapp.user.model.User.Language;
 import io.dkakunsi.bitapp.user.repository.UserRepository;
 
-public class UserRetrievalProcessTest {
+public final class UserRetrievalTest {
 
   private static final String REQUESTER = "Requester";
 
-  private UserRetrievalProcess underTest;
+  private UserRetrieval underTest;
 
   private UserRepository userRepository;
 
   @BeforeEach
   void setUp() {
     userRepository = mock(UserRepository.class);
-    underTest = new UserRetrievalProcess(userRepository);
+    underTest = new UserRetrieval(userRepository);
   }
 
   @Test
@@ -53,6 +56,7 @@ public class UserRetrievalProcessTest {
     var input = new Input<>(inputData, context);
     var result = underTest.process(input);
 
+    // Then
     assertTrue(result.isSuccess());
     assertTrue(result.data().isPresent());
     var user = result.data().get();
@@ -61,6 +65,8 @@ public class UserRetrievalProcessTest {
     assertEquals("081234567890", user.getPhone());
     assertEquals("http://photo.url/existing_user", user.getPhotoUrl());
     assertEquals(User.Language.EN, user.getLanguage());
+    
+    verify(userRepository).findByEmail(email);
   }
 
   @Test
@@ -77,8 +83,11 @@ public class UserRetrievalProcessTest {
     var input = new Input<>(inputData, context);
     var result = underTest.process(input);
 
+    // Then
     assertTrue(result.isSuccess());
     assertTrue(result.data().isEmpty());
+    
+    verify(userRepository).findByEmail(email);
   }
 
   @Test
@@ -95,8 +104,14 @@ public class UserRetrievalProcessTest {
     var input = new Input<>(inputData, context);
     var result = underTest.process(input);
 
+    // Then
+    assertFalse(result.isSuccess());
     assertTrue(result.isFailed());
+    assertTrue(result.error().isPresent());
     var error = result.error().get();
+    assertEquals(Code.SERVER_ERROR, error.code());
     assertEquals("Database error", error.message());
+    
+    verify(userRepository).findByEmail(email);
   }
 }

@@ -7,11 +7,11 @@ import io.dkakunsi.bitapp.user.dto.UserRetrievalInput;
 import io.dkakunsi.bitapp.user.model.User;
 import io.dkakunsi.bitapp.user.repository.UserRepository;
 
-public final class UserRetrievalProcess {
+public final class UserRetrieval {
 
   private UserRepository userRepository;
 
-  public UserRetrievalProcess(UserRepository userRepository) {
+  public UserRetrieval(UserRepository userRepository) {
     this.userRepository = userRepository;
   }
 
