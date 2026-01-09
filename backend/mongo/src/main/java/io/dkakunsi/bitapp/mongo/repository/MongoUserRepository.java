@@ -1,4 +1,4 @@
-package io.dkakunsi.bitapp.mongo;
+package io.dkakunsi.bitapp.mongo.repository;
 
 import java.util.Optional;
 

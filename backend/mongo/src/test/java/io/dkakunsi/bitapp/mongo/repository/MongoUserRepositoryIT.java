@@ -1,4 +1,4 @@
-package io.dkakunsi.bitapp.mongo;
+package io.dkakunsi.bitapp.mongo.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import dev.morphia.Datastore;
 import io.dkakunsi.bitapp.common.EnvironmentConfiguration;
 import io.dkakunsi.bitapp.common.Id;
+import io.dkakunsi.bitapp.mongo.MongoConfiguration;
 import io.dkakunsi.bitapp.user.model.User;
 import io.dkakunsi.bitapp.user.model.User.Language;
 import io.dkakunsi.lab.test.Mongo;
