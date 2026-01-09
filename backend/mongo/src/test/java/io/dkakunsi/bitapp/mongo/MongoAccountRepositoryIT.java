@@ -5,19 +5,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.Optional;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.mongodb.client.MongoDatabase;
-
+import dev.morphia.Datastore;
 import io.dkakunsi.bitapp.account.model.Account;
 import io.dkakunsi.bitapp.account.model.Account.Type;
-import io.dkakunsi.bitapp.common.Configuration;
+import io.dkakunsi.bitapp.common.EnvironmentConfiguration;
 import io.dkakunsi.bitapp.common.Id;
 import io.dkakunsi.bitapp.user.model.User;
 import io.dkakunsi.lab.test.Mongo;
@@ -25,26 +22,17 @@ import io.dkakunsi.lab.test.Mongo;
 public class MongoAccountRepositoryIT {
 
   private static MongoConfiguration mongoConfiguration;
-  private static MongoDatabase database;
+  private static Datastore datastore;
   private MongoAccountRepository repository;
 
   @BeforeAll
   public static void startMongo() throws Exception {
     Mongo.startDb();
-    var config = Mongo.getDbConfig();
-
-    // Create Configuration implementation from testcontainer config
-    Configuration configuration = new Configuration() {
-      private Map<String, String> configMap = config;
-
-      @Override
-      public Optional<String> get(String key) {
-        return Optional.ofNullable(configMap.get(key));
-      }
-    };
+    var dbConfig = Mongo.getDbConfig();
+    var configuration = EnvironmentConfiguration.of(dbConfig::get);
 
     mongoConfiguration = new MongoConfiguration(configuration);
-    database = mongoConfiguration.getDatabase();
+    datastore = mongoConfiguration.getDatastore();
   }
 
   @AfterAll
@@ -58,8 +46,8 @@ public class MongoAccountRepositoryIT {
   @BeforeEach
   public void setUp() {
     // Clear the collection before each test
-    database.getCollection("accounts").drop();
-    repository = new MongoAccountRepository(database);
+    datastore.getDatabase().getCollection("accounts").drop();
+    repository = new MongoAccountRepository(datastore);
   }
 
   @Test

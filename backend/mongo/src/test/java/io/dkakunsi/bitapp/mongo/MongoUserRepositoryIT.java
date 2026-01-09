@@ -9,8 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.mongodb.client.MongoDatabase;
-
+import dev.morphia.Datastore;
 import io.dkakunsi.bitapp.common.EnvironmentConfiguration;
 import io.dkakunsi.bitapp.common.Id;
 import io.dkakunsi.bitapp.user.model.User;
@@ -20,7 +19,7 @@ import io.dkakunsi.lab.test.Mongo;
 public class MongoUserRepositoryIT {
 
   private static MongoConfiguration mongoConfiguration;
-  private static MongoDatabase database;
+  private static Datastore datastore;
   private MongoUserRepository repository;
 
   @BeforeAll
@@ -30,7 +29,7 @@ public class MongoUserRepositoryIT {
     var configuration = EnvironmentConfiguration.of(mongodbConfig::get);
 
     mongoConfiguration = new MongoConfiguration(configuration);
-    database = mongoConfiguration.getDatabase();
+    datastore = mongoConfiguration.getDatastore();
   }
 
   @AfterAll
@@ -43,8 +42,8 @@ public class MongoUserRepositoryIT {
 
   @BeforeEach
   public void setUp() {
-    database.getCollection("users").drop();
-    repository = new MongoUserRepository(database);
+    datastore.getDatabase().getCollection("users").drop();
+    repository = new MongoUserRepository(datastore);
   }
 
   @Test

@@ -38,6 +38,11 @@
       <artifactId>mongodb-driver-sync</artifactId>
       <version>5.6.2</version>
     </dependency>
+    <dependency>
+      <groupId>dev.morphia.morphia</groupId>
+      <artifactId>morphia-core</artifactId>
+      <version>2.5.2</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -49,6 +54,16 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
+      </plugin>
+      <!-- Override to exclude rules -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <configuration>
+          <rulesets>
+            <ruleset>pmd-ruleset.xml</ruleset>
+          </rulesets>
+        </configuration>
       </plugin>
     </plugins>
   </build>

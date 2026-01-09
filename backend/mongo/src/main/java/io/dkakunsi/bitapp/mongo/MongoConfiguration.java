@@ -11,6 +11,8 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 
+import dev.morphia.Datastore;
+import dev.morphia.Morphia;
 import io.dkakunsi.bitapp.common.Configuration;
 
 public final class MongoConfiguration {
@@ -84,6 +86,13 @@ public final class MongoConfiguration {
 
     public MongoClient getMongoClient() {
         return initMongoClient();
+    }
+
+    public Datastore getDatastore() {
+        var databaseName = configuration.get(ENV_MONGO_DATABASE).orElseThrow();
+        var mongoClient = getMongoClient();
+        var datastore = Morphia.createDatastore(mongoClient, databaseName);
+        return datastore;
     }
 
     public void close() {

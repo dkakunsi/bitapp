@@ -36,6 +36,7 @@
     <spotbugs-maven-plugin.version>4.9.3.2</spotbugs-maven-plugin.version>
     <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
     <versions-maven.plugin.version>2.18.0</versions-maven.plugin.version>
+    <maven-project-info-reports-plugin.version>3.8.1</maven-project-info-reports-plugin.version>
 
     <!-- Common Dependency Versions -->
     <slf4j.version>2.0.17</slf4j.version>
@@ -204,7 +205,7 @@
           <executions>
             <execution>
               <id>checkstyle</id>
-              <phase>validate</phase>
+              <phase>verify</phase>
               <goals>
                 <goal>check</goal>
               </goals>
@@ -228,7 +229,7 @@
           <executions>
             <execution>
               <id>maven-pmd-plugin</id>
-              <phase>validate</phase>
+              <phase>verify</phase>
               <goals>
                 <goal>check</goal>
                 <goal>cpd-check</goal>
@@ -340,6 +341,11 @@
             </execution>
           </executions>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-project-info-reports-plugin</artifactId>
+          <version>${maven-project-info-reports-plugin.version}</version>
+        </plugin>
 
         <!-- Documentation plugins -->
         <plugin>
@@ -425,10 +431,6 @@
       -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clean-plugin</artifactId>
       </plugin>
       <plugin>
@@ -453,6 +455,36 @@
       </plugin>
     </plugins>
   </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>${maven-pmd-plugin.version}</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
 
   <scm>
     <developerConnection>scm:git:https://github.com/dkakunsi/bitapp.git</developerConnection>
