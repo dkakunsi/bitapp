@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Check if Docker is already running
+if docker info >/dev/null 2>&1; then
+    echo "Docker daemon is already running"
+    exit 0
+fi
+
 # Create docker config directory if it doesn't exist
 sudo mkdir -p /etc/docker
 
