@@ -70,7 +70,7 @@ class UserRegistrationJavalinEndpointTest {
     var response = Unirest.post(BASE_URL + "/users").body(body).asString();
 
     // Then
-    assertEquals(200, response.getStatus());
+    assertEquals(201, response.getStatus());
 
     var responseBody = response.getBody();
     assertNotNull(responseBody);
@@ -97,7 +97,7 @@ class UserRegistrationJavalinEndpointTest {
     var response = Unirest.post(BASE_URL + "/users").body(body).asString();
 
     // Then
-    assertEquals(200, response.getStatus());
+    assertEquals(201, response.getStatus());
 
     var responseBody = response.getBody();
     assertEquals("", responseBody);
@@ -187,7 +187,7 @@ class UserRegistrationJavalinEndpointTest {
     var response = Unirest.post(BASE_URL + "/users").body(body).asString();
 
     // Then
-    assertEquals(200, response.getStatus());
+    assertEquals(201, response.getStatus());
 
     var responseBody = response.getBody();
     assertNotNull(responseBody);

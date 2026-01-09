@@ -1,16 +1,16 @@
 package io.dkakunsi.lab.javalin;
 
+import io.dkakunsi.bitapp.account.dto.CreateAccountInput;
+import io.dkakunsi.bitapp.account.dto.CreateAccountOutput;
 import io.dkakunsi.bitapp.common.Authorizer;
 import io.dkakunsi.bitapp.common.usecase.Input;
 import io.dkakunsi.bitapp.common.usecase.UseCase;
-import io.dkakunsi.bitapp.user.dto.UserRegistrationInput;
-import io.dkakunsi.bitapp.user.dto.UserRegistrationOutput;
 import io.javalin.http.Handler;
 import jakarta.validation.constraints.NotNull;
 
-public class UserRegistrationJavalinEndpoint extends JavalinEndpoint<UserRegistrationInput, UserRegistrationOutput> {
+public class CreateAccountJavalinEndpoint extends JavalinEndpoint<CreateAccountInput, CreateAccountOutput> {
 
-  public UserRegistrationJavalinEndpoint(@NotNull UseCase<UserRegistrationInput, UserRegistrationOutput> usecase,
+  public CreateAccountJavalinEndpoint(@NotNull UseCase<CreateAccountInput, CreateAccountOutput> usecase,
       Authorizer authorizer) {
     super(usecase, authorizer);
   }
@@ -22,7 +22,7 @@ public class UserRegistrationJavalinEndpoint extends JavalinEndpoint<UserRegistr
 
   @Override
   public String getPath() {
-    return "/users";
+    return "/accounts";
   }
 
   @Override
@@ -30,7 +30,7 @@ public class UserRegistrationJavalinEndpoint extends JavalinEndpoint<UserRegistr
     return ctx -> {
       var principal = authorizeRequest(ctx);
       var context = initiateContext(ctx, principal);
-      var input = new Input<>(ctx.bodyAsClass(UserRegistrationInput.class), context);
+      var input = new Input<>(ctx.bodyAsClass(CreateAccountInput.class), context);
       var output = usecase.process(input);
       if (output.isFailed()) {
         var error = output.error().get();
@@ -38,9 +38,8 @@ public class UserRegistrationJavalinEndpoint extends JavalinEndpoint<UserRegistr
       } else if (output.isEmpty()) {
         ctx.status(CREATED_RC);
       } else {
-        ctx.status(CREATED_RC).json(output.data().get(), UserRegistrationOutput.class);
+        ctx.status(CREATED_RC).json(output.data().get(), CreateAccountOutput.class);
       }
     };
-
   }
 }

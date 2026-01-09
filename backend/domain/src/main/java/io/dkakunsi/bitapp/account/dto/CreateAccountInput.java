@@ -12,7 +12,7 @@ import lombok.Builder;
 @Builder
 public final record CreateAccountInput(
     @NotBlank String name,
-    @NotBlank String themeColor,
+    String themeColor,
     Account.Type type) {
 
   public Account toAccount(String requester) {
