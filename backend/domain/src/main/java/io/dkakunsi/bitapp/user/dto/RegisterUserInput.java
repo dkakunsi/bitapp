@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
 @Builder
-public final record UserRegistrationInput(
+public final record RegisterUserInput(
     @NotBlank String name,
     @NotBlank String email,
     String phone,

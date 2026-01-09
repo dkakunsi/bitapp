@@ -3,27 +3,26 @@ package io.dkakunsi.lab.javalin;
 import io.dkakunsi.bitapp.common.Authorizer;
 import io.dkakunsi.bitapp.common.usecase.Input;
 import io.dkakunsi.bitapp.common.usecase.UseCase;
-import io.dkakunsi.bitapp.user.dto.UserRegistrationOutput;
-import io.dkakunsi.bitapp.user.dto.UserRetrievalInput;
-import io.dkakunsi.bitapp.user.model.User;
+import io.dkakunsi.bitapp.user.dto.RegisterUserInput;
+import io.dkakunsi.bitapp.user.dto.RegisterUserResult;
 import io.javalin.http.Handler;
 import jakarta.validation.constraints.NotNull;
 
-public class UserRetrievalJavalinEndpoint extends JavalinEndpoint<UserRetrievalInput, User> {
+public class RegisterUserJavalinEndpoint extends JavalinEndpoint<RegisterUserInput, RegisterUserResult> {
 
-  public UserRetrievalJavalinEndpoint(@NotNull UseCase<UserRetrievalInput, User> usecase,
+  public RegisterUserJavalinEndpoint(@NotNull UseCase<RegisterUserInput, RegisterUserResult> usecase,
       Authorizer authorizer) {
     super(usecase, authorizer);
   }
 
   @Override
   public Method getMethod() {
-    return Method.GET;
+    return Method.POST;
   }
 
   @Override
   public String getPath() {
-    return "/users/{email}";
+    return "/users";
   }
 
   @Override
@@ -31,17 +30,17 @@ public class UserRetrievalJavalinEndpoint extends JavalinEndpoint<UserRetrievalI
     return ctx -> {
       var principal = authorizeRequest(ctx);
       var context = initiateContext(ctx, principal);
-      var email = ctx.pathParam("email");
-      var input = new Input<>(UserRetrievalInput.builder().email(email).build(), context);
+      var input = new Input<>(ctx.bodyAsClass(RegisterUserInput.class), context);
       var output = usecase.process(input);
       if (output.isFailed()) {
         var error = output.error().get();
         ctx.status(error.code().getHttpCode()).result(error.message());
       } else if (output.isEmpty()) {
-        ctx.status(NOT_FOUND_RC).result("User not found");
+        ctx.status(CREATED_RC);
       } else {
-        ctx.status(SUCCESS_RC).json(output.data().get(), UserRegistrationOutput.class);
+        ctx.status(CREATED_RC).json(output.data().get(), RegisterUserResult.class);
       }
     };
+
   }
 }

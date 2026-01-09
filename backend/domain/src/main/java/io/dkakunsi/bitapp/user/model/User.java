@@ -3,7 +3,7 @@ package io.dkakunsi.bitapp.user.model;
 import java.util.Objects;
 
 import io.dkakunsi.bitapp.common.Id;
-import io.dkakunsi.bitapp.user.dto.UserRegistrationInput;
+import io.dkakunsi.bitapp.user.dto.RegisterUserInput;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -30,13 +30,13 @@ public final class User {
     ID,
   }
 
-  public boolean needUpdate(UserRegistrationInput userModel) {
+  public boolean needUpdate(RegisterUserInput userModel) {
     return !Objects.equals(this.name, userModel.name())
         || !Objects.equals(this.phone, userModel.phone())
         || !Objects.equals(this.photoUrl, userModel.photoUrl());
   }
 
-  public User update(UserRegistrationInput userInput) {
+  public User update(RegisterUserInput userInput) {
     return User.builder()
         .id(this.id)
         .language(this.language)

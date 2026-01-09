@@ -16,23 +16,23 @@ import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.Id;
 import io.dkakunsi.bitapp.common.usecase.Input;
-import io.dkakunsi.bitapp.user.dto.UserRetrievalInput;
+import io.dkakunsi.bitapp.user.dto.GetUserInput;
 import io.dkakunsi.bitapp.user.model.User;
 import io.dkakunsi.bitapp.user.model.User.Language;
 import io.dkakunsi.bitapp.user.repository.UserRepository;
 
-public final class UserRetrievalTest {
+public final class GetUserTest {
 
   private static final String REQUESTER = "Requester";
 
-  private UserRetrieval underTest;
+  private GetUser underTest;
 
   private UserRepository userRepository;
 
   @BeforeEach
   void setUp() {
     userRepository = mock(UserRepository.class);
-    underTest = new UserRetrieval(userRepository);
+    underTest = new GetUser(userRepository);
   }
 
   @Test
@@ -49,7 +49,7 @@ public final class UserRetrievalTest {
     when(userRepository.findByEmail(email)).thenReturn(Optional.of(existingUser));
 
     // When
-    var inputData = UserRetrievalInput.builder()
+    var inputData = GetUserInput.builder()
         .email(email)
         .build();
     var context = Context.builder().requester(REQUESTER).build();
@@ -60,12 +60,11 @@ public final class UserRetrievalTest {
     assertTrue(result.isSuccess());
     assertTrue(result.data().isPresent());
     var user = result.data().get();
-    assertEquals(email, user.getId().value());
-    assertEquals("Existing User", user.getName());
-    assertEquals("081234567890", user.getPhone());
-    assertEquals("http://photo.url/existing_user", user.getPhotoUrl());
-    assertEquals(User.Language.EN, user.getLanguage());
-
+    assertEquals(email, user.email());
+    assertEquals("Existing User", user.name());
+    assertEquals("081234567890", user.phone());
+    assertEquals("http://photo.url/existing_user", user.photoUrl());
+    assertEquals(User.Language.EN, user.language());
     verify(userRepository).findByEmail(email);
   }
 
@@ -76,7 +75,7 @@ public final class UserRetrievalTest {
     when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
 
     // When
-    var inputData = UserRetrievalInput.builder()
+    var inputData = GetUserInput.builder()
         .email(email)
         .build();
     var context = Context.builder().requester(REQUESTER).build();
@@ -97,7 +96,7 @@ public final class UserRetrievalTest {
     when(userRepository.findByEmail(email)).thenThrow(new RuntimeException("Database error"));
 
     // When
-    var inputData = UserRetrievalInput.builder()
+    var inputData = GetUserInput.builder()
         .email(email)
         .build();
     var context = Context.builder().requester(REQUESTER).build();

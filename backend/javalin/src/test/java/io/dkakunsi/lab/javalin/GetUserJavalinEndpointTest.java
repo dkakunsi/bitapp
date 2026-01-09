@@ -19,24 +19,25 @@ import io.dkakunsi.bitapp.common.Id;
 import io.dkakunsi.bitapp.common.usecase.Input;
 import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.common.usecase.UseCase;
-import io.dkakunsi.bitapp.user.dto.UserRetrievalInput;
+import io.dkakunsi.bitapp.user.dto.GetUserInput;
+import io.dkakunsi.bitapp.user.dto.GetUserResult;
 import io.dkakunsi.bitapp.user.model.User;
 import io.dkakunsi.bitapp.user.model.User.Language;
 import kong.unirest.Unirest;
 
-class UserRetrievalJavalinEndpointTest {
+class GetUserJavalinEndpointTest {
 
   private static final String BASE_URL = "http://localhost:20002";
 
-  private static UseCase<UserRetrievalInput, User> usecase;
+  private static UseCase<GetUserInput, GetUserResult> usecase;
 
   private static JavalinServer server;
 
   @SuppressWarnings("unchecked")
   @BeforeAll
   static void setup() throws Exception {
-    usecase = (UseCase<UserRetrievalInput, User>) mock(UseCase.class);
-    var endpoint = new UserRetrievalJavalinEndpoint(usecase, null);
+    usecase = (UseCase<GetUserInput, GetUserResult>) mock(UseCase.class);
+    var endpoint = new GetUserJavalinEndpoint(usecase, null);
     server = JavalinServer.of(20002);
     server.addEndpoint(endpoint);
     server.start();

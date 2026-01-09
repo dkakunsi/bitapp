@@ -1,16 +1,16 @@
 package io.dkakunsi.lab.javalin;
 
 import io.dkakunsi.bitapp.account.dto.CreateAccountInput;
-import io.dkakunsi.bitapp.account.dto.CreateAccountOutput;
+import io.dkakunsi.bitapp.account.dto.CreateAccountResult;
 import io.dkakunsi.bitapp.common.Authorizer;
 import io.dkakunsi.bitapp.common.usecase.Input;
 import io.dkakunsi.bitapp.common.usecase.UseCase;
 import io.javalin.http.Handler;
 import jakarta.validation.constraints.NotNull;
 
-public class CreateAccountJavalinEndpoint extends JavalinEndpoint<CreateAccountInput, CreateAccountOutput> {
+public class CreateAccountJavalinEndpoint extends JavalinEndpoint<CreateAccountInput, CreateAccountResult> {
 
-  public CreateAccountJavalinEndpoint(@NotNull UseCase<CreateAccountInput, CreateAccountOutput> usecase,
+  public CreateAccountJavalinEndpoint(@NotNull UseCase<CreateAccountInput, CreateAccountResult> usecase,
       Authorizer authorizer) {
     super(usecase, authorizer);
   }
@@ -38,7 +38,7 @@ public class CreateAccountJavalinEndpoint extends JavalinEndpoint<CreateAccountI
       } else if (output.isEmpty()) {
         ctx.status(CREATED_RC);
       } else {
-        ctx.status(CREATED_RC).json(output.data().get(), CreateAccountOutput.class);
+        ctx.status(CREATED_RC).json(output.data().get(), CreateAccountResult.class);
       }
     };
   }

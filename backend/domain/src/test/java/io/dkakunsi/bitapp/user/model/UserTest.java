@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.common.Id;
-import io.dkakunsi.bitapp.user.dto.UserRegistrationInput;
+import io.dkakunsi.bitapp.user.dto.RegisterUserInput;
 import io.dkakunsi.bitapp.user.model.User.Language;
 
 public final class UserTest {
@@ -47,7 +47,7 @@ public final class UserTest {
     var name = "User Name";
     var phone = "081234567890";
     var photoUrl = "http://photo.url/user";
-    var input = UserRegistrationInput.builder()
+    var input = RegisterUserInput.builder()
         .email(email)
         .name(name)
         .phone(phone)
@@ -71,7 +71,7 @@ public final class UserTest {
     // Given
     var email = "user@email.com";
     var name = "User Name";
-    var input = UserRegistrationInput.builder()
+    var input = RegisterUserInput.builder()
         .email(email)
         .name(name)
         .phone(null)
@@ -101,7 +101,7 @@ public final class UserTest {
         .language(Language.EN)
         .build();
 
-    var input = UserRegistrationInput.builder()
+    var input = RegisterUserInput.builder()
         .email("user@email.com")
         .name("Updated Name")
         .phone("081234567890")
@@ -126,7 +126,7 @@ public final class UserTest {
         .language(Language.EN)
         .build();
 
-    var input = UserRegistrationInput.builder()
+    var input = RegisterUserInput.builder()
         .email("user@email.com")
         .name("User Name")
         .phone("089876543210")
@@ -151,7 +151,7 @@ public final class UserTest {
         .language(Language.EN)
         .build();
 
-    var input = UserRegistrationInput.builder()
+    var input = RegisterUserInput.builder()
         .email("user@email.com")
         .name("User Name")
         .phone("081234567890")
@@ -176,7 +176,7 @@ public final class UserTest {
         .language(Language.EN)
         .build();
 
-    var input = UserRegistrationInput.builder()
+    var input = RegisterUserInput.builder()
         .email("user@email.com")
         .name("User Name")
         .phone("081234567890")
@@ -201,7 +201,7 @@ public final class UserTest {
         .language(Language.EN)
         .build();
 
-    var input = UserRegistrationInput.builder()
+    var input = RegisterUserInput.builder()
         .email("user@email.com")
         .name("User Name")
         .phone(null)
@@ -226,7 +226,7 @@ public final class UserTest {
         .language(Language.EN)
         .build();
 
-    var input = UserRegistrationInput.builder()
+    var input = RegisterUserInput.builder()
         .email("user@email.com")
         .name("User Name")
         .phone("081234567890")
@@ -256,7 +256,7 @@ public final class UserTest {
     var updatedName = "Updated Name";
     var updatedPhone = "089876543210";
     var updatedPhotoUrl = "http://new.photo.url/user";
-    var input = UserRegistrationInput.builder()
+    var input = RegisterUserInput.builder()
         .email("different@email.com") // Email should not affect the update
         .name(updatedName)
         .phone(updatedPhone)
@@ -288,7 +288,7 @@ public final class UserTest {
         .language(originalLanguage)
         .build();
 
-    var input = UserRegistrationInput.builder()
+    var input = RegisterUserInput.builder()
         .email("user@email.com")
         .name("Updated Name")
         .phone(null)

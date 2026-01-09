@@ -4,25 +4,25 @@ import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.usecase.Input;
 import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.common.usecase.UseCase;
-import io.dkakunsi.bitapp.user.dto.UserRegistrationInput;
-import io.dkakunsi.bitapp.user.dto.UserRegistrationOutput;
+import io.dkakunsi.bitapp.user.dto.RegisterUserInput;
+import io.dkakunsi.bitapp.user.dto.RegisterUserResult;
 import io.dkakunsi.bitapp.user.model.User;
 import io.dkakunsi.bitapp.user.repository.UserRepository;
 
-public final class UserRegistration implements UseCase<UserRegistrationInput, UserRegistrationOutput> {
+public final class RegisterUser implements UseCase<RegisterUserInput, RegisterUserResult> {
 
   private UserRepository userRepository;
 
-  public UserRegistration(UserRepository userRepository) {
+  public RegisterUser(UserRepository userRepository) {
     this.userRepository = userRepository;
   }
 
-  public Result<UserRegistrationOutput> process(Input<UserRegistrationInput> input) {
+  public Result<RegisterUserResult> process(Input<RegisterUserInput> input) {
     try {
       User user = userRepository.findByEmail(input.data().email())
           .map(existing -> update(existing, input.data()))
           .orElseGet(() -> create(input.data()));
-      return Result.success(UserRegistrationOutput.from(user));
+      return Result.success(RegisterUserResult.from(user));
     } catch (IllegalArgumentException e) {
       return Result.failure(Code.BAD_REQUEST, e.getMessage());
     } catch (Exception e) {
@@ -30,11 +30,11 @@ public final class UserRegistration implements UseCase<UserRegistrationInput, Us
     }
   }
 
-  private User update(User existingUser, UserRegistrationInput userInput) {
+  private User update(User existingUser, RegisterUserInput userInput) {
     return existingUser.needUpdate(userInput) ? userRepository.save(existingUser.update(userInput)) : existingUser;
   }
 
-  private User create(UserRegistrationInput userInput) {
+  private User create(RegisterUserInput userInput) {
     return userRepository.save(userInput.toUser());
   }
 }

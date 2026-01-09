@@ -6,7 +6,7 @@ import io.dkakunsi.bitapp.account.model.Account;
 import lombok.Builder;
 
 @Builder
-public final record CreateAccountOutput(
+public final record CreateAccountResult(
     String id,
     String name,
     Account.Type type,
@@ -14,8 +14,8 @@ public final record CreateAccountOutput(
     BigDecimal balance,
     String user) {
 
-  public static CreateAccountOutput from(Account account) {
-    return CreateAccountOutput.builder()
+  public static CreateAccountResult from(Account account) {
+    return CreateAccountResult.builder()
         .id(account.getId().value())
         .name(account.getName())
         .type(account.getType())

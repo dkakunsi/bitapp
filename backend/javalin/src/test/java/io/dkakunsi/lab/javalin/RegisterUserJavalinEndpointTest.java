@@ -18,24 +18,24 @@ import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.usecase.Input;
 import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.common.usecase.UseCase;
-import io.dkakunsi.bitapp.user.dto.UserRegistrationInput;
-import io.dkakunsi.bitapp.user.dto.UserRegistrationOutput;
+import io.dkakunsi.bitapp.user.dto.RegisterUserInput;
+import io.dkakunsi.bitapp.user.dto.RegisterUserResult;
 import io.dkakunsi.bitapp.user.model.User.Language;
 import kong.unirest.Unirest;
 
-class UserRegistrationJavalinEndpointTest {
+class RegisterUserJavalinEndpointTest {
 
   private static final String BASE_URL = "http://localhost:20001";
 
-  private static UseCase<UserRegistrationInput, UserRegistrationOutput> usecase;
+  private static UseCase<RegisterUserInput, RegisterUserResult> usecase;
 
   private static JavalinServer server;
 
   @SuppressWarnings("unchecked")
   @BeforeAll
   static void setup() throws Exception {
-    usecase = (UseCase<UserRegistrationInput, UserRegistrationOutput>) mock(UseCase.class);
-    var endpoint = new UserRegistrationJavalinEndpoint(usecase, null);
+    usecase = (UseCase<RegisterUserInput, RegisterUserResult>) mock(UseCase.class);
+    var endpoint = new RegisterUserJavalinEndpoint(usecase, null);
     server = JavalinServer.of(20001);
     server.addEndpoint(endpoint);
     server.start();
@@ -57,7 +57,7 @@ class UserRegistrationJavalinEndpointTest {
     when(result.isSuccess()).thenReturn(true);
     when(result.isEmpty()).thenReturn(false);
     when(result.isFailed()).thenReturn(false);
-    when(result.data()).thenReturn(Optional.of(UserRegistrationOutput.builder()
+    when(result.data()).thenReturn(Optional.of(RegisterUserResult.builder()
         .email("user@email.com")
         .name("User Name")
         .phone("081234567890")
@@ -174,7 +174,7 @@ class UserRegistrationJavalinEndpointTest {
     when(result.isSuccess()).thenReturn(true);
     when(result.isEmpty()).thenReturn(false);
     when(result.isFailed()).thenReturn(false);
-    when(result.data()).thenReturn(Optional.of(UserRegistrationOutput.builder()
+    when(result.data()).thenReturn(Optional.of(RegisterUserResult.builder()
         .email("user@email.com")
         .name("User Name")
         .phone(null)

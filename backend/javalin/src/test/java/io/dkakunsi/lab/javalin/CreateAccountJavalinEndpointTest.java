@@ -14,7 +14,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import io.dkakunsi.bitapp.account.dto.CreateAccountOutput;
+import io.dkakunsi.bitapp.account.dto.CreateAccountResult;
 import io.dkakunsi.bitapp.account.model.Account;
 import io.dkakunsi.bitapp.common.AppError;
 import io.dkakunsi.bitapp.common.AppError.Code;
@@ -28,14 +28,14 @@ class CreateAccountJavalinEndpointTest {
 
   private static final String BASE_URL = "http://localhost:20003";
 
-  private static UseCase<CreateAccountInput, CreateAccountOutput> usecase;
+  private static UseCase<CreateAccountInput, CreateAccountResult> usecase;
 
   private static JavalinServer server;
 
   @SuppressWarnings("unchecked")
   @BeforeAll
   static void setup() throws Exception {
-    usecase = (UseCase<CreateAccountInput, CreateAccountOutput>) mock(UseCase.class);
+    usecase = (UseCase<CreateAccountInput, CreateAccountResult>) mock(UseCase.class);
     var endpoint = new CreateAccountJavalinEndpoint(usecase, null);
     server = JavalinServer.of(20003);
     server.addEndpoint(endpoint);
@@ -58,7 +58,7 @@ class CreateAccountJavalinEndpointTest {
     when(result.isSuccess()).thenReturn(true);
     when(result.isEmpty()).thenReturn(false);
     when(result.isFailed()).thenReturn(false);
-    when(result.data()).thenReturn(Optional.of(CreateAccountOutput.builder()
+    when(result.data()).thenReturn(Optional.of(CreateAccountResult.builder()
         .id("account-123")
         .name("Savings Account")
         .type(Account.Type.BANK)

@@ -20,14 +20,14 @@ import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.Id;
 import io.dkakunsi.bitapp.common.usecase.Input;
-import io.dkakunsi.bitapp.user.dto.UserRegistrationInput;
+import io.dkakunsi.bitapp.user.dto.RegisterUserInput;
 import io.dkakunsi.bitapp.user.model.User;
 import io.dkakunsi.bitapp.user.model.User.Language;
 import io.dkakunsi.bitapp.user.repository.UserRepository;
 
-public final class UserRegistrationTest {
+public final class RegisterUserTest {
 
-  private UserRegistration underTest;
+  private RegisterUser underTest;
 
   private UserRepository userRepository;
 
@@ -36,7 +36,7 @@ public final class UserRegistrationTest {
   @BeforeEach
   void setUp() {
     userRepository = mock(UserRepository.class);
-    underTest = new UserRegistration(userRepository);
+    underTest = new RegisterUser(userRepository);
   }
 
   @Test
@@ -46,7 +46,7 @@ public final class UserRegistrationTest {
     var name = "User Name";
     var phone = "081234567890";
     var photoUrl = "http://photo.url/user";
-    var registerInput = UserRegistrationInput.builder()
+    var registerInput = RegisterUserInput.builder()
         .email(email)
         .name(name)
         .phone(phone)
@@ -91,7 +91,7 @@ public final class UserRegistrationTest {
     var phone = "081234567890";
     var photoUrl = "http://photo.url/user";
     var updatingUserName = "Update User Name";
-    var registerInput = UserRegistrationInput.builder()
+    var registerInput = RegisterUserInput.builder()
         .email(email)
         .name(updatingUserName)
         .phone(phone)
@@ -142,7 +142,7 @@ public final class UserRegistrationTest {
     var email = "user@email.com";
     var phone = "081234567890";
     var photoUrl = "http://photo.url/user";
-    var registerInput = UserRegistrationInput.builder()
+    var registerInput = RegisterUserInput.builder()
         .email(email)
         .name(username)
         .phone(phone)
@@ -184,7 +184,7 @@ public final class UserRegistrationTest {
     // Given
     when(userRepository.findByEmail(any())).thenThrow(new RuntimeException("An error occured"));
 
-    var registerInput = UserRegistrationInput.builder()
+    var registerInput = RegisterUserInput.builder()
         .email("user@email.com")
         .name("User Name")
         .build();
@@ -204,7 +204,7 @@ public final class UserRegistrationTest {
   public void givenInvalidRegisterUserRequestWhenIllegalArgumentExceptionThenShouldReturnBadRequest() {
     // Given
     var email = "user@email.com";
-    var registerInput = UserRegistrationInput.builder()
+    var registerInput = RegisterUserInput.builder()
         .email(email)
         .name("User Name")
         .build();
