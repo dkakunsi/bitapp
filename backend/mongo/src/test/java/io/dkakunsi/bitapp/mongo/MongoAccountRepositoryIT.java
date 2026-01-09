@@ -22,7 +22,7 @@ import io.dkakunsi.bitapp.common.Id;
 import io.dkakunsi.bitapp.user.model.User;
 import io.dkakunsi.lab.test.Mongo;
 
-public class MongoAccountRepositoryTest {
+public class MongoAccountRepositoryIT {
 
   private static MongoConfiguration mongoConfiguration;
   private static MongoDatabase database;

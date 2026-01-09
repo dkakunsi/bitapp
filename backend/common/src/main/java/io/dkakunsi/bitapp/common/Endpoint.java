@@ -38,6 +38,10 @@ public abstract class Endpoint<S, T> {
 
   public abstract String getPath();
 
+  protected UseCase<S, T> getUsecase() {
+    return usecase;
+  }
+
   protected boolean isPreflightRequest(String method) {
     return Method.OPTIONS.name().equalsIgnoreCase(method);
   }

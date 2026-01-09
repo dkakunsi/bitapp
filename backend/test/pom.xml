@@ -18,7 +18,6 @@
 
   <properties>
     <junit.version>5.13.4</junit.version>
-    <mockito.version>5.18.0</mockito.version>
     <mockito-junit.version>5.18.0</mockito-junit.version>
     <hamcrest.version>3.0</hamcrest.version>
     <awaitility.version>4.3.0</awaitility.version>

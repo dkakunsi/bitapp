@@ -17,7 +17,7 @@ import io.dkakunsi.bitapp.user.model.User;
 import io.dkakunsi.bitapp.user.model.User.Language;
 import io.dkakunsi.lab.test.Mongo;
 
-public class MongoUserRepositoryTest {
+public class MongoUserRepositoryIT {
 
   private static MongoConfiguration mongoConfiguration;
   private static MongoDatabase database;

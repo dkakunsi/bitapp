@@ -1,5 +1,7 @@
 package io.dkakunsi.bitapp.mongo;
 
+import java.util.Optional;
+
 import org.apache.commons.lang3.StringUtils;
 
 import com.mongodb.ConnectionString;
@@ -22,15 +24,16 @@ public final class MongoConfiguration {
     private static final String ENV_MONGO_PASSWORD = "MONGO_PASSWORD";
 
     private final Configuration configuration;
-    private MongoClient mongoClient;
+    private Optional<MongoClient> mongoClient;
 
     public MongoConfiguration(Configuration configuration) {
         this.configuration = configuration;
+        mongoClient = Optional.empty();
     }
 
     private MongoClient initMongoClient() {
-        if (mongoClient != null) {
-            return mongoClient;
+        if (mongoClient.isPresent()) {
+            return mongoClient.get();
         }
 
         var connectionString = getConnectionString();
@@ -41,9 +44,9 @@ public final class MongoConfiguration {
             settingsBuilder.credential(credential);
         }
         var settings = settingsBuilder.build();
-        mongoClient = MongoClients.create(settings);
+        mongoClient = Optional.of(MongoClients.create(settings));
 
-        return mongoClient;
+        return mongoClient.get();
     }
 
     private String getConnectionString() {
@@ -84,9 +87,9 @@ public final class MongoConfiguration {
     }
 
     public void close() {
-        if (mongoClient != null) {
-            mongoClient.close();
-            mongoClient = null;
+        if (mongoClient.isPresent()) {
+            mongoClient.get().close();
+            mongoClient = Optional.empty();
         }
     }
 }
