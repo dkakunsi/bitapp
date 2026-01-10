@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration name="lab" status="ERROR">
+  <ThresholdFilter level="debug" />
+
+  <Appenders>
+    <Console name="STDOUT" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p %c{1} - %m%n" />
+    </Console>
+    <RollingFile name="RollingFile" fileName="./logs/app.log" filePattern="app-%d{MM-dd-yy}.log.gz">
+      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p %c{1} - %m%n" />
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+        <SizeBasedTriggeringPolicy size="10MB" />
+      </Policies>
+      <DefaultRolloverStrategy max="20" />
+      <Filters>
+        <ThresholdFilter level="debug" />
+      </Filters>
+    </RollingFile>
+    <RollingFile name="loki" fileName="./logs/loki.log" filePattern="loki-%d{MM-dd-yy}.log.gz">
+      <PatternLayout pattern="%-5p %c{1} - %m %throwable{separator(\\n)} %n" />
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+        <SizeBasedTriggeringPolicy size="10MB" />
+      </Policies>
+      <DefaultRolloverStrategy max="20" />
+      <Filters>
+        <ThresholdFilter level="info" />
+      </Filters>
+    </RollingFile>
+  </Appenders>
+
+  <Loggers>
+    <Logger name="io.dkakunsi" level="debug" additivity="false">
+      <AppenderRef ref="STDOUT" />
+      <AppenderRef ref="RollingFile" />
+      <AppenderRef ref="loki" />
+    </Logger>
+    <Root level="error">
+      <AppenderRef ref="STDOUT" />
+      <AppenderRef ref="RollingFile" />
+      <AppenderRef ref="loki" />
+    </Root>
+  </Loggers>
+</Configuration>

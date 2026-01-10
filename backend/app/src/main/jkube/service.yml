@@ -1,0 +1,13 @@
+metadata:
+  name: ${service.name}
+  namespace: ${solution.name}
+  labels:
+    app: ${service.name}
+spec:
+  ports:
+    - name: http
+      port: 2000
+      targetPort: 2000
+      protocol: TCP
+  selector:
+    app: ${service.name}

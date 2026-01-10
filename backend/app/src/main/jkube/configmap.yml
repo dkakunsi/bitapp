@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ${service.name}
+  namespace: ${solution.name}
+data:
+  mongo.host: ${mongo.host}
+  mongo.port: ${mongo.port}
+  mongo.database: ${mongo.database}
+  mongo.secure: ${mongo.secure}
+  mongo.username: ${mongo.username}
+  mongo.password: ${mongo.password}
+  otel.otlpExporterEndpoint: ${otel.otlpExporterEndpoint}

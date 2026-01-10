@@ -1,0 +1,38 @@
+resources:
+  cpu:
+    request: "100m"
+    limit: "200m"
+  memory:
+    request: "100Mi"
+    limit: "500Mi"
+  storage:
+    request: "100Mi"
+    limit: "1Gi"
+
+probes:
+  liveness:
+    initialDelay: 60
+    period: 10
+    failureThreshold: 10
+  readiness:
+    initialDelay: 90
+    period: 30
+    failureThreshold: 3
+
+replicas:
+  count: 1
+
+configs:
+  mongo:
+    host: localhost
+    port: 5432
+    database: bitapp
+    secure: false
+  otelEndpoint: http://grafana-k8s-monitoring-alloy.grafana.svc.cluster.local:4318
+
+secrets:
+  mongo:
+    username: ""
+    password: ""
+  github:
+    credential: ""

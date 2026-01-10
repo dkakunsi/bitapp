@@ -1,0 +1,85 @@
+metadata:
+  name: ${service.name}
+  namespace: ${solution.name}
+  labels:
+    app: ${service.name}
+spec:
+  replicas: ${replicas.count}
+  selector:
+    matchLabels:
+      app: ${service.name}
+  template:
+    metadata:
+      labels:
+        app: ${service.name}
+    spec:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+        - name: ${service.name}-githubcred
+      containers:
+        - name: ${service.name}
+          image: ${docker.image}:${docker.tag}
+          imagePullPolicy: IfNotPresent
+          command: ["java"]
+          args: ["-Duser.timezone=Asia/Makassar", "-jar", "app.jar"]
+          ports:
+            - containerPort: 2000
+          env:
+            - name: MONGO_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: ${service.name}
+                  key: mongo.host
+            - name: MONGO_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: ${service.name}
+                  key: mongo.port
+            - name: MONGO_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: ${service.name}
+                  key: mongo.database
+            - name: MONGO_SECURE
+              valueFrom:
+                configMapKeyRef:
+                  name: ${service.name}
+                  key: mongo.secure
+            - name: MONGO_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: ${service.name}
+                  key: mongo.username
+            - name: MONGO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ${service.name}
+                  key: mongo.password
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: ${service.name}
+                  key: otel.otlpExporterEndpoint
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 2000
+            initialDelaySeconds: ${probes.liveness.initialDelay}
+            periodSeconds: ${probes.liveness.period}
+            failureThreshold: ${probes.liveness.failureThreshold}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 2000
+            initialDelaySeconds: ${probes.readiness.initialDelay}
+            periodSeconds: ${probes.readiness.period}
+            failureThreshold: ${probes.readiness.failureThreshold}
+          resources:
+            limits:
+              cpu: ${resources.cpu.limit}
+              memory: ${resources.memory.limit}
+              ephemeral-storage: ${resources.storage.limit}
+            requests:
+              cpu: ${resources.cpu.request}
+              memory: ${resources.memory.request}
+              ephemeral-storage: ${resources.storage.request}
