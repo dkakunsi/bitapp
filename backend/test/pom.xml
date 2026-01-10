@@ -21,9 +21,10 @@
     <mockito-junit.version>5.18.0</mockito-junit.version>
     <hamcrest.version>3.0</hamcrest.version>
     <awaitility.version>4.3.0</awaitility.version>
-    <postgres.version>1.21.4</postgres.version>
     <unirest.version>3.14.5</unirest.version>
-    <mongo.version>1.21.4</mongo.version>
+    <json.version>20240303</json.version>
+    <testcontainer.postgres.version>1.21.4</testcontainer.postgres.version>
+    <testcontainer.mongo.version>1.21.4</testcontainer.mongo.version>
   </properties>
 
   <dependencies>
@@ -68,13 +69,13 @@
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>postgresql</artifactId>
-      <version>${postgres.version}</version>
+      <version>${testcontainer.postgres.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>mongodb</artifactId>
-      <version>${mongo.version}</version>
+      <version>${testcontainer.mongo.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -86,7 +87,13 @@
     <dependency>
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
-      <version>20240303</version>
+      <version>${json.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.auth0</groupId>
+      <artifactId>java-jwt</artifactId>
+      <version>${jwt.version}</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>

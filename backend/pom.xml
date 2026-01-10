@@ -44,6 +44,7 @@
     <lombok.version>1.18.42</lombok.version>
     <commons.lang3.version>3.18.0</commons.lang3.version>
     <mockito.version>5.18.0</mockito.version>
+    <jwt.version>4.5.0</jwt.version>
 
     <!-- Github package for maven repository -->
     <github.package.url>https://maven.pkg.github.com/dkakunsi/bitapp</github.package.url>
@@ -526,6 +527,7 @@
     <module>domain</module>
     <module>mongo</module>
     <module>javalin</module>
+    <module>jwt</module>
     <module>app</module>
   </modules>
 </project>
