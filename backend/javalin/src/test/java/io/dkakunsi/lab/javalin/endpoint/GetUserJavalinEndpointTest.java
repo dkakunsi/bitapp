@@ -1,4 +1,4 @@
-package io.dkakunsi.lab.javalin;
+package io.dkakunsi.lab.javalin.endpoint;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -23,6 +23,7 @@ import io.dkakunsi.bitapp.user.dto.GetUserInput;
 import io.dkakunsi.bitapp.user.dto.GetUserResult;
 import io.dkakunsi.bitapp.user.model.User;
 import io.dkakunsi.bitapp.user.model.User.Language;
+import io.dkakunsi.lab.javalin.JavalinServer;
 import kong.unirest.Unirest;
 
 class GetUserJavalinEndpointTest {

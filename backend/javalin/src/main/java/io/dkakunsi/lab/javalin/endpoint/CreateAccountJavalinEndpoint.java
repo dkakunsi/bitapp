@@ -1,10 +1,11 @@
-package io.dkakunsi.lab.javalin;
+package io.dkakunsi.lab.javalin.endpoint;
 
 import io.dkakunsi.bitapp.account.dto.CreateAccountInput;
 import io.dkakunsi.bitapp.account.dto.CreateAccountResult;
 import io.dkakunsi.bitapp.common.Authorizer;
 import io.dkakunsi.bitapp.common.usecase.Input;
 import io.dkakunsi.bitapp.common.usecase.UseCase;
+import io.dkakunsi.lab.javalin.JavalinEndpoint;
 import io.javalin.http.Handler;
 import jakarta.validation.constraints.NotNull;
 

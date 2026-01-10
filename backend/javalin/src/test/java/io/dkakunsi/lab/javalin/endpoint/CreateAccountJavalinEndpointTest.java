@@ -1,4 +1,4 @@
-package io.dkakunsi.lab.javalin;
+package io.dkakunsi.lab.javalin.endpoint;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -14,6 +14,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import io.dkakunsi.bitapp.account.dto.CreateAccountInput;
 import io.dkakunsi.bitapp.account.dto.CreateAccountResult;
 import io.dkakunsi.bitapp.account.model.Account;
 import io.dkakunsi.bitapp.common.AppError;
@@ -21,7 +22,7 @@ import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.usecase.Input;
 import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.common.usecase.UseCase;
-import io.dkakunsi.bitapp.account.dto.CreateAccountInput;
+import io.dkakunsi.lab.javalin.JavalinServer;
 import kong.unirest.Unirest;
 
 class CreateAccountJavalinEndpointTest {
