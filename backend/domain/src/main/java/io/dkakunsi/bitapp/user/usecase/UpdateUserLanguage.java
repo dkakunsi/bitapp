@@ -10,7 +10,7 @@ import io.dkakunsi.bitapp.user.repository.UserRepository;
 
 public final class UpdateUserLanguage implements UseCase<UpdateUserLanguageInput, UpdateUserLanguageResult> {
 
-  private UserRepository userRepository;
+  private final UserRepository userRepository;
 
   public UpdateUserLanguage(UserRepository userRepository) {
     this.userRepository = userRepository;
