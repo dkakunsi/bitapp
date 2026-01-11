@@ -10,10 +10,12 @@ import io.dkakunsi.bitapp.mongo.repository.MongoUserRepository;
 import io.dkakunsi.bitapp.security.jwt.JWTAuthorizer;
 import io.dkakunsi.bitapp.user.usecase.GetUser;
 import io.dkakunsi.bitapp.user.usecase.RegisterUser;
+import io.dkakunsi.bitapp.user.usecase.UpdateUserLanguage;
 import io.dkakunsi.lab.javalin.JavalinServer;
 import io.dkakunsi.lab.javalin.endpoint.CreateAccountJavalinEndpoint;
 import io.dkakunsi.lab.javalin.endpoint.GetUserJavalinEndpoint;
 import io.dkakunsi.lab.javalin.endpoint.RegisterUserJavalinEndpoint;
+import io.dkakunsi.lab.javalin.endpoint.UpdateUserLanguageJavalinEndpoint;
 
 public final class Launcher {
 
@@ -33,18 +35,21 @@ public final class Launcher {
     // UseCases
     var registerUser = new RegisterUser(userRepository);
     var getUser = new GetUser(userRepository);
+    var updateUserLanguage = new UpdateUserLanguage(userRepository);
     var createAccount = new CreateAccount(accountRepository);
 
     // endpoints
     var authorizer = JWTAuthorizer.of(configuration);
     var registerUserEndpoint = new RegisterUserJavalinEndpoint(registerUser, null);
     var getUserEndpoint = new GetUserJavalinEndpoint(getUser, null);
+    var updateUserLanguageEndpoint = new UpdateUserLanguageJavalinEndpoint(updateUserLanguage, authorizer);
     var createAccountEndpoint = new CreateAccountJavalinEndpoint(createAccount, authorizer);
 
     var appPort = configuration.get(APP_PORT).orElse("8080");
     server = JavalinServer.of(Integer.parseInt(appPort))
         .addEndpoint(registerUserEndpoint)
         .addEndpoint(getUserEndpoint)
+        .addEndpoint(updateUserLanguageEndpoint)
         .addEndpoint(createAccountEndpoint)
         .start();
   }
