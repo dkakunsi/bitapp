@@ -16,6 +16,7 @@ public final class UpdateUserLanguage implements UseCase<UpdateUserLanguageInput
     this.userRepository = userRepository;
   }
 
+  @Override
   public Result<UpdateUserLanguageResult> process(Input<UpdateUserLanguageInput> input) {
     try {
       return userRepository.findByEmail(input.data().email())

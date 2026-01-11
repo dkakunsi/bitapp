@@ -32,13 +32,15 @@ public class UpdateUserLanguageJavalinEndpoint extends JavalinEndpoint<UpdateUse
       var principal = authorizeRequest(ctx);
       var context = initiateContext(ctx, principal);
       var email = ctx.pathParam("email");
-      var input = new Input<>(ctx.bodyAsClass(UpdateUserLanguageInput.class), context);
+      var bodyInput = ctx.bodyAsClass(UpdateUserLanguageInput.class);
+      var input = new Input<>(UpdateUserLanguageInput.builder()
+          .email(email)
+          .language(bodyInput.language())
+          .build(), context);
       var output = usecase.process(input);
       if (output.isFailed()) {
         var error = output.error().get();
         ctx.status(error.code().getHttpCode()).result(error.message());
-      } else if (output.isEmpty()) {
-        ctx.status(NOT_FOUND_RC).result("User not found");
       } else {
         ctx.status(SUCCESS_RC).json(output.data().get(), UpdateUserLanguageResult.class);
       }
