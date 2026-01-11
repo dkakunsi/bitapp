@@ -382,4 +382,52 @@ public final class UserTest {
     assertTrue(toString.contains("http://photo.url/user"));
     assertTrue(toString.contains("EN"));
   }
+
+  @Test
+  public void givenUserWithLanguageWhenUpdateLanguageThenShouldReturnNewUserWithUpdatedLanguage() {
+    // Given
+    var originalId = Id.of("user@email.com");
+    var originalName = "User Name";
+    var originalPhone = "081234567890";
+    var originalPhotoUrl = "http://photo.url/user";
+    var user = User.builder()
+        .id(originalId)
+        .name(originalName)
+        .phone(originalPhone)
+        .photoUrl(originalPhotoUrl)
+        .language(Language.EN)
+        .build();
+
+    // When
+    var updatedUser = user.updateLanguage(Language.ID);
+
+    // Then
+    assertNotNull(updatedUser);
+    assertEquals(originalId, updatedUser.getId());
+    assertEquals(originalName, updatedUser.getName());
+    assertEquals(originalPhone, updatedUser.getPhone());
+    assertEquals(originalPhotoUrl, updatedUser.getPhotoUrl());
+    assertEquals(Language.ID, updatedUser.getLanguage());
+  }
+
+  @Test
+  public void givenUserWithLanguageWhenUpdateLanguageToSameThenShouldStillReturnNewUser() {
+    // Given
+    var user = User.builder()
+        .id(Id.of("user@email.com"))
+        .name("User Name")
+        .phone("081234567890")
+        .photoUrl("http://photo.url/user")
+        .language(Language.EN)
+        .build();
+
+    // When
+    var updatedUser = user.updateLanguage(Language.EN);
+
+    // Then
+    assertNotNull(updatedUser);
+    assertEquals(Language.EN, updatedUser.getLanguage());
+    assertEquals(user.getId(), updatedUser.getId());
+    assertEquals(user.getName(), updatedUser.getName());
+  }
 }

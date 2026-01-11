@@ -45,4 +45,14 @@ public final class User {
         .photoUrl(userInput.photoUrl())
         .build();
   }
+
+  public User updateLanguage(Language newLanguage) {
+    return User.builder()
+        .id(this.id)
+        .name(this.name)
+        .phone(this.phone)
+        .photoUrl(this.photoUrl)
+        .language(newLanguage)
+        .build();
+  }
 }
