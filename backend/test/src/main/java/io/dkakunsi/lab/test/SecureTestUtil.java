@@ -27,6 +27,19 @@ public class SecureTestUtil {
     return JWT.create().withPayload(payload).sign(algorithm);
   }
 
+  public static String generateToken(String userId) {
+    try {
+      var payload = Map.<String, Object>of(
+          "sub", userId,
+          "email", userId,
+          "exp", System.currentTimeMillis() / 1000 + 3600 // expire 1 hour later
+      );
+      return createToken(payload);
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to generate token", e);
+    }
+  }
+
   public static RSAPrivateKey privateKey()
       throws NoSuchAlgorithmException, InvalidKeySpecException {
     var decodedPrivateKey = Base64.getDecoder().decode(PRIVATE_KEY.getBytes(StandardCharsets.UTF_8));
