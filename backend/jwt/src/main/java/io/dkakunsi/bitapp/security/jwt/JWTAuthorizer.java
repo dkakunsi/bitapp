@@ -23,9 +23,9 @@ import io.dkakunsi.bitapp.common.SystemLogger;
 
 public class JWTAuthorizer implements Authorizer {
 
-  private static final Logger LOG = SystemLogger.getLogger(JWTAuthorizer.class);
+  public static final String JWT_PUBLIC_KEY = "JWT_PUBLIC_KEY";
 
-  protected static final String PUBLIC_KEY = "JWT_PUBLIC_KEY";
+  private static final Logger LOG = SystemLogger.getLogger(JWTAuthorizer.class);
 
   private static final String EMAIL_CLAIM = "email";
 
@@ -36,7 +36,7 @@ public class JWTAuthorizer implements Authorizer {
   }
 
   public static JWTAuthorizer of(Configuration configuration) {
-    var publicKeyString = configuration.get(PUBLIC_KEY)
+    var publicKeyString = configuration.get(JWT_PUBLIC_KEY)
         .orElseThrow(() -> new RuntimeException("JWT_PUBLIC_KEY is not configured correctly"));
     try {
       var publicKey = toRSAPublicKey(publicKeyString.getBytes(StandardCharsets.UTF_8.name()));
