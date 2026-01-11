@@ -2,6 +2,8 @@ package io.dkakunsi.lab.money;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Map;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -18,8 +20,8 @@ public class RegisterUserIT extends BaseTest {
 
   @BeforeAll
   static void setup() throws Exception {
-    sut.create();
-    sut.startServer(port);
+    sut.create(Map.of(APP_PORT, Integer.toString(port)));
+    sut.startServer();
     baseUrl = "http://localhost:" + port;
   }
 

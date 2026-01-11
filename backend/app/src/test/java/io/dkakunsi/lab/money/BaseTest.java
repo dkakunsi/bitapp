@@ -3,35 +3,33 @@ package io.dkakunsi.lab.money;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.dkakunsi.lab.test.Mongo;
+import io.dkakunsi.lab.test.MongoServer;
 
 public abstract class BaseTest {
-  static final String SCHEMA = "schema";
   static final String APP_PORT = "app.port";
 
   private Launcher launcher;
 
-  protected void create() throws Exception {
-    Mongo.startDb();
+  private Map<String, String> env;
+
+  protected void create(Map<String, String> appEnv) throws Exception {
+    MongoServer.startDb();
+    env = new HashMap<>();
+    env.putAll(appEnv);
   }
 
   protected void destroy() throws Exception {
     stopServer();
-    Mongo.stopDb();
+    MongoServer.stopDb();
   }
 
-  protected void startServer(int port) throws Exception {
-    while (Mongo.isNotRunning()) {
+  protected void startServer() throws Exception {
+    while (MongoServer.isNotRunning()) {
       System.out.println("Waiting for Mongo to start...");
       Thread.sleep(1000);
     }
 
-    var mongoEnv = Mongo.getDbConfig();
-    var appEnv = Map.of(APP_PORT, Integer.toString(port));
-
-    var env = new HashMap<String, String>();
-    env.putAll(mongoEnv);
-    env.putAll(appEnv);
+    env.putAll(MongoServer.getDbConfig());
 
     launcher = new Launcher();
     launcher.launch(env::get);

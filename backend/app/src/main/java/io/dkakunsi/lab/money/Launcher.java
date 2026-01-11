@@ -7,6 +7,7 @@ import io.dkakunsi.bitapp.common.EnvironmentConfiguration;
 import io.dkakunsi.bitapp.mongo.MongoConfiguration;
 import io.dkakunsi.bitapp.mongo.repository.MongoAccountRepository;
 import io.dkakunsi.bitapp.mongo.repository.MongoUserRepository;
+import io.dkakunsi.bitapp.security.jwt.JWTAuthorizer;
 import io.dkakunsi.bitapp.user.usecase.GetUser;
 import io.dkakunsi.bitapp.user.usecase.RegisterUser;
 import io.dkakunsi.lab.javalin.JavalinServer;
@@ -35,9 +36,10 @@ public final class Launcher {
     var createAccount = new CreateAccount(accountRepository);
 
     // endpoints
+    var authorizer = JWTAuthorizer.of(configuration);
     var registerUserEndpoint = new RegisterUserJavalinEndpoint(registerUser, null);
     var getUserEndpoint = new GetUserJavalinEndpoint(getUser, null);
-    var createAccountEndpoint = new CreateAccountJavalinEndpoint(createAccount, null);
+    var createAccountEndpoint = new CreateAccountJavalinEndpoint(createAccount, authorizer);
 
     var appPort = configuration.get(APP_PORT).orElse("8080");
     server = JavalinServer.of(Integer.parseInt(appPort))

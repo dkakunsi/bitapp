@@ -49,6 +49,11 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>io.dkakunsi.bitapp</groupId>
+      <artifactId>jwt</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <!-- This is excluded by "websocket-jetty-server" exclusion -->
     <dependency>
