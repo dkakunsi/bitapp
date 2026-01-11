@@ -25,7 +25,7 @@ public final class UpdateUserLanguage implements UseCase<UpdateUserLanguageInput
             var savedUser = userRepository.save(updatedUser);
             return Result.success(UpdateUserLanguageResult.from(savedUser));
           })
-          .orElse(Result.failure(Code.BAD_REQUEST, "User not found"));
+          .orElse(Result.success());
     } catch (IllegalArgumentException e) {
       return Result.failure(Code.BAD_REQUEST, e.getMessage());
     } catch (Exception e) {
