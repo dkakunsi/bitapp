@@ -9,8 +9,6 @@ public abstract class Endpoint<S, T> {
 
   protected static final int CREATED_RC = 201;
 
-  protected static final int NOT_FOUND_RC = 404;
-
   protected static final String APPLICATION_JSON = "application/json";
 
   public static enum Method {

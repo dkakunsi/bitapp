@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.Id;
-import io.dkakunsi.bitapp.common.usecase.Input;
 import io.dkakunsi.bitapp.user.dto.GetUserInput;
 import io.dkakunsi.bitapp.user.model.User;
 import io.dkakunsi.bitapp.user.model.User.Language;
@@ -53,8 +52,7 @@ public final class GetUserTest {
         .email(email)
         .build();
     var context = Context.builder().requester(REQUESTER).build();
-    var input = new Input<>(inputData, context);
-    var result = underTest.process(input);
+    var result = underTest.process(context, inputData);
 
     // Then
     assertTrue(result.isSuccess());
@@ -79,12 +77,12 @@ public final class GetUserTest {
         .email(email)
         .build();
     var context = Context.builder().requester(REQUESTER).build();
-    var input = new Input<>(inputData, context);
-    var result = underTest.process(input);
+    var result = underTest.process(context, inputData);
 
     // Then
-    assertTrue(result.isSuccess());
-    assertTrue(result.data().isEmpty());
+    assertTrue(result.isFailed());
+    assertEquals(Code.NOT_FOUND, result.error().get().code());
+    assertEquals("User not found", result.error().get().message());
 
     verify(userRepository).findByEmail(email);
   }
@@ -100,8 +98,7 @@ public final class GetUserTest {
         .email(email)
         .build();
     var context = Context.builder().requester(REQUESTER).build();
-    var input = new Input<>(inputData, context);
-    var result = underTest.process(input);
+    var result = underTest.process(context, inputData);
 
     // Then
     assertFalse(result.isSuccess());

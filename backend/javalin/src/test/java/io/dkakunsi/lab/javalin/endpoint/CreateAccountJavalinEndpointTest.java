@@ -19,7 +19,7 @@ import io.dkakunsi.bitapp.account.dto.CreateAccountResult;
 import io.dkakunsi.bitapp.account.model.Account;
 import io.dkakunsi.bitapp.common.AppError;
 import io.dkakunsi.bitapp.common.AppError.Code;
-import io.dkakunsi.bitapp.common.usecase.Input;
+import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.common.usecase.UseCase;
 import io.dkakunsi.lab.javalin.JavalinServer;
@@ -67,13 +67,13 @@ class CreateAccountJavalinEndpointTest {
         .balance(BigDecimal.ZERO)
         .user("user@email.com")
         .build()));
-    when(usecase.process(any(Input.class))).thenReturn(result);
+    when(usecase.process(any(Context.class), any(CreateAccountInput.class))).thenReturn(result);
 
     // When
     var response = Unirest.post(BASE_URL + "/accounts").body(body).asString();
 
     // Then
-    assertEquals(201, response.getStatus());
+    assertEquals(200, response.getStatus());
 
     var responseBody = response.getBody();
     assertNotNull(responseBody);
@@ -95,13 +95,13 @@ class CreateAccountJavalinEndpointTest {
     when(result.isSuccess()).thenReturn(true);
     when(result.isEmpty()).thenReturn(true);
     when(result.isFailed()).thenReturn(false);
-    when(usecase.process(any(Input.class))).thenReturn(result);
+    when(usecase.process(any(Context.class), any(CreateAccountInput.class))).thenReturn(result);
 
     // When
     var response = Unirest.post(BASE_URL + "/accounts").body(body).asString();
 
     // Then
-    assertEquals(201, response.getStatus());
+    assertEquals(200, response.getStatus());
   }
 
   @SuppressWarnings("unchecked")
@@ -117,7 +117,7 @@ class CreateAccountJavalinEndpointTest {
     when(result.isEmpty()).thenReturn(false);
     when(result.isFailed()).thenReturn(true);
     when(result.error()).thenReturn(Optional.of(error));
-    when(usecase.process(any(Input.class))).thenReturn(result);
+    when(usecase.process(any(Context.class), any(CreateAccountInput.class))).thenReturn(result);
 
     // When
     var response = Unirest.post(BASE_URL + "/accounts").body(body).asString();
@@ -140,7 +140,7 @@ class CreateAccountJavalinEndpointTest {
     when(result.isEmpty()).thenReturn(false);
     when(result.isFailed()).thenReturn(true);
     when(result.error()).thenReturn(Optional.of(error));
-    when(usecase.process(any(Input.class))).thenReturn(result);
+    when(usecase.process(any(Context.class), any(CreateAccountInput.class))).thenReturn(result);
 
     // When
     var response = Unirest.post(BASE_URL + "/accounts").body(body).asString();
@@ -163,7 +163,7 @@ class CreateAccountJavalinEndpointTest {
     when(result.isEmpty()).thenReturn(false);
     when(result.isFailed()).thenReturn(true);
     when(result.error()).thenReturn(Optional.of(error));
-    when(usecase.process(any(Input.class))).thenReturn(result);
+    when(usecase.process(any(Context.class), any(CreateAccountInput.class))).thenReturn(result);
 
     // When
     var response = Unirest.post(BASE_URL + "/accounts").body(body).asString();

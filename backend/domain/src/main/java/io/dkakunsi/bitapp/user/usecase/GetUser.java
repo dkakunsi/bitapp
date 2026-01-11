@@ -1,7 +1,7 @@
 package io.dkakunsi.bitapp.user.usecase;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
-import io.dkakunsi.bitapp.common.usecase.Input;
+import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.common.usecase.UseCase;
 import io.dkakunsi.bitapp.user.dto.GetUserInput;
@@ -16,11 +16,11 @@ public final class GetUser implements UseCase<GetUserInput, GetUserResult> {
     this.userRepository = userRepository;
   }
 
-  public Result<GetUserResult> process(Input<GetUserInput> input) {
+  public Result<GetUserResult> process(Context context, GetUserInput input) {
     try {
-      return userRepository.findByEmail(input.data().email())
+      return userRepository.findByEmail(input.email())
           .map(user -> Result.success(GetUserResult.from(user)))
-          .orElse(Result.success());
+          .orElse(Result.failure(Code.NOT_FOUND, "User not found"));
     } catch (Exception e) {
       return Result.failure(Code.SERVER_ERROR, e.getMessage());
     }

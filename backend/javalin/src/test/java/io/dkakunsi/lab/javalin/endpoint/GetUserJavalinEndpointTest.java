@@ -15,8 +15,8 @@ import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.common.AppError;
 import io.dkakunsi.bitapp.common.AppError.Code;
+import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.Id;
-import io.dkakunsi.bitapp.common.usecase.Input;
 import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.common.usecase.UseCase;
 import io.dkakunsi.bitapp.user.dto.GetUserInput;
@@ -65,7 +65,7 @@ class GetUserJavalinEndpointTest {
         .photoUrl("http://photo.url/user")
         .language(Language.EN)
         .build()));
-    when(usecase.process(any(Input.class))).thenReturn(result);
+    when(usecase.process(any(Context.class), any(GetUserInput.class))).thenReturn(result);
 
     // When
     var response = Unirest.get(BASE_URL + "/users/" + email).asString();
@@ -86,10 +86,11 @@ class GetUserJavalinEndpointTest {
     // Given
     var email = "nonexistent@email.com";
     var result = mock(Result.class);
-    when(result.isSuccess()).thenReturn(true);
+    when(result.isSuccess()).thenReturn(false);
     when(result.isEmpty()).thenReturn(true);
-    when(result.isFailed()).thenReturn(false);
-    when(usecase.process(any(Input.class))).thenReturn(result);
+    when(result.isFailed()).thenReturn(true);
+    when(result.error()).thenReturn(Optional.of(new AppError(Code.NOT_FOUND, "User not found")));
+    when(usecase.process(any(Context.class), any(GetUserInput.class))).thenReturn(result);
 
     // When
     var response = Unirest.get(BASE_URL + "/users/" + email).asString();
@@ -110,7 +111,7 @@ class GetUserJavalinEndpointTest {
     when(result.isEmpty()).thenReturn(false);
     when(result.isFailed()).thenReturn(true);
     when(result.error()).thenReturn(Optional.of(error));
-    when(usecase.process(any(Input.class))).thenReturn(result);
+    when(usecase.process(any(Context.class), any(GetUserInput.class))).thenReturn(result);
 
     // When
     var response = Unirest.get(BASE_URL + "/users/" + email).asString();

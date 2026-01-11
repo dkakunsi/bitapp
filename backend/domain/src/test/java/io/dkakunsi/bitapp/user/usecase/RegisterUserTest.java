@@ -19,7 +19,6 @@ import org.mockito.ArgumentCaptor;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.Id;
-import io.dkakunsi.bitapp.common.usecase.Input;
 import io.dkakunsi.bitapp.user.dto.RegisterUserInput;
 import io.dkakunsi.bitapp.user.model.User;
 import io.dkakunsi.bitapp.user.model.User.Language;
@@ -54,13 +53,12 @@ public final class RegisterUserTest {
         .build();
 
     var context = Context.builder().requester(REQUESTER).build();
-    var processInput = new Input<>(registerInput, context);
 
     when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
     when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var result = underTest.process(processInput);
+    var result = underTest.process(context, registerInput);
 
     // Then
     assertTrue(result.isSuccess());
@@ -99,7 +97,6 @@ public final class RegisterUserTest {
         .build();
 
     var context = Context.builder().requester(REQUESTER).build();
-    var processInput = new Input<>(registerInput, context);
 
     var existingUser = User.builder()
         .id(Id.of(email))
@@ -113,7 +110,7 @@ public final class RegisterUserTest {
     when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var result = underTest.process(processInput);
+    var result = underTest.process(context, registerInput);
 
     // Then
     assertTrue(result.isSuccess());
@@ -150,7 +147,6 @@ public final class RegisterUserTest {
         .build();
 
     var context = Context.builder().requester(REQUESTER).build();
-    var processInput = new Input<>(registerInput, context);
 
     var existingUser = User.builder()
         .id(Id.of(email))
@@ -164,7 +160,7 @@ public final class RegisterUserTest {
     when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var result = underTest.process(processInput);
+    var result = underTest.process(context, registerInput);
 
     // Then
     assertTrue(result.isSuccess());
@@ -189,10 +185,9 @@ public final class RegisterUserTest {
         .name("User Name")
         .build();
     var context = Context.builder().requester(REQUESTER).build();
-    var processInput = new Input<>(registerInput, context);
 
     // When
-    var result = underTest.process(processInput);
+    var result = underTest.process(context, registerInput);
 
     // Then
     assertFalse(result.isSuccess());
@@ -210,12 +205,11 @@ public final class RegisterUserTest {
         .build();
 
     var context = Context.builder().requester(REQUESTER).build();
-    var processInput = new Input<>(registerInput, context);
 
     when(userRepository.findByEmail(email)).thenThrow(new IllegalArgumentException("Invalid email format"));
 
     // When
-    var result = underTest.process(processInput);
+    var result = underTest.process(context, registerInput);
 
     // Then
     assertFalse(result.isSuccess());

@@ -17,7 +17,6 @@ import org.mockito.ArgumentCaptor;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.Id;
-import io.dkakunsi.bitapp.common.usecase.Input;
 import io.dkakunsi.bitapp.user.dto.UpdateUserLanguageInput;
 import io.dkakunsi.bitapp.user.model.User;
 import io.dkakunsi.bitapp.user.model.User.Language;
@@ -28,8 +27,6 @@ public final class UpdateUserLanguageTest {
   private UpdateUserLanguage underTest;
 
   private UserRepository userRepository;
-
-  private static final String REQUESTER = "Requester";
 
   @BeforeEach
   void setUp() {
@@ -47,7 +44,6 @@ public final class UpdateUserLanguageTest {
         .build();
 
     var context = Context.builder().requester(email).build();
-    var processInput = new Input<>(updateInput, context);
 
     var existingUser = User.builder()
         .id(Id.of(email))
@@ -61,7 +57,7 @@ public final class UpdateUserLanguageTest {
     when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var result = underTest.process(processInput);
+    var result = underTest.process(context, updateInput);
 
     // Then
     assertTrue(result.isSuccess());
@@ -92,10 +88,9 @@ public final class UpdateUserLanguageTest {
         .build();
 
     var context = Context.builder().requester(differentEmail).build();
-    var processInput = new Input<>(updateInput, context);
 
     // When
-    var result = underTest.process(processInput);
+    var result = underTest.process(context, updateInput);
 
     // Then
     assertFalse(result.isSuccess());
@@ -113,16 +108,16 @@ public final class UpdateUserLanguageTest {
         .build();
 
     var context = Context.builder().requester(email).build();
-    var processInput = new Input<>(updateInput, context);
 
     when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
 
     // When
-    var result = underTest.process(processInput);
+    var result = underTest.process(context, updateInput);
 
     // Then
-    assertTrue(result.isSuccess());
-    assertTrue(result.isEmpty());
+    assertTrue(result.isFailed());
+    assertEquals(Code.NOT_FOUND, result.error().get().code());
+    assertEquals("User not found", result.error().get().message());
   }
 
   @Test
@@ -135,12 +130,11 @@ public final class UpdateUserLanguageTest {
         .build();
 
     var context = Context.builder().requester(email).build();
-    var processInput = new Input<>(updateInput, context);
 
     when(userRepository.findByEmail(email)).thenThrow(new RuntimeException("Database error"));
 
     // When
-    var result = underTest.process(processInput);
+    var result = underTest.process(context, updateInput);
 
     // Then
     assertFalse(result.isSuccess());
@@ -158,12 +152,11 @@ public final class UpdateUserLanguageTest {
         .build();
 
     var context = Context.builder().requester(email).build();
-    var processInput = new Input<>(updateInput, context);
 
     when(userRepository.findByEmail(email)).thenThrow(new IllegalArgumentException("Invalid email format"));
 
     // When
-    var result = underTest.process(processInput);
+    var result = underTest.process(context, updateInput);
 
     // Then
     assertFalse(result.isSuccess());
@@ -181,7 +174,6 @@ public final class UpdateUserLanguageTest {
         .build();
 
     var context = Context.builder().requester(email).build();
-    var processInput = new Input<>(updateInput, context);
 
     var existingUser = User.builder()
         .id(Id.of(email))
@@ -193,7 +185,7 @@ public final class UpdateUserLanguageTest {
     when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var result = underTest.process(processInput);
+    var result = underTest.process(context, updateInput);
 
     // Then
     assertTrue(result.isSuccess());
@@ -210,7 +202,6 @@ public final class UpdateUserLanguageTest {
         .build();
 
     var context = Context.builder().requester(email).build();
-    var processInput = new Input<>(updateInput, context);
 
     var existingUser = User.builder()
         .id(Id.of(email))
@@ -222,7 +213,7 @@ public final class UpdateUserLanguageTest {
     when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var result = underTest.process(processInput);
+    var result = underTest.process(context, updateInput);
 
     // Then
     assertTrue(result.isSuccess());

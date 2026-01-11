@@ -1,7 +1,7 @@
 package io.dkakunsi.bitapp.user.usecase;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
-import io.dkakunsi.bitapp.common.usecase.Input;
+import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.common.usecase.UseCase;
 import io.dkakunsi.bitapp.user.dto.RegisterUserInput;
@@ -17,11 +17,11 @@ public final class RegisterUser implements UseCase<RegisterUserInput, RegisterUs
     this.userRepository = userRepository;
   }
 
-  public Result<RegisterUserResult> process(Input<RegisterUserInput> input) {
+  public Result<RegisterUserResult> process(Context context, RegisterUserInput input) {
     try {
-      User user = userRepository.findByEmail(input.data().email())
-          .map(existing -> update(existing, input.data()))
-          .orElseGet(() -> create(input.data()));
+      User user = userRepository.findByEmail(input.email())
+          .map(existing -> update(existing, input))
+          .orElseGet(() -> create(input));
       return Result.success(RegisterUserResult.from(user));
     } catch (IllegalArgumentException e) {
       return Result.failure(Code.BAD_REQUEST, e.getMessage());

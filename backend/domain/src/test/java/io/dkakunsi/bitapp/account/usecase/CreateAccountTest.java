@@ -20,7 +20,6 @@ import io.dkakunsi.bitapp.account.model.Account;
 import io.dkakunsi.bitapp.account.repository.AccountRepository;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
-import io.dkakunsi.bitapp.common.usecase.Input;
 
 public final class CreateAccountTest {
 
@@ -45,12 +44,11 @@ public final class CreateAccountTest {
         .themeColor("#FF5733")
         .build();
     final var context = Context.builder().requester(REQUESTER).build();
-    final var input = new Input<>(createRequest, context);
 
     when(accountRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    final var result = underTest.process(input);
+    final var result = underTest.process(context, createRequest);
 
     // Then
     assertTrue(result.isSuccess());
@@ -90,12 +88,11 @@ public final class CreateAccountTest {
         .themeColor("#FF5733")
         .build();
     final var context = Context.builder().requester(REQUESTER).build();
-    final var input = new Input<>(createRequest, context);
 
     when(accountRepository.create(any())).thenThrow(new RuntimeException("An error occurred"));
 
     // When
-    final var result = underTest.process(input);
+    final var result = underTest.process(context, createRequest);
 
     // Then
     assertFalse(result.isSuccess());

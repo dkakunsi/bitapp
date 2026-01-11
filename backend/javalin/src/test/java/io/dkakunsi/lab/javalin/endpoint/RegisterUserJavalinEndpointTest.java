@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.common.AppError;
 import io.dkakunsi.bitapp.common.AppError.Code;
-import io.dkakunsi.bitapp.common.usecase.Input;
+import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.common.usecase.UseCase;
 import io.dkakunsi.bitapp.user.dto.RegisterUserInput;
@@ -65,13 +65,13 @@ class RegisterUserJavalinEndpointTest {
         .photoUrl("http://photo.url/user")
         .language(Language.EN)
         .build()));
-    when(usecase.process(any(Input.class))).thenReturn(result);
+    when(usecase.process(any(Context.class), any(RegisterUserInput.class))).thenReturn(result);
 
     // When
     var response = Unirest.post(BASE_URL + "/users").body(body).asString();
 
     // Then
-    assertEquals(201, response.getStatus());
+    assertEquals(200, response.getStatus());
 
     var responseBody = response.getBody();
     assertNotNull(responseBody);
@@ -92,13 +92,13 @@ class RegisterUserJavalinEndpointTest {
     when(output.isSuccess()).thenReturn(true);
     when(output.isEmpty()).thenReturn(true);
     when(output.isFailed()).thenReturn(false);
-    when(usecase.process(any(Input.class))).thenReturn(output);
+    when(usecase.process(any(Context.class), any(RegisterUserInput.class))).thenReturn(output);
 
     // When
     var response = Unirest.post(BASE_URL + "/users").body(body).asString();
 
     // Then
-    assertEquals(201, response.getStatus());
+    assertEquals(200, response.getStatus());
 
     var responseBody = response.getBody();
     assertEquals("", responseBody);
@@ -115,7 +115,7 @@ class RegisterUserJavalinEndpointTest {
     when(output.isSuccess()).thenReturn(false);
     when(output.isFailed()).thenReturn(true);
     when(output.error()).thenReturn(Optional.of(new AppError(Code.SERVER_ERROR, "Database error")));
-    when(usecase.process(any(Input.class))).thenReturn(output);
+    when(usecase.process(any(Context.class), any(RegisterUserInput.class))).thenReturn(output);
 
     // When
     var response = Unirest.post(BASE_URL + "/users").body(body).asString();
@@ -138,7 +138,7 @@ class RegisterUserJavalinEndpointTest {
     when(output.isSuccess()).thenReturn(false);
     when(output.isFailed()).thenReturn(true);
     when(output.error()).thenReturn(Optional.of(new AppError(Code.BAD_REQUEST, "Invalid email format")));
-    when(usecase.process(any(Input.class))).thenReturn(output);
+    when(usecase.process(any(Context.class), any(RegisterUserInput.class))).thenReturn(output);
 
     // When
     var response = Unirest.post(BASE_URL + "/users").body(body).asString();
@@ -182,13 +182,13 @@ class RegisterUserJavalinEndpointTest {
         .photoUrl(null)
         .language(Language.EN)
         .build()));
-    when(usecase.process(any(Input.class))).thenReturn(result);
+    when(usecase.process(any(Context.class), any(RegisterUserInput.class))).thenReturn(result);
 
     // When
     var response = Unirest.post(BASE_URL + "/users").body(body).asString();
 
     // Then
-    assertEquals(201, response.getStatus());
+    assertEquals(200, response.getStatus());
 
     var responseBody = response.getBody();
     assertNotNull(responseBody);

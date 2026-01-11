@@ -1,7 +1,7 @@
 package io.dkakunsi.bitapp.user.usecase;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
-import io.dkakunsi.bitapp.common.usecase.Input;
+import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.common.usecase.UseCase;
 import io.dkakunsi.bitapp.user.dto.UpdateUserLanguageInput;
@@ -17,21 +17,21 @@ public final class UpdateUserLanguage implements UseCase<UpdateUserLanguageInput
   }
 
   @Override
-  public Result<UpdateUserLanguageResult> process(Input<UpdateUserLanguageInput> input) {
+  public Result<UpdateUserLanguageResult> process(Context context, UpdateUserLanguageInput input) {
     try {
       // Verify the authenticated user matches the email being updated
-      var requester = input.context().requester();
-      if (!requester.equals(input.data().email())) {
+      var requester = context.requester();
+      if (!requester.equals(input.email())) {
         return Result.failure(Code.BAD_REQUEST, "User can only update their own language preference");
       }
 
-      return userRepository.findByEmail(input.data().email())
+      return userRepository.findByEmail(input.email())
           .map(user -> {
-            var updatedUser = user.updateLanguage(input.data().language());
+            var updatedUser = user.updateLanguage(input.language());
             var savedUser = userRepository.save(updatedUser);
             return Result.success(UpdateUserLanguageResult.from(savedUser));
           })
-          .orElse(Result.success());
+          .orElse(Result.failure(Code.NOT_FOUND, "User not found"));
     } catch (IllegalArgumentException e) {
       return Result.failure(Code.BAD_REQUEST, e.getMessage());
     } catch (Exception e) {

@@ -1,9 +1,12 @@
 package io.dkakunsi.lab.javalin;
 
+import java.lang.reflect.Type;
+
 import io.dkakunsi.bitapp.common.AuthorizedPrincipal;
 import io.dkakunsi.bitapp.common.Authorizer;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.Endpoint;
+import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.common.usecase.UseCase;
 import io.javalin.http.Handler;
 import io.javalin.http.HandlerType;
@@ -28,7 +31,14 @@ public abstract class JavalinEndpoint<S, T> extends Endpoint<S, T> {
     };
   }
 
-  protected abstract Handler getHandler();
+  protected Handler getHandler() {
+    return ctx -> {
+      var principal = authorizeRequest(ctx);
+      var context = initiateContext(ctx, principal);
+      var result = usecase.process(context, buildInput(ctx));
+      response(ctx, result);
+    };
+  }
 
   protected AuthorizedPrincipal authorizeRequest(io.javalin.http.Context ctx) {
     if (authorizer == null || isPreflightRequest(ctx.method().toString())) {
@@ -52,4 +62,29 @@ public abstract class JavalinEndpoint<S, T> extends Endpoint<S, T> {
     Context.set(context);
     return context;
   }
+
+  protected void response(io.javalin.http.Context ctx, Result<T> result) {
+    if (result.isFailed()) {
+      failureResponse(ctx, result);
+    } else {
+      successResponse(ctx, result);
+    }
+  }
+
+  private void failureResponse(io.javalin.http.Context ctx, Result<T> result) {
+    var error = result.error().get();
+    ctx.status(error.code().getHttpCode()).result(error.message());
+  }
+
+  private void successResponse(io.javalin.http.Context ctx, Result<T> result) {
+    if (result.isEmpty()) {
+      ctx.status(SUCCESS_RC);
+    } else {
+      ctx.status(SUCCESS_RC).json(result.data().get(), getOutputClass());
+    }
+  }
+
+  protected abstract S buildInput(io.javalin.http.Context ctx);
+
+  protected abstract Type getOutputClass();
 }
