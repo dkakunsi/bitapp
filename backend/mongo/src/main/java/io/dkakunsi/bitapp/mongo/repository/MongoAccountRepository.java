@@ -1,6 +1,7 @@
 package io.dkakunsi.bitapp.mongo.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import dev.morphia.Datastore;
 import dev.morphia.query.filters.Filters;
@@ -21,6 +22,21 @@ public class MongoAccountRepository implements AccountRepository {
     var entity = AccountEntity.fromAccount(account);
     datastore.save(entity);
     return account;
+  }
+
+  @Override
+  public Account update(Account account) {
+    var entity = AccountEntity.fromAccount(account);
+    var updatedEntity = datastore.save(entity);
+    return updatedEntity.toAccount();
+  }
+
+  @Override
+  public Optional<Account> findById(String id) {
+    var entity = datastore.find(AccountEntity.class)
+        .filter(Filters.eq("_id", id))
+        .first();
+    return entity != null ? Optional.of(entity.toAccount()) : Optional.empty();
   }
 
   @Override

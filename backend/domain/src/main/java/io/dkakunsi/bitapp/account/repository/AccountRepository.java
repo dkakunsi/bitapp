@@ -1,11 +1,16 @@
 package io.dkakunsi.bitapp.account.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import io.dkakunsi.bitapp.account.model.Account;
 
 public interface AccountRepository {
   Account create(Account account);
+
+  Account update(Account account);
+
+  Optional<Account> findById(String id);
 
   List<Account> findByUserId(String userId);
 }

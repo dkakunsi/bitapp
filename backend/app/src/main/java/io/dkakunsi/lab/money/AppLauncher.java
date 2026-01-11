@@ -4,6 +4,7 @@ import java.util.function.Function;
 
 import io.dkakunsi.bitapp.account.usecase.CreateAccount;
 import io.dkakunsi.bitapp.account.usecase.GetUserAccounts;
+import io.dkakunsi.bitapp.account.usecase.UpdateAccount;
 import io.dkakunsi.bitapp.common.EnvironmentConfiguration;
 import io.dkakunsi.bitapp.common.Launcher;
 import io.dkakunsi.bitapp.mongo.MongoConfiguration;
@@ -18,6 +19,7 @@ import io.dkakunsi.lab.javalin.endpoint.CreateAccountJavalinEndpoint;
 import io.dkakunsi.lab.javalin.endpoint.GetUserAccountsJavalinEndpoint;
 import io.dkakunsi.lab.javalin.endpoint.GetUserJavalinEndpoint;
 import io.dkakunsi.lab.javalin.endpoint.RegisterUserJavalinEndpoint;
+import io.dkakunsi.lab.javalin.endpoint.UpdateAccountJavalinEndpoint;
 import io.dkakunsi.lab.javalin.endpoint.UpdateUserLanguageJavalinEndpoint;
 
 public final class AppLauncher implements Launcher {
@@ -42,6 +44,7 @@ public final class AppLauncher implements Launcher {
     var updateUserLanguage = new UpdateUserLanguage(userRepository);
     var createAccount = new CreateAccount(accountRepository);
     var getUserAccounts = new GetUserAccounts(accountRepository);
+    var updateAccount = new UpdateAccount(accountRepository);
 
     // endpoints
     var authorizer = JWTAuthorizer.of(configuration);
@@ -50,6 +53,7 @@ public final class AppLauncher implements Launcher {
     var updateUserLanguageEndpoint = new UpdateUserLanguageJavalinEndpoint(updateUserLanguage, authorizer);
     var createAccountEndpoint = new CreateAccountJavalinEndpoint(createAccount, authorizer);
     var getUserAccountsEndpoint = new GetUserAccountsJavalinEndpoint(getUserAccounts, authorizer);
+    var updateAccountEndpoint = new UpdateAccountJavalinEndpoint(updateAccount, authorizer);
 
     var appPort = configuration.get(APP_PORT).orElse("8080");
     server = JavalinServer.of(Integer.parseInt(appPort))
@@ -58,6 +62,7 @@ public final class AppLauncher implements Launcher {
         .addEndpoint(updateUserLanguageEndpoint)
         .addEndpoint(createAccountEndpoint)
         .addEndpoint(getUserAccountsEndpoint)
+        .addEndpoint(updateAccountEndpoint)
         .start();
   }
 

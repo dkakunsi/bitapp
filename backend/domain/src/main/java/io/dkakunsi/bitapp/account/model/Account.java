@@ -3,6 +3,7 @@ package io.dkakunsi.bitapp.account.model;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import io.dkakunsi.bitapp.account.dto.UpdateAccountInput;
 import io.dkakunsi.bitapp.common.Id;
 import io.dkakunsi.bitapp.user.model.User;
 import lombok.Builder;
@@ -33,5 +34,28 @@ public final class Account {
     CASH,
     EWALLET,
     OTHER
+  }
+
+  public Account updateDetails(UpdateAccountInput input, String requester) {
+    var updatedName = input.name() != null ? input.name() : this.name;
+    var updatedType = input.type() != null ? input.type() : this.type;
+    var updatedThemeColor = input.themeColor() != null ? input.themeColor() : this.themeColor;
+
+    return Account.builder()
+        .id(this.id)
+        .name(updatedName)
+        .type(updatedType)
+        .themeColor(updatedThemeColor)
+        .balance(this.balance)
+        .user(this.user)
+        .createdAt(this.createdAt)
+        .updatedAt(LocalDateTime.now())
+        .createdBy(this.createdBy)
+        .updatedBy(requester)
+        .build();
+  }
+
+  public boolean isOwner(String requester) {
+    return this.user.getId().equals(requester);
   }
 }

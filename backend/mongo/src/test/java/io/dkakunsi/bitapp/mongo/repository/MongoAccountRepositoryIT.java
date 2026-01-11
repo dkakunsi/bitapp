@@ -321,4 +321,320 @@ public class MongoAccountRepositoryIT {
     assertNotNull(createdAccount.getCreatedAt());
     assertNotNull(createdAccount.getUpdatedAt());
   }
+
+  @Test
+  public void givenExistingAccountWhenUpdateThenShouldUpdateFields() {
+    // Given
+    var userId = Id.of("user@email.com");
+    var user = User.builder().id(userId).build();
+    var now = LocalDateTime.now();
+    var requester = "user@email.com";
+
+    var account = Account.builder()
+        .id(Id.generate())
+        .name("Original Name")
+        .type(Type.BANK)
+        .themeColor("#FF0000")
+        .balance(BigDecimal.valueOf(100))
+        .user(user)
+        .createdAt(now)
+        .updatedAt(now)
+        .createdBy(requester)
+        .updatedBy(requester)
+        .build();
+
+    repository.create(account);
+
+    // When
+    var updatedAccount = Account.builder()
+        .id(account.getId())
+        .name("Updated Name")
+        .type(Type.CASH)
+        .themeColor("#00FF00")
+        .balance(account.getBalance())
+        .user(user)
+        .createdAt(account.getCreatedAt())
+        .updatedAt(LocalDateTime.now())
+        .createdBy(requester)
+        .updatedBy("admin@email.com")
+        .build();
+
+    var result = repository.update(updatedAccount);
+
+    // Then
+    assertNotNull(result);
+    assertEquals("Updated Name", result.getName());
+    assertEquals(Type.CASH, result.getType());
+    assertEquals("#00FF00", result.getThemeColor());
+    assertEquals("admin@email.com", result.getUpdatedBy());
+  }
+
+  @Test
+  public void givenNonExistingAccountWhenUpdateThenShouldReturnNull() {
+    // Given
+    var userId = Id.of("user@email.com");
+    var user = User.builder().id(userId).build();
+    var now = LocalDateTime.now();
+    var requester = "user@email.com";
+
+    var nonExistingAccount = Account.builder()
+        .id(Id.generate())
+        .name("Non-existing Account")
+        .type(Type.BANK)
+        .themeColor("#FF0000")
+        .balance(BigDecimal.valueOf(500))
+        .user(user)
+        .createdAt(now)
+        .updatedAt(now)
+        .createdBy(requester)
+        .updatedBy(requester)
+        .build();
+
+    // When
+    var result = repository.update(nonExistingAccount);
+
+    // Then
+    assertNotNull(result);
+    assertEquals(nonExistingAccount.getId().value(), result.getId().value());
+    assertEquals(nonExistingAccount.getName(), result.getName());
+    assertEquals(nonExistingAccount.getType(), result.getType());
+    assertEquals(nonExistingAccount.getThemeColor(), result.getThemeColor());
+    assertEquals(nonExistingAccount.getBalance().toBigInteger(), result.getBalance().toBigInteger());
+    assertEquals(nonExistingAccount.getUser().getId().value(), result.getUser().getId().value());
+    assertEquals(nonExistingAccount.getCreatedBy(), result.getCreatedBy());
+    assertEquals(nonExistingAccount.getUpdatedBy(), result.getUpdatedBy());
+  }
+
+  @Test
+  public void givenExistingAccountIdWhenFindByIdThenShouldReturnAccount() {
+    // Given
+    var userId = Id.of("user@email.com");
+    var user = User.builder().id(userId).build();
+    var now = LocalDateTime.now();
+    var requester = "user@email.com";
+
+    var account = Account.builder()
+        .id(Id.generate())
+        .name("Find Me")
+        .type(Type.EWALLET)
+        .themeColor("#0000FF")
+        .balance(BigDecimal.valueOf(500))
+        .user(user)
+        .createdAt(now)
+        .updatedAt(now)
+        .createdBy(requester)
+        .updatedBy(requester)
+        .build();
+
+    repository.create(account);
+
+    // When
+    var result = repository.findById(account.getId().value());
+
+    // Then
+    assertNotNull(result);
+    assertEquals(true, result.isPresent());
+    assertEquals(account.getId().value(), result.get().getId().value());
+    assertEquals("Find Me", result.get().getName());
+    assertEquals(Type.EWALLET, result.get().getType());
+  }
+
+  @Test
+  public void givenNonExistingAccountIdWhenFindByIdThenShouldReturnEmpty() {
+    // Given
+    var nonExistingId = "non-existing-account-id";
+
+    // When
+    var result = repository.findById(nonExistingId);
+
+    // Then
+    assertNotNull(result);
+    assertEquals(false, result.isPresent());
+  }
+
+  @Test
+  public void givenUserIdWithAccountsWhenFindByUserIdThenShouldReturnAllUserAccounts() {
+    // Given
+    var userId = Id.of("user@email.com");
+    var user = User.builder().id(userId).build();
+    var now = LocalDateTime.now();
+    var requester = "user@email.com";
+
+    var account1 = Account.builder()
+        .id(Id.generate())
+        .name("User Account 1")
+        .type(Type.BANK)
+        .themeColor("#FF0000")
+        .balance(BigDecimal.valueOf(100))
+        .user(user)
+        .createdAt(now)
+        .updatedAt(now)
+        .createdBy(requester)
+        .updatedBy(requester)
+        .build();
+
+    var account2 = Account.builder()
+        .id(Id.generate())
+        .name("User Account 2")
+        .type(Type.CASH)
+        .themeColor("#00FF00")
+        .balance(BigDecimal.valueOf(200))
+        .user(user)
+        .createdAt(now)
+        .updatedAt(now)
+        .createdBy(requester)
+        .updatedBy(requester)
+        .build();
+
+    var account3 = Account.builder()
+        .id(Id.generate())
+        .name("User Account 3")
+        .type(Type.EWALLET)
+        .themeColor("#0000FF")
+        .balance(BigDecimal.valueOf(300))
+        .user(user)
+        .createdAt(now)
+        .updatedAt(now)
+        .createdBy(requester)
+        .updatedBy(requester)
+        .build();
+
+    repository.create(account1);
+    repository.create(account2);
+    repository.create(account3);
+
+    // When
+    var result = repository.findByUserId(userId.value());
+
+    // Then
+    assertNotNull(result);
+    assertEquals(3, result.size());
+    assertEquals(true, result.stream().anyMatch(a -> a.getName().equals("User Account 1")));
+    assertEquals(true, result.stream().anyMatch(a -> a.getName().equals("User Account 2")));
+    assertEquals(true, result.stream().anyMatch(a -> a.getName().equals("User Account 3")));
+  }
+
+  @Test
+  public void givenUserIdWithNoAccountsWhenFindByUserIdThenShouldReturnEmptyList() {
+    // Given
+    var userId = "user-with-no-accounts@email.com";
+
+    // When
+    var result = repository.findByUserId(userId);
+
+    // Then
+    assertNotNull(result);
+    assertEquals(0, result.size());
+  }
+
+  @Test
+  public void givenMultipleUsersWhenFindByUserIdThenShouldReturnOnlySpecificUserAccounts() {
+    // Given
+    var userId1 = Id.of("user1@email.com");
+    var userId2 = Id.of("user2@email.com");
+    var user1 = User.builder().id(userId1).build();
+    var user2 = User.builder().id(userId2).build();
+    var now = LocalDateTime.now();
+
+    var account1 = Account.builder()
+        .id(Id.generate())
+        .name("User1 Account")
+        .type(Type.BANK)
+        .themeColor("#FF0000")
+        .balance(BigDecimal.valueOf(100))
+        .user(user1)
+        .createdAt(now)
+        .updatedAt(now)
+        .createdBy("user1@email.com")
+        .updatedBy("user1@email.com")
+        .build();
+
+    var account2 = Account.builder()
+        .id(Id.generate())
+        .name("User2 Account")
+        .type(Type.CASH)
+        .themeColor("#00FF00")
+        .balance(BigDecimal.valueOf(200))
+        .user(user2)
+        .createdAt(now)
+        .updatedAt(now)
+        .createdBy("user2@email.com")
+        .updatedBy("user2@email.com")
+        .build();
+
+    repository.create(account1);
+    repository.create(account2);
+
+    // When
+    var result = repository.findByUserId(userId1.value());
+
+    // Then
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    assertEquals("User1 Account", result.get(0).getName());
+    assertEquals(userId1.value(), result.get(0).getUser().getId().value());
+  }
+
+  @Test
+  public void givenAccountWhenUpdateMultipleTimesThenShouldReflectLatestChanges() {
+    // Given
+    var userId = Id.of("user@email.com");
+    var user = User.builder().id(userId).build();
+    var now = LocalDateTime.now();
+    var requester = "user@email.com";
+
+    var account = Account.builder()
+        .id(Id.generate())
+        .name("Original")
+        .type(Type.BANK)
+        .themeColor("#000000")
+        .balance(BigDecimal.ZERO)
+        .user(user)
+        .createdAt(now)
+        .updatedAt(now)
+        .createdBy(requester)
+        .updatedBy(requester)
+        .build();
+
+    repository.create(account);
+
+    // When - First update
+    var firstUpdate = Account.builder()
+        .id(account.getId())
+        .name("First Update")
+        .type(Type.CASH)
+        .themeColor("#111111")
+        .balance(account.getBalance())
+        .user(user)
+        .createdAt(account.getCreatedAt())
+        .updatedAt(LocalDateTime.now())
+        .createdBy(requester)
+        .updatedBy("updater1@email.com")
+        .build();
+
+    repository.update(firstUpdate);
+
+    // When - Second update
+    var secondUpdate = Account.builder()
+        .id(account.getId())
+        .name("Second Update")
+        .type(Type.EWALLET)
+        .themeColor("#222222")
+        .balance(account.getBalance())
+        .user(user)
+        .createdAt(account.getCreatedAt())
+        .updatedAt(LocalDateTime.now())
+        .createdBy(requester)
+        .updatedBy("updater2@email.com")
+        .build();
+
+    var result = repository.update(secondUpdate);
+
+    // Then
+    assertNotNull(result);
+    assertEquals("Second Update", result.getName());
+    assertEquals(Type.EWALLET, result.getType());
+    assertEquals("#222222", result.getThemeColor());
+    assertEquals("updater2@email.com", result.getUpdatedBy());
+  }
 }
