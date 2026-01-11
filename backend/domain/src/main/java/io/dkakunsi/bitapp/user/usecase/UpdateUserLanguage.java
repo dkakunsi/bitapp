@@ -19,6 +19,12 @@ public final class UpdateUserLanguage implements UseCase<UpdateUserLanguageInput
   @Override
   public Result<UpdateUserLanguageResult> process(Input<UpdateUserLanguageInput> input) {
     try {
+      // Verify the authenticated user matches the email being updated
+      var requester = input.context().requester();
+      if (!requester.equals(input.data().email())) {
+        return Result.failure(Code.BAD_REQUEST, "User can only update their own language preference");
+      }
+
       return userRepository.findByEmail(input.data().email())
           .map(user -> {
             var updatedUser = user.updateLanguage(input.data().language());

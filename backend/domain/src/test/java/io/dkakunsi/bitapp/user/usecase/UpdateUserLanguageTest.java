@@ -46,7 +46,7 @@ public final class UpdateUserLanguageTest {
         .language(Language.ID)
         .build();
 
-    var context = Context.builder().requester(REQUESTER).build();
+    var context = Context.builder().requester(email).build();
     var processInput = new Input<>(updateInput, context);
 
     var existingUser = User.builder()
@@ -82,7 +82,29 @@ public final class UpdateUserLanguageTest {
   }
 
   @Test
-  public void givenValidUpdateLanguageRequestWhenUserDoesNotExistThenShouldFail() {
+  public void givenUpdateLanguageRequestWhenRequesterDoesNotMatchEmailThenShouldReturnBadRequest() {
+    // Given
+    var email = "user@email.com";
+    var differentEmail = "other@email.com";
+    var updateInput = UpdateUserLanguageInput.builder()
+        .email(email)
+        .language(Language.ID)
+        .build();
+
+    var context = Context.builder().requester(differentEmail).build();
+    var processInput = new Input<>(updateInput, context);
+
+    // When
+    var result = underTest.process(processInput);
+
+    // Then
+    assertFalse(result.isSuccess());
+    assertEquals(Code.BAD_REQUEST, result.error().get().code());
+    assertEquals("User can only update their own language preference", result.error().get().message());
+  }
+
+  @Test
+  public void givenValidUpdateLanguageRequestWhenUserDoesNotExistThenShouldReturnEmpty() {
     // Given
     var email = "nonexistent@email.com";
     var updateInput = UpdateUserLanguageInput.builder()
@@ -90,7 +112,7 @@ public final class UpdateUserLanguageTest {
         .language(Language.ID)
         .build();
 
-    var context = Context.builder().requester(REQUESTER).build();
+    var context = Context.builder().requester(email).build();
     var processInput = new Input<>(updateInput, context);
 
     when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
@@ -99,9 +121,8 @@ public final class UpdateUserLanguageTest {
     var result = underTest.process(processInput);
 
     // Then
-    assertFalse(result.isSuccess());
-    assertEquals(Code.BAD_REQUEST, result.error().get().code());
-    assertEquals("User not found", result.error().get().message());
+    assertTrue(result.isSuccess());
+    assertTrue(result.isEmpty());
   }
 
   @Test
@@ -113,7 +134,7 @@ public final class UpdateUserLanguageTest {
         .language(Language.ID)
         .build();
 
-    var context = Context.builder().requester(REQUESTER).build();
+    var context = Context.builder().requester(email).build();
     var processInput = new Input<>(updateInput, context);
 
     when(userRepository.findByEmail(email)).thenThrow(new RuntimeException("Database error"));
@@ -136,7 +157,7 @@ public final class UpdateUserLanguageTest {
         .language(Language.EN)
         .build();
 
-    var context = Context.builder().requester(REQUESTER).build();
+    var context = Context.builder().requester(email).build();
     var processInput = new Input<>(updateInput, context);
 
     when(userRepository.findByEmail(email)).thenThrow(new IllegalArgumentException("Invalid email format"));
@@ -159,7 +180,7 @@ public final class UpdateUserLanguageTest {
         .language(Language.ID)
         .build();
 
-    var context = Context.builder().requester(REQUESTER).build();
+    var context = Context.builder().requester(email).build();
     var processInput = new Input<>(updateInput, context);
 
     var existingUser = User.builder()
@@ -188,7 +209,7 @@ public final class UpdateUserLanguageTest {
         .language(Language.EN)
         .build();
 
-    var context = Context.builder().requester(REQUESTER).build();
+    var context = Context.builder().requester(email).build();
     var processInput = new Input<>(updateInput, context);
 
     var existingUser = User.builder()
