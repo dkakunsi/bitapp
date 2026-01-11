@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.testcontainers.containers.PostgreSQLContainer;
 
-public abstract class Postgres {
+public abstract class PostgresServer {
   static final String POSTGRES_HOST = "postgres.host";
   static final String POSTGRES_PORT = "postgres.port";
   static final String POSTGRES_DBNAME = "postgres.dbname";

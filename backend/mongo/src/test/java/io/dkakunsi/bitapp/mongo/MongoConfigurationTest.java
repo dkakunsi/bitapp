@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.common.Configuration;
 import io.dkakunsi.bitapp.common.EnvironmentConfiguration;
-import io.dkakunsi.lab.test.Mongo;
+import io.dkakunsi.lab.test.MongoServer;
 
 public class MongoConfigurationTest {
 
@@ -17,14 +17,14 @@ public class MongoConfigurationTest {
 
   @BeforeAll
   public static void startMongo() throws Exception {
-    Mongo.startDb();
-    var mongodbConfig = Mongo.getDbConfig();
+    MongoServer.startDb();
+    var mongodbConfig = MongoServer.getDbConfig();
     configuration = EnvironmentConfiguration.of(mongodbConfig::get);
   }
 
   @AfterAll
   public static void stopMongo() throws Exception {
-    Mongo.stopDb();
+    MongoServer.stopDb();
   }
 
   @Test

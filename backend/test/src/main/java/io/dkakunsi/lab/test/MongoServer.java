@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.testcontainers.containers.MongoDBContainer;
 
-public abstract class Mongo {
+public abstract class MongoServer {
   static final String MONGO_CONNECTION_STRING = "MONGO_CONNECTION_STRING";
   static final String MONGO_DATABASE = "MONGO_DATABASE";
   static final String MONGO_SECURE = "MONGO_SECURE";

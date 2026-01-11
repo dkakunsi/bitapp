@@ -18,7 +18,7 @@ import io.dkakunsi.bitapp.common.EnvironmentConfiguration;
 import io.dkakunsi.bitapp.common.Id;
 import io.dkakunsi.bitapp.mongo.MongoConfiguration;
 import io.dkakunsi.bitapp.user.model.User;
-import io.dkakunsi.lab.test.Mongo;
+import io.dkakunsi.lab.test.MongoServer;
 
 public class MongoAccountRepositoryIT {
 
@@ -28,8 +28,8 @@ public class MongoAccountRepositoryIT {
 
   @BeforeAll
   public static void startMongo() throws Exception {
-    Mongo.startDb();
-    var dbConfig = Mongo.getDbConfig();
+    MongoServer.startDb();
+    var dbConfig = MongoServer.getDbConfig();
     var configuration = EnvironmentConfiguration.of(dbConfig::get);
 
     mongoConfiguration = new MongoConfiguration(configuration);
@@ -41,7 +41,7 @@ public class MongoAccountRepositoryIT {
     if (mongoConfiguration != null) {
       mongoConfiguration.close();
     }
-    Mongo.stopDb();
+    MongoServer.stopDb();
   }
 
   @BeforeEach
