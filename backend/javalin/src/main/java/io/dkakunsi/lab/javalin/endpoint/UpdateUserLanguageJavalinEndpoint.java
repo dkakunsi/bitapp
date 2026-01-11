@@ -41,6 +41,8 @@ public class UpdateUserLanguageJavalinEndpoint extends JavalinEndpoint<UpdateUse
       if (output.isFailed()) {
         var error = output.error().get();
         ctx.status(error.code().getHttpCode()).result(error.message());
+      } else if (output.isEmpty()) {
+        ctx.status(NOT_FOUND_RC).result("User not found");
       } else {
         ctx.status(SUCCESS_RC).json(output.data().get(), UpdateUserLanguageResult.class);
       }
