@@ -11,20 +11,4 @@ public final record Id(String value) {
     final var uuid = UUID.randomUUID().toString();
     return Id.of(uuid);
   }
-
-  @Override
-  public final boolean equals(Object other) {
-    if (this == other) {
-      return true;
-    }
-    if (other == null || getClass() != other.getClass()) {
-      return false;
-    }
-    Id id = (Id) other;
-    return value.equals(id.value);
-  }
-
-  public final boolean equals(String value) {
-    return this.value.equals(value);
-  }
 }

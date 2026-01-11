@@ -56,6 +56,6 @@ public final class Account {
   }
 
   public boolean isOwner(String requester) {
-    return this.user.getId().equals(requester);
+    return this.user.getId().equals(Id.of(requester));
   }
 }
