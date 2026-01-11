@@ -9,9 +9,10 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import io.dkakunsi.lab.test.AppTestUtil;
 import kong.unirest.Unirest;
 
-public class GetUserIT extends BaseTest {
+public class GetUserIT extends AppTestUtil {
 
   private static final int port = 20001;
 
@@ -21,7 +22,7 @@ public class GetUserIT extends BaseTest {
   @BeforeAll
   static void setup() throws Exception {
     sut.create(Map.of(APP_PORT, Integer.toString(port)));
-    sut.startServer();
+    sut.startServer(new AppLauncher());
 
     baseUrl = "http://localhost:" + port;
   }

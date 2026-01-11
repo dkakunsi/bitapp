@@ -12,10 +12,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.security.jwt.JWTAuthorizer;
+import io.dkakunsi.lab.test.AppTestUtil;
 import io.dkakunsi.lab.test.SecureTestUtil;
 import kong.unirest.Unirest;
 
-public class CreateAccountIT extends BaseTest {
+public class CreateAccountIT extends AppTestUtil {
 
   private static final int port = 20002;
 
@@ -26,7 +27,7 @@ public class CreateAccountIT extends BaseTest {
   static void setup() throws Exception {
     var appEnv = Map.of(APP_PORT, Integer.toString(port), JWTAuthorizer.JWT_PUBLIC_KEY, SecureTestUtil.PUBLIC_KEY);
     sut.create(appEnv);
-    sut.startServer();
+    sut.startServer(new AppLauncher());
 
     baseUrl = "http://localhost:" + port;
   }

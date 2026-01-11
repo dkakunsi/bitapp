@@ -4,6 +4,7 @@ import java.util.function.Function;
 
 import io.dkakunsi.bitapp.account.usecase.CreateAccount;
 import io.dkakunsi.bitapp.common.EnvironmentConfiguration;
+import io.dkakunsi.bitapp.common.Launcher;
 import io.dkakunsi.bitapp.mongo.MongoConfiguration;
 import io.dkakunsi.bitapp.mongo.repository.MongoAccountRepository;
 import io.dkakunsi.bitapp.mongo.repository.MongoUserRepository;
@@ -17,12 +18,13 @@ import io.dkakunsi.lab.javalin.endpoint.GetUserJavalinEndpoint;
 import io.dkakunsi.lab.javalin.endpoint.RegisterUserJavalinEndpoint;
 import io.dkakunsi.lab.javalin.endpoint.UpdateUserLanguageJavalinEndpoint;
 
-public final class Launcher {
+public final class AppLauncher implements Launcher {
 
   private static final String APP_PORT = "app.port";
 
   private JavalinServer server;
 
+  @Override
   public void launch(Function<String, String> envProvider) {
     var configuration = EnvironmentConfiguration.of(envProvider);
     var mongoConfig = new MongoConfiguration(configuration);
@@ -54,6 +56,7 @@ public final class Launcher {
         .start();
   }
 
+  @Override
   public void stop() {
     if (server != null) {
       server.stop();

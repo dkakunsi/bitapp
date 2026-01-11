@@ -1,12 +1,12 @@
-package io.dkakunsi.lab.money;
+package io.dkakunsi.lab.test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import io.dkakunsi.lab.test.MongoServer;
+import io.dkakunsi.bitapp.common.Launcher;
 
-public abstract class BaseTest {
-  static final String APP_PORT = "app.port";
+public abstract class AppTestUtil {
+  protected static final String APP_PORT = "app.port";
 
   private Launcher launcher;
 
@@ -23,19 +23,18 @@ public abstract class BaseTest {
     MongoServer.stopDb();
   }
 
-  protected void startServer() throws Exception {
+  protected void startServer(Launcher launcher) throws Exception {
     while (MongoServer.isNotRunning()) {
       System.out.println("Waiting for Mongo to start...");
       Thread.sleep(1000);
     }
 
     env.putAll(MongoServer.getDbConfig());
-
-    launcher = new Launcher();
-    launcher.launch(env::get);
+    this.launcher = launcher;
+    this.launcher.launch(env::get);
   }
 
   protected void stopServer() {
-    launcher.stop();
+    this.launcher.stop();
   }
 }

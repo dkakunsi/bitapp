@@ -8,10 +8,11 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import io.dkakunsi.lab.test.AppTestUtil;
 import kong.unirest.Unirest;
 import kong.unirest.json.JSONObject;
 
-public class UpdateUserLanguageIT extends BaseTest {
+public class UpdateUserLanguageIT extends AppTestUtil {
 
   private static final int port = 20004;
 
@@ -21,7 +22,8 @@ public class UpdateUserLanguageIT extends BaseTest {
   @BeforeAll
   static void setup() throws Exception {
     sut.create(Map.of(APP_PORT, Integer.toString(port)));
-    sut.startServer();
+    sut.startServer(new AppLauncher());
+
     baseUrl = "http://localhost:" + port;
   }
 

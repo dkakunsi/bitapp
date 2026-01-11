@@ -14,7 +14,7 @@ public class Main {
     Context.set(Context.builder().requestId(UUID.randomUUID().toString()).requester("SYSTEM").build());
     LOGGER.info("Starting services!");
     try {
-      new Launcher().launch(System::getenv);
+      new AppLauncher().launch(System::getenv);
       LOGGER.info("Service is started!");
     } catch (Exception ex) {
       LOGGER.error("Cannot start the application", ex);
