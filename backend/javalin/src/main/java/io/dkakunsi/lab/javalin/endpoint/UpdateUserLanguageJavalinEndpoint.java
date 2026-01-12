@@ -2,20 +2,17 @@ package io.dkakunsi.lab.javalin.endpoint;
 
 import java.lang.reflect.Type;
 
-import io.dkakunsi.bitapp.common.Authorizer;
-import io.dkakunsi.bitapp.common.usecase.UseCase;
 import io.dkakunsi.bitapp.user.dto.UpdateUserLanguageInput;
 import io.dkakunsi.bitapp.user.dto.UpdateUserLanguageResult;
+import io.dkakunsi.bitapp.user.usecase.UpdateUserLanguage;
 import io.dkakunsi.lab.javalin.JavalinEndpoint;
 import io.javalin.http.Context;
-import jakarta.validation.constraints.NotNull;
 
 public class UpdateUserLanguageJavalinEndpoint
     extends JavalinEndpoint<UpdateUserLanguageInput, UpdateUserLanguageResult> {
 
-  public UpdateUserLanguageJavalinEndpoint(@NotNull UseCase<UpdateUserLanguageInput, UpdateUserLanguageResult> usecase,
-      Authorizer authorizer) {
-    super(usecase, authorizer);
+  public UpdateUserLanguageJavalinEndpoint(UpdateUserLanguage usecase) {
+    super(usecase);
   }
 
   @Override

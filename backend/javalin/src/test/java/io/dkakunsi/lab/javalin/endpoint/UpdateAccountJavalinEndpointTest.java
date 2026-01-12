@@ -14,10 +14,10 @@ import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.account.dto.UpdateAccountInput;
 import io.dkakunsi.bitapp.account.dto.UpdateAccountResult;
+import io.dkakunsi.bitapp.account.usecase.UpdateAccount;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.usecase.Result;
-import io.dkakunsi.bitapp.common.usecase.UseCase;
 import io.dkakunsi.lab.javalin.JavalinServer;
 import kong.unirest.Unirest;
 
@@ -26,15 +26,15 @@ class UpdateAccountJavalinEndpointTest {
   private static final String BASE_URL = "http://localhost:20006";
   private static final String ACCOUNT_ID = "account123";
 
-  private static UseCase<UpdateAccountInput, UpdateAccountResult> usecase;
+  private static UpdateAccount usecase;
 
   private static JavalinServer server;
 
-  @SuppressWarnings("unchecked")
   @BeforeAll
   static void setup() throws Exception {
-    usecase = (UseCase<UpdateAccountInput, UpdateAccountResult>) mock(UseCase.class);
-    var endpoint = new UpdateAccountJavalinEndpoint(usecase, null);
+    usecase = mock(UpdateAccount.class);
+    var endpoint = new UpdateAccountJavalinEndpoint(usecase)
+        .withValidator();
     server = JavalinServer.of(20006);
     server.addEndpoint(endpoint);
     server.start();
@@ -45,7 +45,6 @@ class UpdateAccountJavalinEndpointTest {
     server.stop();
   }
 
-  @SuppressWarnings("unchecked")
   @AfterEach
   void resetMocks() {
     reset(usecase);

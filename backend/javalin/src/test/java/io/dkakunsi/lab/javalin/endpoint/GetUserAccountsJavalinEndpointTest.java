@@ -22,11 +22,11 @@ import org.junit.jupiter.api.Test;
 import io.dkakunsi.bitapp.account.dto.GetUserAccountsInput;
 import io.dkakunsi.bitapp.account.dto.GetUserAccountsResult;
 import io.dkakunsi.bitapp.account.model.Account;
+import io.dkakunsi.bitapp.account.usecase.GetUserAccounts;
 import io.dkakunsi.bitapp.common.AppError;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.usecase.Result;
-import io.dkakunsi.bitapp.common.usecase.UseCase;
 import io.dkakunsi.lab.javalin.JavalinServer;
 import kong.unirest.Unirest;
 
@@ -35,15 +35,15 @@ class GetUserAccountsJavalinEndpointTest {
   private static final String BASE_URL = "http://localhost:20004";
   private static final String USER_ID = "user123";
 
-  private static UseCase<GetUserAccountsInput, GetUserAccountsResult> usecase;
+  private static GetUserAccounts usecase;
 
   private static JavalinServer server;
 
-  @SuppressWarnings("unchecked")
   @BeforeAll
   static void setup() throws Exception {
-    usecase = (UseCase<GetUserAccountsInput, GetUserAccountsResult>) mock(UseCase.class);
-    var endpoint = new GetUserAccountsJavalinEndpoint(usecase, null);
+    usecase = mock(GetUserAccounts.class);
+    var endpoint = new GetUserAccountsJavalinEndpoint(usecase)
+        .withValidator();
     server = JavalinServer.of(20004);
     server.addEndpoint(endpoint);
     server.start();
@@ -54,7 +54,6 @@ class GetUserAccountsJavalinEndpointTest {
     server.stop();
   }
 
-  @SuppressWarnings("unchecked")
   @AfterEach
   void resetMocks() {
     reset(usecase);

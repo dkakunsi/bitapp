@@ -32,6 +32,12 @@ public class RegisterUserIT extends AppTestUtil {
     sut.destroy();
   }
 
+  /**
+   * <b>Given</b> a valid user registration request with all required fields<br>
+   * <b>When</b> the POST /users endpoint is called and the user is retrieved<br>
+   * <b>Then</b> the user should be created with status 200 and default language
+   * EN, and retrievable via GET
+   */
   @Test
   public void givenValidRegisterRequest_WhenSent_ThenShouldSuccess() {
     var body = """
@@ -62,6 +68,12 @@ public class RegisterUserIT extends AppTestUtil {
     assertEquals("EN", getResponseBody.getString("language"));
   }
 
+  /**
+   * <b>Given</b> a user registration request with an invalid email format<br>
+   * <b>When</b> the POST /users endpoint is called<br>
+   * <b>Then</b> the request should fail with status 400 and "Invalid data"
+   * message
+   */
   @Test
   public void givenInvalidEmailOnRegisterRequest_WhenSent_ThenShouldFailWithBadRequest() {
     var body = """
@@ -78,6 +90,14 @@ public class RegisterUserIT extends AppTestUtil {
     assertEquals("Invalid data", response.getBody());
   }
 
+  /**
+   * <b>Given</b> a user registration request with a phone number that already
+   * exists in the system<br>
+   * <b>When</b> the POST /users endpoint is called to register another user with
+   * the same phone<br>
+   * <b>Then</b> the second request should fail with status 400 and "Key is
+   * duplicated" message
+   */
   @Test
   public void givenValidRegisterRequest_WhenThePhoneNoIsDuplicated_ThenShouldFailWithBadRequest() {
     var body = """

@@ -69,6 +69,14 @@ public class GetUserAccountsIT extends AppTestUtil {
         .asString();
   }
 
+  /**
+   * <b>Given</b> a user with multiple accounts of different types (BANK, CASH,
+   * EWALLET)<br>
+   * <b>When</b> the GET /users/{userId}/accounts endpoint is called with valid
+   * authorization<br>
+   * <b>Then</b> all accounts belonging to the user should be returned with status
+   * 200 and complete details
+   */
   @Test
   public void shouldReturnAllAccountsForUser_WhenMultipleAccountsExist() {
     // Given
@@ -100,6 +108,13 @@ public class GetUserAccountsIT extends AppTestUtil {
     }
   }
 
+  /**
+   * <b>Given</b> multiple users with their own accounts in the system<br>
+   * <b>When</b> the GET /users/{userId}/accounts endpoint is called for a
+   * specific user<br>
+   * <b>Then</b> only that user's accounts should be returned, not accounts from
+   * other users
+   */
   @Test
   public void shouldReturnOnlyUserSpecificAccounts_NotOtherUsersAccounts() {
     // Given
@@ -128,6 +143,13 @@ public class GetUserAccountsIT extends AppTestUtil {
     }
   }
 
+  /**
+   * <b>Given</b> a user with multiple accounts having specific names, types, and
+   * theme colors<br>
+   * <b>When</b> the GET /users/{userId}/accounts endpoint is called<br>
+   * <b>Then</b> all account details should match exactly what was created (name,
+   * type, color, balance)
+   */
   @Test
   public void shouldReturnAccountsWithCorrectDetails_WhenRequested() {
     // Given
@@ -176,6 +198,11 @@ public class GetUserAccountsIT extends AppTestUtil {
     assertTrue(foundEWallet, "Should find Digital Wallet");
   }
 
+  /**
+   * <b>Given</b> a user who has no accounts in the system<br>
+   * <b>When</b> the GET /users/{userId}/accounts endpoint is called<br>
+   * <b>Then</b> an empty accounts array should be returned with status 200
+   */
   @Test
   public void shouldReturnEmptyList_WhenUserHasNoAccounts() {
     // Given
@@ -197,6 +224,13 @@ public class GetUserAccountsIT extends AppTestUtil {
     assertEquals(0, accounts.length(), "Should return empty array for user with no accounts");
   }
 
+  /**
+   * <b>Given</b> two different users with their own separate accounts<br>
+   * <b>When</b> the GET /users/{userId}/accounts endpoint is called for each
+   * user<br>
+   * <b>Then</b> each user should receive only their own accounts, properly
+   * segregated
+   */
   @Test
   public void shouldReturnCorrectAccountsForDifferentUsers() {
     // Given
@@ -237,6 +271,11 @@ public class GetUserAccountsIT extends AppTestUtil {
     }
   }
 
+  /**
+   * <b>Given</b> a request without an Authorization header<br>
+   * <b>When</b> the GET /users/{userId}/accounts endpoint is called<br>
+   * <b>Then</b> the request should be rejected with status 401 (Unauthorized)
+   */
   @Test
   public void shouldReturn401_WhenNoAuthorizationHeaderProvided() {
     // When
@@ -248,6 +287,11 @@ public class GetUserAccountsIT extends AppTestUtil {
     assertEquals(401, response.getStatus());
   }
 
+  /**
+   * <b>Given</b> a request with an invalid or malformed JWT token<br>
+   * <b>When</b> the GET /users/{userId}/accounts endpoint is called<br>
+   * <b>Then</b> the request should be rejected with status 401 (Unauthorized)
+   */
   @Test
   public void shouldReturn401_WhenInvalidTokenProvided() {
     // When
@@ -260,6 +304,13 @@ public class GetUserAccountsIT extends AppTestUtil {
     assertEquals(401, response.getStatus());
   }
 
+  /**
+   * <b>Given</b> a user with accounts in the system<br>
+   * <b>When</b> the GET /users/{userId}/accounts endpoint is called multiple
+   * times consecutively<br>
+   * <b>Then</b> all responses should be identical, ensuring consistency and
+   * idempotency
+   */
   @Test
   public void shouldReturnConsistentResults_WhenCalledMultipleTimes() {
     // Given

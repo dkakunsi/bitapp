@@ -6,8 +6,10 @@ import io.dkakunsi.bitapp.common.AuthorizedPrincipal;
 import io.dkakunsi.bitapp.common.Authorizer;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.Endpoint;
+import io.dkakunsi.bitapp.common.Validator;
 import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.common.usecase.UseCase;
+import io.dkakunsi.lab.javalin.validation.JakartaValidation;
 import io.javalin.http.Handler;
 import io.javalin.http.HandlerType;
 import io.javalin.http.UnauthorizedResponse;
@@ -15,9 +17,21 @@ import jakarta.validation.constraints.NotNull;
 
 public abstract class JavalinEndpoint<S, T> extends Endpoint<S, T> {
 
-  public JavalinEndpoint(@NotNull UseCase<S, T> usecase,
-      Authorizer authorizer) {
-    super(usecase, authorizer);
+  public JavalinEndpoint(@NotNull UseCase<S, T> usecase) {
+    super(usecase);
+  }
+
+  @Override
+  public JavalinEndpoint<S, T> setAuthorizer(Authorizer authorizer) {
+    return (JavalinEndpoint<S, T>) super.setAuthorizer(authorizer);
+  }
+
+  public JavalinEndpoint<S, T> withValidator(Validator validator) {
+    return (JavalinEndpoint<S, T>) super.setValidator(validator);
+  }
+
+  public JavalinEndpoint<S, T> withValidator() {
+    return withValidator(new JakartaValidation());
   }
 
   public HandlerType getHandlerType() {
@@ -35,7 +49,11 @@ public abstract class JavalinEndpoint<S, T> extends Endpoint<S, T> {
     return ctx -> {
       var principal = authorizeRequest(ctx);
       var context = initiateContext(ctx, principal);
-      var result = usecase.process(context, buildInput(ctx));
+      var input = buildInput(ctx);
+      if (validator != null) {
+        validator.validate(input);
+      }
+      var result = usecase.process(context, input);
       response(ctx, result);
     };
   }

@@ -17,11 +17,11 @@ import org.junit.jupiter.api.Test;
 import io.dkakunsi.bitapp.account.dto.CreateAccountInput;
 import io.dkakunsi.bitapp.account.dto.CreateAccountResult;
 import io.dkakunsi.bitapp.account.model.Account;
+import io.dkakunsi.bitapp.account.usecase.CreateAccount;
 import io.dkakunsi.bitapp.common.AppError;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.usecase.Result;
-import io.dkakunsi.bitapp.common.usecase.UseCase;
 import io.dkakunsi.lab.javalin.JavalinServer;
 import kong.unirest.Unirest;
 
@@ -29,15 +29,15 @@ class CreateAccountJavalinEndpointTest {
 
   private static final String BASE_URL = "http://localhost:20003";
 
-  private static UseCase<CreateAccountInput, CreateAccountResult> usecase;
+  private static CreateAccount usecase;
 
   private static JavalinServer server;
 
-  @SuppressWarnings("unchecked")
   @BeforeAll
   static void setup() throws Exception {
-    usecase = (UseCase<CreateAccountInput, CreateAccountResult>) mock(UseCase.class);
-    var endpoint = new CreateAccountJavalinEndpoint(usecase, null);
+    usecase = mock(CreateAccount.class);
+    var endpoint = new CreateAccountJavalinEndpoint(usecase)
+        .withValidator();
     server = JavalinServer.of(20003);
     server.addEndpoint(endpoint);
     server.start();
@@ -50,7 +50,7 @@ class CreateAccountJavalinEndpointTest {
 
   @SuppressWarnings("unchecked")
   @Test
-  void givenValidAccountRequest_WhenRequested_ThenShouldReturn201AndAccount() {
+  void givenValidAccountRequest_WhenRequested_ThenShouldReturn200AndAccount() {
     // Given
     var body = """
         {"name":"Savings Account","themeColor":"#FF5733","type":"BANK"}
@@ -152,7 +152,7 @@ class CreateAccountJavalinEndpointTest {
 
   @SuppressWarnings("unchecked")
   @Test
-  void givenDuplicateAccount_WhenRequested_ThenShouldReturn409() {
+  void givenDuplicateAccount_WhenRequested_ThenShouldReturn400() {
     // Given
     var body = """
         {"name":"Duplicate Account","themeColor":"#5733FF","type":"CASH"}
@@ -171,5 +171,111 @@ class CreateAccountJavalinEndpointTest {
     // Then
     assertEquals(400, response.getStatus());
     assertEquals("Account with this name already exists", response.getBody());
+  }
+
+  /**
+   * <b>Given</b> a create account request with null name<br>
+   * <b>When</b> the POST /accounts endpoint is called<br>
+   * <b>Then</b> should return status 400 with validation error message
+   */
+  @Test
+  void givenCreateAccountRequestWithNullName_WhenRequested_ThenShouldReturn400() {
+    // Given
+    var body = """
+        {"name":null,"themeColor":"#FF5733","type":"BANK"}
+        """;
+
+    // When
+    var response = Unirest.post(BASE_URL + "/accounts").body(body).asString();
+
+    // Then
+    assertEquals(400, response.getStatus());
+    assertTrue(response.getBody().contains("must not be blank") ||
+        response.getBody().contains("name"));
+  }
+
+  /**
+   * <b>Given</b> a create account request with empty name<br>
+   * <b>When</b> the POST /accounts endpoint is called<br>
+   * <b>Then</b> should return status 400 with validation error message
+   */
+  @Test
+  void givenCreateAccountRequestWithEmptyName_WhenRequested_ThenShouldReturn400() {
+    // Given
+    var body = """
+        {"name":"","themeColor":"#FF5733","type":"BANK"}
+        """;
+
+    // When
+    var response = Unirest.post(BASE_URL + "/accounts").body(body).asString();
+
+    // Then
+    assertEquals(400, response.getStatus());
+    assertTrue(response.getBody().contains("must not be blank") ||
+        response.getBody().contains("name"));
+  }
+
+  /**
+   * <b>Given</b> a create account request with blank name (only whitespace)<br>
+   * <b>When</b> the POST /accounts endpoint is called<br>
+   * <b>Then</b> should return status 400 with validation error message
+   */
+  @Test
+  void givenCreateAccountRequestWithBlankName_WhenRequested_ThenShouldReturn400() {
+    // Given
+    var body = """
+        {"name":"   ","themeColor":"#FF5733","type":"BANK"}
+        """;
+
+    // When
+    var response = Unirest.post(BASE_URL + "/accounts").body(body).asString();
+
+    // Then
+    assertEquals(400, response.getStatus());
+    assertTrue(response.getBody().contains("must not be blank") ||
+        response.getBody().contains("name"));
+  }
+
+  /**
+   * <b>Given</b> a create account request with missing name field<br>
+   * <b>When</b> the POST /accounts endpoint is called<br>
+   * <b>Then</b> should return status 400 with validation error message
+   */
+  @Test
+  void givenCreateAccountRequestWithMissingName_WhenRequested_ThenShouldReturn400() {
+    // Given
+    var body = """
+        {"themeColor":"#FF5733","type":"BANK"}
+        """;
+
+    // When
+    var response = Unirest.post(BASE_URL + "/accounts").body(body).asString();
+
+    // Then
+    assertEquals(400, response.getStatus());
+    assertTrue(response.getBody().contains("must not be blank") ||
+        response.getBody().contains("name"));
+  }
+
+  /**
+   * <b>Given</b> a create account request with name containing only tabs and
+   * newlines<br>
+   * <b>When</b> the POST /accounts endpoint is called<br>
+   * <b>Then</b> should return status 400 with validation error message
+   */
+  @Test
+  void givenCreateAccountRequestWithWhitespaceOnlyName_WhenRequested_ThenShouldReturn400() {
+    // Given
+    var body = """
+        {"name":"\\t\\n  ","themeColor":"#FF5733","type":"BANK"}
+        """;
+
+    // When
+    var response = Unirest.post(BASE_URL + "/accounts").body(body).asString();
+
+    // Then
+    assertEquals(400, response.getStatus());
+    assertTrue(response.getBody().contains("must not be blank") ||
+        response.getBody().contains("name"));
   }
 }

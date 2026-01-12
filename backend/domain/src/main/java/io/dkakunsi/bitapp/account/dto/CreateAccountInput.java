@@ -15,6 +15,8 @@ public final record CreateAccountInput(
     String themeColor,
     Account.Type type) {
 
+  private static final String DEFAULT_THEME_COLOR = "#FFFFFF";
+
   public Account toAccount(String requester) {
     final var userId = Id.of(requester);
     final var user = User.builder().id(userId).build();
@@ -24,7 +26,7 @@ public final record CreateAccountInput(
         .id(Id.generate())
         .name(name)
         .type(type)
-        .themeColor(themeColor)
+        .themeColor(themeColor != null ? themeColor : DEFAULT_THEME_COLOR)
         .user(user)
         .balance(BigDecimal.ZERO)
         .createdAt(now)

@@ -2,19 +2,16 @@ package io.dkakunsi.lab.javalin.endpoint;
 
 import java.lang.reflect.Type;
 
-import io.dkakunsi.bitapp.common.Authorizer;
-import io.dkakunsi.bitapp.common.usecase.UseCase;
 import io.dkakunsi.bitapp.user.dto.GetUserInput;
 import io.dkakunsi.bitapp.user.dto.GetUserResult;
+import io.dkakunsi.bitapp.user.usecase.GetUser;
 import io.dkakunsi.lab.javalin.JavalinEndpoint;
 import io.javalin.http.Context;
-import jakarta.validation.constraints.NotNull;
 
 public class GetUserJavalinEndpoint extends JavalinEndpoint<GetUserInput, GetUserResult> {
 
-  public GetUserJavalinEndpoint(@NotNull UseCase<GetUserInput, GetUserResult> usecase,
-      Authorizer authorizer) {
-    super(usecase, authorizer);
+  public GetUserJavalinEndpoint(GetUser usecase) {
+    super(usecase);
   }
 
   @Override

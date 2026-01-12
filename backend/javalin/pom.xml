@@ -18,7 +18,8 @@
   <properties>
     <javalin.version>6.7.0</javalin.version>
     <jackson.version>2.18.2</jackson.version>
-    <unirest.version>3.14.5</unirest.version>
+    <hibernate.validator.version>9.1.0.Final</hibernate.validator.version>
+    <jakarta.el.version>4.0.2</jakarta.el.version>
 
     <minimum.class.line.coverage>0.81</minimum.class.line.coverage>
   </properties>
@@ -56,11 +57,16 @@
       <version>${jackson.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.konghq</groupId>
-      <artifactId>unirest-java</artifactId>
-      <version>${unirest.version}</version>
-      <scope>test</scope>
+      <groupId>org.hibernate.validator</groupId>
+      <artifactId>hibernate-validator</artifactId>
+      <version>${hibernate.validator.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.glassfish</groupId>
+      <artifactId>jakarta.el</artifactId>
+      <version>${jakarta.el.version}</version>
+    </dependency>
+
     <dependency>
       <groupId>io.dkakunsi.bitapp</groupId>
       <artifactId>test</artifactId>

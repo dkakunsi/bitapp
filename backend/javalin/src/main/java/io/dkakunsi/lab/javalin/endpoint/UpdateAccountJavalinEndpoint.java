@@ -4,17 +4,14 @@ import java.lang.reflect.Type;
 
 import io.dkakunsi.bitapp.account.dto.UpdateAccountInput;
 import io.dkakunsi.bitapp.account.dto.UpdateAccountResult;
-import io.dkakunsi.bitapp.common.Authorizer;
-import io.dkakunsi.bitapp.common.usecase.UseCase;
+import io.dkakunsi.bitapp.account.usecase.UpdateAccount;
 import io.dkakunsi.lab.javalin.JavalinEndpoint;
 import io.javalin.http.Context;
-import jakarta.validation.constraints.NotNull;
 
 public class UpdateAccountJavalinEndpoint extends JavalinEndpoint<UpdateAccountInput, UpdateAccountResult> {
 
-  public UpdateAccountJavalinEndpoint(@NotNull UseCase<UpdateAccountInput, UpdateAccountResult> usecase,
-      Authorizer authorizer) {
-    super(usecase, authorizer);
+  public UpdateAccountJavalinEndpoint(UpdateAccount usecase) {
+    super(usecase);
   }
 
   @Override

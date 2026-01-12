@@ -18,11 +18,10 @@ import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.Id;
 import io.dkakunsi.bitapp.common.usecase.Result;
-import io.dkakunsi.bitapp.common.usecase.UseCase;
 import io.dkakunsi.bitapp.user.dto.GetUserInput;
-import io.dkakunsi.bitapp.user.dto.GetUserResult;
 import io.dkakunsi.bitapp.user.model.User;
 import io.dkakunsi.bitapp.user.model.User.Language;
+import io.dkakunsi.bitapp.user.usecase.GetUser;
 import io.dkakunsi.lab.javalin.JavalinServer;
 import kong.unirest.Unirest;
 
@@ -30,15 +29,15 @@ class GetUserJavalinEndpointTest {
 
   private static final String BASE_URL = "http://localhost:20002";
 
-  private static UseCase<GetUserInput, GetUserResult> usecase;
+  private static GetUser usecase;
 
   private static JavalinServer server;
 
-  @SuppressWarnings("unchecked")
   @BeforeAll
   static void setup() throws Exception {
-    usecase = (UseCase<GetUserInput, GetUserResult>) mock(UseCase.class);
-    var endpoint = new GetUserJavalinEndpoint(usecase, null);
+    usecase = mock(GetUser.class);
+    var endpoint = new GetUserJavalinEndpoint(usecase)
+        .withValidator();
     server = JavalinServer.of(20002);
     server.addEndpoint(endpoint);
     server.start();

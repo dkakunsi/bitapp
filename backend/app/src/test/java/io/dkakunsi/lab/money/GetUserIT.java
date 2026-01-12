@@ -32,6 +32,12 @@ public class GetUserIT extends AppTestUtil {
     sut.destroy();
   }
 
+  /**
+   * <b>Given</b> a user is registered in the system<br>
+   * <b>When</b> the GET /user/{email} endpoint is called with an existing user's
+   * email<br>
+   * <b>Then</b> the user's complete details should be returned with status 200
+   */
   @Test
   public void shouldReturnUserData_WhenUserExists() {
     var body = """
@@ -62,6 +68,11 @@ public class GetUserIT extends AppTestUtil {
     assertEquals("EN", getResponseBody.getString("language"));
   }
 
+  /**
+   * <b>Given</b> a user email that does not exist in the system<br>
+   * <b>When</b> the GET /user/{email} endpoint is called<br>
+   * <b>Then</b> an empty response should be returned with status 200
+   */
   @Test
   public void shouldReturnEmpty_WhenUserNotExists() {
     var getResponse = Unirest.get(baseUrl + "/user/notexist@example.com").asString();

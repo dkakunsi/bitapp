@@ -17,10 +17,10 @@ import io.dkakunsi.bitapp.common.AppError;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.usecase.Result;
-import io.dkakunsi.bitapp.common.usecase.UseCase;
 import io.dkakunsi.bitapp.user.dto.RegisterUserInput;
 import io.dkakunsi.bitapp.user.dto.RegisterUserResult;
 import io.dkakunsi.bitapp.user.model.User.Language;
+import io.dkakunsi.bitapp.user.usecase.RegisterUser;
 import io.dkakunsi.lab.javalin.JavalinServer;
 import kong.unirest.Unirest;
 
@@ -28,15 +28,15 @@ class RegisterUserJavalinEndpointTest {
 
   private static final String BASE_URL = "http://localhost:20001";
 
-  private static UseCase<RegisterUserInput, RegisterUserResult> usecase;
+  private static RegisterUser usecase;
 
   private static JavalinServer server;
 
-  @SuppressWarnings("unchecked")
   @BeforeAll
   static void setup() throws Exception {
-    usecase = (UseCase<RegisterUserInput, RegisterUserResult>) mock(UseCase.class);
-    var endpoint = new RegisterUserJavalinEndpoint(usecase, null);
+    usecase = mock(RegisterUser.class);
+    var endpoint = new RegisterUserJavalinEndpoint(usecase)
+        .withValidator();
     server = JavalinServer.of(20001);
     server.addEndpoint(endpoint);
     server.start();

@@ -32,6 +32,13 @@ public class UpdateUserLanguageIT extends AppTestUtil {
     sut.destroy();
   }
 
+  /**
+   * <b>Given</b> a registered user with default language EN<br>
+   * <b>When</b> the PATCH /users/{email}/language endpoint is called with
+   * language ID<br>
+   * <b>Then</b> the user's language should be updated to ID with status 200 and
+   * verified via GET
+   */
   @Test
   public void givenValidUpdateLanguageRequest_WhenUserExists_ThenShouldUpdateLanguage() {
     // First, register a user
@@ -74,6 +81,12 @@ public class UpdateUserLanguageIT extends AppTestUtil {
     assertEquals("ID", getResponseBody.getString("language"));
   }
 
+  /**
+   * <b>Given</b> a user email that does not exist in the system<br>
+   * <b>When</b> the PATCH /users/{email}/language endpoint is called<br>
+   * <b>Then</b> the request should fail with status 404 and "User not found"
+   * message
+   */
   @Test
   public void givenUpdateLanguageRequest_WhenUserDoesNotExist_ThenShouldReturn404() {
     var updateBody = """
@@ -90,6 +103,13 @@ public class UpdateUserLanguageIT extends AppTestUtil {
     assertEquals("User not found", updateResponse.getBody());
   }
 
+  /**
+   * <b>Given</b> a registered user with language ID<br>
+   * <b>When</b> the PATCH /users/{email}/language endpoint is called with
+   * language EN<br>
+   * <b>Then</b> the user's language should be updated back to EN with status 200
+   * and verified via GET
+   */
   @Test
   public void givenValidUpdateLanguageRequest_WhenUpdatingToEN_ThenShouldUpdateLanguage() {
     // First, register a user

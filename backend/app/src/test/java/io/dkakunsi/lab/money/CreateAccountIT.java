@@ -22,6 +22,7 @@ public class CreateAccountIT extends AppTestUtil {
 
   private static CreateAccountIT sut = new CreateAccountIT();
   private static String baseUrl;
+  private static String token;
 
   @BeforeAll
   static void setup() throws Exception {
@@ -30,6 +31,7 @@ public class CreateAccountIT extends AppTestUtil {
     sut.startServer(new AppLauncher());
 
     baseUrl = "http://localhost:" + port;
+    token = SecureTestUtil.generateToken("User001");
   }
 
   @AfterAll
@@ -37,11 +39,16 @@ public class CreateAccountIT extends AppTestUtil {
     sut.destroy();
   }
 
+  /**
+   * <b>Given</b> a valid account creation request with BANK type<br>
+   * <b>When</b> the POST /accounts endpoint is called<br>
+   * <b>Then</b> a new bank account should be created with status 200 and all
+   * provided details
+   */
   @Test
   public void shouldCreateBankAccount_WhenValidRequestProvided() {
     var body = """
         {
-          "user": "User001",
           "name": "My Bank Account",
           "type": "BANK",
           "themeColor": "#0000FF"
@@ -49,10 +56,11 @@ public class CreateAccountIT extends AppTestUtil {
         """;
 
     var response = Unirest.post(baseUrl + "/accounts")
+        .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
 
-    assertEquals(201, response.getStatus());
+    assertEquals(200, response.getStatus());
     var responseBody = new JSONObject(response.getBody());
     assertNotNull(responseBody.getString("id"));
     assertEquals("My Bank Account", responseBody.getString("name"));
@@ -62,11 +70,16 @@ public class CreateAccountIT extends AppTestUtil {
     assertEquals("User001", responseBody.getString("user"));
   }
 
+  /**
+   * <b>Given</b> a valid account creation request with CASH type<br>
+   * <b>When</b> the POST /accounts endpoint is called<br>
+   * <b>Then</b> a new cash account should be created with status 200 and all
+   * provided details
+   */
   @Test
   public void shouldCreateCashAccount_WhenValidRequestProvided() {
     var body = """
         {
-          "user": "User001",
           "name": "My Cash Wallet",
           "type": "CASH",
           "themeColor": "#00FF00"
@@ -74,10 +87,11 @@ public class CreateAccountIT extends AppTestUtil {
         """;
 
     var response = Unirest.post(baseUrl + "/accounts")
+        .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
 
-    assertEquals(201, response.getStatus());
+    assertEquals(200, response.getStatus());
     var responseBody = new JSONObject(response.getBody());
     assertNotNull(responseBody.getString("id"));
     assertEquals("My Cash Wallet", responseBody.getString("name"));
@@ -87,11 +101,16 @@ public class CreateAccountIT extends AppTestUtil {
     assertEquals("User001", responseBody.getString("user"));
   }
 
+  /**
+   * <b>Given</b> a valid account creation request with EWALLET type<br>
+   * <b>When</b> the POST /accounts endpoint is called<br>
+   * <b>Then</b> a new e-wallet account should be created with status 200 and all
+   * provided details
+   */
   @Test
   public void shouldCreateEWalletAccount_WhenValidRequestProvided() {
     var body = """
         {
-          "user": "User001",
           "name": "Digital Wallet",
           "type": "EWALLET",
           "themeColor": "#FF0000"
@@ -99,10 +118,11 @@ public class CreateAccountIT extends AppTestUtil {
         """;
 
     var response = Unirest.post(baseUrl + "/accounts")
+        .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
 
-    assertEquals(201, response.getStatus());
+    assertEquals(200, response.getStatus());
     var responseBody = new JSONObject(response.getBody());
     assertNotNull(responseBody.getString("id"));
     assertEquals("Digital Wallet", responseBody.getString("name"));
@@ -112,34 +132,46 @@ public class CreateAccountIT extends AppTestUtil {
     assertEquals("User001", responseBody.getString("user"));
   }
 
+  /**
+   * <b>Given</b> a valid account creation request without themeColor field<br>
+   * <b>When</b> the POST /accounts endpoint is called<br>
+   * <b>Then</b> a new account should be created successfully with status 200,
+   * using EMPTY theme color
+   */
   @Test
   public void shouldCreateAccountWithoutThemeColor_WhenNotProvided() {
     var body = """
         {
-          "user": "User001",
           "name": "Simple Account",
           "type": "BANK"
         }
         """;
 
     var response = Unirest.post(baseUrl + "/accounts")
+        .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
 
-    assertEquals(201, response.getStatus());
+    assertEquals(200, response.getStatus());
     var responseBody = new JSONObject(response.getBody());
     assertNotNull(responseBody.getString("id"));
     assertEquals("Simple Account", responseBody.getString("name"));
     assertEquals("BANK", responseBody.getString("type"));
     assertEquals(new BigDecimal("0"), responseBody.getBigDecimal("balance"));
     assertEquals("User001", responseBody.getString("user"));
+    assertEquals("#FFFFFF", responseBody.getString("themeColor"));
   }
 
+  /**
+   * <b>Given</b> an account creation request with an empty name field<br>
+   * <b>When</b> the POST /accounts endpoint is called<br>
+   * <b>Then</b> the request should fail with status 400 and "Invalid data"
+   * message
+   */
   @Test
   public void shouldFailWithBadRequest_WhenNameIsEmpty() {
     var body = """
         {
-          "user": "User001",
           "name": "",
           "type": "BANK",
           "themeColor": "#0000FF"
@@ -147,6 +179,7 @@ public class CreateAccountIT extends AppTestUtil {
         """;
 
     var response = Unirest.post(baseUrl + "/accounts")
+        .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
 
@@ -154,17 +187,23 @@ public class CreateAccountIT extends AppTestUtil {
     assertEquals("Invalid data", response.getBody());
   }
 
+  /**
+   * <b>Given</b> an account creation request without a name field<br>
+   * <b>When</b> the POST /accounts endpoint is called<br>
+   * <b>Then</b> the request should fail with status 400 and "Invalid data"
+   * message
+   */
   @Test
   public void shouldFailWithBadRequest_WhenNameIsMissing() {
     var body = """
         {
-          "user": "User001",
           "type": "BANK",
           "themeColor": "#0000FF"
         }
         """;
 
     var response = Unirest.post(baseUrl + "/accounts")
+        .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
 
@@ -172,12 +211,19 @@ public class CreateAccountIT extends AppTestUtil {
     assertEquals("Invalid data", response.getBody());
   }
 
+  /**
+   * <b>Given</b> multiple valid account creation requests with different account
+   * types<br>
+   * <b>When</b> the POST /accounts endpoint is called sequentially for each
+   * account<br>
+   * <b>Then</b> all accounts should be created successfully with unique IDs and
+   * correct types
+   */
   @Test
   public void shouldCreateMultipleAccounts_WithDifferentTypes() {
     // Create first account
     var body1 = """
         {
-          "user": "User001",
           "name": "First Account",
           "type": "BANK",
           "themeColor": "#0000FF"
@@ -185,10 +231,11 @@ public class CreateAccountIT extends AppTestUtil {
         """;
 
     var response1 = Unirest.post(baseUrl + "/accounts")
+        .header("Authorization", "Bearer " + token)
         .body(body1)
         .asString();
 
-    assertEquals(201, response1.getStatus());
+    assertEquals(200, response1.getStatus());
     var responseBody1 = new JSONObject(response1.getBody());
     var firstAccountId = responseBody1.getString("id");
     assertEquals("First Account", responseBody1.getString("name"));
@@ -197,7 +244,6 @@ public class CreateAccountIT extends AppTestUtil {
     // Create second account
     var body2 = """
         {
-          "user": "User001",
           "name": "Second Account",
           "type": "CASH",
           "themeColor": "#00FF00"
@@ -205,10 +251,11 @@ public class CreateAccountIT extends AppTestUtil {
         """;
 
     var response2 = Unirest.post(baseUrl + "/accounts")
+        .header("Authorization", "Bearer " + token)
         .body(body2)
         .asString();
 
-    assertEquals(201, response2.getStatus());
+    assertEquals(200, response2.getStatus());
     var responseBody2 = new JSONObject(response2.getBody());
     var secondAccountId = responseBody2.getString("id");
     assertEquals("Second Account", responseBody2.getString("name"));

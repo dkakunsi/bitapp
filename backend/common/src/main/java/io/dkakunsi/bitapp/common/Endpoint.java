@@ -31,9 +31,10 @@ public abstract class Endpoint<S, T> {
 
   protected Authorizer authorizer;
 
-  protected Endpoint(UseCase<S, T> usecase, Authorizer authorizer) {
+  protected Validator validator;
+
+  protected Endpoint(UseCase<S, T> usecase) {
     this.usecase = usecase;
-    this.authorizer = authorizer;
   }
 
   public abstract Method getMethod();
@@ -48,10 +49,27 @@ public abstract class Endpoint<S, T> {
     return Method.OPTIONS.name().equalsIgnoreCase(method);
   }
 
+  public Endpoint<S, T> setAuthorizer(Authorizer authorizer) {
+    this.authorizer = authorizer;
+    return this;
+  }
+
   protected AuthorizedPrincipal authorizeRequest(String sessionKey) {
     if (authorizer == null) {
       throw new RuntimeException("Authentication provider is not configured");
     }
     return authorizer.verify(sessionKey);
+  }
+
+  public Endpoint<S, T> setValidator(Validator validator) {
+    this.validator = validator;
+    return this;
+  }
+
+  protected boolean validateInput(S input) {
+    if (validator == null) {
+      throw new RuntimeException("Validator is not configured");
+    }
+    return validator.validate(input);
   }
 }
