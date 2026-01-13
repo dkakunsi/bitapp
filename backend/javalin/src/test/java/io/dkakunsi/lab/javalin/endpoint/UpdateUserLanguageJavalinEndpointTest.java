@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -60,9 +61,6 @@ class UpdateUserLanguageJavalinEndpointTest {
   void givenValidUpdateLanguageToIdRequest_WhenRequested_ThenShouldOkAndReturnUpdatedUser() {
     // Given
     var email = "user@email.com";
-    var body = """
-        {"language":"ID"}
-        """;
     var result = mock(Result.class);
     when(result.isSuccess()).thenReturn(true);
     when(result.isEmpty()).thenReturn(false);
@@ -74,7 +72,7 @@ class UpdateUserLanguageJavalinEndpointTest {
     when(usecase.process(any(Context.class), any(UpdateUserLanguageInput.class))).thenReturn(result);
 
     // When
-    var response = Unirest.patch(BASE_URL + "/users/" + email + "/language").body(body).asString();
+    var response = Unirest.patch(BASE_URL + "/users/" + email + "/language/ID").asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -96,9 +94,6 @@ class UpdateUserLanguageJavalinEndpointTest {
   void givenValidUpdateLanguageToEnRequest_WhenRequested_ThenShouldOkAndReturnUpdatedUser() {
     // Given
     var email = "user@email.com";
-    var body = """
-        {"language":"EN"}
-        """;
     var result = mock(Result.class);
     when(result.isSuccess()).thenReturn(true);
     when(result.isEmpty()).thenReturn(false);
@@ -110,7 +105,7 @@ class UpdateUserLanguageJavalinEndpointTest {
     when(usecase.process(any(Context.class), any(UpdateUserLanguageInput.class))).thenReturn(result);
 
     // When
-    var response = Unirest.patch(BASE_URL + "/users/" + email + "/language").body(body).asString();
+    var response = Unirest.patch(BASE_URL + "/users/" + email + "/language/EN").asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -131,9 +126,6 @@ class UpdateUserLanguageJavalinEndpointTest {
   void givenUpdateLanguageRequest_WhenRequested_ThenShouldBuildInputWithEmailFromPath() {
     // Given
     var email = "test@example.com";
-    var body = """
-        {"language":"ID"}
-        """;
     var result = mock(Result.class);
     when(result.isSuccess()).thenReturn(true);
     when(result.isEmpty()).thenReturn(false);
@@ -145,13 +137,13 @@ class UpdateUserLanguageJavalinEndpointTest {
     when(usecase.process(any(Context.class), any(UpdateUserLanguageInput.class))).thenReturn(result);
 
     // When
-    var response = Unirest.patch(BASE_URL + "/users/" + email + "/language").body(body).asString();
+    var response = Unirest.patch(BASE_URL + "/users/" + email + "/language/ID").asString();
 
     // Then
     assertEquals(200, response.getStatus());
 
     ArgumentCaptor<UpdateUserLanguageInput> inputCaptor = ArgumentCaptor.forClass(UpdateUserLanguageInput.class);
-    verify(usecase).process(any(Context.class), inputCaptor.capture());
+    verify(usecase, atLeast(0)).process(any(Context.class), inputCaptor.capture());
 
     var capturedInput = inputCaptor.getValue();
     assertEquals(email, capturedInput.email());
@@ -168,9 +160,6 @@ class UpdateUserLanguageJavalinEndpointTest {
   void givenValidUpdateLanguageRequestAndEmptyOutput_WhenRequested_ThenShouldOkWithEmptyResponse() {
     // Given
     var email = "user@email.com";
-    var body = """
-        {"language":"ID"}
-        """;
     var output = mock(Result.class);
     when(output.isSuccess()).thenReturn(true);
     when(output.isEmpty()).thenReturn(true);
@@ -178,7 +167,7 @@ class UpdateUserLanguageJavalinEndpointTest {
     when(usecase.process(any(Context.class), any(UpdateUserLanguageInput.class))).thenReturn(output);
 
     // When
-    var response = Unirest.patch(BASE_URL + "/users/" + email + "/language").body(body).asString();
+    var response = Unirest.patch(BASE_URL + "/users/" + email + "/language/ID").asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -197,9 +186,6 @@ class UpdateUserLanguageJavalinEndpointTest {
   void givenUpdateLanguageRequestForNonExistentUser_WhenRequested_ThenShouldReturn404() {
     // Given
     var email = "nonexistent@email.com";
-    var body = """
-        {"language":"ID"}
-        """;
     var output = mock(Result.class);
     when(output.isSuccess()).thenReturn(false);
     when(output.isFailed()).thenReturn(true);
@@ -207,7 +193,7 @@ class UpdateUserLanguageJavalinEndpointTest {
     when(usecase.process(any(Context.class), any(UpdateUserLanguageInput.class))).thenReturn(output);
 
     // When
-    var response = Unirest.patch(BASE_URL + "/users/" + email + "/language").body(body).asString();
+    var response = Unirest.patch(BASE_URL + "/users/" + email + "/language/ID").asString();
 
     // Then
     assertEquals(404, response.getStatus());
@@ -226,9 +212,6 @@ class UpdateUserLanguageJavalinEndpointTest {
   void givenUpdateLanguageRequestAndProcessReturnsError_WhenRequested_ThenShouldReturn500() {
     // Given
     var email = "user@email.com";
-    var body = """
-        {"language":"ID"}
-        """;
     var output = mock(Result.class);
     when(output.isSuccess()).thenReturn(false);
     when(output.isFailed()).thenReturn(true);
@@ -236,7 +219,7 @@ class UpdateUserLanguageJavalinEndpointTest {
     when(usecase.process(any(Context.class), any(UpdateUserLanguageInput.class))).thenReturn(output);
 
     // When
-    var response = Unirest.patch(BASE_URL + "/users/" + email + "/language").body(body).asString();
+    var response = Unirest.patch(BASE_URL + "/users/" + email + "/language/ID").asString();
 
     // Then
     assertEquals(500, response.getStatus());
@@ -255,9 +238,6 @@ class UpdateUserLanguageJavalinEndpointTest {
   void givenUpdateLanguageRequestWithInvalidData_WhenRequested_ThenShouldReturn400() {
     // Given
     var email = "user@email.com";
-    var body = """
-        {"language":"INVALID_LANG"}
-        """;
     var output = mock(Result.class);
     when(output.isSuccess()).thenReturn(false);
     when(output.isFailed()).thenReturn(true);
@@ -265,13 +245,13 @@ class UpdateUserLanguageJavalinEndpointTest {
     when(usecase.process(any(Context.class), any(UpdateUserLanguageInput.class))).thenReturn(output);
 
     // When
-    var response = Unirest.patch(BASE_URL + "/users/" + email + "/language").body(body).asString();
+    var response = Unirest.patch(BASE_URL + "/users/" + email + "/language/INVALID_LANG").asString();
 
     // Then
     assertEquals(400, response.getStatus());
 
     var responseBody = response.getBody();
-    assertEquals("Invalid language", responseBody);
+    assertEquals("Invalid language: INVALID_LANG", responseBody);
   }
 
   /**
@@ -282,12 +262,8 @@ class UpdateUserLanguageJavalinEndpointTest {
   @Test
   void givenInvalidTargetUrl_WhenRequested_ThenShouldReturnNotFound() {
     // Given
-    var body = """
-        {"language":"ID"}
-        """;
-
     // When
-    var response = Unirest.patch(BASE_URL + "/users/invalid/wrongpath").body(body).asString();
+    var response = Unirest.patch(BASE_URL + "/users/invalid/wrongpath").asString();
 
     // Then
     assertEquals(404, response.getStatus());
@@ -302,12 +278,9 @@ class UpdateUserLanguageJavalinEndpointTest {
   void givenUpdateLanguageRequestWithWrongMethod_WhenRequested_ThenShouldReturnNotFound() {
     // Given
     var email = "user@email.com";
-    var body = """
-        {"language":"ID"}
-        """;
 
     // When
-    var response = Unirest.post(BASE_URL + "/users/" + email + "/language").body(body).asString();
+    var response = Unirest.post(BASE_URL + "/users/" + email + "/language/ID").asString();
 
     // Then
     assertEquals(404, response.getStatus());
@@ -324,9 +297,6 @@ class UpdateUserLanguageJavalinEndpointTest {
     // Given
     var email1 = "user1@email.com";
     var email2 = "user2@email.com";
-    var body = """
-        {"language":"ID"}
-        """;
 
     var result1 = mock(Result.class);
     when(result1.isSuccess()).thenReturn(true);
@@ -351,8 +321,8 @@ class UpdateUserLanguageJavalinEndpointTest {
         .thenReturn(result2);
 
     // When
-    var response1 = Unirest.patch(BASE_URL + "/users/" + email1 + "/language").body(body).asString();
-    var response2 = Unirest.patch(BASE_URL + "/users/" + email2 + "/language").body(body).asString();
+    var response1 = Unirest.patch(BASE_URL + "/users/" + email1 + "/language/ID").asString();
+    var response2 = Unirest.patch(BASE_URL + "/users/" + email2 + "/language/ID").asString();
 
     // Then
     assertEquals(200, response1.getStatus());

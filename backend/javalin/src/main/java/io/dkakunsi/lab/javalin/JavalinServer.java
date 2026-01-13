@@ -91,7 +91,7 @@ public final class JavalinServer {
   private static ExceptionHandler<Exception> exceptionHandler(int statusCode) {
     return (ex, ctx) -> {
       LOGGER.error("Cannot process request. Reason: {}", ex, ex.getMessage());
-      ctx.status(statusCode).contentType("application/json");
+      ctx.status(statusCode).contentType("text/plain").result(ex.getMessage());
     };
   }
 }

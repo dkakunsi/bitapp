@@ -27,7 +27,7 @@ public final class User {
 
   public static enum Language {
     EN,
-    ID,
+    ID
   }
 
   public boolean needUpdate(RegisterUserInput userModel) {

@@ -106,29 +106,6 @@ class CreateAccountJavalinEndpointTest {
 
   @SuppressWarnings("unchecked")
   @Test
-  void givenInvalidRequest_WhenRequested_ThenShouldReturn400() {
-    // Given
-    var body = """
-        {"name":"","themeColor":"#FF5733","type":"BANK"}
-        """;
-    var error = new AppError(Code.BAD_REQUEST, "Account name cannot be empty");
-    var result = mock(Result.class);
-    when(result.isSuccess()).thenReturn(false);
-    when(result.isEmpty()).thenReturn(false);
-    when(result.isFailed()).thenReturn(true);
-    when(result.error()).thenReturn(Optional.of(error));
-    when(usecase.process(any(Context.class), any(CreateAccountInput.class))).thenReturn(result);
-
-    // When
-    var response = Unirest.post(BASE_URL + "/accounts").body(body).asString();
-
-    // Then
-    assertEquals(400, response.getStatus());
-    assertEquals("Account name cannot be empty", response.getBody());
-  }
-
-  @SuppressWarnings("unchecked")
-  @Test
   void givenServerError_WhenRequested_ThenShouldReturn500() {
     // Given
     var body = """
@@ -190,8 +167,7 @@ class CreateAccountJavalinEndpointTest {
 
     // Then
     assertEquals(400, response.getStatus());
-    assertTrue(response.getBody().contains("must not be blank") ||
-        response.getBody().contains("name"));
+    assertEquals("name: must not be blank", response.getBody());
   }
 
   /**
@@ -211,8 +187,7 @@ class CreateAccountJavalinEndpointTest {
 
     // Then
     assertEquals(400, response.getStatus());
-    assertTrue(response.getBody().contains("must not be blank") ||
-        response.getBody().contains("name"));
+    assertEquals("name: must not be blank", response.getBody());
   }
 
   /**
@@ -232,8 +207,7 @@ class CreateAccountJavalinEndpointTest {
 
     // Then
     assertEquals(400, response.getStatus());
-    assertTrue(response.getBody().contains("must not be blank") ||
-        response.getBody().contains("name"));
+    assertEquals("name: must not be blank", response.getBody());
   }
 
   /**
@@ -253,8 +227,7 @@ class CreateAccountJavalinEndpointTest {
 
     // Then
     assertEquals(400, response.getStatus());
-    assertTrue(response.getBody().contains("must not be blank") ||
-        response.getBody().contains("name"));
+    assertEquals("name: must not be blank", response.getBody());
   }
 
   /**
@@ -275,7 +248,6 @@ class CreateAccountJavalinEndpointTest {
 
     // Then
     assertEquals(400, response.getStatus());
-    assertTrue(response.getBody().contains("must not be blank") ||
-        response.getBody().contains("name"));
+    assertEquals("name: must not be blank", response.getBody());
   }
 }

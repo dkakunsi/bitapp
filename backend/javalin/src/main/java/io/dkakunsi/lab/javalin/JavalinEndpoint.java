@@ -1,12 +1,14 @@
 package io.dkakunsi.lab.javalin;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 import io.dkakunsi.bitapp.common.AuthorizedPrincipal;
 import io.dkakunsi.bitapp.common.Authorizer;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.Endpoint;
 import io.dkakunsi.bitapp.common.Validator;
+import io.dkakunsi.bitapp.common.Validator.Violation;
 import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.common.usecase.UseCase;
 import io.dkakunsi.lab.javalin.validation.JakartaValidation;
@@ -50,9 +52,13 @@ public abstract class JavalinEndpoint<S, T> extends Endpoint<S, T> {
       var principal = authorizeRequest(ctx);
       var context = initiateContext(ctx, principal);
       var input = buildInput(ctx);
-      if (validator != null) {
-        validator.validate(input);
+
+      List<Violation> violations = null;
+      if (validator != null && !(violations = validateInput(input)).isEmpty()) {
+        failureResponse(ctx, violations);
+        return;
       }
+
       var result = usecase.process(context, input);
       response(ctx, result);
     };
@@ -81,6 +87,8 @@ public abstract class JavalinEndpoint<S, T> extends Endpoint<S, T> {
     return context;
   }
 
+  protected abstract S buildInput(io.javalin.http.Context ctx);
+
   protected void response(io.javalin.http.Context ctx, Result<T> result) {
     if (result.isFailed()) {
       failureResponse(ctx, result);
@@ -102,7 +110,10 @@ public abstract class JavalinEndpoint<S, T> extends Endpoint<S, T> {
     }
   }
 
-  protected abstract S buildInput(io.javalin.http.Context ctx);
+  private void failureResponse(io.javalin.http.Context ctx, List<Violation> violations) {
+    var messages = violations.stream().map(Violation::toString).toList();
+    ctx.status(400).result(String.join(", ", messages));
+  }
 
   protected abstract Type getOutputClass();
 }

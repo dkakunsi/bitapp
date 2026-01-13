@@ -1,5 +1,7 @@
 package io.dkakunsi.bitapp.common;
 
+import java.util.List;
+
 import io.dkakunsi.bitapp.common.usecase.UseCase;
 import lombok.Getter;
 
@@ -66,7 +68,7 @@ public abstract class Endpoint<S, T> {
     return this;
   }
 
-  protected boolean validateInput(S input) {
+  protected List<Validator.Violation> validateInput(S input) {
     if (validator == null) {
       throw new RuntimeException("Validator is not configured");
     }
