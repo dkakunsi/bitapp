@@ -32,7 +32,10 @@ import kong.unirest.Unirest;
 
 class GetUserAccountsJavalinEndpointTest {
 
-  private static final String BASE_URL = "http://localhost:20004";
+  private static final int PORT = 20002;
+
+  private static String baseUrl;
+
   private static final String USER_ID = "user123";
 
   private static GetUserAccounts usecase;
@@ -41,10 +44,11 @@ class GetUserAccountsJavalinEndpointTest {
 
   @BeforeAll
   static void setup() throws Exception {
+    baseUrl = "http://localhost:" + PORT;
     usecase = mock(GetUserAccounts.class);
     var endpoint = new GetUserAccountsJavalinEndpoint(usecase)
         .withValidator();
-    server = JavalinServer.of(20004);
+    server = JavalinServer.of(PORT);
     server.addEndpoint(endpoint);
     server.start();
   }
@@ -92,7 +96,7 @@ class GetUserAccountsJavalinEndpointTest {
     when(usecase.process(any(Context.class), any(GetUserAccountsInput.class))).thenReturn(result);
 
     // When
-    var response = Unirest.get(BASE_URL + "/users/{userId}/accounts")
+    var response = Unirest.get(baseUrl + "/users/{userId}/accounts")
         .routeParam("userId", USER_ID)
         .asString();
 
@@ -128,7 +132,7 @@ class GetUserAccountsJavalinEndpointTest {
     when(usecase.process(any(Context.class), any(GetUserAccountsInput.class))).thenReturn(result);
 
     // When
-    var response = Unirest.get(BASE_URL + "/users/{userId}/accounts")
+    var response = Unirest.get(baseUrl + "/users/{userId}/accounts")
         .routeParam("userId", USER_ID)
         .asString();
 
@@ -164,7 +168,7 @@ class GetUserAccountsJavalinEndpointTest {
     when(usecase.process(any(Context.class), any(GetUserAccountsInput.class))).thenReturn(result);
 
     // When
-    var response = Unirest.get(BASE_URL + "/users/{userId}/accounts")
+    var response = Unirest.get(baseUrl + "/users/{userId}/accounts")
         .routeParam("userId", USER_ID)
         .asString();
 
@@ -190,7 +194,7 @@ class GetUserAccountsJavalinEndpointTest {
     when(usecase.process(any(Context.class), any(GetUserAccountsInput.class))).thenReturn(result);
 
     // When
-    var response = Unirest.get(BASE_URL + "/users/{userId}/accounts")
+    var response = Unirest.get(baseUrl + "/users/{userId}/accounts")
         .routeParam("userId", USER_ID)
         .asString();
 
@@ -210,7 +214,7 @@ class GetUserAccountsJavalinEndpointTest {
     when(usecase.process(any(Context.class), any(GetUserAccountsInput.class))).thenReturn(result);
 
     // When
-    var response = Unirest.get(BASE_URL + "/users/{userId}/accounts")
+    var response = Unirest.get(baseUrl + "/users/{userId}/accounts")
         .routeParam("userId", USER_ID)
         .asString();
 

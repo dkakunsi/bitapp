@@ -18,7 +18,7 @@ import kong.unirest.Unirest;
 
 public class CreateAccountIT extends AppTestUtil {
 
-  private static final int port = 20002;
+  private static final int port = 20001;
 
   private static CreateAccountIT sut = new CreateAccountIT();
   private static String baseUrl;

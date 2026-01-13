@@ -14,7 +14,7 @@ import kong.unirest.json.JSONObject;
 
 public class UpdateUserLanguageIT extends AppTestUtil {
 
-  private static final int port = 20004;
+  private static final int port = 20006;
 
   private static UpdateUserLanguageIT sut = new UpdateUserLanguageIT();
   private static String baseUrl;

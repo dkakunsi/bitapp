@@ -27,7 +27,9 @@ import kong.unirest.Unirest;
 
 class GetUserJavalinEndpointTest {
 
-  private static final String BASE_URL = "http://localhost:20002";
+  private static final int PORT = 20003;
+
+  private static String baseUrl;
 
   private static GetUser usecase;
 
@@ -35,10 +37,11 @@ class GetUserJavalinEndpointTest {
 
   @BeforeAll
   static void setup() throws Exception {
+    baseUrl = "http://localhost:" + PORT;
     usecase = mock(GetUser.class);
     var endpoint = new GetUserJavalinEndpoint(usecase)
         .withValidator();
-    server = JavalinServer.of(20002);
+    server = JavalinServer.of(PORT);
     server.addEndpoint(endpoint);
     server.start();
   }
@@ -67,7 +70,7 @@ class GetUserJavalinEndpointTest {
     when(usecase.process(any(Context.class), any(GetUserInput.class))).thenReturn(result);
 
     // When
-    var response = Unirest.get(BASE_URL + "/users/" + email).asString();
+    var response = Unirest.get(baseUrl + "/users/" + email).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -92,7 +95,7 @@ class GetUserJavalinEndpointTest {
     when(usecase.process(any(Context.class), any(GetUserInput.class))).thenReturn(result);
 
     // When
-    var response = Unirest.get(BASE_URL + "/users/" + email).asString();
+    var response = Unirest.get(baseUrl + "/users/" + email).asString();
 
     // Then
     assertEquals(404, response.getStatus());
@@ -113,7 +116,7 @@ class GetUserJavalinEndpointTest {
     when(usecase.process(any(Context.class), any(GetUserInput.class))).thenReturn(result);
 
     // When
-    var response = Unirest.get(BASE_URL + "/users/" + email).asString();
+    var response = Unirest.get(baseUrl + "/users/" + email).asString();
 
     // Then
     assertEquals(500, response.getStatus());

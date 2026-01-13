@@ -23,7 +23,10 @@ import kong.unirest.Unirest;
 
 class UpdateAccountJavalinEndpointTest {
 
-  private static final String BASE_URL = "http://localhost:20006";
+  private static final int PORT = 20005;
+
+  private static String baseUrl;
+
   private static final String ACCOUNT_ID = "account123";
 
   private static UpdateAccount usecase;
@@ -32,10 +35,11 @@ class UpdateAccountJavalinEndpointTest {
 
   @BeforeAll
   static void setup() throws Exception {
+    baseUrl = "http://localhost:" + PORT;
     usecase = mock(UpdateAccount.class);
     var endpoint = new UpdateAccountJavalinEndpoint(usecase)
         .withValidator();
-    server = JavalinServer.of(20006);
+    server = JavalinServer.of(PORT);
     server.addEndpoint(endpoint);
     server.start();
   }
@@ -72,7 +76,7 @@ class UpdateAccountJavalinEndpointTest {
         """;
 
     // When
-    var response = Unirest.put(BASE_URL + "/accounts/" + ACCOUNT_ID)
+    var response = Unirest.put(baseUrl + "/accounts/" + ACCOUNT_ID)
         .header("Content-Type", "application/json")
         .body(requestBody)
         .asJson();
@@ -107,7 +111,7 @@ class UpdateAccountJavalinEndpointTest {
         """;
 
     // When
-    var response = Unirest.put(BASE_URL + "/accounts/" + ACCOUNT_ID)
+    var response = Unirest.put(baseUrl + "/accounts/" + ACCOUNT_ID)
         .header("Content-Type", "application/json")
         .body(requestBody)
         .asJson();
@@ -131,7 +135,7 @@ class UpdateAccountJavalinEndpointTest {
         """;
 
     // When
-    var response = Unirest.put(BASE_URL + "/accounts/" + ACCOUNT_ID)
+    var response = Unirest.put(baseUrl + "/accounts/" + ACCOUNT_ID)
         .header("Content-Type", "application/json")
         .body(requestBody)
         .asString();
@@ -160,7 +164,7 @@ class UpdateAccountJavalinEndpointTest {
         """;
 
     // When
-    var response = Unirest.put(BASE_URL + "/accounts/invalid-id")
+    var response = Unirest.put(baseUrl + "/accounts/invalid-id")
         .header("Content-Type", "application/json")
         .body(requestBody)
         .asJson();

@@ -14,7 +14,7 @@ import kong.unirest.Unirest;
 
 public class GetUserIT extends AppTestUtil {
 
-  private static final int port = 20001;
+  private static final int port = 20003;
 
   private static GetUserIT sut = new GetUserIT();
   private static String baseUrl;

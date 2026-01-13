@@ -27,7 +27,9 @@ import kong.unirest.Unirest;
 
 class CreateAccountJavalinEndpointTest {
 
-  private static final String BASE_URL = "http://localhost:20003";
+  private static final int PORT = 20001;
+
+  private static String baseUrl;
 
   private static CreateAccount usecase;
 
@@ -35,10 +37,11 @@ class CreateAccountJavalinEndpointTest {
 
   @BeforeAll
   static void setup() throws Exception {
+    baseUrl = "http://localhost:" + PORT;
     usecase = mock(CreateAccount.class);
     var endpoint = new CreateAccountJavalinEndpoint(usecase)
         .withValidator();
-    server = JavalinServer.of(20003);
+    server = JavalinServer.of(PORT);
     server.addEndpoint(endpoint);
     server.start();
   }
@@ -70,7 +73,7 @@ class CreateAccountJavalinEndpointTest {
     when(usecase.process(any(Context.class), any(CreateAccountInput.class))).thenReturn(result);
 
     // When
-    var response = Unirest.post(BASE_URL + "/accounts").body(body).asString();
+    var response = Unirest.post(baseUrl + "/accounts").body(body).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -98,7 +101,7 @@ class CreateAccountJavalinEndpointTest {
     when(usecase.process(any(Context.class), any(CreateAccountInput.class))).thenReturn(result);
 
     // When
-    var response = Unirest.post(BASE_URL + "/accounts").body(body).asString();
+    var response = Unirest.post(baseUrl + "/accounts").body(body).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -120,7 +123,7 @@ class CreateAccountJavalinEndpointTest {
     when(usecase.process(any(Context.class), any(CreateAccountInput.class))).thenReturn(result);
 
     // When
-    var response = Unirest.post(BASE_URL + "/accounts").body(body).asString();
+    var response = Unirest.post(baseUrl + "/accounts").body(body).asString();
 
     // Then
     assertEquals(500, response.getStatus());
@@ -143,7 +146,7 @@ class CreateAccountJavalinEndpointTest {
     when(usecase.process(any(Context.class), any(CreateAccountInput.class))).thenReturn(result);
 
     // When
-    var response = Unirest.post(BASE_URL + "/accounts").body(body).asString();
+    var response = Unirest.post(baseUrl + "/accounts").body(body).asString();
 
     // Then
     assertEquals(400, response.getStatus());
@@ -163,7 +166,7 @@ class CreateAccountJavalinEndpointTest {
         """;
 
     // When
-    var response = Unirest.post(BASE_URL + "/accounts").body(body).asString();
+    var response = Unirest.post(baseUrl + "/accounts").body(body).asString();
 
     // Then
     assertEquals(400, response.getStatus());
@@ -183,7 +186,7 @@ class CreateAccountJavalinEndpointTest {
         """;
 
     // When
-    var response = Unirest.post(BASE_URL + "/accounts").body(body).asString();
+    var response = Unirest.post(baseUrl + "/accounts").body(body).asString();
 
     // Then
     assertEquals(400, response.getStatus());
@@ -203,7 +206,7 @@ class CreateAccountJavalinEndpointTest {
         """;
 
     // When
-    var response = Unirest.post(BASE_URL + "/accounts").body(body).asString();
+    var response = Unirest.post(baseUrl + "/accounts").body(body).asString();
 
     // Then
     assertEquals(400, response.getStatus());
@@ -223,7 +226,7 @@ class CreateAccountJavalinEndpointTest {
         """;
 
     // When
-    var response = Unirest.post(BASE_URL + "/accounts").body(body).asString();
+    var response = Unirest.post(baseUrl + "/accounts").body(body).asString();
 
     // Then
     assertEquals(400, response.getStatus());
@@ -244,7 +247,7 @@ class CreateAccountJavalinEndpointTest {
         """;
 
     // When
-    var response = Unirest.post(BASE_URL + "/accounts").body(body).asString();
+    var response = Unirest.post(baseUrl + "/accounts").body(body).asString();
 
     // Then
     assertEquals(400, response.getStatus());

@@ -26,7 +26,9 @@ import kong.unirest.Unirest;
 
 class RegisterUserJavalinEndpointTest {
 
-  private static final String BASE_URL = "http://localhost:20001";
+  private static final int PORT = 20004;
+
+  private static String baseUrl;
 
   private static RegisterUser usecase;
 
@@ -34,10 +36,11 @@ class RegisterUserJavalinEndpointTest {
 
   @BeforeAll
   static void setup() throws Exception {
+    baseUrl = "http://localhost:" + PORT;
     usecase = mock(RegisterUser.class);
     var endpoint = new RegisterUserJavalinEndpoint(usecase)
         .withValidator();
-    server = JavalinServer.of(20001);
+    server = JavalinServer.of(PORT);
     server.addEndpoint(endpoint);
     server.start();
   }
@@ -68,7 +71,7 @@ class RegisterUserJavalinEndpointTest {
     when(usecase.process(any(Context.class), any(RegisterUserInput.class))).thenReturn(result);
 
     // When
-    var response = Unirest.post(BASE_URL + "/users").body(body).asString();
+    var response = Unirest.post(baseUrl + "/users").body(body).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -95,7 +98,7 @@ class RegisterUserJavalinEndpointTest {
     when(usecase.process(any(Context.class), any(RegisterUserInput.class))).thenReturn(output);
 
     // When
-    var response = Unirest.post(BASE_URL + "/users").body(body).asString();
+    var response = Unirest.post(baseUrl + "/users").body(body).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -118,7 +121,7 @@ class RegisterUserJavalinEndpointTest {
     when(usecase.process(any(Context.class), any(RegisterUserInput.class))).thenReturn(output);
 
     // When
-    var response = Unirest.post(BASE_URL + "/users").body(body).asString();
+    var response = Unirest.post(baseUrl + "/users").body(body).asString();
 
     // Then
     assertEquals(500, response.getStatus());
@@ -141,7 +144,7 @@ class RegisterUserJavalinEndpointTest {
     when(usecase.process(any(Context.class), any(RegisterUserInput.class))).thenReturn(output);
 
     // When
-    var response = Unirest.post(BASE_URL + "/users").body(body).asString();
+    var response = Unirest.post(baseUrl + "/users").body(body).asString();
 
     // Then
     assertEquals(400, response.getStatus());
@@ -158,7 +161,7 @@ class RegisterUserJavalinEndpointTest {
         """;
 
     // When
-    var response = Unirest.put(BASE_URL + "/users/invalid").body(body).asString();
+    var response = Unirest.put(baseUrl + "/users/invalid").body(body).asString();
 
     // Then
     assertEquals(404, response.getStatus());
@@ -185,7 +188,7 @@ class RegisterUserJavalinEndpointTest {
     when(usecase.process(any(Context.class), any(RegisterUserInput.class))).thenReturn(result);
 
     // When
-    var response = Unirest.post(BASE_URL + "/users").body(body).asString();
+    var response = Unirest.post(baseUrl + "/users").body(body).asString();
 
     // Then
     assertEquals(200, response.getStatus());

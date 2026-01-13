@@ -14,7 +14,7 @@ import kong.unirest.json.JSONObject;
 
 public class RegisterUserIT extends AppTestUtil {
 
-  private static final int port = 20000;
+  private static final int port = 20004;
 
   private static RegisterUserIT sut = new RegisterUserIT();
   private static String baseUrl;

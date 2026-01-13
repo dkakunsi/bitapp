@@ -20,7 +20,7 @@ import kong.unirest.Unirest;
 
 public class GetUserAccountsIT extends AppTestUtil {
 
-  private static final int port = 20005;
+  private static final int port = 20002;
 
   private static GetUserAccountsIT sut = new GetUserAccountsIT();
   private static String baseUrl;
