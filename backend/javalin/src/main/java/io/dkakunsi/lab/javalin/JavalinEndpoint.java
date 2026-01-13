@@ -53,15 +53,22 @@ public abstract class JavalinEndpoint<S, T> extends Endpoint<S, T> {
       var context = initiateContext(ctx, principal);
       var input = buildInput(ctx);
 
-      List<Violation> violations = null;
-      if (validator != null && !(violations = validateInput(input)).isEmpty()) {
-        failureResponse(ctx, violations);
+      if (validator != null && !validateAndRespond(ctx, input)) {
         return;
       }
 
       var result = usecase.process(context, input);
       response(ctx, result);
     };
+  }
+
+  private boolean validateAndRespond(io.javalin.http.Context ctx, S input) {
+    var violations = validateInput(input);
+    if (!violations.isEmpty()) {
+      failureResponse(ctx, violations);
+      return false;
+    }
+    return true;
   }
 
   protected AuthorizedPrincipal authorizeRequest(io.javalin.http.Context ctx) {
