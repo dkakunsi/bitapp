@@ -13,9 +13,9 @@ import dev.morphia.Datastore;
 import io.dkakunsi.bitapp.common.EnvironmentConfiguration;
 import io.dkakunsi.bitapp.common.Id;
 import io.dkakunsi.bitapp.mongo.MongoConfiguration;
+import io.dkakunsi.bitapp.test.MongoServer;
 import io.dkakunsi.bitapp.user.model.User;
 import io.dkakunsi.bitapp.user.model.User.Language;
-import io.dkakunsi.lab.test.MongoServer;
 
 public class MongoUserRepositoryIT {
 

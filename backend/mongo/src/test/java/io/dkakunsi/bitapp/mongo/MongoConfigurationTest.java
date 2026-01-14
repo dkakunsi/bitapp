@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.common.Configuration;
 import io.dkakunsi.bitapp.common.EnvironmentConfiguration;
-import io.dkakunsi.lab.test.MongoServer;
+import io.dkakunsi.bitapp.test.MongoServer;
 
 public class MongoConfigurationTest {
 

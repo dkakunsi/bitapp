@@ -17,8 +17,8 @@ import io.dkakunsi.bitapp.account.model.Account.Type;
 import io.dkakunsi.bitapp.common.EnvironmentConfiguration;
 import io.dkakunsi.bitapp.common.Id;
 import io.dkakunsi.bitapp.mongo.MongoConfiguration;
+import io.dkakunsi.bitapp.test.MongoServer;
 import io.dkakunsi.bitapp.user.model.User;
-import io.dkakunsi.lab.test.MongoServer;
 
 public class MongoAccountRepositoryIT {
 

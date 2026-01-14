@@ -18,7 +18,8 @@ import org.junit.jupiter.api.Test;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 
 import io.dkakunsi.bitapp.common.Configuration;
-import io.dkakunsi.lab.test.SecureTestUtil;
+import io.dkakunsi.bitapp.jwt.JWTAuthorizer;
+import io.dkakunsi.bitapp.test.SecureTestUtil;
 
 class JWTAuthorizerTest {
 
