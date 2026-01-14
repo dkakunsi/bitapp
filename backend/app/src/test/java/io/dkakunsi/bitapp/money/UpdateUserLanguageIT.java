@@ -8,7 +8,9 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import io.dkakunsi.bitapp.jwt.JWTAuthorizer;
 import io.dkakunsi.bitapp.test.AppTestUtil;
+import io.dkakunsi.bitapp.test.SecureTestUtil;
 import kong.unirest.Unirest;
 import kong.unirest.json.JSONObject;
 
@@ -17,11 +19,13 @@ public class UpdateUserLanguageIT extends AppTestUtil {
   private static final int port = 20006;
 
   private static UpdateUserLanguageIT sut = new UpdateUserLanguageIT();
+
   private static String baseUrl;
 
   @BeforeAll
   static void setup() throws Exception {
-    sut.create(Map.of(APP_PORT, Integer.toString(port)));
+    sut.create(Map.of(APP_PORT, Integer.toString(port),
+        JWTAuthorizer.JWT_PUBLIC_KEY, SecureTestUtil.PUBLIC_KEY));
     sut.startServer(new AppLauncher());
 
     baseUrl = "http://localhost:" + port;
@@ -57,15 +61,9 @@ public class UpdateUserLanguageIT extends AppTestUtil {
     assertEquals("EN", registerResponseBody.getString("language"));
 
     // Update the language to ID
-    var updateBody = """
-        {
-          "email": "jane.doe@example.com",
-          "language": "ID"
-        }
-        """;
-
-    var updateResponse = Unirest.patch(baseUrl + "/users/jane.doe@example.com/language")
-        .body(updateBody)
+    var janeToken = SecureTestUtil.generateToken("jane.doe@example.com");
+    var updateResponse = Unirest.patch(baseUrl + "/users/jane.doe@example.com/language/ID")
+        .header("Authorization", "Bearer " + janeToken)
         .asString();
     assertEquals(200, updateResponse.getStatus());
     var updateResponseBody = new JSONObject(updateResponse.getBody());
@@ -73,7 +71,9 @@ public class UpdateUserLanguageIT extends AppTestUtil {
     assertEquals("ID", updateResponseBody.getString("language"));
 
     // Verify the language was updated by getting the user
-    var getResponse = Unirest.get(baseUrl + "/user/jane.doe@example.com").asString();
+    var getResponse = Unirest.get(baseUrl + "/users/jane.doe@example.com")
+        .header("Authorization", "Bearer " + janeToken)
+        .asString();
     assertEquals(200, getResponse.getStatus());
     var getResponseBody = new JSONObject(getResponse.getBody());
     assertEquals("Jane Doe", getResponseBody.getString("name"));
@@ -89,15 +89,9 @@ public class UpdateUserLanguageIT extends AppTestUtil {
    */
   @Test
   public void givenUpdateLanguageRequest_WhenUserDoesNotExist_ThenShouldReturn404() {
-    var updateBody = """
-        {
-          "email": "nonexistent@example.com",
-          "language": "ID"
-        }
-        """;
-
-    var updateResponse = Unirest.patch(baseUrl + "/users/nonexistent@example.com/language")
-        .body(updateBody)
+    var nonExistentUserToken = SecureTestUtil.generateToken("nonexistent@example.com");
+    var updateResponse = Unirest.patch(baseUrl + "/users/nonexistent@example.com/language/ID")
+        .header("Authorization", "Bearer " + nonExistentUserToken)
         .asString();
     assertEquals(404, updateResponse.getStatus());
     assertEquals("User not found", updateResponse.getBody());
@@ -126,30 +120,17 @@ public class UpdateUserLanguageIT extends AppTestUtil {
     assertEquals(200, registerResponse.getStatus());
 
     // Update to ID first
-    var updateToIdBody = """
-        {
-          "email": "bob.smith@example.com",
-          "language": "ID"
-        }
-        """;
-
-    var updateToIdResponse = Unirest.patch(baseUrl + "/users/bob.smith@example.com/language")
-        .body(updateToIdBody)
+    var bobToken = SecureTestUtil.generateToken("bob.smith@example.com");
+    var updateToIdResponse = Unirest.patch(baseUrl + "/users/bob.smith@example.com/language/ID")
+        .header("Authorization", "Bearer " + bobToken)
         .asString();
     assertEquals(200, updateToIdResponse.getStatus());
     var updateToIdResponseBody = new JSONObject(updateToIdResponse.getBody());
     assertEquals("ID", updateToIdResponseBody.getString("language"));
 
     // Update back to EN
-    var updateToEnBody = """
-        {
-          "email": "bob.smith@example.com",
-          "language": "EN"
-        }
-        """;
-
-    var updateToEnResponse = Unirest.patch(baseUrl + "/users/bob.smith@example.com/language")
-        .body(updateToEnBody)
+    var updateToEnResponse = Unirest.patch(baseUrl + "/users/bob.smith@example.com/language/EN")
+        .header("Authorization", "Bearer " + bobToken)
         .asString();
     assertEquals(200, updateToEnResponse.getStatus());
     var updateToEnResponseBody = new JSONObject(updateToEnResponse.getBody());
@@ -157,7 +138,9 @@ public class UpdateUserLanguageIT extends AppTestUtil {
     assertEquals("EN", updateToEnResponseBody.getString("language"));
 
     // Verify the final state
-    var getResponse = Unirest.get(baseUrl + "/user/bob.smith@example.com").asString();
+    var getResponse = Unirest.get(baseUrl + "/users/bob.smith@example.com")
+        .header("Authorization", "Bearer " + bobToken)
+        .asString();
     assertEquals(200, getResponse.getStatus());
     var getResponseBody = new JSONObject(getResponse.getBody());
     assertEquals("EN", getResponseBody.getString("language"));

@@ -22,18 +22,26 @@ public class GetUserAccountsIT extends AppTestUtil {
 
   private static final int port = 20002;
 
-  private static GetUserAccountsIT sut = new GetUserAccountsIT();
-  private static String baseUrl;
-  private static final String USER_ID = "testuser123";
   private static final String OTHER_USER_ID = "otheruser456";
+
+  private static GetUserAccountsIT sut = new GetUserAccountsIT();
+
+  private static String baseUrl;
+
+  private static String token;
+
+  private static String otherUserToken;
 
   @BeforeAll
   static void setup() throws Exception {
-    var appEnv = Map.of(APP_PORT, Integer.toString(port), JWTAuthorizer.JWT_PUBLIC_KEY, SecureTestUtil.PUBLIC_KEY);
+    var appEnv = Map.of(APP_PORT, Integer.toString(port),
+        JWTAuthorizer.JWT_PUBLIC_KEY, SecureTestUtil.PUBLIC_KEY);
     sut.create(appEnv);
     sut.startServer(new AppLauncher());
 
     baseUrl = "http://localhost:" + port;
+    token = SecureTestUtil.generateToken(USER_ID);
+    otherUserToken = SecureTestUtil.generateToken(OTHER_USER_ID);
   }
 
   @AfterAll
@@ -45,15 +53,15 @@ public class GetUserAccountsIT extends AppTestUtil {
   void setupTestData() {
     // Clear and setup test data for each test
     // Create accounts for the test user
-    createAccount(USER_ID, "Savings Account", "BANK", "#FF5733");
-    createAccount(USER_ID, "Cash Wallet", "CASH", "#3357FF");
-    createAccount(USER_ID, "Digital Wallet", "EWALLET", "#00FF00");
+    createAccount(token, "Savings Account", "BANK", "#FF5733");
+    createAccount(token, "Cash Wallet", "CASH", "#3357FF");
+    createAccount(token, "Digital Wallet", "EWALLET", "#00FF00");
 
     // Create accounts for another user to ensure filtering works
-    createAccount(OTHER_USER_ID, "Other User Account", "BANK", "#000000");
+    createAccount(otherUserToken, "Other User Account", "BANK", "#000000");
   }
 
-  private void createAccount(String userId, String name, String type, String themeColor) {
+  private void createAccount(String token, String name, String type, String themeColor) {
     var body = String.format("""
         {
           "name": "%s",
@@ -62,7 +70,6 @@ public class GetUserAccountsIT extends AppTestUtil {
         }
         """, name, type, themeColor);
 
-    var token = SecureTestUtil.generateToken(userId);
     Unirest.post(baseUrl + "/accounts")
         .header("Authorization", "Bearer " + token)
         .body(body)
@@ -80,8 +87,6 @@ public class GetUserAccountsIT extends AppTestUtil {
   @Test
   public void shouldReturnAllAccountsForUser_WhenMultipleAccountsExist() {
     // Given
-    var token = SecureTestUtil.generateToken(USER_ID);
-
     // When
     var response = Unirest.get(baseUrl + "/users/{userId}/accounts")
         .routeParam("userId", USER_ID)
@@ -118,8 +123,6 @@ public class GetUserAccountsIT extends AppTestUtil {
   @Test
   public void shouldReturnOnlyUserSpecificAccounts_NotOtherUsersAccounts() {
     // Given
-    var token = SecureTestUtil.generateToken(USER_ID);
-
     // When
     var response = Unirest.get(baseUrl + "/users/{userId}/accounts")
         .routeParam("userId", USER_ID)
@@ -153,8 +156,6 @@ public class GetUserAccountsIT extends AppTestUtil {
   @Test
   public void shouldReturnAccountsWithCorrectDetails_WhenRequested() {
     // Given
-    var token = SecureTestUtil.generateToken(USER_ID);
-
     // When
     var response = Unirest.get(baseUrl + "/users/{userId}/accounts")
         .routeParam("userId", USER_ID)
@@ -206,7 +207,7 @@ public class GetUserAccountsIT extends AppTestUtil {
   @Test
   public void shouldReturnEmptyList_WhenUserHasNoAccounts() {
     // Given
-    var newUserId = "userwithnoaccount789";
+    var newUserId = "userwithnoaccount@email.com";
     var token = SecureTestUtil.generateToken(newUserId);
 
     // When
@@ -234,19 +235,16 @@ public class GetUserAccountsIT extends AppTestUtil {
   @Test
   public void shouldReturnCorrectAccountsForDifferentUsers() {
     // Given
-    var token1 = SecureTestUtil.generateToken(USER_ID);
-    var token2 = SecureTestUtil.generateToken(OTHER_USER_ID);
-
     // When - Get accounts for first user
     var response1 = Unirest.get(baseUrl + "/users/{userId}/accounts")
         .routeParam("userId", USER_ID)
-        .header("Authorization", "Bearer " + token1)
+        .header("Authorization", "Bearer " + token)
         .asString();
 
     // When - Get accounts for second user
     var response2 = Unirest.get(baseUrl + "/users/{userId}/accounts")
         .routeParam("userId", OTHER_USER_ID)
-        .header("Authorization", "Bearer " + token2)
+        .header("Authorization", "Bearer " + otherUserToken)
         .asString();
 
     // Then - First user should have at least 3 accounts
@@ -314,8 +312,6 @@ public class GetUserAccountsIT extends AppTestUtil {
   @Test
   public void shouldReturnConsistentResults_WhenCalledMultipleTimes() {
     // Given
-    var token = SecureTestUtil.generateToken(USER_ID);
-
     // When - First call
     var response1 = Unirest.get(baseUrl + "/users/{userId}/accounts")
         .routeParam("userId", USER_ID)

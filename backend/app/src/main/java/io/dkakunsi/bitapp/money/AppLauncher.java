@@ -24,62 +24,63 @@ import io.dkakunsi.bitapp.user.usecase.UpdateUserLanguage;
 
 public final class AppLauncher implements Launcher {
 
-        private static final String APP_PORT = "app.port";
+  private static final String APP_PORT = "app.port";
 
-        private JavalinServer server;
+  private JavalinServer server;
 
-        @Override
-        public void launch(Function<String, String> envProvider) {
-                var configuration = EnvironmentConfiguration.of(envProvider);
-                var mongoConfig = new MongoConfiguration(configuration);
+  @Override
+  public void launch(Function<String, String> envProvider) {
+    var configuration = EnvironmentConfiguration.of(envProvider);
+    var mongoConfig = new MongoConfiguration(configuration);
 
-                // Repositories
-                var datastore = mongoConfig.getDatastore();
-                var userRepository = new MongoUserRepository(datastore);
-                var accountRepository = new MongoAccountRepository(datastore);
+    // Repositories
+    var datastore = mongoConfig.getDatastore();
+    var userRepository = new MongoUserRepository(datastore);
+    var accountRepository = new MongoAccountRepository(datastore);
 
-                // UseCases
-                var registerUser = new RegisterUser(userRepository);
-                var getUser = new GetUser(userRepository);
-                var updateUserLanguage = new UpdateUserLanguage(userRepository);
-                var createAccount = new CreateAccount(accountRepository);
-                var getUserAccounts = new GetUserAccounts(accountRepository);
-                var updateAccount = new UpdateAccount(accountRepository);
+    // UseCases
+    var registerUser = new RegisterUser(userRepository);
+    var getUser = new GetUser(userRepository);
+    var updateUserLanguage = new UpdateUserLanguage(userRepository);
+    var createAccount = new CreateAccount(accountRepository);
+    var getUserAccounts = new GetUserAccounts(accountRepository);
+    var updateAccount = new UpdateAccount(accountRepository);
 
-                // endpoints
-                var authorizer = JWTAuthorizer.of(configuration);
-                var registerUserEndpoint = new RegisterUserJavalinEndpoint(registerUser)
-                                .withValidator();
-                var getUserEndpoint = new GetUserJavalinEndpoint(getUser)
-                                .withValidator();
-                var updateUserLanguageEndpoint = new UpdateUserLanguageJavalinEndpoint(updateUserLanguage)
-                                .setAuthorizer(authorizer)
-                                .withValidator();
-                var createAccountEndpoint = new CreateAccountJavalinEndpoint(createAccount)
-                                .setAuthorizer(authorizer)
-                                .withValidator();
-                var getUserAccountsEndpoint = new GetUserAccountsJavalinEndpoint(getUserAccounts)
-                                .setAuthorizer(authorizer)
-                                .withValidator();
-                var updateAccountEndpoint = new UpdateAccountJavalinEndpoint(updateAccount)
-                                .setAuthorizer(authorizer)
-                                .withValidator();
+    // endpoints
+    var authorizer = JWTAuthorizer.of(configuration);
+    var registerUserEndpoint = new RegisterUserJavalinEndpoint(registerUser)
+        .withValidator();
+    var getUserEndpoint = new GetUserJavalinEndpoint(getUser)
+        .setAuthorizer(authorizer)
+        .withValidator();
+    var updateUserLanguageEndpoint = new UpdateUserLanguageJavalinEndpoint(updateUserLanguage)
+        .setAuthorizer(authorizer)
+        .withValidator();
+    var createAccountEndpoint = new CreateAccountJavalinEndpoint(createAccount)
+        .setAuthorizer(authorizer)
+        .withValidator();
+    var getUserAccountsEndpoint = new GetUserAccountsJavalinEndpoint(getUserAccounts)
+        .setAuthorizer(authorizer)
+        .withValidator();
+    var updateAccountEndpoint = new UpdateAccountJavalinEndpoint(updateAccount)
+        .setAuthorizer(authorizer)
+        .withValidator();
 
-                var appPort = configuration.get(APP_PORT).orElse("8080");
-                server = JavalinServer.of(Integer.parseInt(appPort))
-                                .addEndpoint(registerUserEndpoint)
-                                .addEndpoint(getUserEndpoint)
-                                .addEndpoint(updateUserLanguageEndpoint)
-                                .addEndpoint(createAccountEndpoint)
-                                .addEndpoint(getUserAccountsEndpoint)
-                                .addEndpoint(updateAccountEndpoint)
-                                .start();
-        }
+    var appPort = configuration.get(APP_PORT).orElse("8080");
+    server = JavalinServer.of(Integer.parseInt(appPort))
+        .addEndpoint(registerUserEndpoint)
+        .addEndpoint(getUserEndpoint)
+        .addEndpoint(updateUserLanguageEndpoint)
+        .addEndpoint(createAccountEndpoint)
+        .addEndpoint(getUserAccountsEndpoint)
+        .addEndpoint(updateAccountEndpoint)
+        .start();
+  }
 
-        @Override
-        public void stop() {
-                if (server != null) {
-                        server.stop();
-                }
-        }
+  @Override
+  public void stop() {
+    if (server != null) {
+      server.stop();
+    }
+  }
 }

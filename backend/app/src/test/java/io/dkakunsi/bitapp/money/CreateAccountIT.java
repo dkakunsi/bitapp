@@ -21,17 +21,20 @@ public class CreateAccountIT extends AppTestUtil {
   private static final int port = 20001;
 
   private static CreateAccountIT sut = new CreateAccountIT();
+
   private static String baseUrl;
+
   private static String token;
 
   @BeforeAll
   static void setup() throws Exception {
-    var appEnv = Map.of(APP_PORT, Integer.toString(port), JWTAuthorizer.JWT_PUBLIC_KEY, SecureTestUtil.PUBLIC_KEY);
+    var appEnv = Map.of(APP_PORT, Integer.toString(port),
+        JWTAuthorizer.JWT_PUBLIC_KEY, SecureTestUtil.PUBLIC_KEY);
     sut.create(appEnv);
     sut.startServer(new AppLauncher());
 
     baseUrl = "http://localhost:" + port;
-    token = SecureTestUtil.generateToken("User001");
+    token = SecureTestUtil.generateToken(USER_ID);
   }
 
   @AfterAll
@@ -67,7 +70,7 @@ public class CreateAccountIT extends AppTestUtil {
     assertEquals("BANK", responseBody.getString("type"));
     assertEquals("#0000FF", responseBody.getString("themeColor"));
     assertEquals(new BigDecimal("0"), responseBody.getBigDecimal("balance"));
-    assertEquals("User001", responseBody.getString("user"));
+    assertEquals("user@email.com", responseBody.getString("user"));
   }
 
   /**
@@ -98,7 +101,7 @@ public class CreateAccountIT extends AppTestUtil {
     assertEquals("CASH", responseBody.getString("type"));
     assertEquals("#00FF00", responseBody.getString("themeColor"));
     assertEquals(new BigDecimal("0"), responseBody.getBigDecimal("balance"));
-    assertEquals("User001", responseBody.getString("user"));
+    assertEquals("user@email.com", responseBody.getString("user"));
   }
 
   /**
@@ -129,7 +132,7 @@ public class CreateAccountIT extends AppTestUtil {
     assertEquals("EWALLET", responseBody.getString("type"));
     assertEquals("#FF0000", responseBody.getString("themeColor"));
     assertEquals(new BigDecimal("0"), responseBody.getBigDecimal("balance"));
-    assertEquals("User001", responseBody.getString("user"));
+    assertEquals("user@email.com", responseBody.getString("user"));
   }
 
   /**
@@ -158,7 +161,7 @@ public class CreateAccountIT extends AppTestUtil {
     assertEquals("Simple Account", responseBody.getString("name"));
     assertEquals("BANK", responseBody.getString("type"));
     assertEquals(new BigDecimal("0"), responseBody.getBigDecimal("balance"));
-    assertEquals("User001", responseBody.getString("user"));
+    assertEquals("user@email.com", responseBody.getString("user"));
     assertEquals("#FFFFFF", responseBody.getString("themeColor"));
   }
 
@@ -184,7 +187,7 @@ public class CreateAccountIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("Invalid data", response.getBody());
+    assertEquals("name: must not be blank", response.getBody());
   }
 
   /**
@@ -208,7 +211,7 @@ public class CreateAccountIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("Invalid data", response.getBody());
+    assertEquals("name: must not be blank", response.getBody());
   }
 
   /**

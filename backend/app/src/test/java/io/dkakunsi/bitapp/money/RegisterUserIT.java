@@ -8,7 +8,9 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import io.dkakunsi.bitapp.jwt.JWTAuthorizer;
 import io.dkakunsi.bitapp.test.AppTestUtil;
+import io.dkakunsi.bitapp.test.SecureTestUtil;
 import kong.unirest.Unirest;
 import kong.unirest.json.JSONObject;
 
@@ -17,14 +19,19 @@ public class RegisterUserIT extends AppTestUtil {
   private static final int port = 20004;
 
   private static RegisterUserIT sut = new RegisterUserIT();
+
   private static String baseUrl;
+
+  private static String token;
 
   @BeforeAll
   static void setup() throws Exception {
-    sut.create(Map.of(APP_PORT, Integer.toString(port)));
+    sut.create(Map.of(APP_PORT, Integer.toString(port),
+        JWTAuthorizer.JWT_PUBLIC_KEY, SecureTestUtil.PUBLIC_KEY));
     sut.startServer(new AppLauncher());
 
     baseUrl = "http://localhost:" + port;
+    token = SecureTestUtil.generateToken(USER_ID);
   }
 
   @AfterAll
@@ -58,7 +65,9 @@ public class RegisterUserIT extends AppTestUtil {
     assertEquals("http://example.com/photo.jpg", postResponseBody.getString("photoUrl"));
     assertEquals("EN", postResponseBody.getString("language"));
 
-    var getResponse = Unirest.get(baseUrl + "/user/john.doe@example.com").asString();
+    var getResponse = Unirest.get(baseUrl + "/users/john.doe@example.com")
+        .header("Authorization", "Bearer " + token)
+        .asString();
     assertEquals(200, getResponse.getStatus());
     var getResponseBody = new JSONObject(getResponse.getBody());
     assertEquals("John Doe", getResponseBody.getString("name"));
@@ -87,22 +96,20 @@ public class RegisterUserIT extends AppTestUtil {
     var response = Unirest.post(baseUrl + "/users").body(body).asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("Invalid data", response.getBody());
+    assertEquals("email: must be a well-formed email address", response.getBody());
   }
 
   /**
-   * <b>Given</b> a user registration request with a phone number that already
-   * exists in the system<br>
-   * <b>When</b> the POST /users endpoint is called to register another user with
-   * the same phone<br>
-   * <b>Then</b> the second request should fail with status 400 and "Key is
-   * duplicated" message
+   * <b>Given</b> a user registration request with invalid name (null, empty, or
+   * whitespace)<br>
+   * <b>When</b> the POST /users endpoint is called<br>
+   * <b>Then</b> the request should fail with status 400 and validation message
    */
   @Test
-  public void givenValidRegisterRequest_WhenThePhoneNoIsDuplicated_ThenShouldFailWithBadRequest() {
+  public void givenNullNameOnRegisterRequest_WhenSent_ThenShouldFailWithBadRequest() {
     var body = """
         {
-          "name": "John Doe",
+          "name": null,
           "email": "john.doe@example.com",
           "phone": "1234567890",
           "photoUrl": "http://example.com/photo.jpg"
@@ -110,26 +117,39 @@ public class RegisterUserIT extends AppTestUtil {
         """;
     var response = Unirest.post(baseUrl + "/users").body(body).asString();
 
-    assertEquals(200, response.getStatus());
+    assertEquals(400, response.getStatus());
+    assertEquals("name: must not be blank", response.getBody());
+  }
 
-    var responseBody = new JSONObject(response.getBody());
-    assertEquals("John Doe", responseBody.getString("name"));
-    assertEquals("john.doe@example.com", responseBody.getString("email"));
-    assertEquals("1234567890", responseBody.getString("phone"));
-    assertEquals("http://example.com/photo.jpg", responseBody.getString("photoUrl"));
-    assertEquals("EN", responseBody.getString("language"));
-
-    var body2 = """
+  @Test
+  public void givenEmptyNameOnRegisterRequest_WhenSent_ThenShouldFailWithBadRequest() {
+    var body = """
         {
-          "name": "Alicia Key",
-          "email": "alice@example.com",
+          "name": "",
+          "email": "john.doe@example.com",
           "phone": "1234567890",
           "photoUrl": "http://example.com/photo.jpg"
         }
         """;
-    var response2 = Unirest.post(baseUrl + "/users").body(body2).asString();
+    var response = Unirest.post(baseUrl + "/users").body(body).asString();
 
-    assertEquals(400, response2.getStatus());
-    assertEquals("Key is duplicated", response2.getBody());
+    assertEquals(400, response.getStatus());
+    assertEquals("name: must not be blank", response.getBody());
+  }
+
+  @Test
+  public void givenWhitespaceNameOnRegisterRequest_WhenSent_ThenShouldFailWithBadRequest() {
+    var body = """
+        {
+          "name": "   ",
+          "email": "john.doe@example.com",
+          "phone": "1234567890",
+          "photoUrl": "http://example.com/photo.jpg"
+        }
+        """;
+    var response = Unirest.post(baseUrl + "/users").body(body).asString();
+
+    assertEquals(400, response.getStatus());
+    assertEquals("name: must not be blank", response.getBody());
   }
 }

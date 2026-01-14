@@ -163,6 +163,7 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${maven-surefire-plugin.version}</version>
           <configuration>
+            <useModulePath>false</useModulePath>
             <includes>
               <include>**/*Test.java</include>
             </includes>
@@ -186,6 +187,10 @@
                 <goal>verify</goal>
               </goals>
               <configuration>
+                <useModulePath>false</useModulePath>
+                <classpathDependencyExcludes>
+                  <classpathDependencyExclude>${project.groupId}:${project.artifactId}</classpathDependencyExclude>
+                </classpathDependencyExcludes>
                 <includes>
                   <include>**/*IT.java</include>
                 </includes>

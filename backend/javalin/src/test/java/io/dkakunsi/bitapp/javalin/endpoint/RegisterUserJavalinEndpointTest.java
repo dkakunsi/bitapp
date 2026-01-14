@@ -150,7 +150,7 @@ class RegisterUserJavalinEndpointTest {
     assertEquals(400, response.getStatus());
 
     var responseBody = response.getBody();
-    assertEquals("Invalid email format", responseBody);
+    assertEquals("email: must be a well-formed email address", responseBody);
   }
 
   @Test

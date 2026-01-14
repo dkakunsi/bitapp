@@ -6,7 +6,10 @@ import java.util.Map;
 import io.dkakunsi.bitapp.common.Launcher;
 
 public abstract class AppTestUtil {
+
   protected static final String APP_PORT = "app.port";
+
+  protected static final String USER_ID = "user@email.com";
 
   private Launcher launcher;
 

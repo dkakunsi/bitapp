@@ -3,13 +3,14 @@ package io.dkakunsi.bitapp.user.dto;
 import io.dkakunsi.bitapp.common.Id;
 import io.dkakunsi.bitapp.user.model.User;
 import io.dkakunsi.bitapp.user.model.User.Language;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
 @Builder
 public final record RegisterUserInput(
     @NotBlank String name,
-    @NotBlank String email,
+    @NotBlank @Email String email,
     String phone,
     String photoUrl) {
 
