@@ -1,5 +1,6 @@
 package io.dkakunsi.bitapp.money;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Map;
@@ -78,10 +79,113 @@ public class RegisterUserIT extends AppTestUtil {
   }
 
   /**
+   * <b>Given</b> a valid user registration request without phone and photoUrl
+   * fields<br>
+   * <b>When</b> the POST /users endpoint is called and the user is retrieved<br>
+   * <b>Then</b> the user should be created with status 200 and default language
+   * EN, and retrievable via GET
+   */
+  @Test
+  public void givenValidRegisterRequestWithoutPhoneAndPhotoUrl_WhenSent_ThenShouldSuccess() {
+    var body = """
+        {
+          "name": "Jane Doe",
+          "email": "jane.doe@example.com"
+        }
+        """;
+
+    var postResponse = Unirest.post(baseUrl + "/users").body(body).asString();
+    assertEquals(200, postResponse.getStatus());
+    var postResponseBody = new JSONObject(postResponse.getBody());
+    assertEquals("Jane Doe", postResponseBody.getString("name"));
+    assertEquals("jane.doe@example.com", postResponseBody.getString("email"));
+    assertNull(postResponseBody.get("phone"));
+    assertNull(postResponseBody.get("photoUrl"));
+    assertEquals("EN", postResponseBody.getString("language"));
+
+    var getResponse = Unirest.get(baseUrl + "/users/jane.doe@example.com")
+        .header("Authorization", "Bearer " + token)
+        .asString();
+    assertEquals(200, getResponse.getStatus());
+    var getResponseBody = new JSONObject(getResponse.getBody());
+    assertEquals("Jane Doe", getResponseBody.getString("name"));
+    assertEquals("jane.doe@example.com", getResponseBody.getString("email"));
+    assertNull(getResponseBody.get("phone"));
+    assertNull(getResponseBody.get("photoUrl"));
+    assertEquals("EN", getResponseBody.getString("language"));
+  }
+
+  /**
+   * <b>Given</b> a user registration request with null value on email<br>
+   * <b>When</b> the POST /users endpoint is called<br>
+   * <b>Then</b> the request should fail with status 400 and validation message
+   * mentioning that the email must not be blank
+   */
+  @Test
+  public void givenNullEmailOnRegisterRequest_WhenSent_ThenShouldFailWithBadRequest() {
+    var body = """
+        {
+          "name": "John Doe",
+          "email": null,
+          "phone": "1234567890",
+          "photoUrl": "http://example.com/photo.jpg"
+        }
+        """;
+    var response = Unirest.post(baseUrl + "/users").body(body).asString();
+
+    assertEquals(400, response.getStatus());
+    assertEquals("email: must not be blank", response.getBody());
+  }
+
+  /**
+   * <b>Given</b> a user registration request with empty value on email<br>
+   * <b>When</b> the POST /users endpoint is called<br>
+   * <b>Then</b> the request should fail with status 400 and validation message
+   * mentioning that the email must not be blank
+   */
+  @Test
+  public void givenEmptyEmailOnRegisterRequest_WhenSent_ThenShouldFailWithBadRequest() {
+    var body = """
+        {
+          "name": "John Doe",
+          "email": "",
+          "phone": "1234567890",
+          "photoUrl": "http://example.com/photo.jpg"
+        }
+        """;
+    var response = Unirest.post(baseUrl + "/users").body(body).asString();
+
+    assertEquals(400, response.getStatus());
+    assertEquals("email: must not be blank", response.getBody());
+  }
+
+  /**
+   * <b>Given</b> a user registration request with whitespace value on email<br>
+   * <b>When</b> the POST /users endpoint is called<br>
+   * <b>Then</b> the request should fail with status 400 and validation message
+   * mentioning that the email must not be blank and must be well-formed
+   */
+  @Test
+  public void givenWhitespaceEmailOnRegisterRequest_WhenSent_ThenShouldFailWithBadRequest() {
+    var body = """
+        {
+          "name": "John Doe",
+          "email": "   ",
+          "phone": "1234567890",
+          "photoUrl": "http://example.com/photo.jpg"
+        }
+        """;
+    var response = Unirest.post(baseUrl + "/users").body(body).asString();
+
+    assertEquals(400, response.getStatus());
+    assertEquals("email: must be a well-formed email address, email: must not be blank", response.getBody());
+  }
+
+  /**
    * <b>Given</b> a user registration request with an invalid email format<br>
    * <b>When</b> the POST /users endpoint is called<br>
-   * <b>Then</b> the request should fail with status 400 and "Invalid data"
-   * message
+   * <b>Then</b> the request should fail with status 400 and validation
+   * message mentioning that the email is not well-formed
    */
   @Test
   public void givenInvalidEmailOnRegisterRequest_WhenSent_ThenShouldFailWithBadRequest() {
@@ -100,10 +204,11 @@ public class RegisterUserIT extends AppTestUtil {
   }
 
   /**
-   * <b>Given</b> a user registration request with invalid name (null, empty, or
-   * whitespace)<br>
+   * <b>Given</b> a user registration request with null value on name<br>
    * <b>When</b> the POST /users endpoint is called<br>
    * <b>Then</b> the request should fail with status 400 and validation message
+   * mentioning
+   * that the name must not be blank
    */
   @Test
   public void givenNullNameOnRegisterRequest_WhenSent_ThenShouldFailWithBadRequest() {
@@ -121,6 +226,13 @@ public class RegisterUserIT extends AppTestUtil {
     assertEquals("name: must not be blank", response.getBody());
   }
 
+  /**
+   * <b>Given</b> a user registration request with empty value on name<br>
+   * <b>When</b> the POST /users endpoint is called<br>
+   * <b>Then</b> the request should fail with status 400 and validation message
+   * mentioning
+   * that the name must not be blank
+   */
   @Test
   public void givenEmptyNameOnRegisterRequest_WhenSent_ThenShouldFailWithBadRequest() {
     var body = """
@@ -137,6 +249,13 @@ public class RegisterUserIT extends AppTestUtil {
     assertEquals("name: must not be blank", response.getBody());
   }
 
+  /**
+   * <b>Given</b> a user registration request with whitespace value on name<br>
+   * <b>When</b> the POST /users endpoint is called<br>
+   * <b>Then</b> the request should fail with status 400 and validation message
+   * mentioning
+   * that the name must not be blank
+   */
   @Test
   public void givenWhitespaceNameOnRegisterRequest_WhenSent_ThenShouldFailWithBadRequest() {
     var body = """

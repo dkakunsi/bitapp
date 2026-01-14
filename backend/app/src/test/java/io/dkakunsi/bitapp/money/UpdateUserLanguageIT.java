@@ -82,22 +82,6 @@ public class UpdateUserLanguageIT extends AppTestUtil {
   }
 
   /**
-   * <b>Given</b> a user email that does not exist in the system<br>
-   * <b>When</b> the PATCH /users/{email}/language endpoint is called<br>
-   * <b>Then</b> the request should fail with status 404 and "User not found"
-   * message
-   */
-  @Test
-  public void givenUpdateLanguageRequest_WhenUserDoesNotExist_ThenShouldReturn404() {
-    var nonExistentUserToken = SecureTestUtil.generateToken("nonexistent@example.com");
-    var updateResponse = Unirest.patch(baseUrl + "/users/nonexistent@example.com/language/ID")
-        .header("Authorization", "Bearer " + nonExistentUserToken)
-        .asString();
-    assertEquals(404, updateResponse.getStatus());
-    assertEquals("User not found", updateResponse.getBody());
-  }
-
-  /**
    * <b>Given</b> a registered user with language ID<br>
    * <b>When</b> the PATCH /users/{email}/language endpoint is called with
    * language EN<br>
@@ -144,5 +128,51 @@ public class UpdateUserLanguageIT extends AppTestUtil {
     assertEquals(200, getResponse.getStatus());
     var getResponseBody = new JSONObject(getResponse.getBody());
     assertEquals("EN", getResponseBody.getString("language"));
+  }
+
+  /**
+   * <b>Given</b> a user email that does not exist in the system<br>
+   * <b>When</b> the PATCH /users/{email}/language endpoint is called<br>
+   * <b>Then</b> the request should fail with status 404 and "User not found"
+   * message
+   */
+  @Test
+  public void givenUpdateLanguageRequest_WhenUserDoesNotExist_ThenShouldReturn404() {
+    var nonExistentUserToken = SecureTestUtil.generateToken("nonexistent@example.com");
+    var updateResponse = Unirest.patch(baseUrl + "/users/nonexistent@example.com/language/ID")
+        .header("Authorization", "Bearer " + nonExistentUserToken)
+        .asString();
+    assertEquals(404, updateResponse.getStatus());
+    assertEquals("User not found", updateResponse.getBody());
+  }
+
+  /**
+   * <b>Given</b> a registered user with language EN<br>
+   * <b>When</b> the PATCH /users/{email}/language endpoint is called with
+   * an unsupported language code<br>
+   * <b>Then</b> the request should fail with status 400
+   */
+  @Test
+  public void givenUpdateLanguageRequest_WhenLanguageIsUnsupported_ThenShouldReturn400() {
+    // First, register a user
+    var registerBody = """
+        {
+         "name": "Alice Johnson",
+         "email": "alice.johnson@example.com",
+         "phone": "5559876543",
+         "photoUrl": "http://example.com/alice.jpg"
+        }
+        """;
+
+    var registerResponse = Unirest.post(baseUrl + "/users").body(registerBody).asString();
+    assertEquals(200, registerResponse.getStatus());
+
+    // Try to update to an unsupported language
+    var aliceToken = SecureTestUtil.generateToken("alice.johnson@example.com");
+    var updateResponse = Unirest.patch(baseUrl + "/users/alice.johnson@example.com/language/FR")
+        .header("Authorization", "Bearer " + aliceToken)
+        .asString();
+    assertEquals(400, updateResponse.getStatus());
+    assertEquals("Invalid language: FR", updateResponse.getBody());
   }
 }

@@ -91,4 +91,29 @@ public class GetUserIT extends AppTestUtil {
     assertEquals(404, getResponse.getStatus());
     assertEquals("User not found", getResponse.getBody());
   }
+
+  /**
+   * <b>Given</b> a request without Authorization header<br>
+   * <b>When</b> the GET /user/{email} endpoint is called<br>
+   * <b>Then</b> an empty response should be returned with status 401
+   */
+  @Test
+  public void shouldReturnUnauthorized_WhenNoAuthorizationHeader() {
+    var getResponse = Unirest.get(baseUrl + "/users/test@example.com")
+        .asString();
+    assertEquals(401, getResponse.getStatus());
+  }
+
+  /**
+   * <b>Given</b> a request with an invalid Authorization header<br>
+   * <b>When</b> the GET /user/{email} endpoint is called<br>
+   * <b>Then</b> an empty response should be returned with status 401
+   */
+  @Test
+  public void shouldReturnUnauthorized_WhenInvalidToken() {
+    var getResponse = Unirest.get(baseUrl + "/users/test@example.com")
+        .header("Authorization", "Bearer invalid-token")
+        .asString();
+    assertEquals(401, getResponse.getStatus());
+  }
 }

@@ -236,19 +236,11 @@ class UpdateUserLanguageJavalinEndpointTest {
    * <b>When</b> the PATCH /users/{email}/language endpoint is called<br>
    * <b>Then</b> should return status 400 with error message
    */
-  @SuppressWarnings("unchecked")
   @Test
   void givenUpdateLanguageRequestWithInvalidData_WhenRequested_ThenShouldReturn400() {
     // Given
-    var email = "user@email.com";
-    var output = mock(Result.class);
-    when(output.isSuccess()).thenReturn(false);
-    when(output.isFailed()).thenReturn(true);
-    when(output.error()).thenReturn(Optional.of(new AppError(Code.BAD_REQUEST, "Invalid language")));
-    when(usecase.process(any(Context.class), any(UpdateUserLanguageInput.class))).thenReturn(output);
-
     // When
-    var response = Unirest.patch(baseUrl + "/users/" + email + "/language/INVALID_LANG").asString();
+    var response = Unirest.patch(baseUrl + "/users/user@email.com/language/INVALID_LANG").asString();
 
     // Then
     assertEquals(400, response.getStatus());
