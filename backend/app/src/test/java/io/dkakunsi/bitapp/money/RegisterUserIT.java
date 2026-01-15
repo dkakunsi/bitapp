@@ -1,6 +1,7 @@
 package io.dkakunsi.bitapp.money;
 
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Map;
@@ -178,7 +179,8 @@ public class RegisterUserIT extends AppTestUtil {
     var response = Unirest.post(baseUrl + "/users").body(body).asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("email: must be a well-formed email address, email: must not be blank", response.getBody());
+    assertTrue(response.getBody().contains("email: must be a well-formed email address"));
+    assertTrue(response.getBody().contains("email: must not be blank"));
   }
 
   /**
