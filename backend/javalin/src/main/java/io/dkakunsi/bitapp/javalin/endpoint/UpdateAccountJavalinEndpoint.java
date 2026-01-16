@@ -4,6 +4,7 @@ import java.lang.reflect.Type;
 
 import io.dkakunsi.bitapp.account.dto.UpdateAccountInput;
 import io.dkakunsi.bitapp.account.dto.UpdateAccountResult;
+import io.dkakunsi.bitapp.account.model.Account;
 import io.dkakunsi.bitapp.account.usecase.UpdateAccount;
 import io.dkakunsi.bitapp.javalin.JavalinEndpoint;
 import io.javalin.http.Context;
@@ -31,14 +32,28 @@ public class UpdateAccountJavalinEndpoint extends JavalinEndpoint<UpdateAccountI
 
   @Override
   protected UpdateAccountInput buildInput(Context ctx) {
-    var body = ctx.bodyAsClass(UpdateAccountInput.class);
+    var body = parseRequestBody(ctx);
     var id = ctx.pathParam("id");
 
     return UpdateAccountInput.builder()
         .id(id)
         .name(body.name())
-        .type(body.type())
+        .type(Account.Type.from(body.type()))
         .themeColor(body.themeColor())
         .build();
   }
+
+  private static UpdateAccountRequest parseRequestBody(Context ctx) {
+    try {
+      return ctx.bodyAsClass(UpdateAccountRequest.class);
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Invalid request body", e);
+    }
+  }
+}
+
+final record UpdateAccountRequest(
+    String name,
+    String type,
+    String themeColor) {
 }

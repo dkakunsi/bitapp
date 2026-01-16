@@ -7,13 +7,14 @@ import io.dkakunsi.bitapp.account.model.Account;
 import io.dkakunsi.bitapp.common.Id;
 import io.dkakunsi.bitapp.user.model.User;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
 public final record CreateAccountInput(
     @NotBlank String name,
-    String themeColor,
-    Account.Type type) {
+    @NotNull Account.Type type,
+    String themeColor) {
 
   private static final String DEFAULT_THEME_COLOR = "#FFFFFF";
 

@@ -27,7 +27,16 @@ public final class User {
 
   public static enum Language {
     EN,
-    ID
+    ID;
+
+    public static User.Language from(String language) {
+      try {
+        return valueOf(language);
+      } catch (IllegalArgumentException ex) {
+        throw new IllegalArgumentException("Invalid language: " + language);
+      }
+    }
+
   }
 
   public boolean needUpdate(RegisterUserInput userModel) {

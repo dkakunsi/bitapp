@@ -4,6 +4,7 @@ import java.lang.reflect.Type;
 
 import io.dkakunsi.bitapp.account.dto.CreateAccountInput;
 import io.dkakunsi.bitapp.account.dto.CreateAccountResult;
+import io.dkakunsi.bitapp.account.model.Account;
 import io.dkakunsi.bitapp.account.usecase.CreateAccount;
 import io.dkakunsi.bitapp.javalin.JavalinEndpoint;
 import io.javalin.http.Context;
@@ -31,6 +32,17 @@ public class CreateAccountJavalinEndpoint extends JavalinEndpoint<CreateAccountI
 
   @Override
   protected CreateAccountInput buildInput(Context ctx) {
-    return ctx.bodyAsClass(CreateAccountInput.class);
+    var body = ctx.bodyAsClass(CreateAccountRequest.class);
+    return CreateAccountInput.builder()
+        .name(body.name())
+        .type(Account.Type.from(body.type()))
+        .themeColor(body.themeColor())
+        .build();
   }
+}
+
+final record CreateAccountRequest(
+    String name,
+    String type,
+    String themeColor) {
 }

@@ -136,10 +136,57 @@ public class CreateAccountIT extends AppTestUtil {
   }
 
   /**
+   * <b>Given</b> an account creation request with an invalid type<br>
+   * <b>When</b> the POST /accounts endpoint is called<br>
+   * <b>Then</b> the request should fail with status 400
+   */
+  @Test
+  public void shouldFailWithBadRequest_WhenTypeIsInvalid() {
+    var body = """
+        {
+         "name": "Invalid Type Account",
+         "type": "INVALID_TYPE",
+         "themeColor": "#0000FF"
+        }
+        """;
+
+    var response = Unirest.post(baseUrl + "/accounts")
+        .header("Authorization", "Bearer " + token)
+        .body(body)
+        .asString();
+
+    assertEquals(400, response.getStatus());
+    assertEquals("Invalid account type: INVALID_TYPE", response.getBody());
+  }
+
+  /**
+   * <b>Given</b> an account creation request without a type field<br>
+   * <b>When</b> the POST /accounts endpoint is called<br>
+   * <b>Then</b> the request should fail with status 400
+   */
+  @Test
+  public void shouldFailWithBadRequest_WhenTypeIsMissing() {
+    var body = """
+        {
+         "name": "No Type Account",
+         "themeColor": "#0000FF"
+        }
+        """;
+
+    var response = Unirest.post(baseUrl + "/accounts")
+        .header("Authorization", "Bearer " + token)
+        .body(body)
+        .asString();
+
+    assertEquals(400, response.getStatus());
+    assertEquals("type: must not be null", response.getBody());
+  }
+
+  /**
    * <b>Given</b> a valid account creation request without themeColor field<br>
    * <b>When</b> the POST /accounts endpoint is called<br>
    * <b>Then</b> a new account should be created successfully with status 200,
-   * using EMPTY theme color
+   * using default theme color (white)
    */
   @Test
   public void shouldCreateAccountWithoutThemeColor_WhenNotProvided() {
@@ -168,8 +215,8 @@ public class CreateAccountIT extends AppTestUtil {
   /**
    * <b>Given</b> an account creation request with an empty name field<br>
    * <b>When</b> the POST /accounts endpoint is called<br>
-   * <b>Then</b> the request should fail with status 400 and "Invalid data"
-   * message
+   * <b>Then</b> the request should fail with status 400 and "name: must not be
+   * blank" message
    */
   @Test
   public void shouldFailWithBadRequest_WhenNameIsEmpty() {
@@ -193,8 +240,8 @@ public class CreateAccountIT extends AppTestUtil {
   /**
    * <b>Given</b> an account creation request without a name field<br>
    * <b>When</b> the POST /accounts endpoint is called<br>
-   * <b>Then</b> the request should fail with status 400 and "Invalid data"
-   * message
+   * <b>Then</b> the request should fail with status 400 and "name: must not be
+   * blank" message
    */
   @Test
   public void shouldFailWithBadRequest_WhenNameIsMissing() {
@@ -268,5 +315,51 @@ public class CreateAccountIT extends AppTestUtil {
     assertNotNull(firstAccountId);
     assertNotNull(secondAccountId);
     assertEquals(false, firstAccountId.equals(secondAccountId));
+  }
+
+  /**
+   * <b>Given</b> an account creation request without authorization token<br>
+   * <b>When</b> the POST /accounts endpoint is called<br>
+   * <b>Then</b> the request should fail with status 401
+   */
+  @Test
+  public void shouldFailWithUnauthorized_WhenNoTokenProvided() {
+    var body = """
+        {
+         "name": "Unauthorized Account",
+         "type": "BANK",
+         "themeColor": "#0000FF"
+        }
+        """;
+
+    var response = Unirest.post(baseUrl + "/accounts")
+        .body(body)
+        .asString();
+
+    assertEquals(401, response.getStatus());
+  }
+
+  /**
+   * <b>Given</b> an account creation request with an invalid authorization
+   * token<br>
+   * <b>When</b> the POST /accounts endpoint is called<br>
+   * <b>Then</b> the request should fail with status 401
+   */
+  @Test
+  public void shouldFailWithUnauthorized_WhenInvalidTokenProvided() {
+    var body = """
+        {
+         "name": "Unauthorized Account",
+         "type": "BANK",
+         "themeColor": "#0000FF"
+        }
+        """;
+
+    var response = Unirest.post(baseUrl + "/accounts")
+        .header("Authorization", "Bearer invalid_token")
+        .body(body)
+        .asString();
+
+    assertEquals(401, response.getStatus());
   }
 }

@@ -5,5 +5,5 @@ import lombok.Builder;
 
 @Builder
 public record GetUserAccountsInput(
-        @NotBlank String userId) {
+    @NotBlank String userId) {
 }

@@ -7,7 +7,7 @@ import lombok.Builder;
 @Builder
 public final record UpdateAccountInput(
     @NotBlank String id,
-    String name,
+    @NotBlank String name,
     Account.Type type,
     String themeColor) {
 }

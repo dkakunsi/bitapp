@@ -33,7 +33,17 @@ public final class Account {
     BANK,
     CASH,
     EWALLET,
-    OTHER
+    OTHER;
+
+    public static Type from(String type) {
+      try {
+        return valueOf(type);
+      } catch (IllegalArgumentException e) {
+        throw new IllegalArgumentException("Invalid account type: " + type);
+      } catch (NullPointerException e) {
+        return null;
+      }
+    }
   }
 
   public Account updateDetails(UpdateAccountInput input, String requester) {
