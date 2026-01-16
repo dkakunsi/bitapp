@@ -174,6 +174,6 @@ public class UpdateUserLanguageIT extends AppTestUtil {
         .header("Authorization", "Bearer " + aliceToken)
         .asString();
     assertEquals(400, updateResponse.getStatus());
-    assertEquals("Invalid language: FR", updateResponse.getBody());
+    assertEquals("language: invalid value", updateResponse.getBody());
   }
 }

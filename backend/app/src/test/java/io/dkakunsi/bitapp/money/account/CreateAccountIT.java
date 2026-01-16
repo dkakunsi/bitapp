@@ -157,7 +157,7 @@ public class CreateAccountIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("Invalid account type: INVALID_TYPE", response.getBody());
+    assertEquals("type: invalid value", response.getBody());
   }
 
   /**
