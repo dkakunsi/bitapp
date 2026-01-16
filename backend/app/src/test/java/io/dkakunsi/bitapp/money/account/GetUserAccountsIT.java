@@ -1,4 +1,4 @@
-package io.dkakunsi.bitapp.money;
+package io.dkakunsi.bitapp.money.account;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.jwt.JWTAuthorizer;
+import io.dkakunsi.bitapp.money.AppLauncher;
 import io.dkakunsi.bitapp.test.AppTestUtil;
 import io.dkakunsi.bitapp.test.SecureTestUtil;
 import kong.unirest.Unirest;
