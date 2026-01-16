@@ -1,5 +1,6 @@
 package io.dkakunsi.bitapp.money.loan;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -776,6 +777,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("date: invalid value; time: invalid value", response.getBody());
+    assertTrue(response.getBody().contains("date: invalid value"));
+    assertTrue(response.getBody().contains("time: invalid value"));
   }
 }

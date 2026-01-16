@@ -9,14 +9,17 @@ import io.dkakunsi.bitapp.common.EnvironmentConfiguration;
 import io.dkakunsi.bitapp.common.Launcher;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.javalin.endpoint.CreateAccountJavalinEndpoint;
+import io.dkakunsi.bitapp.javalin.endpoint.CreateLoanJavalinEndpoint;
 import io.dkakunsi.bitapp.javalin.endpoint.GetUserAccountsJavalinEndpoint;
 import io.dkakunsi.bitapp.javalin.endpoint.GetUserJavalinEndpoint;
 import io.dkakunsi.bitapp.javalin.endpoint.RegisterUserJavalinEndpoint;
 import io.dkakunsi.bitapp.javalin.endpoint.UpdateAccountJavalinEndpoint;
 import io.dkakunsi.bitapp.javalin.endpoint.UpdateUserLanguageJavalinEndpoint;
 import io.dkakunsi.bitapp.jwt.JWTAuthorizer;
+import io.dkakunsi.bitapp.loan.usecase.CreateLoan;
 import io.dkakunsi.bitapp.mongo.MongoConfiguration;
 import io.dkakunsi.bitapp.mongo.repository.MongoAccountRepository;
+import io.dkakunsi.bitapp.mongo.repository.MongoLoanRepository;
 import io.dkakunsi.bitapp.mongo.repository.MongoUserRepository;
 import io.dkakunsi.bitapp.user.usecase.GetUser;
 import io.dkakunsi.bitapp.user.usecase.RegisterUser;
@@ -37,6 +40,7 @@ public final class AppLauncher implements Launcher {
     var datastore = mongoConfig.getDatastore();
     var userRepository = new MongoUserRepository(datastore);
     var accountRepository = new MongoAccountRepository(datastore);
+    var loanRepository = new MongoLoanRepository(datastore);
 
     // UseCases
     var registerUser = new RegisterUser(userRepository);
@@ -45,6 +49,7 @@ public final class AppLauncher implements Launcher {
     var createAccount = new CreateAccount(accountRepository);
     var getUserAccounts = new GetUserAccounts(accountRepository);
     var updateAccount = new UpdateAccount(accountRepository);
+    var createLoan = new CreateLoan(loanRepository);
 
     // endpoints
     var authorizer = JWTAuthorizer.of(configuration);
@@ -65,6 +70,9 @@ public final class AppLauncher implements Launcher {
     var updateAccountEndpoint = new UpdateAccountJavalinEndpoint(updateAccount)
         .setAuthorizer(authorizer)
         .withValidator();
+    var createLoanEndpoint = new CreateLoanJavalinEndpoint(createLoan)
+        .setAuthorizer(authorizer)
+        .withValidator();
 
     var appPort = configuration.get(APP_PORT).orElse("8080");
     server = JavalinServer.of(Integer.parseInt(appPort))
@@ -74,6 +82,7 @@ public final class AppLauncher implements Launcher {
         .addEndpoint(createAccountEndpoint)
         .addEndpoint(getUserAccountsEndpoint)
         .addEndpoint(updateAccountEndpoint)
+        .addEndpoint(createLoanEndpoint)
         .start();
   }
 

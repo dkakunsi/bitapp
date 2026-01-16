@@ -33,6 +33,17 @@ public final record Loan(
 
   public static enum Type {
     BORROW,
-    LEND
+    LEND;
+
+    public static Type from(String type) {
+      if (type == null) {
+        return null;
+      }
+      try {
+        return valueOf(type);
+      } catch (IllegalArgumentException e) {
+        throw new IllegalArgumentException("Invalid loan type: " + type);
+      }
+    }
   }
 }
