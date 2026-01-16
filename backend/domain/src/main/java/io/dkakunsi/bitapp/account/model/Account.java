@@ -36,12 +36,13 @@ public final class Account {
     OTHER;
 
     public static Type from(String type) {
+      if (type == null) {
+        return null;
+      }
       try {
         return valueOf(type);
       } catch (IllegalArgumentException e) {
         throw new IllegalArgumentException("Invalid account type: " + type);
-      } catch (NullPointerException e) {
-        return null;
       }
     }
   }
