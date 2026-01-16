@@ -4,5 +4,6 @@
     "editor.tabSize": 2,
     "java.configuration.updateBuildConfiguration": "interactive",
     "files.saveAllOnSave": true,
-    "java.debug.settings.onBuildFailureProceed": true
+    "java.debug.settings.onBuildFailureProceed": true,
+    "java.compile.nullAnalysis.mode": "automatic"
 }
