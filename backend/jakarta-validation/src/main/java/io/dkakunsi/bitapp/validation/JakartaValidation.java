@@ -1,4 +1,4 @@
-package io.dkakunsi.bitapp.javalin.validation;
+package io.dkakunsi.bitapp.validation;
 
 import java.util.List;
 

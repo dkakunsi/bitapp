@@ -20,6 +20,7 @@
   </properties>
 
   <dependencies>
+    <!-- TODO: remove this dependency -->
     <dependency>
       <groupId>jakarta.validation</groupId>
       <artifactId>jakarta.validation-api</artifactId>

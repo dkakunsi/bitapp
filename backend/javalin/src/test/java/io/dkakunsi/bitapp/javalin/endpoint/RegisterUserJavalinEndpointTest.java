@@ -38,8 +38,7 @@ class RegisterUserJavalinEndpointTest {
   static void setup() throws Exception {
     baseUrl = "http://localhost:" + PORT;
     usecase = mock(RegisterUser.class);
-    var endpoint = new RegisterUserJavalinEndpoint(usecase)
-        .withValidator();
+    var endpoint = new RegisterUserJavalinEndpoint(usecase);
     server = JavalinServer.of(PORT);
     server.addEndpoint(endpoint);
     server.start();
@@ -140,7 +139,7 @@ class RegisterUserJavalinEndpointTest {
     var output = mock(Result.class);
     when(output.isSuccess()).thenReturn(false);
     when(output.isFailed()).thenReturn(true);
-    when(output.error()).thenReturn(Optional.of(new AppError(Code.BAD_REQUEST, "Invalid email format")));
+    when(output.error()).thenReturn(Optional.of(new AppError(Code.BAD_REQUEST, "email: must be a well-formed email address")));
     when(usecase.process(any(Context.class), any(RegisterUserInput.class))).thenReturn(output);
 
     // When

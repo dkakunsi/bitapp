@@ -46,4 +46,8 @@ ENV OTEL_EXPORTER_OTLP_ENDPOINT=
 EXPOSE 2000
 USER "$MY_USER"
 
-ENTRYPOINT exec java -Duser.timezone=Asia/Makassar -jar app.jar
+ENTRYPOINT exec java \ 
+  -javaagent:aspectjweaver.jar \
+  -cp app.jar:lib/* \
+  -Duser.timezone=Asia/Makassar \
+  -jar app.jar

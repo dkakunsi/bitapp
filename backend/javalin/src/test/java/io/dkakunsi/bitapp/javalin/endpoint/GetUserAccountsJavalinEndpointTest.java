@@ -46,8 +46,7 @@ class GetUserAccountsJavalinEndpointTest {
   static void setup() throws Exception {
     baseUrl = "http://localhost:" + PORT;
     usecase = mock(GetUserAccounts.class);
-    var endpoint = new GetUserAccountsJavalinEndpoint(usecase)
-        .withValidator();
+    var endpoint = new GetUserAccountsJavalinEndpoint(usecase);
     server = JavalinServer.of(PORT);
     server.addEndpoint(endpoint);
     server.start();

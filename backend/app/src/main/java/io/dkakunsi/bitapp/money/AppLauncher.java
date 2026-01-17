@@ -53,26 +53,19 @@ public final class AppLauncher implements Launcher {
 
     // endpoints
     var authorizer = JWTAuthorizer.of(configuration);
-    var registerUserEndpoint = new RegisterUserJavalinEndpoint(registerUser)
-        .withValidator();
+    var registerUserEndpoint = new RegisterUserJavalinEndpoint(registerUser);
     var getUserEndpoint = new GetUserJavalinEndpoint(getUser)
-        .setAuthorizer(authorizer)
-        .withValidator();
+        .setAuthorizer(authorizer);
     var updateUserLanguageEndpoint = new UpdateUserLanguageJavalinEndpoint(updateUserLanguage)
-        .setAuthorizer(authorizer)
-        .withValidator();
+        .setAuthorizer(authorizer);
     var createAccountEndpoint = new CreateAccountJavalinEndpoint(createAccount)
-        .setAuthorizer(authorizer)
-        .withValidator();
+        .setAuthorizer(authorizer);
     var getUserAccountsEndpoint = new GetUserAccountsJavalinEndpoint(getUserAccounts)
-        .setAuthorizer(authorizer)
-        .withValidator();
+        .setAuthorizer(authorizer);
     var updateAccountEndpoint = new UpdateAccountJavalinEndpoint(updateAccount)
-        .setAuthorizer(authorizer)
-        .withValidator();
+        .setAuthorizer(authorizer);
     var createLoanEndpoint = new CreateLoanJavalinEndpoint(createLoan)
-        .setAuthorizer(authorizer)
-        .withValidator();
+        .setAuthorizer(authorizer);
 
     var appPort = configuration.get(APP_PORT).orElse("8080");
     server = JavalinServer.of(Integer.parseInt(appPort))

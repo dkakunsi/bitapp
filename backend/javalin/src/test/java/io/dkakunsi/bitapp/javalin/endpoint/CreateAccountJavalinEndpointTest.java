@@ -39,8 +39,7 @@ class CreateAccountJavalinEndpointTest {
   static void setup() throws Exception {
     baseUrl = "http://localhost:" + PORT;
     usecase = mock(CreateAccount.class);
-    var endpoint = new CreateAccountJavalinEndpoint(usecase)
-        .withValidator();
+    var endpoint = new CreateAccountJavalinEndpoint(usecase);
     server = JavalinServer.of(PORT);
     server.addEndpoint(endpoint);
     server.start();
@@ -151,106 +150,5 @@ class CreateAccountJavalinEndpointTest {
     // Then
     assertEquals(400, response.getStatus());
     assertEquals("Account with this name already exists", response.getBody());
-  }
-
-  /**
-   * <b>Given</b> a create account request with null name<br>
-   * <b>When</b> the POST /accounts endpoint is called<br>
-   * <b>Then</b> should return status 400 with validation error message
-   */
-  @Test
-  void givenCreateAccountRequestWithNullName_WhenRequested_ThenShouldReturn400() {
-    // Given
-    var body = """
-        {"name":null,"themeColor":"#FF5733","type":"BANK"}
-        """;
-
-    // When
-    var response = Unirest.post(baseUrl + "/accounts").body(body).asString();
-
-    // Then
-    assertEquals(400, response.getStatus());
-    assertEquals("name: must not be blank", response.getBody());
-  }
-
-  /**
-   * <b>Given</b> a create account request with empty name<br>
-   * <b>When</b> the POST /accounts endpoint is called<br>
-   * <b>Then</b> should return status 400 with validation error message
-   */
-  @Test
-  void givenCreateAccountRequestWithEmptyName_WhenRequested_ThenShouldReturn400() {
-    // Given
-    var body = """
-        {"name":"","themeColor":"#FF5733","type":"BANK"}
-        """;
-
-    // When
-    var response = Unirest.post(baseUrl + "/accounts").body(body).asString();
-
-    // Then
-    assertEquals(400, response.getStatus());
-    assertEquals("name: must not be blank", response.getBody());
-  }
-
-  /**
-   * <b>Given</b> a create account request with blank name (only whitespace)<br>
-   * <b>When</b> the POST /accounts endpoint is called<br>
-   * <b>Then</b> should return status 400 with validation error message
-   */
-  @Test
-  void givenCreateAccountRequestWithBlankName_WhenRequested_ThenShouldReturn400() {
-    // Given
-    var body = """
-        {"name":"   ","themeColor":"#FF5733","type":"BANK"}
-        """;
-
-    // When
-    var response = Unirest.post(baseUrl + "/accounts").body(body).asString();
-
-    // Then
-    assertEquals(400, response.getStatus());
-    assertEquals("name: must not be blank", response.getBody());
-  }
-
-  /**
-   * <b>Given</b> a create account request with missing name field<br>
-   * <b>When</b> the POST /accounts endpoint is called<br>
-   * <b>Then</b> should return status 400 with validation error message
-   */
-  @Test
-  void givenCreateAccountRequestWithMissingName_WhenRequested_ThenShouldReturn400() {
-    // Given
-    var body = """
-        {"themeColor":"#FF5733","type":"BANK"}
-        """;
-
-    // When
-    var response = Unirest.post(baseUrl + "/accounts").body(body).asString();
-
-    // Then
-    assertEquals(400, response.getStatus());
-    assertEquals("name: must not be blank", response.getBody());
-  }
-
-  /**
-   * <b>Given</b> a create account request with name containing only tabs and
-   * newlines<br>
-   * <b>When</b> the POST /accounts endpoint is called<br>
-   * <b>Then</b> should return status 400 with validation error message
-   */
-  @Test
-  void givenCreateAccountRequestWithWhitespaceOnlyName_WhenRequested_ThenShouldReturn400() {
-    // Given
-    var body = """
-        {"name":"\\t\\n  ","themeColor":"#FF5733","type":"BANK"}
-        """;
-
-    // When
-    var response = Unirest.post(baseUrl + "/accounts").body(body).asString();
-
-    // Then
-    assertEquals(400, response.getStatus());
-    assertEquals("name: must not be blank", response.getBody());
   }
 }

@@ -37,8 +37,7 @@ class UpdateAccountJavalinEndpointTest {
   static void setup() throws Exception {
     baseUrl = "http://localhost:" + PORT;
     usecase = mock(UpdateAccount.class);
-    var endpoint = new UpdateAccountJavalinEndpoint(usecase)
-        .withValidator();
+    var endpoint = new UpdateAccountJavalinEndpoint(usecase);
     server = JavalinServer.of(PORT);
     server.addEndpoint(endpoint);
     server.start();

@@ -41,8 +41,7 @@ class UpdateUserLanguageJavalinEndpointTest {
   static void setup() throws Exception {
     baseUrl = "http://localhost:" + PORT;
     usecase = mock(UpdateUserLanguage.class);
-    var endpoint = new UpdateUserLanguageJavalinEndpoint(usecase)
-        .withValidator();
+    var endpoint = new UpdateUserLanguageJavalinEndpoint(usecase);
     server = JavalinServer.of(PORT);
     server.addEndpoint(endpoint);
     server.start();
@@ -229,24 +228,6 @@ class UpdateUserLanguageJavalinEndpointTest {
 
     var responseBody = response.getBody();
     assertEquals("Database connection failed", responseBody);
-  }
-
-  /**
-   * <b>Given</b> an update language request with invalid data<br>
-   * <b>When</b> the PATCH /users/{email}/language endpoint is called<br>
-   * <b>Then</b> should return status 400 with error message
-   */
-  @Test
-  void givenUpdateLanguageRequestWithInvalidData_WhenRequested_ThenShouldReturn400() {
-    // Given
-    // When
-    var response = Unirest.patch(baseUrl + "/users/user@email.com/language/INVALID_LANG").asString();
-
-    // Then
-    assertEquals(400, response.getStatus());
-
-    var responseBody = response.getBody();
-    assertEquals("language: invalid value", responseBody);
   }
 
   /**
