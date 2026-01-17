@@ -15,9 +15,9 @@
   <packaging>jar</packaging>
   <name>Dkakunsi :: BitApp :: MongoDB Database Library</name>
   <properties>
-    <postgres.version>42.7.7</postgres.version>
-    <dbcp.version>2.13.0</dbcp.version>
-    <embedded-postgres.version>2.1.0</embedded-postgres.version>
+    <mongodb.driver.version>5.6.2</mongodb.driver.version>
+    <morphia.version>2.5.2</morphia.version>
+
     <minimum.class.line.coverage>0.30</minimum.class.line.coverage>
     <minimum.bundle.line.coverage>0.70</minimum.bundle.line.coverage>
   </properties>
@@ -36,12 +36,12 @@
     <dependency>
       <groupId>org.mongodb</groupId>
       <artifactId>mongodb-driver-sync</artifactId>
-      <version>5.6.2</version>
+      <version>${mongodb.driver.version}</version>
     </dependency>
     <dependency>
       <groupId>dev.morphia.morphia</groupId>
       <artifactId>morphia-core</artifactId>
-      <version>2.5.2</version>
+      <version>${morphia.version}</version>
     </dependency>
   </dependencies>
 
