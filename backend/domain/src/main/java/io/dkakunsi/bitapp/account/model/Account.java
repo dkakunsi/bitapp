@@ -49,7 +49,7 @@ public final class Account {
 
   public Account updateDetails(UpdateAccountInput input, String requester) {
     var updatedName = input.name() != null ? input.name() : this.name;
-    var updatedType = input.type() != null ? input.type() : this.type;
+    var updatedType = input.type() != null ? Type.from(input.type()) : this.type;
     var updatedThemeColor = input.themeColor() != null ? input.themeColor() : this.themeColor;
 
     return Account.builder()

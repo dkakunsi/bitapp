@@ -23,7 +23,7 @@ public final class CreateAccountInputTest {
     var requester = "user@email.com";
     var name = "My Bank Account";
     var themeColor = "#0000FF";
-    var type = Account.Type.BANK;
+    var type = "BANK";
     var input = CreateAccountInput.builder()
         .name(name)
         .themeColor(themeColor)
@@ -38,7 +38,7 @@ public final class CreateAccountInputTest {
     assertNotNull(account.getId());
     assertEquals(name, account.getName());
     assertEquals(themeColor, account.getThemeColor());
-    assertEquals(type, account.getType());
+    assertEquals(Account.Type.BANK, account.getType());
     assertNotNull(account.getUser());
     assertEquals(requester, account.getUser().getId().value());
     assertEquals(BigDecimal.ZERO, account.getBalance());
@@ -58,7 +58,7 @@ public final class CreateAccountInputTest {
     // Given
     var requester = "user@email.com";
     var name = "Simple Account";
-    var type = Account.Type.CASH;
+    var type = "CASH";
     var input = CreateAccountInput.builder()
         .name(name)
         .themeColor(null)
@@ -72,7 +72,7 @@ public final class CreateAccountInputTest {
     assertNotNull(account);
     assertEquals("#FFFFFF", account.getThemeColor());
     assertEquals(name, account.getName());
-    assertEquals(type, account.getType());
+    assertEquals(Account.Type.CASH, account.getType());
   }
 
   /**
@@ -87,7 +87,7 @@ public final class CreateAccountInputTest {
     var input = CreateAccountInput.builder()
         .name("Bank Account")
         .themeColor("#FF0000")
-        .type(Account.Type.BANK)
+        .type("BANK")
         .build();
 
     // When
@@ -110,7 +110,7 @@ public final class CreateAccountInputTest {
     var input = CreateAccountInput.builder()
         .name("Cash Wallet")
         .themeColor("#00FF00")
-        .type(Account.Type.CASH)
+        .type("CASH")
         .build();
 
     // When
@@ -133,7 +133,7 @@ public final class CreateAccountInputTest {
     var input = CreateAccountInput.builder()
         .name("Digital Wallet")
         .themeColor("#0000FF")
-        .type(Account.Type.EWALLET)
+        .type("EWALLET")
         .build();
 
     // When
@@ -155,7 +155,7 @@ public final class CreateAccountInputTest {
     var requester = "user@email.com";
     var input = CreateAccountInput.builder()
         .name("Other Account")
-        .type(Account.Type.OTHER)
+        .type("OTHER")
         .build();
 
     // When
@@ -177,7 +177,7 @@ public final class CreateAccountInputTest {
     var requester = "user@email.com";
     var input = CreateAccountInput.builder()
         .name("New Account")
-        .type(Account.Type.BANK)
+        .type("BANK")
         .build();
 
     // When
@@ -200,7 +200,7 @@ public final class CreateAccountInputTest {
     var requester = "user@email.com";
     var input = CreateAccountInput.builder()
         .name("Account 1")
-        .type(Account.Type.BANK)
+        .type("BANK")
         .build();
 
     // When
@@ -224,7 +224,7 @@ public final class CreateAccountInputTest {
     var requester = "john.doe@example.com";
     var input = CreateAccountInput.builder()
         .name("John's Account")
-        .type(Account.Type.CASH)
+        .type("CASH")
         .build();
 
     // When
@@ -247,7 +247,7 @@ public final class CreateAccountInputTest {
     var requester = "user@email.com";
     var input = CreateAccountInput.builder()
         .name("Timestamped Account")
-        .type(Account.Type.BANK)
+        .type("BANK")
         .build();
 
     // When
@@ -271,7 +271,7 @@ public final class CreateAccountInputTest {
     var requester = "admin@example.com";
     var input = CreateAccountInput.builder()
         .name("Audited Account")
-        .type(Account.Type.EWALLET)
+        .type("EWALLET")
         .build();
 
     // When
@@ -294,17 +294,17 @@ public final class CreateAccountInputTest {
     var input1 = CreateAccountInput.builder()
         .name("Red Account")
         .themeColor("#FF0000")
-        .type(Account.Type.BANK)
+        .type("BANK")
         .build();
     var input2 = CreateAccountInput.builder()
         .name("Green Account")
         .themeColor("#00FF00")
-        .type(Account.Type.CASH)
+        .type("CASH")
         .build();
     var input3 = CreateAccountInput.builder()
         .name("Blue Account")
         .themeColor("#0000FF")
-        .type(Account.Type.EWALLET)
+        .type("EWALLET")
         .build();
 
     // When
@@ -330,7 +330,7 @@ public final class CreateAccountInputTest {
     var expectedName = "My Special Savings Account";
     var input = CreateAccountInput.builder()
         .name(expectedName)
-        .type(Account.Type.BANK)
+        .type("BANK")
         .build();
 
     // When
@@ -352,7 +352,7 @@ public final class CreateAccountInputTest {
     var requester2 = "user2@email.com";
     var input = CreateAccountInput.builder()
         .name("Shared Account Template")
-        .type(Account.Type.BANK)
+        .type("BANK")
         .build();
 
     // When

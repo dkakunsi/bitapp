@@ -6,6 +6,7 @@ import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.common.usecase.UseCase;
 import io.dkakunsi.bitapp.user.dto.UpdateUserLanguageInput;
 import io.dkakunsi.bitapp.user.dto.UpdateUserLanguageResult;
+import io.dkakunsi.bitapp.user.model.User;
 import io.dkakunsi.bitapp.user.repository.UserRepository;
 
 public final class UpdateUserLanguage implements UseCase<UpdateUserLanguageInput, UpdateUserLanguageResult> {
@@ -27,7 +28,7 @@ public final class UpdateUserLanguage implements UseCase<UpdateUserLanguageInput
 
       return userRepository.findByEmail(input.email())
           .map(user -> {
-            var updatedUser = user.updateLanguage(input.language());
+            var updatedUser = user.updateLanguage(User.Language.from(input.language()));
             var savedUser = userRepository.save(updatedUser);
             return Result.success(UpdateUserLanguageResult.from(savedUser));
           })

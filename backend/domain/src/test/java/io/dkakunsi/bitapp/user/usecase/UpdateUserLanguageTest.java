@@ -40,7 +40,7 @@ public final class UpdateUserLanguageTest {
     var email = "user@email.com";
     var updateInput = UpdateUserLanguageInput.builder()
         .email(email)
-        .language(Language.ID)
+        .language("ID")
         .build();
 
     var context = Context.builder().requester(email).build();
@@ -84,7 +84,7 @@ public final class UpdateUserLanguageTest {
     var differentEmail = "other@email.com";
     var updateInput = UpdateUserLanguageInput.builder()
         .email(email)
-        .language(Language.ID)
+        .language("ID")
         .build();
 
     var context = Context.builder().requester(differentEmail).build();
@@ -104,7 +104,7 @@ public final class UpdateUserLanguageTest {
     var email = "nonexistent@email.com";
     var updateInput = UpdateUserLanguageInput.builder()
         .email(email)
-        .language(Language.ID)
+        .language("ID")
         .build();
 
     var context = Context.builder().requester(email).build();
@@ -126,7 +126,7 @@ public final class UpdateUserLanguageTest {
     var email = "user@email.com";
     var updateInput = UpdateUserLanguageInput.builder()
         .email(email)
-        .language(Language.ID)
+        .language("ID")
         .build();
 
     var context = Context.builder().requester(email).build();
@@ -148,7 +148,7 @@ public final class UpdateUserLanguageTest {
     var email = "user@email.com";
     var updateInput = UpdateUserLanguageInput.builder()
         .email(email)
-        .language(Language.EN)
+        .language("EN")
         .build();
 
     var context = Context.builder().requester(email).build();
@@ -170,7 +170,7 @@ public final class UpdateUserLanguageTest {
     var email = "user@email.com";
     var updateInput = UpdateUserLanguageInput.builder()
         .email(email)
-        .language(Language.ID)
+        .language("ID")
         .build();
 
     var context = Context.builder().requester(email).build();
@@ -198,7 +198,7 @@ public final class UpdateUserLanguageTest {
     var email = "user@email.com";
     var updateInput = UpdateUserLanguageInput.builder()
         .email(email)
-        .language(Language.EN)
+        .language("EN")
         .build();
 
     var context = Context.builder().requester(email).build();

@@ -4,16 +4,16 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import io.dkakunsi.bitapp.account.model.Account;
+import io.dkakunsi.bitapp.account.validation.ValidAccountType;
 import io.dkakunsi.bitapp.common.Id;
 import io.dkakunsi.bitapp.user.model.User;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
 public final record CreateAccountInput(
     @NotBlank String name,
-    @NotNull Account.Type type,
+    @NotBlank @ValidAccountType String type,
     String themeColor) {
 
   private static final String DEFAULT_THEME_COLOR = "#FFFFFF";
@@ -26,7 +26,7 @@ public final record CreateAccountInput(
     return Account.builder()
         .id(Id.generate())
         .name(name)
-        .type(type)
+        .type(Account.Type.from(type))
         .themeColor(themeColor != null ? themeColor : DEFAULT_THEME_COLOR)
         .user(user)
         .balance(BigDecimal.ZERO)

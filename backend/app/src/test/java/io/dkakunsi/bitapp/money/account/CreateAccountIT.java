@@ -180,7 +180,7 @@ public class CreateAccountIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("type: must not be null", response.getBody());
+    assertEquals("type: must not be blank", response.getBody());
   }
 
   /**

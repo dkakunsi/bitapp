@@ -5,7 +5,6 @@ import java.lang.reflect.Type;
 import io.dkakunsi.bitapp.javalin.JavalinEndpoint;
 import io.dkakunsi.bitapp.user.dto.UpdateUserLanguageInput;
 import io.dkakunsi.bitapp.user.dto.UpdateUserLanguageResult;
-import io.dkakunsi.bitapp.user.model.User;
 import io.dkakunsi.bitapp.user.usecase.UpdateUserLanguage;
 import io.javalin.http.Context;
 
@@ -38,7 +37,7 @@ public class UpdateUserLanguageJavalinEndpoint
 
     return UpdateUserLanguageInput.builder()
         .email(email)
-        .language(User.Language.from(language))
+        .language(language)
         .build();
   }
 }

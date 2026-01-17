@@ -4,7 +4,6 @@ import java.lang.reflect.Type;
 
 import io.dkakunsi.bitapp.account.dto.UpdateAccountInput;
 import io.dkakunsi.bitapp.account.dto.UpdateAccountResult;
-import io.dkakunsi.bitapp.account.model.Account;
 import io.dkakunsi.bitapp.account.usecase.UpdateAccount;
 import io.dkakunsi.bitapp.javalin.JavalinEndpoint;
 import io.javalin.http.Context;
@@ -38,7 +37,7 @@ public class UpdateAccountJavalinEndpoint extends JavalinEndpoint<UpdateAccountI
     return UpdateAccountInput.builder()
         .id(id)
         .name(body.name())
-        .type(Account.Type.from(body.type()))
+        .type(body.type())
         .themeColor(body.themeColor())
         .build();
   }

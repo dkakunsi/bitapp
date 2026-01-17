@@ -150,7 +150,7 @@ class UpdateUserLanguageJavalinEndpointTest {
 
     var capturedInput = inputCaptor.getValue();
     assertEquals(email, capturedInput.email());
-    assertEquals(Language.ID, capturedInput.language());
+    assertEquals("ID", capturedInput.language());
   }
 
   /**
@@ -246,7 +246,7 @@ class UpdateUserLanguageJavalinEndpointTest {
     assertEquals(400, response.getStatus());
 
     var responseBody = response.getBody();
-    assertEquals("Invalid language: INVALID_LANG", responseBody);
+    assertEquals("language: invalid value", responseBody);
   }
 
   /**

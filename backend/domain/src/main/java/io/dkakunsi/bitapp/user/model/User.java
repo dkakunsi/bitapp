@@ -30,6 +30,10 @@ public final class User {
     ID;
 
     public static User.Language from(String language) {
+      if (language == null) {
+        return null;
+      }
+
       try {
         return valueOf(language);
       } catch (IllegalArgumentException ex) {

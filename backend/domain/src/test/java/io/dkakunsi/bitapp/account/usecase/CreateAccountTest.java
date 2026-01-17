@@ -40,7 +40,7 @@ public final class CreateAccountTest {
     // Given
     final var createRequest = CreateAccountInput.builder()
         .name("Savings Account")
-        .type(Account.Type.BANK)
+        .type("BANK")
         .themeColor("#FF5733")
         .build();
     final var context = Context.builder().requester(REQUESTER).build();
@@ -58,7 +58,7 @@ public final class CreateAccountTest {
     final var resultData = result.data().get();
     assertNotNull(resultData.id());
     assertEquals(createRequest.name(), resultData.name());
-    assertEquals(createRequest.type(), resultData.type());
+    assertEquals(createRequest.type(), resultData.type().toString());
     assertEquals(createRequest.themeColor(), resultData.themeColor());
     assertEquals(BigDecimal.ZERO, resultData.balance());
     assertEquals(REQUESTER, resultData.user());
@@ -68,7 +68,7 @@ public final class CreateAccountTest {
     verify(accountRepository).create(savingAccountCaptor.capture());
     var capturedAccount = savingAccountCaptor.getValue();
     assertEquals(createRequest.name(), capturedAccount.getName());
-    assertEquals(createRequest.type(), capturedAccount.getType());
+    assertEquals(createRequest.type(), capturedAccount.getType().toString());
     assertEquals(createRequest.themeColor(), capturedAccount.getThemeColor());
     assertEquals(BigDecimal.ZERO, capturedAccount.getBalance());
     assertEquals(REQUESTER, capturedAccount.getCreatedBy());
@@ -84,7 +84,7 @@ public final class CreateAccountTest {
     // Given
     final var createRequest = CreateAccountInput.builder()
         .name("Savings Account")
-        .type(Account.Type.BANK)
+        .type("BANK")
         .themeColor("#FF5733")
         .build();
     final var context = Context.builder().requester(REQUESTER).build();

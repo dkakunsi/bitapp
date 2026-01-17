@@ -347,6 +347,7 @@ public class UpdateAccountIT extends AppTestUtil {
 
     // When - Try to update with invalid account type
     var updateRequest = new JSONObject()
+        .put("name", "Test Account")
         .put("type", "INVALID_TYPE");
 
     var response = Unirest.put(baseUrl + "/accounts/" + accountId)
