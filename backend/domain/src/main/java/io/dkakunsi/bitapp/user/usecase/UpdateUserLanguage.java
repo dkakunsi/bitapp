@@ -6,7 +6,7 @@ import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.common.usecase.UseCase;
 import io.dkakunsi.bitapp.user.dto.UpdateUserLanguageInput;
 import io.dkakunsi.bitapp.user.dto.UpdateUserLanguageResult;
-import io.dkakunsi.bitapp.user.model.User;
+import io.dkakunsi.bitapp.user.entity.User;
 import io.dkakunsi.bitapp.user.repository.UserRepository;
 
 public final class UpdateUserLanguage implements UseCase<UpdateUserLanguageInput, UpdateUserLanguageResult> {

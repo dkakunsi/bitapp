@@ -2,7 +2,7 @@ package io.dkakunsi.bitapp.account.dto;
 
 import org.apache.commons.lang3.StringUtils;
 
-import io.dkakunsi.bitapp.account.model.Account;
+import io.dkakunsi.bitapp.account.entity.Account;
 import io.dkakunsi.bitapp.common.Validatable;
 import lombok.Builder;
 

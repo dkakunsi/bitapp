@@ -1,10 +1,10 @@
-package io.dkakunsi.bitapp.mongo.entity;
+package io.dkakunsi.bitapp.mongo.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import dev.morphia.annotations.Entity;
-import io.dkakunsi.bitapp.account.model.Account;
+import io.dkakunsi.bitapp.account.entity.Account;
 import io.dkakunsi.bitapp.common.Id;
 import io.dkakunsi.bitapp.common.ModelStatus;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package io.dkakunsi.bitapp.mongo.entity;
+package io.dkakunsi.bitapp.mongo.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -9,7 +9,7 @@ import java.util.Currency;
 import dev.morphia.annotations.Entity;
 import io.dkakunsi.bitapp.common.Id;
 import io.dkakunsi.bitapp.common.ModelStatus;
-import io.dkakunsi.bitapp.loan.model.Loan;
+import io.dkakunsi.bitapp.loan.entity.Loan;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

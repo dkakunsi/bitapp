@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.apache.commons.lang3.StringUtils;
 
 import io.dkakunsi.bitapp.common.Validatable;
-import io.dkakunsi.bitapp.user.model.User;
+import io.dkakunsi.bitapp.user.entity.User;
 import lombok.Builder;
 
 @Builder

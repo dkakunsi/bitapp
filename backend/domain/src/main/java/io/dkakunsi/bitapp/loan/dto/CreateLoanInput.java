@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import org.apache.commons.lang3.StringUtils;
 
 import io.dkakunsi.bitapp.common.Validatable;
-import io.dkakunsi.bitapp.loan.model.Loan;
+import io.dkakunsi.bitapp.loan.entity.Loan;
 import lombok.Builder;
 
 @Builder

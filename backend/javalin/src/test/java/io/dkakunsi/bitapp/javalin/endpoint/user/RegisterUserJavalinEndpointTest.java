@@ -1,4 +1,4 @@
-package io.dkakunsi.bitapp.javalin.endpoint;
+package io.dkakunsi.bitapp.javalin.endpoint.user;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -18,7 +18,7 @@ import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.user.dto.RegisterUserInput;
 import io.dkakunsi.bitapp.user.dto.RegisterUserResult;
-import io.dkakunsi.bitapp.user.model.User.Language;
+import io.dkakunsi.bitapp.user.entity.User.Language;
 import io.dkakunsi.bitapp.user.usecase.RegisterUser;
 import kong.unirest.Unirest;
 

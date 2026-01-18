@@ -1,4 +1,4 @@
-package io.dkakunsi.bitapp.javalin.endpoint;
+package io.dkakunsi.bitapp.javalin.endpoint.loan;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;

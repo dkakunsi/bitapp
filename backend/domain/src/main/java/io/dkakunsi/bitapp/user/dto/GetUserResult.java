@@ -1,6 +1,6 @@
 package io.dkakunsi.bitapp.user.dto;
 
-import io.dkakunsi.bitapp.user.model.User;
+import io.dkakunsi.bitapp.user.entity.User;
 import lombok.Builder;
 
 @Builder

@@ -4,8 +4,8 @@ import java.util.Optional;
 
 import dev.morphia.Datastore;
 import dev.morphia.query.filters.Filters;
-import io.dkakunsi.bitapp.mongo.entity.UserEntity;
-import io.dkakunsi.bitapp.user.model.User;
+import io.dkakunsi.bitapp.mongo.model.UserEntity;
+import io.dkakunsi.bitapp.user.entity.User;
 import io.dkakunsi.bitapp.user.repository.UserRepository;
 
 public class MongoUserRepository implements UserRepository {

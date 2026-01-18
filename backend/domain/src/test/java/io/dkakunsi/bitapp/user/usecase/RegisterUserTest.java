@@ -20,8 +20,8 @@ import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.Id;
 import io.dkakunsi.bitapp.user.dto.RegisterUserInput;
-import io.dkakunsi.bitapp.user.model.User;
-import io.dkakunsi.bitapp.user.model.User.Language;
+import io.dkakunsi.bitapp.user.entity.User;
+import io.dkakunsi.bitapp.user.entity.User.Language;
 import io.dkakunsi.bitapp.user.repository.UserRepository;
 
 public final class RegisterUserTest {

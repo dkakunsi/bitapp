@@ -2,7 +2,7 @@ package io.dkakunsi.bitapp.account.dto;
 
 import java.math.BigDecimal;
 
-import io.dkakunsi.bitapp.account.model.Account;
+import io.dkakunsi.bitapp.account.entity.Account;
 import lombok.Builder;
 
 @Builder

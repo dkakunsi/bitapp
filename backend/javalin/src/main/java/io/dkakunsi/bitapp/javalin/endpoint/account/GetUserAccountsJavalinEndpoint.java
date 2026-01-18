@@ -1,4 +1,4 @@
-package io.dkakunsi.bitapp.javalin.endpoint;
+package io.dkakunsi.bitapp.javalin.endpoint.account;
 
 import java.lang.reflect.Type;
 import java.util.List;

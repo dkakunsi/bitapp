@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import io.dkakunsi.bitapp.loan.model.Loan;
+import io.dkakunsi.bitapp.loan.entity.Loan;
 import lombok.Builder;
 
 @Builder

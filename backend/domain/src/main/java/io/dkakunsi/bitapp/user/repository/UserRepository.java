@@ -2,7 +2,7 @@ package io.dkakunsi.bitapp.user.repository;
 
 import java.util.Optional;
 
-import io.dkakunsi.bitapp.user.model.User;
+import io.dkakunsi.bitapp.user.entity.User;
 
 public interface UserRepository {
   User save(User user);

@@ -1,4 +1,4 @@
-package io.dkakunsi.bitapp.javalin.endpoint;
+package io.dkakunsi.bitapp.javalin.endpoint.account;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.account.dto.GetUserAccountsInput;
 import io.dkakunsi.bitapp.account.dto.GetUserAccountsResult;
-import io.dkakunsi.bitapp.account.model.Account;
+import io.dkakunsi.bitapp.account.entity.Account;
 import io.dkakunsi.bitapp.account.usecase.GetUserAccounts;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;

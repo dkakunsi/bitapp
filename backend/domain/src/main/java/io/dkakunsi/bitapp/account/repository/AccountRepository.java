@@ -3,7 +3,7 @@ package io.dkakunsi.bitapp.account.repository;
 import java.util.List;
 import java.util.Optional;
 
-import io.dkakunsi.bitapp.account.model.Account;
+import io.dkakunsi.bitapp.account.entity.Account;
 
 public interface AccountRepository {
   Account create(Account account);

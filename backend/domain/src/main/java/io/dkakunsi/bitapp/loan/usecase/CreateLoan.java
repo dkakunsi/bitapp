@@ -5,7 +5,7 @@ import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.common.usecase.UseCase;
 import io.dkakunsi.bitapp.loan.dto.CreateLoanInput;
 import io.dkakunsi.bitapp.loan.dto.CreateLoanResult;
-import io.dkakunsi.bitapp.loan.model.Loan;
+import io.dkakunsi.bitapp.loan.entity.Loan;
 import io.dkakunsi.bitapp.loan.repository.LoanRepository;
 
 public final class CreateLoan implements UseCase<CreateLoanInput, CreateLoanResult> {

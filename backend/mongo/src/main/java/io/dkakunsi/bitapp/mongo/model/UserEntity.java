@@ -1,12 +1,12 @@
-package io.dkakunsi.bitapp.mongo.entity;
+package io.dkakunsi.bitapp.mongo.model;
 
 import java.time.LocalDateTime;
 
 import dev.morphia.annotations.Entity;
 import io.dkakunsi.bitapp.common.Id;
 import io.dkakunsi.bitapp.common.ModelStatus;
-import io.dkakunsi.bitapp.user.model.User;
-import io.dkakunsi.bitapp.user.model.User.Language;
+import io.dkakunsi.bitapp.user.entity.User;
+import io.dkakunsi.bitapp.user.entity.User.Language;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

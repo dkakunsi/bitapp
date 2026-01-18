@@ -19,8 +19,8 @@ import org.junit.jupiter.api.Test;
 import dev.morphia.Datastore;
 import io.dkakunsi.bitapp.common.Id;
 import io.dkakunsi.bitapp.common.ModelStatus;
-import io.dkakunsi.bitapp.loan.model.Loan;
-import io.dkakunsi.bitapp.mongo.entity.LoanEntity;
+import io.dkakunsi.bitapp.loan.entity.Loan;
+import io.dkakunsi.bitapp.mongo.model.LoanEntity;
 
 public class MongoLoanRepositoryTest {
 

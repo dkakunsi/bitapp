@@ -1,9 +1,9 @@
 package io.dkakunsi.bitapp.mongo.repository;
 
 import dev.morphia.Datastore;
-import io.dkakunsi.bitapp.loan.model.Loan;
+import io.dkakunsi.bitapp.loan.entity.Loan;
 import io.dkakunsi.bitapp.loan.repository.LoanRepository;
-import io.dkakunsi.bitapp.mongo.entity.LoanEntity;
+import io.dkakunsi.bitapp.mongo.model.LoanEntity;
 
 public class MongoLoanRepository implements LoanRepository {
 

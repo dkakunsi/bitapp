@@ -5,9 +5,9 @@ import java.util.Optional;
 
 import dev.morphia.Datastore;
 import dev.morphia.query.filters.Filters;
-import io.dkakunsi.bitapp.account.model.Account;
+import io.dkakunsi.bitapp.account.entity.Account;
 import io.dkakunsi.bitapp.account.repository.AccountRepository;
-import io.dkakunsi.bitapp.mongo.entity.AccountEntity;
+import io.dkakunsi.bitapp.mongo.model.AccountEntity;
 
 public class MongoAccountRepository implements AccountRepository {
 

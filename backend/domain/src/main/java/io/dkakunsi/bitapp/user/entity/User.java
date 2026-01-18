@@ -1,4 +1,4 @@
-package io.dkakunsi.bitapp.user.model;
+package io.dkakunsi.bitapp.user.entity;
 
 import java.time.LocalDateTime;
 import java.util.Objects;

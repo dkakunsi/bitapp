@@ -1,4 +1,4 @@
-package io.dkakunsi.bitapp.loan.model;
+package io.dkakunsi.bitapp.loan.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

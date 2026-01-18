@@ -17,8 +17,8 @@ import io.dkakunsi.bitapp.common.Id;
 import io.dkakunsi.bitapp.common.ModelStatus;
 import io.dkakunsi.bitapp.mongo.MongoConfiguration;
 import io.dkakunsi.bitapp.test.MongoServer;
-import io.dkakunsi.bitapp.user.model.User;
-import io.dkakunsi.bitapp.user.model.User.Language;
+import io.dkakunsi.bitapp.user.entity.User;
+import io.dkakunsi.bitapp.user.entity.User.Language;
 
 public class MongoUserRepositoryIT {
 
