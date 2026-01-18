@@ -49,7 +49,7 @@ public class UpdateAccountIT extends AppTestUtil {
    * <b>Then</b> all account fields should be updated successfully with status 200
    */
   @Test
-  void givenValidUpdateRequestWhenAllFieldsProvidedThenShouldUpdateSuccessfully() {
+  void updateRequestWithAllFieldsShouldBeOk() {
     // Given - Create an account first
     var createRequest = new JSONObject()
         .put("name", "Original Account")
@@ -95,7 +95,7 @@ public class UpdateAccountIT extends AppTestUtil {
    * unchanged
    */
   @Test
-  void givenUpdateRequestWithOnlyNameWhenProcessedThenShouldUpdateOnlyName() {
+  void updateRequestWithOnlyNameShouldBeOk() {
     // Given - Create an account first
     var createRequest = new JSONObject()
         .put("name", "Test Account")
@@ -129,12 +129,49 @@ public class UpdateAccountIT extends AppTestUtil {
   }
 
   /**
+   * <b>Given</b> an update request with null name<br>
+   * <b>When</b> the PUT /accounts/{id} endpoint is called<br>
+   * <b>Then</b> should return status 200 with updated account
+   */
+  @Test
+  void updateRequestWithNullNameShouldBeOk() {
+    // Given - Create an account first
+    var createRequest = new JSONObject()
+        .put("name", "Valid Account")
+        .put("type", "BANK")
+        .put("themeColor", "#FF0000");
+
+    var createResponse = Unirest.post(baseUrl + "/accounts")
+        .header("Content-Type", "application/json")
+        .header("Authorization", "Bearer " + token)
+        .body(createRequest.toString())
+        .asJson();
+
+    assertEquals(200, createResponse.getStatus());
+    var accountId = createResponse.getBody().getObject().getString("id");
+
+    // When - Update with null name
+    var updateRequest = new JSONObject()
+        .put("name", JSONObject.NULL)
+        .put("themeColor", "#FF0000");
+
+    var response = Unirest.put(baseUrl + "/accounts/" + accountId)
+        .header("Content-Type", "application/json")
+        .header("Authorization", "Bearer " + token)
+        .body(updateRequest.toString())
+        .asString();
+
+    // Then
+    assertEquals(200, response.getStatus());
+  }
+
+  /**
    * <b>Given</b> an update request with empty name<br>
    * <b>When</b> the PUT /accounts/{id} endpoint is called<br>
    * <b>Then</b> should return status 400 with validation error message
    */
   @Test
-  void givenUpdateRequestWithEmptyNameWhenProcessedThenShouldReturn400() {
+  void updateRequestWithEmptyNameShouldReturn400() {
     // Given - Create an account first
     var createRequest = new JSONObject()
         .put("name", "Valid Account")
@@ -162,7 +199,7 @@ public class UpdateAccountIT extends AppTestUtil {
 
     // Then
     assertEquals(400, response.getStatus());
-    assertEquals("name: must not be blank", response.getBody());
+    assertEquals("name: invalid value", response.getBody());
   }
 
   /**
@@ -171,7 +208,7 @@ public class UpdateAccountIT extends AppTestUtil {
    * <b>Then</b> should return status 400 with validation error message
    */
   @Test
-  void givenUpdateRequestWithBlankNameWhenProcessedThenShouldReturn400() {
+  void updateRequestWithBlankNameShouldReturn400() {
     // Given - Create an account first
     var createRequest = new JSONObject()
         .put("name", "Valid Account")
@@ -199,55 +236,18 @@ public class UpdateAccountIT extends AppTestUtil {
 
     // Then
     assertEquals(400, response.getStatus());
-    assertEquals("name: must not be blank", response.getBody());
+    assertEquals("name: invalid value", response.getBody());
   }
 
   /**
-   * <b>Given</b> an update request with null name<br>
-   * <b>When</b> the PUT /accounts/{id} endpoint is called<br>
-   * <b>Then</b> should return status 400 with validation error message
-   */
-  @Test
-  void givenUpdateRequestWithNullNameWhenProcessedThenShouldReturn400() {
-    // Given - Create an account first
-    var createRequest = new JSONObject()
-        .put("name", "Valid Account")
-        .put("type", "BANK")
-        .put("themeColor", "#FF0000");
-
-    var createResponse = Unirest.post(baseUrl + "/accounts")
-        .header("Content-Type", "application/json")
-        .header("Authorization", "Bearer " + token)
-        .body(createRequest.toString())
-        .asJson();
-
-    assertEquals(200, createResponse.getStatus());
-    var accountId = createResponse.getBody().getObject().getString("id");
-
-    // When - Update with null name
-    var updateRequest = new JSONObject()
-        .put("name", JSONObject.NULL);
-
-    var response = Unirest.put(baseUrl + "/accounts/" + accountId)
-        .header("Content-Type", "application/json")
-        .header("Authorization", "Bearer " + token)
-        .body(updateRequest.toString())
-        .asString();
-
-    // Then
-    assertEquals(400, response.getStatus());
-    assertEquals("name: must not be blank", response.getBody());
-  }
-
-  /**
-   * <b>Given</b> an existing account and an update request with only the type and
-   * name fields<br>
+   * <b>Given</b> an existing account and an update request with only the type
+   * field<br>
    * <b>When</b> the PUT /accounts/{id} endpoint is called<br>
    * <b>Then</b> only the type should be updated while other fields remain
    * unchanged
    */
   @Test
-  void givenUpdateRequestWithOnlyTypeAndNameWhenProcessedThenShouldUpdateOnlyType() {
+  void updateRequestWithOnlyTypeShouldBeOk() {
     // Given
     var createRequest = new JSONObject()
         .put("name", "Type Test Account")
@@ -264,7 +264,6 @@ public class UpdateAccountIT extends AppTestUtil {
 
     // When - Update only type
     var updateRequest = new JSONObject()
-        .put("name", "Type Test Account")
         .put("type", "OTHER");
 
     var updateResponse = Unirest.put(baseUrl + "/accounts/" + accountId)
@@ -282,19 +281,17 @@ public class UpdateAccountIT extends AppTestUtil {
   }
 
   /**
-   * <b>Given</b> an existing account and an update request with only the
-   * themeColor and name fields<br>
+   * <b>Given</b> an update request with null type<br>
    * <b>When</b> the PUT /accounts/{id} endpoint is called<br>
-   * <b>Then</b> only the theme color should be updated while other fields remain
-   * unchanged
+   * <b>Then</b> should return status 200 with updated account
    */
   @Test
-  void givenUpdateRequestWithOnlyThemeColorAndNameWhenProcessedThenShouldUpdateOnlyThemeColor() {
-    // Given
+  void updateRequestWithNullTypeShouldBeOk() {
+    // Given - Create an account first
     var createRequest = new JSONObject()
-        .put("name", "Color Test Account")
-        .put("type", "CASH")
-        .put("themeColor", "#111111");
+        .put("name", "Valid Account")
+        .put("type", "BANK")
+        .put("themeColor", "#FF0000");
 
     var createResponse = Unirest.post(baseUrl + "/accounts")
         .header("Content-Type", "application/json")
@@ -302,25 +299,96 @@ public class UpdateAccountIT extends AppTestUtil {
         .body(createRequest.toString())
         .asJson();
 
+    assertEquals(200, createResponse.getStatus());
     var accountId = createResponse.getBody().getObject().getString("id");
 
-    // When - Update only theme color
+    // When - Update with null type
     var updateRequest = new JSONObject()
-        .put("name", "Color Test Account")
-        .put("themeColor", "#FFFFFF");
+        .put("name", "Valid Account")
+        .put("type", JSONObject.NULL);
 
-    var updateResponse = Unirest.put(baseUrl + "/accounts/" + accountId)
+    var response = Unirest.put(baseUrl + "/accounts/" + accountId)
         .header("Content-Type", "application/json")
         .header("Authorization", "Bearer " + token)
         .body(updateRequest.toString())
-        .asJson();
+        .asString();
 
     // Then
-    assertEquals(200, updateResponse.getStatus());
-    var updated = updateResponse.getBody().getObject();
-    assertEquals("Color Test Account", updated.getString("name"));
-    assertEquals("CASH", updated.getString("type"));
-    assertEquals("#FFFFFF", updated.getString("themeColor"));
+    assertEquals(200, response.getStatus());
+  }
+
+  /**
+   * <b>Given</b> an update request with blank type (only whitespace)<br>
+   * <b>When</b> the PUT /accounts/{id} endpoint is called<br>
+   * <b>Then</b> should return status 400 with validation error message
+   */
+  @Test
+  void updateRequestWithBlankTypeShouldReturn400() {
+    // Given - Create an account first
+    var createRequest = new JSONObject()
+        .put("name", "Valid Account")
+        .put("type", "BANK")
+        .put("themeColor", "#FF0000");
+
+    var createResponse = Unirest.post(baseUrl + "/accounts")
+        .header("Content-Type", "application/json")
+        .header("Authorization", "Bearer " + token)
+        .body(createRequest.toString())
+        .asJson();
+
+    assertEquals(200, createResponse.getStatus());
+    var accountId = createResponse.getBody().getObject().getString("id");
+
+    // When - Update with blank type
+    var updateRequest = new JSONObject()
+        .put("type", "   ");
+
+    var response = Unirest.put(baseUrl + "/accounts/" + accountId)
+        .header("Content-Type", "application/json")
+        .header("Authorization", "Bearer " + token)
+        .body(updateRequest.toString())
+        .asString();
+
+    // Then
+    assertEquals(400, response.getStatus());
+    assertEquals("type: invalid value", response.getBody());
+  }
+
+  /**
+   * <b>Given</b> an update request with empty type<br>
+   * <b>When</b> the PUT /accounts/{id} endpoint is called<br>
+   * <b>Then</b> should return status 400 with validation error message
+   */
+  @Test
+  void updateRequestWithEmptyTypeShouldReturn400() {
+    // Given - Create an account first
+    var createRequest = new JSONObject()
+        .put("name", "Valid Account")
+        .put("type", "BANK")
+        .put("themeColor", "#FF0000");
+
+    var createResponse = Unirest.post(baseUrl + "/accounts")
+        .header("Content-Type", "application/json")
+        .header("Authorization", "Bearer " + token)
+        .body(createRequest.toString())
+        .asJson();
+
+    assertEquals(200, createResponse.getStatus());
+    var accountId = createResponse.getBody().getObject().getString("id");
+
+    // When - Update with empty type
+    var updateRequest = new JSONObject()
+        .put("type", "");
+
+    var response = Unirest.put(baseUrl + "/accounts/" + accountId)
+        .header("Content-Type", "application/json")
+        .header("Authorization", "Bearer " + token)
+        .body(updateRequest.toString())
+        .asString();
+
+    // Then
+    assertEquals(400, response.getStatus());
+    assertEquals("type: invalid value", response.getBody());
   }
 
   /**
@@ -329,7 +397,7 @@ public class UpdateAccountIT extends AppTestUtil {
    * <b>Then</b> the request should be rejected with status 400 (Bad Request)
    */
   @Test
-  void givenUpdateRequestWithInvalidAccountTypeWhenProcessedThenShouldReturn400() {
+  void updateRequestWithInvalidAccountTypeShouldReturn400() {
     // Given - Create an account first
     var createRequest = new JSONObject()
         .put("name", "Test Account")
@@ -347,7 +415,6 @@ public class UpdateAccountIT extends AppTestUtil {
 
     // When - Try to update with invalid account type
     var updateRequest = new JSONObject()
-        .put("name", "Test Account")
         .put("type", "INVALID_TYPE");
 
     var response = Unirest.put(baseUrl + "/accounts/" + accountId)
@@ -362,12 +429,207 @@ public class UpdateAccountIT extends AppTestUtil {
   }
 
   /**
+   * <b>Given</b> an update request with empty account type<br>
+   * <b>When</b> the PUT /accounts/{id} endpoint is called<br>
+   * <b>Then</b> the request should be rejected with status 400 (Bad Request)
+   */
+  @Test
+  void updateRequestWithEmptyAccountTypeShouldReturn400() {
+    // Given - Create an account first
+    var createRequest = new JSONObject()
+        .put("name", "Test Account")
+        .put("type", "BANK")
+        .put("themeColor", "#FF0000");
+
+    var createResponse = Unirest.post(baseUrl + "/accounts")
+        .header("Content-Type", "application/json")
+        .header("Authorization", "Bearer " + token)
+        .body(createRequest.toString())
+        .asJson();
+
+    assertEquals(200, createResponse.getStatus());
+    var accountId = createResponse.getBody().getObject().getString("id");
+
+    // When - Try to update with empty account type
+    var updateRequest = new JSONObject()
+        .put("name", "Test Account")
+        .put("type", "");
+
+    var response = Unirest.put(baseUrl + "/accounts/" + accountId)
+        .header("Content-Type", "application/json")
+        .header("Authorization", "Bearer " + token)
+        .body(updateRequest.toString())
+        .asString();
+
+    // Then
+    assertEquals(400, response.getStatus());
+    assertEquals("type: invalid value", response.getBody());
+  }
+
+  /**
+   * <b>Given</b> an existing account and an update request with only the
+   * themeColor field<br>
+   * <b>When</b> the PUT /accounts/{id} endpoint is called<br>
+   * <b>Then</b> only the theme color should be updated while other fields remain
+   * unchanged
+   */
+  @Test
+  void updateRequestWithOnlyThemeColorShouldBeOk() {
+    // Given
+    var createRequest = new JSONObject()
+        .put("name", "Color Test Account")
+        .put("type", "CASH")
+        .put("themeColor", "#111111");
+
+    var createResponse = Unirest.post(baseUrl + "/accounts")
+        .header("Content-Type", "application/json")
+        .header("Authorization", "Bearer " + token)
+        .body(createRequest.toString())
+        .asJson();
+
+    var accountId = createResponse.getBody().getObject().getString("id");
+
+    // When - Update only theme color
+    var updateRequest = new JSONObject()
+        .put("themeColor", "#FFFFFF");
+
+    var updateResponse = Unirest.put(baseUrl + "/accounts/" + accountId)
+        .header("Content-Type", "application/json")
+        .header("Authorization", "Bearer " + token)
+        .body(updateRequest.toString())
+        .asJson();
+
+    // Then
+    assertEquals(200, updateResponse.getStatus());
+    var updated = updateResponse.getBody().getObject();
+    assertEquals("Color Test Account", updated.getString("name"));
+    assertEquals("CASH", updated.getString("type"));
+    assertEquals("#FFFFFF", updated.getString("themeColor"));
+  }
+
+  /**
+   * <b>Given</b> an existing account and an update request with null
+   * themeColor<br>
+   * <b>When</b> the PUT /accounts/{id} endpoint is called<br>
+   * <b>Then</b> only the theme color should be updated while other fields remain
+   * unchanged
+   */
+  @Test
+  void updateRequestWithNullThemeColorShouldBeOk() {
+    // Given
+    var createRequest = new JSONObject()
+        .put("name", "Color Test Account")
+        .put("type", "CASH")
+        .put("themeColor", "#111111");
+
+    var createResponse = Unirest.post(baseUrl + "/accounts")
+        .header("Content-Type", "application/json")
+        .header("Authorization", "Bearer " + token)
+        .body(createRequest.toString())
+        .asJson();
+
+    var accountId = createResponse.getBody().getObject().getString("id");
+
+    // When - Update only theme color
+    var updateRequest = new JSONObject()
+        .put("name", "Color Test Account")
+        .put("themeColor", JSONObject.NULL);
+
+    var updateResponse = Unirest.put(baseUrl + "/accounts/" + accountId)
+        .header("Content-Type", "application/json")
+        .header("Authorization", "Bearer " + token)
+        .body(updateRequest.toString())
+        .asJson();
+
+    // Then
+    assertEquals(200, updateResponse.getStatus());
+    var updated = updateResponse.getBody().getObject();
+    assertEquals("Color Test Account", updated.getString("name"));
+    assertEquals("CASH", updated.getString("type"));
+    assertEquals("#111111", updated.getString("themeColor"));
+  }
+
+  /**
+   * <b>Given</b> an update request with blank themeColor (only whitespace)<br>
+   * <b>When</b> the PUT /accounts/{id} endpoint is called<br>
+   * <b>Then</b> should return status 400 with validation error message
+   */
+  @Test
+  void updateRequestWithBlankThemeColorShouldReturn400() {
+    // Given - Create an account first
+    var createRequest = new JSONObject()
+        .put("name", "Valid Account")
+        .put("type", "BANK")
+        .put("themeColor", "#FF0000");
+
+    var createResponse = Unirest.post(baseUrl + "/accounts")
+        .header("Content-Type", "application/json")
+        .header("Authorization", "Bearer " + token)
+        .body(createRequest.toString())
+        .asJson();
+
+    assertEquals(200, createResponse.getStatus());
+    var accountId = createResponse.getBody().getObject().getString("id");
+
+    // When - Update with blank themeColor
+    var updateRequest = new JSONObject()
+        .put("themeColor", "   ");
+
+    var response = Unirest.put(baseUrl + "/accounts/" + accountId)
+        .header("Content-Type", "application/json")
+        .header("Authorization", "Bearer " + token)
+        .body(updateRequest.toString())
+        .asString();
+
+    // Then
+    assertEquals(400, response.getStatus());
+    assertEquals("themeColor: invalid value", response.getBody());
+  }
+
+  /**
+   * <b>Given</b> an update request with empty themeColor<br>
+   * <b>When</b> the PUT /accounts/{id} endpoint is called<br>
+   * <b>Then</b> should return status 400 with validation error message
+   */
+  @Test
+  void updateRequestWithEmptyThemeColorShouldReturn400() {
+    // Given - Create an account first
+    var createRequest = new JSONObject()
+        .put("name", "Valid Account")
+        .put("type", "BANK")
+        .put("themeColor", "#FF0000");
+
+    var createResponse = Unirest.post(baseUrl + "/accounts")
+        .header("Content-Type", "application/json")
+        .header("Authorization", "Bearer " + token)
+        .body(createRequest.toString())
+        .asJson();
+
+    assertEquals(200, createResponse.getStatus());
+    var accountId = createResponse.getBody().getObject().getString("id");
+
+    // When - Update with empty themeColor
+    var updateRequest = new JSONObject()
+        .put("themeColor", "");
+
+    var response = Unirest.put(baseUrl + "/accounts/" + accountId)
+        .header("Content-Type", "application/json")
+        .header("Authorization", "Bearer " + token)
+        .body(updateRequest.toString())
+        .asString();
+
+    // Then
+    assertEquals(400, response.getStatus());
+    assertEquals("themeColor: invalid value", response.getBody());
+  }
+
+  /**
    * <b>Given</b> an update request with empty request body<br>
    * <b>When</b> the PUT /accounts/{id} endpoint is called<br>
    * <b>Then</b> the request should be rejected with status 400
    */
   @Test
-  void givenUpdateRequestWithEmptyBodyWhenProcessedThenShouldReturn400() {
+  void updateRequestWithEmptyBodyShouldReturn400() {
     // Given
     var createRequest = new JSONObject()
         .put("name", "Test Account")
@@ -391,7 +653,7 @@ public class UpdateAccountIT extends AppTestUtil {
 
     // Then
     assertEquals(400, response.getStatus());
-    assertEquals("name: must not be blank", response.getBody());
+    assertEquals("invalid request", response.getBody());
   }
 
   /**
@@ -400,7 +662,7 @@ public class UpdateAccountIT extends AppTestUtil {
    * <b>Then</b> the request should be rejected with status 400
    */
   @Test
-  void givenUpdateRequestWithMalformedJsonWhenProcessedThenShouldReturn400() {
+  void updateRequestWithMalformedJsonShouldReturn400() {
     // Given
     var createRequest = new JSONObject()
         .put("name", "Test Account")
@@ -433,7 +695,7 @@ public class UpdateAccountIT extends AppTestUtil {
    * <b>Then</b> the request should be rejected with status 401 (Unauthorized)
    */
   @Test
-  void givenUpdateRequestWithoutAuthorizationWhenProcessedThenShouldReturn401() {
+  void updateRequestWithoutAuthorizationShouldReturn401() {
     // When
     var updateRequest = new JSONObject()
         .put("name", "Unauthorized Update");
@@ -453,7 +715,7 @@ public class UpdateAccountIT extends AppTestUtil {
    * <b>Then</b> the request should be rejected with status 401 (Unauthorized)
    */
   @Test
-  void givenUpdateRequestWithInvalidTokenWhenProcessedThenShouldReturn401() {
+  void updateRequestWithInvalidTokenShouldReturn401() {
     // When
     var updateRequest = new JSONObject()
         .put("name", "Invalid Token Update");
@@ -475,7 +737,7 @@ public class UpdateAccountIT extends AppTestUtil {
    * <b>Then</b> the request should fail with status 404 (Not Found)
    */
   @Test
-  void givenUpdateRequestForNonExistentAccountWhenProcessedThenShouldReturn404() {
+  void updateRequestForNonExistentAccountShouldReturn404() {
     // Given
 
     var updateRequest = new JSONObject()
@@ -495,11 +757,11 @@ public class UpdateAccountIT extends AppTestUtil {
   /**
    * <b>Given</b> user2 attempts to update an account that belongs to user1<br>
    * <b>When</b> the PUT /accounts/{id} endpoint is called with user2's token<br>
-   * <b>Then</b> the request should be rejected with status 400 as users can only
+   * <b>Then</b> the request should be rejected with status 401 as users can only
    * update their own accounts
    */
   @Test
-  void givenUpdateRequestForOtherUsersAccountWhenProcessedThenShouldReturn400() {
+  void updateRequestForOtherUsersAccountShouldReturn401() {
     // Given - User1 creates an account
     var createRequest = new JSONObject()
         .put("name", "User1 Account")
@@ -528,8 +790,8 @@ public class UpdateAccountIT extends AppTestUtil {
         .body(updateRequest.toString())
         .asString();
 
-    // Then - Should return 400 as user can only update their own account
-    assertEquals(400, response.getStatus());
+    // Then - Should return 401 as user can only update their own account
+    assertEquals(401, response.getStatus());
     assertEquals("User can only update their own account", response.getBody());
   }
 
@@ -540,7 +802,7 @@ public class UpdateAccountIT extends AppTestUtil {
    * <b>Then</b> the update should succeed with status 200 and reflect the changes
    */
   @Test
-  void givenUpdateRequestByOwnerWhenProcessedThenShouldSucceed() {
+  void updateRequestByOwnerShouldSucceed() {
     // Given - Create an account
     var createRequest = new JSONObject()
         .put("name", "Owner Account")
@@ -580,7 +842,7 @@ public class UpdateAccountIT extends AppTestUtil {
    * the final state
    */
   @Test
-  void givenMultipleSequentialUpdatesWhenProcessedThenShouldApplyAllChanges() {
+  void multipleSequentialUpdatesShouldApplyAllChanges() {
     // Given - Create an account
     var createRequest = new JSONObject()
         .put("name", "Sequential Test")

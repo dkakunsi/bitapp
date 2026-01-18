@@ -70,11 +70,11 @@ public final class UpdateUserLanguageTest {
     var userCaptor = ArgumentCaptor.forClass(User.class);
     verify(userRepository).save(userCaptor.capture());
     var savedUser = userCaptor.getValue();
-    assertEquals(email, savedUser.getId().value());
-    assertEquals(Language.ID, savedUser.getLanguage());
-    assertEquals("User Name", savedUser.getName());
-    assertEquals("081234567890", savedUser.getPhone());
-    assertEquals("http://photo.url/user", savedUser.getPhotoUrl());
+    assertEquals(email, savedUser.id().value());
+    assertEquals(Language.ID, savedUser.language());
+    assertEquals("User Name", savedUser.name());
+    assertEquals("081234567890", savedUser.phone());
+    assertEquals("http://photo.url/user", savedUser.photoUrl());
   }
 
   @Test

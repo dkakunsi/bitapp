@@ -1,6 +1,7 @@
 package io.dkakunsi.bitapp.javalin.endpoint;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 import io.dkakunsi.bitapp.account.dto.GetUserAccountsInput;
 import io.dkakunsi.bitapp.account.dto.GetUserAccountsResult;
@@ -9,7 +10,7 @@ import io.dkakunsi.bitapp.javalin.JavalinEndpoint;
 import io.javalin.http.Context;
 
 public class GetUserAccountsJavalinEndpoint
-    extends JavalinEndpoint<GetUserAccountsInput, GetUserAccountsResult> {
+    extends JavalinEndpoint<GetUserAccountsInput, List<GetUserAccountsResult>> {
 
   public GetUserAccountsJavalinEndpoint(GetUserAccounts usecase) {
     super(usecase);

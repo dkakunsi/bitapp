@@ -1,6 +1,5 @@
 package io.dkakunsi.bitapp.user.usecase;
 
-import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.common.usecase.UseCase;
@@ -17,17 +16,12 @@ public final class RegisterUser implements UseCase<RegisterUserInput, RegisterUs
     this.userRepository = userRepository;
   }
 
-  public Result<RegisterUserResult> process(Context context, RegisterUserInput input) {
-    try {
-      User user = userRepository.findByEmail(input.email())
-          .map(existing -> update(existing, input))
-          .orElseGet(() -> create(input));
-      return Result.success(RegisterUserResult.from(user));
-    } catch (IllegalArgumentException e) {
-      return Result.failure(Code.BAD_REQUEST, e.getMessage());
-    } catch (Exception e) {
-      return Result.failure(Code.SERVER_ERROR, e.getMessage());
-    }
+  @Override
+  public Result<RegisterUserResult> execute(Context context, RegisterUserInput input) {
+    User user = userRepository.findByEmail(input.email())
+        .map(existing -> update(existing, input))
+        .orElseGet(() -> create(input));
+    return Result.success(RegisterUserResult.from(user));
   }
 
   private User update(User existingUser, RegisterUserInput userInput) {
@@ -35,6 +29,6 @@ public final class RegisterUser implements UseCase<RegisterUserInput, RegisterUs
   }
 
   private User create(RegisterUserInput userInput) {
-    return userRepository.save(userInput.toUser());
+    return userRepository.save(User.from(userInput));
   }
 }

@@ -3,31 +3,31 @@ package io.dkakunsi.bitapp.account.model;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import org.apache.commons.lang3.StringUtils;
+
+import io.dkakunsi.bitapp.account.dto.CreateAccountInput;
 import io.dkakunsi.bitapp.account.dto.UpdateAccountInput;
 import io.dkakunsi.bitapp.common.Id;
-import io.dkakunsi.bitapp.user.model.User;
+import io.dkakunsi.bitapp.common.ModelStatus;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
 
 @Builder
-@Getter
-@EqualsAndHashCode
-@ToString
-public final class Account {
+public final record Account(
+    Id id,
+    Id user,
 
-  private final Id id;
-  private final String name;
-  private final Type type;
-  private final String themeColor;
-  private final BigDecimal balance;
-  private final User user;
+    String name,
+    Type type,
+    String themeColor,
+    BigDecimal balance,
 
-  private final LocalDateTime createdAt;
-  private final LocalDateTime updatedAt;
-  private final String createdBy;
-  private final String updatedBy;
+    ModelStatus status,
+    LocalDateTime createdAt,
+    LocalDateTime updatedAt,
+    String createdBy,
+    String updatedBy) {
+
+  private static final String DEFAULT_THEME_COLOR = "#FFFFFF";
 
   public static enum Type {
     BANK,
@@ -35,21 +35,42 @@ public final class Account {
     EWALLET,
     OTHER;
 
-    public static Type from(String type) {
-      if (type == null) {
-        return null;
+    public static boolean isValid(String type) {
+      if (StringUtils.isBlank(type)) {
+        return false;
       }
+
       try {
-        return valueOf(type);
+        valueOf(type);
+        return true;
       } catch (IllegalArgumentException e) {
-        throw new IllegalArgumentException("Invalid account type: " + type);
+        return false;
       }
     }
   }
 
+  public static Account from(CreateAccountInput input, String requester) {
+    final var userId = Id.of(requester);
+    final var now = LocalDateTime.now();
+    final var executor = requester;
+    return Account.builder()
+        .id(Id.generate())
+        .name(input.name())
+        .type(Type.valueOf(input.type()))
+        .themeColor(input.themeColor() != null ? input.themeColor() : DEFAULT_THEME_COLOR)
+        .user(userId)
+        .balance(BigDecimal.ZERO)
+        .status(ModelStatus.ACTIVE)
+        .createdAt(now)
+        .updatedAt(now)
+        .createdBy(executor)
+        .updatedBy(executor)
+        .build();
+  }
+
   public Account updateDetails(UpdateAccountInput input, String requester) {
     var updatedName = input.name() != null ? input.name() : this.name;
-    var updatedType = input.type() != null ? Type.from(input.type()) : this.type;
+    var updatedType = input.type() != null ? Type.valueOf(input.type()) : this.type;
     var updatedThemeColor = input.themeColor() != null ? input.themeColor() : this.themeColor;
 
     return Account.builder()
@@ -59,6 +80,7 @@ public final class Account {
         .themeColor(updatedThemeColor)
         .balance(this.balance)
         .user(this.user)
+        .status(this.status)
         .createdAt(this.createdAt)
         .updatedAt(LocalDateTime.now())
         .createdBy(this.createdBy)
@@ -67,6 +89,6 @@ public final class Account {
   }
 
   public boolean isOwner(String requester) {
-    return this.user.getId().equals(Id.of(requester));
+    return this.user.equals(Id.of(requester));
   }
 }

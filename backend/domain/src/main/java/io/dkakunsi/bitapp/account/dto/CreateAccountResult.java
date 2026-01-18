@@ -9,19 +9,19 @@ import lombok.Builder;
 public final record CreateAccountResult(
     String id,
     String name,
-    Account.Type type,
+    String type,
     String themeColor,
     BigDecimal balance,
     String user) {
 
   public static CreateAccountResult from(Account account) {
     return CreateAccountResult.builder()
-        .id(account.getId().value())
-        .name(account.getName())
-        .type(account.getType())
-        .themeColor(account.getThemeColor())
-        .balance(account.getBalance())
-        .user(account.getUser().getId().value())
+        .id(account.id().value())
+        .name(account.name())
+        .type(account.type().name())
+        .themeColor(account.themeColor())
+        .balance(account.balance())
+        .user(account.user().value())
         .build();
   }
 }

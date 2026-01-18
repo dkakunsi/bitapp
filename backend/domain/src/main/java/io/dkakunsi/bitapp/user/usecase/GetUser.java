@@ -16,13 +16,10 @@ public final class GetUser implements UseCase<GetUserInput, GetUserResult> {
     this.userRepository = userRepository;
   }
 
-  public Result<GetUserResult> process(Context context, GetUserInput input) {
-    try {
-      return userRepository.findByEmail(input.email())
-          .map(user -> Result.success(GetUserResult.from(user)))
-          .orElse(Result.failure(Code.NOT_FOUND, "User not found"));
-    } catch (Exception e) {
-      return Result.failure(Code.SERVER_ERROR, e.getMessage());
-    }
+  @Override
+  public Result<GetUserResult> execute(Context context, GetUserInput input) {
+    return userRepository.findByEmail(input.email())
+        .map(user -> Result.success(GetUserResult.from(user)))
+        .orElse(Result.failure(Code.NOT_FOUND, "User not found"));
   }
 }

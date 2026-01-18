@@ -8,7 +8,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -18,7 +17,6 @@ import io.dkakunsi.bitapp.account.dto.CreateAccountInput;
 import io.dkakunsi.bitapp.account.dto.CreateAccountResult;
 import io.dkakunsi.bitapp.account.model.Account;
 import io.dkakunsi.bitapp.account.usecase.CreateAccount;
-import io.dkakunsi.bitapp.common.AppError;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.usecase.Result;
@@ -39,8 +37,7 @@ class CreateAccountJavalinEndpointTest {
   static void setup() throws Exception {
     baseUrl = "http://localhost:" + PORT;
     usecase = mock(CreateAccount.class);
-    var endpoint = new CreateAccountJavalinEndpoint(usecase)
-        .withValidator();
+    var endpoint = new CreateAccountJavalinEndpoint(usecase);
     server = JavalinServer.of(PORT);
     server.addEndpoint(endpoint);
     server.start();
@@ -51,29 +48,30 @@ class CreateAccountJavalinEndpointTest {
     server.stop();
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   void givenValidAccountRequest_WhenRequested_ThenShouldReturn200AndAccount() {
     // Given
-    var body = """
-        {"name":"Savings Account","themeColor":"#FF5733","type":"BANK"}
-        """;
-    var result = mock(Result.class);
-    when(result.isSuccess()).thenReturn(true);
-    when(result.isEmpty()).thenReturn(false);
-    when(result.isFailed()).thenReturn(false);
-    when(result.data()).thenReturn(Optional.of(CreateAccountResult.builder()
+    var createAccountResult = CreateAccountResult.builder()
         .id("account-123")
         .name("Savings Account")
-        .type(Account.Type.BANK)
+        .type(Account.Type.BANK.name())
         .themeColor("#FF5733")
         .balance(BigDecimal.ZERO)
         .user("user@email.com")
-        .build()));
+        .build();
+    var result = Result.success(createAccountResult);
     when(usecase.process(any(Context.class), any(CreateAccountInput.class))).thenReturn(result);
 
+    var requestBody = """
+        {
+          "name":"Savings Account",
+          "themeColor":"#FF5733",
+          "type":"BANK"
+        }
+        """;
+
     // When
-    var response = Unirest.post(baseUrl + "/accounts").body(body).asString();
+    var response = Unirest.post(baseUrl + "/accounts").body(requestBody).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -87,170 +85,69 @@ class CreateAccountJavalinEndpointTest {
     assertTrue(responseBody.contains("\"balance\":0"));
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   void givenValidRequestWithEmptyOutput_WhenRequested_ThenShouldReturn200() {
     // Given
-    var body = """
-        {"name":"Checking Account","themeColor":"#3357FF","type":"CASH"}
-        """;
-    var result = mock(Result.class);
-    when(result.isSuccess()).thenReturn(true);
-    when(result.isEmpty()).thenReturn(true);
-    when(result.isFailed()).thenReturn(false);
+    var result = Result.<CreateAccountResult>success();
     when(usecase.process(any(Context.class), any(CreateAccountInput.class))).thenReturn(result);
 
+    var requestBody = """
+        {
+          "name":"Checking Account",
+          "themeColor":"#3357FF",
+          "type":"CASH"
+        }
+        """;
+
     // When
-    var response = Unirest.post(baseUrl + "/accounts").body(body).asString();
+    var response = Unirest.post(baseUrl + "/accounts").body(requestBody).asString();
 
     // Then
     assertEquals(200, response.getStatus());
+    assertEquals("", response.getBody());
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   void givenServerError_WhenRequested_ThenShouldReturn500() {
     // Given
-    var body = """
-        {"name":"Investment Account","themeColor":"#33FF57","type":"EWALLET"}
-        """;
-    var error = new AppError(Code.SERVER_ERROR, "Failed to save account");
-    var result = mock(Result.class);
-    when(result.isSuccess()).thenReturn(false);
-    when(result.isEmpty()).thenReturn(false);
-    when(result.isFailed()).thenReturn(true);
-    when(result.error()).thenReturn(Optional.of(error));
+    var result = Result.<CreateAccountResult>failure(Code.SERVER_ERROR, "Failed to save account");
     when(usecase.process(any(Context.class), any(CreateAccountInput.class))).thenReturn(result);
 
+    var requestBody = """
+        {
+          "name":"Investment Account",
+          "themeColor":"#33FF57",
+          "type":"EWALLET"
+        }
+        """;
+
     // When
-    var response = Unirest.post(baseUrl + "/accounts").body(body).asString();
+    var response = Unirest.post(baseUrl + "/accounts").body(requestBody).asString();
 
     // Then
     assertEquals(500, response.getStatus());
     assertEquals("Failed to save account", response.getBody());
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   void givenDuplicateAccount_WhenRequested_ThenShouldReturn400() {
     // Given
-    var body = """
-        {"name":"Duplicate Account","themeColor":"#5733FF","type":"CASH"}
-        """;
-    var error = new AppError(Code.BAD_REQUEST, "Account with this name already exists");
-    var result = mock(Result.class);
-    when(result.isSuccess()).thenReturn(false);
-    when(result.isEmpty()).thenReturn(false);
-    when(result.isFailed()).thenReturn(true);
-    when(result.error()).thenReturn(Optional.of(error));
+    var result = Result.<CreateAccountResult>failure(Code.BAD_REQUEST, "Account with this name already exists");
     when(usecase.process(any(Context.class), any(CreateAccountInput.class))).thenReturn(result);
 
+    var requestBody = """
+        {
+          "name":"Duplicate Account",
+          "themeColor":"#5733FF",
+          "type":"CASH"
+        }
+        """;
+
     // When
-    var response = Unirest.post(baseUrl + "/accounts").body(body).asString();
+    var response = Unirest.post(baseUrl + "/accounts").body(requestBody).asString();
 
     // Then
     assertEquals(400, response.getStatus());
     assertEquals("Account with this name already exists", response.getBody());
-  }
-
-  /**
-   * <b>Given</b> a create account request with null name<br>
-   * <b>When</b> the POST /accounts endpoint is called<br>
-   * <b>Then</b> should return status 400 with validation error message
-   */
-  @Test
-  void givenCreateAccountRequestWithNullName_WhenRequested_ThenShouldReturn400() {
-    // Given
-    var body = """
-        {"name":null,"themeColor":"#FF5733","type":"BANK"}
-        """;
-
-    // When
-    var response = Unirest.post(baseUrl + "/accounts").body(body).asString();
-
-    // Then
-    assertEquals(400, response.getStatus());
-    assertEquals("name: must not be blank", response.getBody());
-  }
-
-  /**
-   * <b>Given</b> a create account request with empty name<br>
-   * <b>When</b> the POST /accounts endpoint is called<br>
-   * <b>Then</b> should return status 400 with validation error message
-   */
-  @Test
-  void givenCreateAccountRequestWithEmptyName_WhenRequested_ThenShouldReturn400() {
-    // Given
-    var body = """
-        {"name":"","themeColor":"#FF5733","type":"BANK"}
-        """;
-
-    // When
-    var response = Unirest.post(baseUrl + "/accounts").body(body).asString();
-
-    // Then
-    assertEquals(400, response.getStatus());
-    assertEquals("name: must not be blank", response.getBody());
-  }
-
-  /**
-   * <b>Given</b> a create account request with blank name (only whitespace)<br>
-   * <b>When</b> the POST /accounts endpoint is called<br>
-   * <b>Then</b> should return status 400 with validation error message
-   */
-  @Test
-  void givenCreateAccountRequestWithBlankName_WhenRequested_ThenShouldReturn400() {
-    // Given
-    var body = """
-        {"name":"   ","themeColor":"#FF5733","type":"BANK"}
-        """;
-
-    // When
-    var response = Unirest.post(baseUrl + "/accounts").body(body).asString();
-
-    // Then
-    assertEquals(400, response.getStatus());
-    assertEquals("name: must not be blank", response.getBody());
-  }
-
-  /**
-   * <b>Given</b> a create account request with missing name field<br>
-   * <b>When</b> the POST /accounts endpoint is called<br>
-   * <b>Then</b> should return status 400 with validation error message
-   */
-  @Test
-  void givenCreateAccountRequestWithMissingName_WhenRequested_ThenShouldReturn400() {
-    // Given
-    var body = """
-        {"themeColor":"#FF5733","type":"BANK"}
-        """;
-
-    // When
-    var response = Unirest.post(baseUrl + "/accounts").body(body).asString();
-
-    // Then
-    assertEquals(400, response.getStatus());
-    assertEquals("name: must not be blank", response.getBody());
-  }
-
-  /**
-   * <b>Given</b> a create account request with name containing only tabs and
-   * newlines<br>
-   * <b>When</b> the POST /accounts endpoint is called<br>
-   * <b>Then</b> should return status 400 with validation error message
-   */
-  @Test
-  void givenCreateAccountRequestWithWhitespaceOnlyName_WhenRequested_ThenShouldReturn400() {
-    // Given
-    var body = """
-        {"name":"\\t\\n  ","themeColor":"#FF5733","type":"BANK"}
-        """;
-
-    // When
-    var response = Unirest.post(baseUrl + "/accounts").body(body).asString();
-
-    // Then
-    assertEquals(400, response.getStatus());
-    assertEquals("name: must not be blank", response.getBody());
   }
 }

@@ -45,7 +45,7 @@ public class UpdateUserLanguageIT extends AppTestUtil {
    * verified via GET
    */
   @Test
-  public void givenValidUpdateLanguageRequest_WhenUserExists_ThenShouldUpdateLanguage() {
+  public void updateUserLanguageShouldBeOk() {
     // First, register a user
     var registerBody = """
         {
@@ -90,7 +90,7 @@ public class UpdateUserLanguageIT extends AppTestUtil {
    * and verified via GET
    */
   @Test
-  public void givenValidUpdateLanguageRequest_WhenUpdatingToEN_ThenShouldUpdateLanguage() {
+  public void updateUserLanguageToEnShouldBeOk() {
     // First, register a user
     var registerBody = """
         {
@@ -138,7 +138,7 @@ public class UpdateUserLanguageIT extends AppTestUtil {
    * message
    */
   @Test
-  public void givenUpdateLanguageRequest_WhenUserDoesNotExist_ThenShouldReturn404() {
+  public void updateUserLanguageNonExistingUserShouldReturn404() {
     var nonExistentUserToken = SecureTestUtil.generateToken("nonexistent@example.com");
     var updateResponse = Unirest.patch(baseUrl + "/users/nonexistent@example.com/language/ID")
         .header("Authorization", "Bearer " + nonExistentUserToken)
@@ -154,7 +154,7 @@ public class UpdateUserLanguageIT extends AppTestUtil {
    * <b>Then</b> the request should fail with status 400
    */
   @Test
-  public void givenUpdateLanguageRequest_WhenLanguageIsUnsupported_ThenShouldReturn400() {
+  public void updateUserLanguageWithUnsupportedLanguageShouldReturn400() {
     // First, register a user
     var registerBody = """
         {

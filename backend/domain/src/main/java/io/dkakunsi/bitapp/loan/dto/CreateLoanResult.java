@@ -30,8 +30,8 @@ public final record CreateLoanResult(
 
   public static CreateLoanResult from(Loan loan) {
     return CreateLoanResult.builder()
-        .id(loan.id())
-        .user(loan.user().getId().value())
+        .id(loan.id().value())
+        .user(loan.user().value())
         .type(loan.type().name())
         .date(loan.date())
         .time(loan.time())

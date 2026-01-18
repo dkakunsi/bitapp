@@ -47,7 +47,7 @@ public class GetUserIT extends AppTestUtil {
    * <b>Then</b> the user's complete details should be returned with status 200
    */
   @Test
-  public void shouldReturnUserData_WhenUserExists() {
+  public void getExistingDataShouldBeOk() {
     var body = """
         {
           "name": "John Doe",
@@ -85,7 +85,7 @@ public class GetUserIT extends AppTestUtil {
    * <b>Then</b> an empty response should be returned with status 200
    */
   @Test
-  public void shouldReturnEmpty_WhenUserNotExists() {
+  public void getNonExistingUserShouldReturn404() {
     var getResponse = Unirest.get(baseUrl + "/users/notexist@example.com")
         .header("Authorization", "Bearer " + token)
         .asString();
@@ -99,7 +99,7 @@ public class GetUserIT extends AppTestUtil {
    * <b>Then</b> an empty response should be returned with status 401
    */
   @Test
-  public void shouldReturnUnauthorized_WhenNoAuthorizationHeader() {
+  public void getUserWithoutAuthorizationHeaderShouldReturn401() {
     var getResponse = Unirest.get(baseUrl + "/users/test@example.com")
         .asString();
     assertEquals(401, getResponse.getStatus());
@@ -111,7 +111,7 @@ public class GetUserIT extends AppTestUtil {
    * <b>Then</b> an empty response should be returned with status 401
    */
   @Test
-  public void shouldReturnUnauthorized_WhenInvalidToken() {
+  public void getUserWithInvalidTokenShouldReturn401() {
     var getResponse = Unirest.get(baseUrl + "/users/test@example.com")
         .header("Authorization", "Bearer invalid-token")
         .asString();

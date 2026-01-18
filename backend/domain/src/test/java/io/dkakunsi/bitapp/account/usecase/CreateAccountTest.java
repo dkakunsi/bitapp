@@ -67,16 +67,16 @@ public final class CreateAccountTest {
     var savingAccountCaptor = ArgumentCaptor.forClass(Account.class);
     verify(accountRepository).create(savingAccountCaptor.capture());
     var capturedAccount = savingAccountCaptor.getValue();
-    assertEquals(createRequest.name(), capturedAccount.getName());
-    assertEquals(createRequest.type(), capturedAccount.getType().toString());
-    assertEquals(createRequest.themeColor(), capturedAccount.getThemeColor());
-    assertEquals(BigDecimal.ZERO, capturedAccount.getBalance());
-    assertEquals(REQUESTER, capturedAccount.getCreatedBy());
-    assertEquals(REQUESTER, capturedAccount.getUpdatedBy());
-    assertNotNull(capturedAccount.getCreatedAt());
-    assertNotNull(capturedAccount.getUpdatedAt());
-    assertNotNull(capturedAccount.getId());
-    assertEquals(REQUESTER, capturedAccount.getUser().getId().value());
+    assertEquals(createRequest.name(), capturedAccount.name());
+    assertEquals(createRequest.type(), capturedAccount.type().toString());
+    assertEquals(createRequest.themeColor(), capturedAccount.themeColor());
+    assertEquals(BigDecimal.ZERO, capturedAccount.balance());
+    assertEquals(REQUESTER, capturedAccount.createdBy());
+    assertEquals(REQUESTER, capturedAccount.updatedBy());
+    assertNotNull(capturedAccount.createdAt());
+    assertNotNull(capturedAccount.updatedAt());
+    assertNotNull(capturedAccount.id());
+    assertEquals(REQUESTER, capturedAccount.user().value());
   }
 
   @Test

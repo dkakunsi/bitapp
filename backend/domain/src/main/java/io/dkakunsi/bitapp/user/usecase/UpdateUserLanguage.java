@@ -18,25 +18,19 @@ public final class UpdateUserLanguage implements UseCase<UpdateUserLanguageInput
   }
 
   @Override
-  public Result<UpdateUserLanguageResult> process(Context context, UpdateUserLanguageInput input) {
-    try {
-      // Verify the authenticated user matches the email being updated
-      var requester = context.requester();
-      if (!requester.equals(input.email())) {
-        return Result.failure(Code.BAD_REQUEST, "User can only update their own language preference");
-      }
-
-      return userRepository.findByEmail(input.email())
-          .map(user -> {
-            var updatedUser = user.updateLanguage(User.Language.from(input.language()));
-            var savedUser = userRepository.save(updatedUser);
-            return Result.success(UpdateUserLanguageResult.from(savedUser));
-          })
-          .orElse(Result.failure(Code.NOT_FOUND, "User not found"));
-    } catch (IllegalArgumentException e) {
-      return Result.failure(Code.BAD_REQUEST, e.getMessage());
-    } catch (Exception e) {
-      return Result.failure(Code.SERVER_ERROR, e.getMessage());
+  public Result<UpdateUserLanguageResult> execute(Context context, UpdateUserLanguageInput input) {
+    // Verify the authenticated user matches the email being updated
+    var requester = context.requester();
+    if (!requester.equals(input.email())) {
+      return Result.failure(Code.BAD_REQUEST, "User can only update their own language preference");
     }
+
+    return userRepository.findByEmail(input.email())
+        .map(user -> {
+          var updatedUser = user.updateLanguage(User.Language.valueOf(input.language()), requester);
+          var savedUser = userRepository.save(updatedUser);
+          return Result.success(UpdateUserLanguageResult.from(savedUser));
+        })
+        .orElse(Result.failure(Code.NOT_FOUND, "User not found"));
   }
 }

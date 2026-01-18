@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.LocalDateTime;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import dev.morphia.Datastore;
 import io.dkakunsi.bitapp.common.EnvironmentConfiguration;
 import io.dkakunsi.bitapp.common.Id;
+import io.dkakunsi.bitapp.common.ModelStatus;
 import io.dkakunsi.bitapp.mongo.MongoConfiguration;
 import io.dkakunsi.bitapp.test.MongoServer;
 import io.dkakunsi.bitapp.user.model.User;
@@ -60,6 +63,11 @@ public class MongoUserRepositoryIT {
         .phone(phone)
         .photoUrl(photoUrl)
         .language(Language.EN)
+        .status(ModelStatus.ACTIVE)
+        .createdAt(LocalDateTime.now())
+        .updatedAt(LocalDateTime.now())
+        .createdBy(email)
+        .updatedBy(email)
         .build();
 
     // When
@@ -67,11 +75,11 @@ public class MongoUserRepositoryIT {
 
     // Then
     assertNotNull(savedUser);
-    assertEquals(email, savedUser.getId().value());
-    assertEquals(name, savedUser.getName());
-    assertEquals(phone, savedUser.getPhone());
-    assertEquals(photoUrl, savedUser.getPhotoUrl());
-    assertEquals(Language.EN, savedUser.getLanguage());
+    assertEquals(email, savedUser.id().value());
+    assertEquals(name, savedUser.name());
+    assertEquals(phone, savedUser.phone());
+    assertEquals(photoUrl, savedUser.photoUrl());
+    assertEquals(Language.EN, savedUser.language());
   }
 
   @Test
@@ -84,6 +92,11 @@ public class MongoUserRepositoryIT {
         .phone("081234567890")
         .photoUrl("http://photo.url/original")
         .language(Language.EN)
+        .status(ModelStatus.ACTIVE)
+        .createdAt(LocalDateTime.now())
+        .updatedAt(LocalDateTime.now())
+        .createdBy(email)
+        .updatedBy(email)
         .build();
     repository.save(originalUser);
 
@@ -93,6 +106,11 @@ public class MongoUserRepositoryIT {
         .phone("089876543210")
         .photoUrl("http://photo.url/updated")
         .language(Language.ID)
+        .status(ModelStatus.ACTIVE)
+        .createdAt(LocalDateTime.now())
+        .updatedAt(LocalDateTime.now())
+        .createdBy(email)
+        .updatedBy(email)
         .build();
 
     // When
@@ -101,10 +119,10 @@ public class MongoUserRepositoryIT {
 
     // Then
     assertTrue(foundUser.isPresent());
-    assertEquals("Updated Name", foundUser.get().getName());
-    assertEquals("089876543210", foundUser.get().getPhone());
-    assertEquals("http://photo.url/updated", foundUser.get().getPhotoUrl());
-    assertEquals(Language.ID, foundUser.get().getLanguage());
+    assertEquals("Updated Name", foundUser.get().name());
+    assertEquals("089876543210", foundUser.get().phone());
+    assertEquals("http://photo.url/updated", foundUser.get().photoUrl());
+    assertEquals(Language.ID, foundUser.get().language());
   }
 
   @Test
@@ -118,6 +136,11 @@ public class MongoUserRepositoryIT {
         .phone("081234567890")
         .photoUrl("http://photo.url/user")
         .language(Language.EN)
+        .status(ModelStatus.ACTIVE)
+        .createdAt(LocalDateTime.now())
+        .updatedAt(LocalDateTime.now())
+        .createdBy(email)
+        .updatedBy(email)
         .build();
     repository.save(user);
 
@@ -126,8 +149,8 @@ public class MongoUserRepositoryIT {
 
     // Then
     assertTrue(foundUser.isPresent());
-    assertEquals(email, foundUser.get().getId().value());
-    assertEquals(name, foundUser.get().getName());
+    assertEquals(email, foundUser.get().id().value());
+    assertEquals(name, foundUser.get().name());
   }
 
   @Test
@@ -152,6 +175,11 @@ public class MongoUserRepositoryIT {
         .phone(null)
         .photoUrl(null)
         .language(Language.EN)
+        .status(ModelStatus.ACTIVE)
+        .createdAt(LocalDateTime.now())
+        .updatedAt(LocalDateTime.now())
+        .createdBy(email)
+        .updatedBy(email)
         .build();
 
     // When
@@ -160,30 +188,42 @@ public class MongoUserRepositoryIT {
 
     // Then
     assertTrue(foundUser.isPresent());
-    assertEquals(email, foundUser.get().getId().value());
-    assertEquals("Test User", foundUser.get().getName());
-    assertEquals(null, foundUser.get().getPhone());
-    assertEquals(null, foundUser.get().getPhotoUrl());
-    assertEquals(Language.EN, foundUser.get().getLanguage());
+    assertEquals(email, foundUser.get().id().value());
+    assertEquals("Test User", foundUser.get().name());
+    assertEquals(null, foundUser.get().phone());
+    assertEquals(null, foundUser.get().photoUrl());
+    assertEquals(Language.EN, foundUser.get().language());
   }
 
   @Test
   public void givenMultipleUsersWhenSaveThenShouldPersistAll() {
     // Given
+    var email1 = "user1@email.com";
     var user1 = User.builder()
-        .id(Id.of("user1@email.com"))
+        .id(Id.of(email1))
         .name("User One")
         .phone("081111111111")
         .photoUrl("http://photo.url/user1")
         .language(Language.EN)
+        .status(ModelStatus.ACTIVE)
+        .createdAt(LocalDateTime.now())
+        .updatedAt(LocalDateTime.now())
+        .createdBy(email1)
+        .updatedBy(email1)
         .build();
 
+    var email2 = "user2@email.com";
     var user2 = User.builder()
-        .id(Id.of("user2@email.com"))
+        .id(Id.of(email2))
         .name("User Two")
         .phone("082222222222")
         .photoUrl("http://photo.url/user2")
         .language(Language.ID)
+        .status(ModelStatus.ACTIVE)
+        .createdAt(LocalDateTime.now())
+        .updatedAt(LocalDateTime.now())
+        .createdBy(email2)
+        .updatedBy(email2)
         .build();
 
     // When
@@ -196,7 +236,7 @@ public class MongoUserRepositoryIT {
 
     assertTrue(foundUser1.isPresent());
     assertTrue(foundUser2.isPresent());
-    assertEquals("User One", foundUser1.get().getName());
-    assertEquals("User Two", foundUser2.get().getName());
+    assertEquals("User One", foundUser1.get().name());
+    assertEquals("User Two", foundUser2.get().name());
   }
 }

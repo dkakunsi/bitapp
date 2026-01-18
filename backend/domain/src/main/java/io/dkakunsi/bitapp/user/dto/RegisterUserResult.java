@@ -14,11 +14,11 @@ public final record RegisterUserResult(
 
   public static RegisterUserResult from(User user) {
     return RegisterUserResult.builder()
-        .email(user.getId().value())
-        .name(user.getName())
-        .phone(user.getPhone())
-        .photoUrl(user.getPhotoUrl())
-        .language(user.getLanguage())
+        .email(user.id().value())
+        .name(user.name())
+        .phone(user.phone())
+        .photoUrl(user.photoUrl())
+        .language(user.language())
         .build();
   }
 }

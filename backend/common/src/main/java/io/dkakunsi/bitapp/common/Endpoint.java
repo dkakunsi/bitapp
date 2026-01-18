@@ -1,7 +1,5 @@
 package io.dkakunsi.bitapp.common;
 
-import java.util.List;
-
 import io.dkakunsi.bitapp.common.usecase.UseCase;
 import lombok.Getter;
 
@@ -33,8 +31,6 @@ public abstract class Endpoint<S, T> {
 
   protected Authorizer authorizer;
 
-  protected Validator validator;
-
   protected Endpoint(UseCase<S, T> usecase) {
     this.usecase = usecase;
   }
@@ -61,17 +57,5 @@ public abstract class Endpoint<S, T> {
       throw new RuntimeException("Authentication provider is not configured");
     }
     return authorizer.verify(sessionKey);
-  }
-
-  public Endpoint<S, T> setValidator(Validator validator) {
-    this.validator = validator;
-    return this;
-  }
-
-  protected List<Validator.Violation> validateInput(S input) {
-    if (validator == null) {
-      throw new RuntimeException("Validator is not configured");
-    }
-    return validator.validate(input);
   }
 }

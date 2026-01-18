@@ -1,28 +1,31 @@
 package io.dkakunsi.bitapp.user.dto;
 
-import io.dkakunsi.bitapp.common.Id;
-import io.dkakunsi.bitapp.user.model.User;
-import io.dkakunsi.bitapp.user.model.User.Language;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+import java.util.ArrayList;
+
+import io.dkakunsi.bitapp.common.Validatable;
 import lombok.Builder;
 
 @Builder
 public final record RegisterUserInput(
-    @NotBlank String name,
-    @NotBlank @Email String email,
+    String name,
+    String email,
     String phone,
-    String photoUrl) {
+    String photoUrl) implements Validatable {
 
-  private static final Language DEFAULT_LANGUAGE = Language.EN;
+  private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
 
-  public User toUser() {
-    return User.builder()
-        .id(Id.of(this.email()))
-        .name(this.name())
-        .phone(this.phone())
-        .photoUrl(this.photoUrl())
-        .language(DEFAULT_LANGUAGE)
-        .build();
+  @Override
+  public void validate() throws IllegalArgumentException {
+    var errors = new ArrayList<String>();
+    if (name == null || name.isBlank()) {
+      errors.add("name: invalid value");
+    }
+    if (email == null || email.isBlank() || !email.matches(EMAIL_REGEX)) {
+      errors.add("email: invalid value");
+    }
+
+    if (!errors.isEmpty()) {
+      throw new IllegalArgumentException(String.join(", ", errors));
+    }
   }
 }

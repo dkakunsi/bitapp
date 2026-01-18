@@ -18,19 +18,15 @@ public final class UpdateAccount implements UseCase<UpdateAccountInput, UpdateAc
   }
 
   @Override
-  public Result<UpdateAccountResult> process(Context context, UpdateAccountInput input) {
-    try {
-      return accountRepository.findById(input.id())
-          .map(account -> onAccount(account, input, context.requester()))
-          .orElse(Result.failure(Code.NOT_FOUND, "Account not found"));
-    } catch (Exception e) {
-      return Result.failure(Code.SERVER_ERROR, e.getMessage());
-    }
+  public Result<UpdateAccountResult> execute(Context context, UpdateAccountInput input) {
+    return accountRepository.findById(input.id())
+        .map(account -> onAccount(account, input, context.requester()))
+        .orElse(Result.failure(Code.NOT_FOUND, "Account not found"));
   }
 
   private Result<UpdateAccountResult> onAccount(Account account, UpdateAccountInput input, String requester) {
     if (!account.isOwner(requester)) {
-      return Result.failure(Code.BAD_REQUEST, "User can only update their own account");
+      return Result.failure(Code.UNAUTHORIZED, "User can only update their own account");
     }
 
     var updatedAccount = accountRepository.update(account.updateDetails(input, requester));

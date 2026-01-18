@@ -24,7 +24,6 @@ import io.dkakunsi.bitapp.account.repository.AccountRepository;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.Id;
-import io.dkakunsi.bitapp.user.model.User;
 
 public final class GetUserAccountsTest {
 
@@ -49,7 +48,7 @@ public final class GetUserAccountsTest {
         .build();
     var context = Context.builder().requester(REQUESTER).build();
 
-    var user = User.builder().id(Id.of(USER_ID)).build();
+    var user = Id.of(USER_ID);
     var account1 = Account.builder()
         .id(Id.of("account1"))
         .name("Savings Account")
@@ -87,11 +86,11 @@ public final class GetUserAccountsTest {
     assertTrue(result.data().isPresent());
 
     var resultData = result.data().get();
-    assertNotNull(resultData.accounts());
-    assertEquals(2, resultData.accounts().size());
+    assertNotNull(resultData);
+    assertEquals(2, resultData.size());
 
     // Verify first account
-    var firstAccount = resultData.accounts().get(0);
+    var firstAccount = resultData.get(0);
     assertEquals("account1", firstAccount.id());
     assertEquals("Savings Account", firstAccount.name());
     assertEquals(Account.Type.BANK, firstAccount.type());
@@ -100,7 +99,7 @@ public final class GetUserAccountsTest {
     assertEquals(USER_ID, firstAccount.userId());
 
     // Verify second account
-    var secondAccount = resultData.accounts().get(1);
+    var secondAccount = resultData.get(1);
     assertEquals("account2", secondAccount.id());
     assertEquals("Checking Account", secondAccount.name());
     assertEquals(Account.Type.CASH, secondAccount.type());
@@ -129,8 +128,8 @@ public final class GetUserAccountsTest {
     assertTrue(result.data().isPresent());
 
     var resultData = result.data().get();
-    assertNotNull(resultData.accounts());
-    assertEquals(0, resultData.accounts().size());
+    assertNotNull(resultData);
+    assertEquals(0, resultData.size());
 
     verify(accountRepository).findByUserId(USER_ID);
   }
@@ -168,7 +167,7 @@ public final class GetUserAccountsTest {
         .build();
     var context = Context.builder().requester(REQUESTER).build();
 
-    var user = User.builder().id(Id.of(USER_ID)).build();
+    var user = Id.of(USER_ID);
     var account = Account.builder()
         .id(Id.of("account1"))
         .name("E-Wallet")
@@ -192,10 +191,10 @@ public final class GetUserAccountsTest {
     assertTrue(result.data().isPresent());
 
     var resultData = result.data().get();
-    assertNotNull(resultData.accounts());
-    assertEquals(1, resultData.accounts().size());
+    assertNotNull(resultData);
+    assertEquals(1, resultData.size());
 
-    var accountItem = resultData.accounts().get(0);
+    var accountItem = resultData.get(0);
     assertEquals("account1", accountItem.id());
     assertEquals("E-Wallet", accountItem.name());
     assertEquals(Account.Type.EWALLET, accountItem.type());

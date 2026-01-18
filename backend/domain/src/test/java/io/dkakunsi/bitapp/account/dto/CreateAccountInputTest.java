@@ -31,21 +31,21 @@ public final class CreateAccountInputTest {
         .build();
 
     // When
-    var account = input.toAccount(requester);
+    var account = Account.from(input, requester);
 
     // Then
     assertNotNull(account);
-    assertNotNull(account.getId());
-    assertEquals(name, account.getName());
-    assertEquals(themeColor, account.getThemeColor());
-    assertEquals(Account.Type.BANK, account.getType());
-    assertNotNull(account.getUser());
-    assertEquals(requester, account.getUser().getId().value());
-    assertEquals(BigDecimal.ZERO, account.getBalance());
-    assertNotNull(account.getCreatedAt());
-    assertNotNull(account.getUpdatedAt());
-    assertEquals(requester, account.getCreatedBy());
-    assertEquals(requester, account.getUpdatedBy());
+    assertNotNull(account.id());
+    assertEquals(name, account.name());
+    assertEquals(themeColor, account.themeColor());
+    assertEquals(Account.Type.BANK, account.type());
+    assertNotNull(account.user());
+    assertEquals(requester, account.user().value());
+    assertEquals(BigDecimal.ZERO, account.balance());
+    assertNotNull(account.createdAt());
+    assertNotNull(account.updatedAt());
+    assertEquals(requester, account.createdBy());
+    assertEquals(requester, account.updatedBy());
   }
 
   /**
@@ -66,13 +66,13 @@ public final class CreateAccountInputTest {
         .build();
 
     // When
-    var account = input.toAccount(requester);
+    var account = Account.from(input, requester);
 
     // Then
     assertNotNull(account);
-    assertEquals("#FFFFFF", account.getThemeColor());
-    assertEquals(name, account.getName());
-    assertEquals(Account.Type.CASH, account.getType());
+    assertEquals("#FFFFFF", account.themeColor());
+    assertEquals(name, account.name());
+    assertEquals(Account.Type.CASH, account.type());
   }
 
   /**
@@ -91,11 +91,11 @@ public final class CreateAccountInputTest {
         .build();
 
     // When
-    var account = input.toAccount(requester);
+    var account = Account.from(input, requester);
 
     // Then
     assertNotNull(account);
-    assertEquals(Account.Type.BANK, account.getType());
+    assertEquals(Account.Type.BANK, account.type());
   }
 
   /**
@@ -114,11 +114,11 @@ public final class CreateAccountInputTest {
         .build();
 
     // When
-    var account = input.toAccount(requester);
+    var account = Account.from(input, requester);
 
     // Then
     assertNotNull(account);
-    assertEquals(Account.Type.CASH, account.getType());
+    assertEquals(Account.Type.CASH, account.type());
   }
 
   /**
@@ -137,11 +137,11 @@ public final class CreateAccountInputTest {
         .build();
 
     // When
-    var account = input.toAccount(requester);
+    var account = Account.from(input, requester);
 
     // Then
     assertNotNull(account);
-    assertEquals(Account.Type.EWALLET, account.getType());
+    assertEquals(Account.Type.EWALLET, account.type());
   }
 
   /**
@@ -159,11 +159,11 @@ public final class CreateAccountInputTest {
         .build();
 
     // When
-    var account = input.toAccount(requester);
+    var account = Account.from(input, requester);
 
     // Then
     assertNotNull(account);
-    assertEquals(Account.Type.OTHER, account.getType());
+    assertEquals(Account.Type.OTHER, account.type());
   }
 
   /**
@@ -181,12 +181,12 @@ public final class CreateAccountInputTest {
         .build();
 
     // When
-    var account = input.toAccount(requester);
+    var account = Account.from(input, requester);
 
     // Then
     assertNotNull(account);
-    assertEquals(BigDecimal.ZERO, account.getBalance());
-    assertEquals(0, account.getBalance().compareTo(BigDecimal.ZERO));
+    assertEquals(BigDecimal.ZERO, account.balance());
+    assertEquals(0, account.balance().compareTo(BigDecimal.ZERO));
   }
 
   /**
@@ -204,13 +204,13 @@ public final class CreateAccountInputTest {
         .build();
 
     // When
-    var account1 = input.toAccount(requester);
-    var account2 = input.toAccount(requester);
+    var account1 = Account.from(input, requester);
+    var account2 = Account.from(input, requester);
 
     // Then
-    assertNotNull(account1.getId());
-    assertNotNull(account2.getId());
-    assertEquals(false, account1.getId().equals(account2.getId()));
+    assertNotNull(account1.id());
+    assertNotNull(account2.id());
+    assertEquals(false, account1.id().equals(account2.id()));
   }
 
   /**
@@ -228,11 +228,11 @@ public final class CreateAccountInputTest {
         .build();
 
     // When
-    var account = input.toAccount(requester);
+    var account = Account.from(input, requester);
 
     // Then
-    assertNotNull(account.getUser());
-    assertEquals(requester, account.getUser().getId().value());
+    assertNotNull(account.user());
+    assertEquals(requester, account.user().value());
   }
 
   /**
@@ -251,12 +251,12 @@ public final class CreateAccountInputTest {
         .build();
 
     // When
-    var account = input.toAccount(requester);
+    var account = Account.from(input, requester);
 
     // Then
-    assertNotNull(account.getCreatedAt());
-    assertNotNull(account.getUpdatedAt());
-    assertEquals(account.getCreatedAt(), account.getUpdatedAt());
+    assertNotNull(account.createdAt());
+    assertNotNull(account.updatedAt());
+    assertEquals(account.createdAt(), account.updatedAt());
   }
 
   /**
@@ -275,11 +275,11 @@ public final class CreateAccountInputTest {
         .build();
 
     // When
-    var account = input.toAccount(requester);
+    var account = Account.from(input, requester);
 
     // Then
-    assertEquals(requester, account.getCreatedBy());
-    assertEquals(requester, account.getUpdatedBy());
+    assertEquals(requester, account.createdBy());
+    assertEquals(requester, account.updatedBy());
   }
 
   /**
@@ -308,14 +308,14 @@ public final class CreateAccountInputTest {
         .build();
 
     // When
-    var account1 = input1.toAccount(requester);
-    var account2 = input2.toAccount(requester);
-    var account3 = input3.toAccount(requester);
+    var account1 = Account.from(input1, requester);
+    var account2 = Account.from(input2, requester);
+    var account3 = Account.from(input3, requester);
 
     // Then
-    assertEquals("#FF0000", account1.getThemeColor());
-    assertEquals("#00FF00", account2.getThemeColor());
-    assertEquals("#0000FF", account3.getThemeColor());
+    assertEquals("#FF0000", account1.themeColor());
+    assertEquals("#00FF00", account2.themeColor());
+    assertEquals("#0000FF", account3.themeColor());
   }
 
   /**
@@ -334,10 +334,10 @@ public final class CreateAccountInputTest {
         .build();
 
     // When
-    var account = input.toAccount(requester);
+    var account = Account.from(input, requester);
 
     // Then
-    assertEquals(expectedName, account.getName());
+    assertEquals(expectedName, account.name());
   }
 
   /**
@@ -356,12 +356,12 @@ public final class CreateAccountInputTest {
         .build();
 
     // When
-    var account1 = input.toAccount(requester1);
-    var account2 = input.toAccount(requester2);
+    var account1 = Account.from(input, requester1);
+    var account2 = Account.from(input, requester2);
 
     // Then
-    assertEquals(requester1, account1.getUser().getId().value());
-    assertEquals(requester2, account2.getUser().getId().value());
-    assertEquals(false, account1.getUser().getId().equals(account2.getUser().getId()));
+    assertEquals(requester1, account1.user().value());
+    assertEquals(requester2, account2.user().value());
+    assertEquals(false, account1.user().equals(account2.user()));
   }
 }

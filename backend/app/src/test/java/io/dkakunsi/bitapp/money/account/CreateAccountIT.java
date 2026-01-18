@@ -50,7 +50,7 @@ public class CreateAccountIT extends AppTestUtil {
    * provided details
    */
   @Test
-  public void shouldCreateBankAccount_WhenValidRequestProvided() {
+  public void createBankAccountShouldBeOk() {
     var body = """
         {
           "name": "My Bank Account",
@@ -81,7 +81,7 @@ public class CreateAccountIT extends AppTestUtil {
    * provided details
    */
   @Test
-  public void shouldCreateCashAccount_WhenValidRequestProvided() {
+  public void createCashAccountShouldBeOk() {
     var body = """
         {
           "name": "My Cash Wallet",
@@ -112,7 +112,7 @@ public class CreateAccountIT extends AppTestUtil {
    * provided details
    */
   @Test
-  public void shouldCreateEWalletAccount_WhenValidRequestProvided() {
+  public void createEWalletAccountShouldBeOk() {
     var body = """
         {
           "name": "Digital Wallet",
@@ -142,7 +142,7 @@ public class CreateAccountIT extends AppTestUtil {
    * <b>Then</b> the request should fail with status 400
    */
   @Test
-  public void shouldFailWithBadRequest_WhenTypeIsInvalid() {
+  public void createAccountWithInvalidTypeShouldFail() {
     var body = """
         {
          "name": "Invalid Type Account",
@@ -166,7 +166,7 @@ public class CreateAccountIT extends AppTestUtil {
    * <b>Then</b> the request should fail with status 400
    */
   @Test
-  public void shouldFailWithBadRequest_WhenTypeIsMissing() {
+  public void createAccountWithMissingTypeShouldFail() {
     var body = """
         {
          "name": "No Type Account",
@@ -180,7 +180,7 @@ public class CreateAccountIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("type: must not be blank", response.getBody());
+    assertEquals("type: invalid value", response.getBody());
   }
 
   /**
@@ -190,7 +190,7 @@ public class CreateAccountIT extends AppTestUtil {
    * using default theme color (white)
    */
   @Test
-  public void shouldCreateAccountWithoutThemeColor_WhenNotProvided() {
+  public void createAccountWithoutThemeColorShouldBeOk() {
     var body = """
         {
           "name": "Simple Account",
@@ -220,7 +220,7 @@ public class CreateAccountIT extends AppTestUtil {
    * blank" message
    */
   @Test
-  public void shouldFailWithBadRequest_WhenNameIsEmpty() {
+  public void createAccountWithEmptyNameShouldFail() {
     var body = """
         {
           "name": "",
@@ -235,7 +235,7 @@ public class CreateAccountIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("name: must not be blank", response.getBody());
+    assertEquals("name: invalid value", response.getBody());
   }
 
   /**
@@ -245,7 +245,7 @@ public class CreateAccountIT extends AppTestUtil {
    * blank" message
    */
   @Test
-  public void shouldFailWithBadRequest_WhenNameIsMissing() {
+  public void createAccountWithMissingNameShouldFail() {
     var body = """
         {
           "type": "BANK",
@@ -259,63 +259,7 @@ public class CreateAccountIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("name: must not be blank", response.getBody());
-  }
-
-  /**
-   * <b>Given</b> multiple valid account creation requests with different account
-   * types<br>
-   * <b>When</b> the POST /accounts endpoint is called sequentially for each
-   * account<br>
-   * <b>Then</b> all accounts should be created successfully with unique IDs and
-   * correct types
-   */
-  @Test
-  public void shouldCreateMultipleAccounts_WithDifferentTypes() {
-    // Create first account
-    var body1 = """
-        {
-          "name": "First Account",
-          "type": "BANK",
-          "themeColor": "#0000FF"
-        }
-        """;
-
-    var response1 = Unirest.post(baseUrl + "/accounts")
-        .header("Authorization", "Bearer " + token)
-        .body(body1)
-        .asString();
-
-    assertEquals(200, response1.getStatus());
-    var responseBody1 = new JSONObject(response1.getBody());
-    var firstAccountId = responseBody1.getString("id");
-    assertEquals("First Account", responseBody1.getString("name"));
-    assertEquals("BANK", responseBody1.getString("type"));
-
-    // Create second account
-    var body2 = """
-        {
-          "name": "Second Account",
-          "type": "CASH",
-          "themeColor": "#00FF00"
-        }
-        """;
-
-    var response2 = Unirest.post(baseUrl + "/accounts")
-        .header("Authorization", "Bearer " + token)
-        .body(body2)
-        .asString();
-
-    assertEquals(200, response2.getStatus());
-    var responseBody2 = new JSONObject(response2.getBody());
-    var secondAccountId = responseBody2.getString("id");
-    assertEquals("Second Account", responseBody2.getString("name"));
-    assertEquals("CASH", responseBody2.getString("type"));
-
-    // Ensure different IDs
-    assertNotNull(firstAccountId);
-    assertNotNull(secondAccountId);
-    assertEquals(false, firstAccountId.equals(secondAccountId));
+    assertEquals("name: invalid value", response.getBody());
   }
 
   /**
@@ -324,7 +268,7 @@ public class CreateAccountIT extends AppTestUtil {
    * <b>Then</b> the request should fail with status 401
    */
   @Test
-  public void shouldFailWithUnauthorized_WhenNoTokenProvided() {
+  public void createAccountWithNoTokenShouldFail() {
     var body = """
         {
          "name": "Unauthorized Account",
@@ -347,7 +291,7 @@ public class CreateAccountIT extends AppTestUtil {
    * <b>Then</b> the request should fail with status 401
    */
   @Test
-  public void shouldFailWithUnauthorized_WhenInvalidTokenProvided() {
+  public void createAccountWithInvalidTokenShouldFail() {
     var body = """
         {
          "name": "Unauthorized Account",

@@ -7,10 +7,9 @@ import java.time.LocalTime;
 import java.util.Currency;
 
 import dev.morphia.annotations.Entity;
-import dev.morphia.annotations.Id;
+import io.dkakunsi.bitapp.common.Id;
 import io.dkakunsi.bitapp.common.ModelStatus;
 import io.dkakunsi.bitapp.loan.model.Loan;
-import io.dkakunsi.bitapp.user.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,7 +22,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class LoanEntity {
 
-  @Id
+  @dev.morphia.annotations.Id
   private String id;
   private String userId;
   private String type;
@@ -46,53 +45,52 @@ public class LoanEntity {
    * Converts this entity to a domain Loan model.
    */
   public Loan toLoan() {
-    var userIdObj = io.dkakunsi.bitapp.common.Id.of(this.userId);
-    var user = User.builder()
-        .id(userIdObj)
-        .build();
+    var userIdObj = Id.of(this.userId);
 
-    return new Loan(
-        this.id,
-        user,
-        Loan.Type.valueOf(this.type),
-        this.date,
-        this.time,
-        this.partyName,
-        this.title,
-        this.description,
-        this.amount,
-        this.remainingAmount,
-        Currency.getInstance(this.currency),
-        this.interestRate,
-        ModelStatus.valueOf(this.status),
-        this.createdAt,
-        this.updatedAt,
-        this.createdBy,
-        this.updatedBy);
+    return Loan.builder()
+        .id(Id.of(this.id))
+        .user(userIdObj)
+        .type(Loan.Type.valueOf(this.type))
+        .date(this.date)
+        .time(this.time)
+        .partyName(this.partyName)
+        .title(this.title)
+        .description(this.description)
+        .amount(this.amount)
+        .remainingAmount(this.remainingAmount)
+        .currency(Currency.getInstance(this.currency))
+        .interestRate(this.interestRate)
+        .status(ModelStatus.valueOf(this.status))
+        .createdAt(this.createdAt)
+        .updatedAt(this.updatedAt)
+        .createdBy(this.createdBy)
+        .updatedBy(this.updatedBy)
+        .build();
   }
 
   /**
    * Creates an entity from a domain Loan model.
    */
   public static LoanEntity fromLoan(Loan loan) {
-    return LoanEntity.builder()
-        .id(loan.id())
-        .userId(loan.user().getId().value())
-        .type(loan.type().name())
-        .date(loan.date())
-        .time(loan.time())
-        .partyName(loan.partyName())
-        .title(loan.title())
-        .description(loan.description())
-        .amount(loan.amount())
-        .remainingAmount(loan.remainingAmount())
-        .currency(loan.currency().getCurrencyCode())
-        .interestRate(loan.interestRate())
-        .status(loan.status().name())
-        .createdAt(loan.createdAt())
-        .updatedAt(loan.updatedAt())
-        .createdBy(loan.createdBy())
-        .updatedBy(loan.updatedBy())
-        .build();
+    // Mrophia is not working properly with builder pattern, so we have to use the
+    // constructor
+    return new LoanEntity(
+        loan.id().value(),
+        loan.user().value(),
+        loan.type().name(),
+        loan.date(),
+        loan.time(),
+        loan.partyName(),
+        loan.title(),
+        loan.description(),
+        loan.amount(),
+        loan.remainingAmount(),
+        loan.currency().getCurrencyCode(),
+        loan.interestRate(),
+        loan.status().name(),
+        loan.createdAt(),
+        loan.updatedAt(),
+        loan.createdBy(),
+        loan.updatedBy());
   }
 }

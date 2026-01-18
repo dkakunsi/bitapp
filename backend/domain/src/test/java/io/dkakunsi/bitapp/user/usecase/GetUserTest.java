@@ -62,7 +62,7 @@ public final class GetUserTest {
     assertEquals("Existing User", user.name());
     assertEquals("081234567890", user.phone());
     assertEquals("http://photo.url/existing_user", user.photoUrl());
-    assertEquals(User.Language.EN, user.language());
+    assertEquals(User.Language.EN.name(), user.language());
     verify(userRepository).findByEmail(email);
   }
 

@@ -9,11 +9,9 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
+import org.json.JSONArray;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -23,7 +21,6 @@ import io.dkakunsi.bitapp.account.dto.GetUserAccountsInput;
 import io.dkakunsi.bitapp.account.dto.GetUserAccountsResult;
 import io.dkakunsi.bitapp.account.model.Account;
 import io.dkakunsi.bitapp.account.usecase.GetUserAccounts;
-import io.dkakunsi.bitapp.common.AppError;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.usecase.Result;
@@ -46,8 +43,7 @@ class GetUserAccountsJavalinEndpointTest {
   static void setup() throws Exception {
     baseUrl = "http://localhost:" + PORT;
     usecase = mock(GetUserAccounts.class);
-    var endpoint = new GetUserAccountsJavalinEndpoint(usecase)
-        .withValidator();
+    var endpoint = new GetUserAccountsJavalinEndpoint(usecase);
     server = JavalinServer.of(PORT);
     server.addEndpoint(endpoint);
     server.start();
@@ -63,11 +59,10 @@ class GetUserAccountsJavalinEndpointTest {
     reset(usecase);
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   void givenValidUserIdWithMultipleAccounts_WhenRequested_ThenShouldReturn200AndAccountsList() {
     // Given
-    var accountItem1 = GetUserAccountsResult.AccountItem.builder()
+    var accountItem1 = GetUserAccountsResult.builder()
         .id("account1")
         .name("Savings Account")
         .type(Account.Type.BANK)
@@ -75,8 +70,7 @@ class GetUserAccountsJavalinEndpointTest {
         .balance(BigDecimal.valueOf(1000.00))
         .userId(USER_ID)
         .build();
-
-    var accountItem2 = GetUserAccountsResult.AccountItem.builder()
+    var accountItem2 = GetUserAccountsResult.builder()
         .id("account2")
         .name("Checking Account")
         .type(Account.Type.CASH)
@@ -84,15 +78,8 @@ class GetUserAccountsJavalinEndpointTest {
         .balance(BigDecimal.valueOf(500.00))
         .userId(USER_ID)
         .build();
-
-    var result = mock(Result.class);
-    when(result.isSuccess()).thenReturn(true);
-    when(result.isEmpty()).thenReturn(false);
-    when(result.isFailed()).thenReturn(false);
-    when(result.data()).thenReturn(Optional.of(
-        GetUserAccountsResult.builder()
-            .accounts(Arrays.asList(accountItem1, accountItem2))
-            .build()));
+    var getResult = List.of(accountItem1, accountItem2);
+    var result = Result.success(getResult);
     when(usecase.process(any(Context.class), any(GetUserAccountsInput.class))).thenReturn(result);
 
     // When
@@ -105,30 +92,26 @@ class GetUserAccountsJavalinEndpointTest {
 
     var responseBody = response.getBody();
     assertNotNull(responseBody);
-    assertTrue(responseBody.contains("\"accounts\":["));
-    assertTrue(responseBody.contains("\"id\":\"account1\""));
-    assertTrue(responseBody.contains("\"name\":\"Savings Account\""));
-    assertTrue(responseBody.contains("\"type\":\"BANK\""));
-    assertTrue(responseBody.contains("\"themeColor\":\"#FF5733\""));
-    assertTrue(responseBody.contains("\"balance\":1000"));
-    assertTrue(responseBody.contains("\"id\":\"account2\""));
-    assertTrue(responseBody.contains("\"name\":\"Checking Account\""));
-    assertTrue(responseBody.contains("\"type\":\"CASH\""));
-    assertTrue(responseBody.contains("\"balance\":500"));
+    var resultBody = new JSONArray(responseBody);
+    assertEquals(2, resultBody.length());
+    var account1 = resultBody.getJSONObject(0);
+    assertEquals("account1", account1.getString("id"));
+    assertEquals("Savings Account", account1.getString("name"));
+    assertEquals("BANK", account1.getString("type"));
+    assertEquals("#FF5733", account1.getString("themeColor"));
+    assertEquals(1000, account1.getDouble("balance"));
+    var account2 = resultBody.getJSONObject(1);
+    assertEquals("account2", account2.getString("id"));
+    assertEquals("Checking Account", account2.getString("name"));
+    assertEquals("CASH", account2.getString("type"));
+    assertEquals("#3357FF", account2.getString("themeColor"));
+    assertEquals(500, account2.getDouble("balance"));
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   void givenValidUserIdWithNoAccounts_WhenRequested_ThenShouldReturn200AndEmptyList() {
     // Given
-    var result = mock(Result.class);
-    when(result.isSuccess()).thenReturn(true);
-    when(result.isEmpty()).thenReturn(false);
-    when(result.isFailed()).thenReturn(false);
-    when(result.data()).thenReturn(Optional.of(
-        GetUserAccountsResult.builder()
-            .accounts(Collections.emptyList())
-            .build()));
+    var result = Result.<List<GetUserAccountsResult>>success(List.of());
     when(usecase.process(any(Context.class), any(GetUserAccountsInput.class))).thenReturn(result);
 
     // When
@@ -141,14 +124,14 @@ class GetUserAccountsJavalinEndpointTest {
 
     var responseBody = response.getBody();
     assertNotNull(responseBody);
-    assertTrue(responseBody.contains("\"accounts\":[]"));
+    var resultBody = new JSONArray(responseBody);
+    assertEquals(0, resultBody.length());
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   void givenValidUserIdWithSingleAccount_WhenRequested_ThenShouldReturn200AndSingleAccountList() {
     // Given
-    var accountItem = GetUserAccountsResult.AccountItem.builder()
+    var accountItem = GetUserAccountsResult.builder()
         .id("account1")
         .name("E-Wallet")
         .type(Account.Type.EWALLET)
@@ -156,15 +139,7 @@ class GetUserAccountsJavalinEndpointTest {
         .balance(BigDecimal.valueOf(250.50))
         .userId(USER_ID)
         .build();
-
-    var result = mock(Result.class);
-    when(result.isSuccess()).thenReturn(true);
-    when(result.isEmpty()).thenReturn(false);
-    when(result.isFailed()).thenReturn(false);
-    when(result.data()).thenReturn(Optional.of(
-        GetUserAccountsResult.builder()
-            .accounts(List.of(accountItem))
-            .build()));
+    var result = Result.success(List.of(accountItem));
     when(usecase.process(any(Context.class), any(GetUserAccountsInput.class))).thenReturn(result);
 
     // When
@@ -183,14 +158,10 @@ class GetUserAccountsJavalinEndpointTest {
     assertTrue(responseBody.contains("\"balance\":250.5"));
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   void givenValidRequest_WhenUseCaseReturnsEmpty_ThenShouldReturn200() {
     // Given
-    var result = mock(Result.class);
-    when(result.isSuccess()).thenReturn(true);
-    when(result.isEmpty()).thenReturn(true);
-    when(result.isFailed()).thenReturn(false);
+    var result = Result.<List<GetUserAccountsResult>>success(List.of());
     when(usecase.process(any(Context.class), any(GetUserAccountsInput.class))).thenReturn(result);
 
     // When
@@ -202,15 +173,10 @@ class GetUserAccountsJavalinEndpointTest {
     assertEquals(200, response.getStatus());
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   void givenValidRequest_WhenUseCaseFails_ThenShouldReturn500() {
     // Given
-    var result = mock(Result.class);
-    when(result.isSuccess()).thenReturn(false);
-    when(result.isEmpty()).thenReturn(false);
-    when(result.isFailed()).thenReturn(true);
-    when(result.error()).thenReturn(Optional.of(new AppError(Code.SERVER_ERROR, "Database error")));
+    var result = Result.<List<GetUserAccountsResult>>failure(Code.SERVER_ERROR, "Database error");
     when(usecase.process(any(Context.class), any(GetUserAccountsInput.class))).thenReturn(result);
 
     // When

@@ -4,8 +4,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import dev.morphia.annotations.Entity;
-import dev.morphia.annotations.Id;
 import io.dkakunsi.bitapp.account.model.Account;
+import io.dkakunsi.bitapp.common.Id;
+import io.dkakunsi.bitapp.common.ModelStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,13 +19,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AccountEntity {
 
-  @Id
+  @dev.morphia.annotations.Id
   private String id;
   private String name;
   private String type;
   private String themeColor;
   private Double balance;
   private String userId;
+
+  private String status;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
   private String createdBy;
@@ -34,11 +37,8 @@ public class AccountEntity {
    * Converts this entity to a domain Account model.
    */
   public Account toAccount() {
-    var accountId = io.dkakunsi.bitapp.common.Id.of(this.id);
-    var userIdObj = io.dkakunsi.bitapp.common.Id.of(this.userId);
-    var user = io.dkakunsi.bitapp.user.model.User.builder()
-        .id(userIdObj)
-        .build();
+    var accountId = Id.of(this.id);
+    var userIdObj = Id.of(this.userId);
 
     return Account.builder()
         .id(accountId)
@@ -46,7 +46,8 @@ public class AccountEntity {
         .type(Account.Type.valueOf(this.type))
         .themeColor(this.themeColor)
         .balance(BigDecimal.valueOf(this.balance))
-        .user(user)
+        .user(userIdObj)
+        .status(ModelStatus.valueOf(this.status))
         .createdAt(this.createdAt)
         .updatedAt(this.updatedAt)
         .createdBy(this.createdBy)
@@ -58,17 +59,19 @@ public class AccountEntity {
    * Creates an entity from a domain Account model.
    */
   public static AccountEntity fromAccount(Account account) {
-    return AccountEntity.builder()
-        .id(account.getId().value())
-        .name(account.getName())
-        .type(account.getType().name())
-        .themeColor(account.getThemeColor())
-        .balance(account.getBalance().doubleValue())
-        .userId(account.getUser().getId().value())
-        .createdAt(account.getCreatedAt())
-        .updatedAt(account.getUpdatedAt())
-        .createdBy(account.getCreatedBy())
-        .updatedBy(account.getUpdatedBy())
-        .build();
+    // Morphia is not working properly with builder pattern, so we have to use the
+    // constructor
+    return new AccountEntity(
+        account.id().value(),
+        account.name(),
+        account.type().name(),
+        account.themeColor(),
+        account.balance().doubleValue(),
+        account.user().value(),
+        account.status().name(),
+        account.createdAt(),
+        account.updatedAt(),
+        account.createdBy(),
+        account.updatedBy());
   }
 }

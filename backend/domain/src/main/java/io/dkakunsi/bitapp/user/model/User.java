@@ -1,46 +1,64 @@
 package io.dkakunsi.bitapp.user.model;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import io.dkakunsi.bitapp.common.Id;
+import io.dkakunsi.bitapp.common.ModelStatus;
 import io.dkakunsi.bitapp.user.dto.RegisterUserInput;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
 
 @Builder
-@Getter
-@EqualsAndHashCode
-@ToString
-public final class User {
+public final record User(
+    Id id,
+    String name,
+    String phone,
+    String photoUrl,
+    Language language,
 
-  // email as Id
-  @NotBlank
-  private final Id id;
-  @NotBlank
-  private final String name;
-  private final String phone;
-  private final String photoUrl;
-  private final Language language;
+    ModelStatus status,
+    LocalDateTime createdAt,
+    LocalDateTime updatedAt,
+    String createdBy,
+    String updatedBy) {
+
+  private static final Language DEFAULT_LANGUAGE = Language.EN;
 
   public static enum Language {
     EN,
     ID;
 
-    public static User.Language from(String language) {
+    public static boolean isValid(String language) {
       if (language == null) {
-        return null;
+        return false;
       }
 
       try {
-        return valueOf(language);
+        valueOf(language);
+        return true;
       } catch (IllegalArgumentException ex) {
-        throw new IllegalArgumentException("Invalid language: " + language);
+        return false;
       }
     }
 
+  }
+
+  public static User from(RegisterUserInput input) {
+    final var userId = Id.of(input.email());
+    final var now = LocalDateTime.now();
+    final var executor = input.email();
+    return User.builder()
+        .id(userId)
+        .name(input.name())
+        .phone(input.phone())
+        .photoUrl(input.photoUrl())
+        .language(DEFAULT_LANGUAGE)
+        .status(ModelStatus.ACTIVE)
+        .createdAt(now)
+        .updatedAt(now)
+        .createdBy(executor)
+        .updatedBy(executor)
+        .build();
   }
 
   public boolean needUpdate(RegisterUserInput userModel) {
@@ -50,22 +68,33 @@ public final class User {
   }
 
   public User update(RegisterUserInput userInput) {
+    var executor = userInput.email();
     return User.builder()
         .id(this.id)
         .language(this.language)
         .name(userInput.name())
         .phone(userInput.phone())
         .photoUrl(userInput.photoUrl())
+        .status(this.status)
+        .createdAt(this.createdAt)
+        .updatedAt(LocalDateTime.now())
+        .createdBy(this.createdBy)
+        .updatedBy(executor)
         .build();
   }
 
-  public User updateLanguage(Language newLanguage) {
+  public User updateLanguage(Language newLanguage, String requester) {
     return User.builder()
         .id(this.id)
         .name(this.name)
         .phone(this.phone)
         .photoUrl(this.photoUrl)
         .language(newLanguage)
+        .status(this.status)
+        .createdAt(this.createdAt)
+        .updatedAt(LocalDateTime.now())
+        .createdBy(this.createdBy)
+        .updatedBy(requester)
         .build();
   }
 }

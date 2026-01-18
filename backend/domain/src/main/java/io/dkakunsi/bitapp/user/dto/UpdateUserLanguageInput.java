@@ -1,11 +1,30 @@
 package io.dkakunsi.bitapp.user.dto;
 
-import io.dkakunsi.bitapp.user.validation.ValidLanguage;
-import jakarta.validation.constraints.NotBlank;
+import java.util.ArrayList;
+
+import org.apache.commons.lang3.StringUtils;
+
+import io.dkakunsi.bitapp.common.Validatable;
+import io.dkakunsi.bitapp.user.model.User;
 import lombok.Builder;
 
 @Builder
 public final record UpdateUserLanguageInput(
-        @NotBlank String email,
-        @NotBlank @ValidLanguage String language) {
+    String email,
+    String language) implements Validatable {
+
+  @Override
+  public void validate() throws IllegalArgumentException {
+    var errors = new ArrayList<String>();
+    if (StringUtils.isBlank(email)) {
+      errors.add("email: invalid value");
+    }
+    if (!User.Language.isValid(language)) {
+      errors.add("language: invalid value");
+    }
+
+    if (!errors.isEmpty()) {
+      throw new IllegalArgumentException(String.join(", ", errors));
+    }
+  }
 }

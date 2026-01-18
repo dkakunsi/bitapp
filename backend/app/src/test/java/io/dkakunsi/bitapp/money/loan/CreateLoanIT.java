@@ -49,7 +49,7 @@ public class CreateLoanIT extends AppTestUtil {
    * <b>Then</b> the request should fail with a 401 status code
    */
   @Test
-  public void shouldFailOnMissingAuthorization() throws Exception {
+  public void createLoanWithoutAuthorizationHeaderShouldReturn401() throws Exception {
     var body = """
         {
           "type": "LEND",
@@ -75,7 +75,7 @@ public class CreateLoanIT extends AppTestUtil {
    * <b>Then</b> a new loan is created and returned with a 200 status code
    */
   @Test
-  public void shouldCreateBorrowLoanSuccessfully() throws Exception {
+  public void createBorrowLoanShouldBeOk() throws Exception {
     var body = """
         {
           "type": "BORROW",
@@ -222,7 +222,9 @@ public class CreateLoanIT extends AppTestUtil {
           "description": "Lending money to buy a car",
           "amount": 500000000,
           "currency": "IDR",
-          "interestRate": 5.5
+          "interestRate": 5.5,
+          "date": "2025-12-31",
+          "time": "23:59:59"
         }
         """;
 
@@ -260,7 +262,9 @@ public class CreateLoanIT extends AppTestUtil {
           "description": "Lending money to buy a car",
           "amount": 500000000,
           "currency": "IDR",
-          "interestRate": 5.5
+          "interestRate": 5.5,
+          "date": "2025-12-31",
+          "time": "23:59:59"
         }
         """;
 
@@ -282,13 +286,14 @@ public class CreateLoanIT extends AppTestUtil {
   public void shouldFailOnMissingType() throws Exception {
     var body = """
         {
-          "type": null,
           "partyName": "John Doe",
           "title": "Loan for Car",
           "description": "Lending money to buy a car",
           "amount": 500000000,
           "currency": "IDR",
-          "interestRate": 5.5
+          "interestRate": 5.5,
+          "date": "2025-12-31",
+          "time": "23:59:59"
         }
         """;
 
@@ -298,7 +303,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("type: must not be blank", response.getBody());
+    assertEquals("type: invalid value", response.getBody());
   }
 
   /**
@@ -316,7 +321,9 @@ public class CreateLoanIT extends AppTestUtil {
           "description": "Lending money to buy a car",
           "amount": 500000000,
           "currency": "IDR",
-          "interestRate": 5.5
+          "interestRate": 5.5,
+          "date": "2025-12-31",
+          "time": "23:59:59"
         }
         """;
 
@@ -326,7 +333,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("type: must not be blank", response.getBody());
+    assertEquals("type: invalid value", response.getBody());
   }
 
   /**
@@ -344,7 +351,9 @@ public class CreateLoanIT extends AppTestUtil {
           "description": "Lending money to buy a car",
           "amount": 500000000,
           "currency": "IDR",
-          "interestRate": 5.5
+          "interestRate": 5.5,
+          "date": "2025-12-31",
+          "time": "23:59:59"
         }
         """;
 
@@ -354,7 +363,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("type: must not be blank", response.getBody());
+    assertEquals("type: invalid value", response.getBody());
   }
 
   /**
@@ -366,12 +375,15 @@ public class CreateLoanIT extends AppTestUtil {
   public void shouldFailOnNullType() throws Exception {
     var body = """
         {
+          "type": null,
           "partyName": "John Doe",
           "title": "Loan for Car",
           "description": "Lending money to buy a car",
           "amount": 500000000,
           "currency": "IDR",
-          "interestRate": 5.5
+          "interestRate": 5.5,
+          "date": "2025-12-31",
+          "time": "23:59:59"
         }
         """;
 
@@ -381,7 +393,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("type: must not be blank", response.getBody());
+    assertEquals("type: invalid value", response.getBody());
   }
 
   /**
@@ -398,7 +410,9 @@ public class CreateLoanIT extends AppTestUtil {
           "description": "Lending money to buy a car",
           "amount": 500000000,
           "currency": "IDR",
-          "interestRate": 5.5
+          "interestRate": 5.5,
+          "date": "2025-12-31",
+          "time": "23:59:59"
         }
         """;
 
@@ -408,7 +422,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("title: must not be blank", response.getBody());
+    assertEquals("title: invalid value", response.getBody());
   }
 
   /**
@@ -426,7 +440,9 @@ public class CreateLoanIT extends AppTestUtil {
           "description": "Lending money to buy a car",
           "amount": 500000000,
           "currency": "IDR",
-          "interestRate": 5.5
+          "interestRate": 5.5,
+          "date": "2025-12-31",
+          "time": "23:59:59"
         }
         """;
 
@@ -436,7 +452,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("title: must not be blank", response.getBody());
+    assertEquals("title: invalid value", response.getBody());
   }
 
   /**
@@ -454,7 +470,9 @@ public class CreateLoanIT extends AppTestUtil {
           "description": "Lending money to buy a car",
           "amount": 500000000,
           "currency": "IDR",
-          "interestRate": 5.5
+          "interestRate": 5.5,
+          "date": "2025-12-31",
+          "time": "23:59:59"
         }
         """;
 
@@ -464,7 +482,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("title: must not be blank", response.getBody());
+    assertEquals("title: invalid value", response.getBody());
   }
 
   /**
@@ -482,7 +500,9 @@ public class CreateLoanIT extends AppTestUtil {
           "description": "Lending money to buy a car",
           "amount": 500000000,
           "currency": "IDR",
-          "interestRate": 5.5
+          "interestRate": 5.5,
+          "date": "2025-12-31",
+          "time": "23:59:59"
         }
         """;
 
@@ -492,7 +512,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("title: must not be blank", response.getBody());
+    assertEquals("title: invalid value", response.getBody());
   }
 
   /**
@@ -510,7 +530,9 @@ public class CreateLoanIT extends AppTestUtil {
           "description": "Lending money to buy a car",
           "amount": -500000000,
           "currency": "IDR",
-          "interestRate": 5.5
+          "interestRate": 5.5,
+          "date": "2025-12-31",
+          "time": "23:59:59"
         }
         """;
 
@@ -520,7 +542,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("amount: must be greater than 0", response.getBody());
+    assertEquals("amount: invalid value", response.getBody());
   }
 
   /**
@@ -538,7 +560,9 @@ public class CreateLoanIT extends AppTestUtil {
           "description": "Lending money to buy a car",
           "amount": 0,
           "currency": "IDR",
-          "interestRate": 5.5
+          "interestRate": 5.5,
+          "date": "2025-12-31",
+          "time": "23:59:59"
         }
         """;
 
@@ -548,7 +572,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("amount: must be greater than 0", response.getBody());
+    assertEquals("amount: invalid value", response.getBody());
   }
 
   /**
@@ -565,7 +589,9 @@ public class CreateLoanIT extends AppTestUtil {
           "title": "Loan for Car",
           "description": "Lending money to buy a car",
           "currency": "IDR",
-          "interestRate": 5.5
+          "interestRate": 5.5,
+          "date": "2025-12-31",
+          "time": "23:59:59"
         }
         """;
 
@@ -575,7 +601,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("amount: must not be null", response.getBody());
+    assertEquals("amount: invalid value", response.getBody());
   }
 
   /**
@@ -593,7 +619,9 @@ public class CreateLoanIT extends AppTestUtil {
           "description": "Lending money to buy a car",
           "amount": null,
           "currency": "IDR",
-          "interestRate": 5.5
+          "interestRate": 5.5,
+          "date": "2025-12-31",
+          "time": "23:59:59"
         }
         """;
 
@@ -603,7 +631,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("amount: must not be null", response.getBody());
+    assertEquals("amount: invalid value", response.getBody());
   }
 
   /**
@@ -621,7 +649,9 @@ public class CreateLoanIT extends AppTestUtil {
           "description": "Lending money to buy a car",
           "amount": 500000000,
           "currency": "IDR",
-          "interestRate": -5.5
+          "interestRate": -5.5,
+          "date": "2025-12-31",
+          "time": "23:59:59"
         }
         """;
 
@@ -631,7 +661,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("interestRate: must be greater than or equal to 0", response.getBody());
+    assertEquals("interestRate: invalid value", response.getBody());
   }
 
   /**
@@ -650,7 +680,8 @@ public class CreateLoanIT extends AppTestUtil {
           "amount": 500000000,
           "currency": "IDR",
           "interestRate": 5.5,
-          "date": "2024-13-45"
+          "date": "2024-13-45",
+          "time": "23:59:59"
         }
         """;
 
@@ -679,7 +710,8 @@ public class CreateLoanIT extends AppTestUtil {
           "amount": 500000000,
           "currency": "IDR",
           "interestRate": 5.5,
-          "date": "invalid-date"
+          "date": "invalid-date",
+          "time": "23:59:59"
         }
         """;
 
@@ -708,6 +740,7 @@ public class CreateLoanIT extends AppTestUtil {
           "amount": 500000000,
           "currency": "IDR",
           "interestRate": 5.5,
+          "date": "2025-12-31",
           "time": "25:99:99"
         }
         """;
@@ -737,6 +770,7 @@ public class CreateLoanIT extends AppTestUtil {
           "amount": 500000000,
           "currency": "IDR",
           "interestRate": 5.5,
+          "date": "2025-12-31",
           "time": "invalid-time"
         }
         """;

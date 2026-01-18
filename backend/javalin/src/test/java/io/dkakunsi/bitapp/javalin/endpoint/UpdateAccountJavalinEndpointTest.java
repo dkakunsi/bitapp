@@ -37,8 +37,7 @@ class UpdateAccountJavalinEndpointTest {
   static void setup() throws Exception {
     baseUrl = "http://localhost:" + PORT;
     usecase = mock(UpdateAccount.class);
-    var endpoint = new UpdateAccountJavalinEndpoint(usecase)
-        .withValidator();
+    var endpoint = new UpdateAccountJavalinEndpoint(usecase);
     server = JavalinServer.of(PORT);
     server.addEndpoint(endpoint);
     server.start();
@@ -63,7 +62,6 @@ class UpdateAccountJavalinEndpointTest {
         .type("CASH")
         .themeColor("#00FF00")
         .build();
-
     var result = Result.success(updateResult);
     when(usecase.process(any(Context.class), any(UpdateAccountInput.class))).thenReturn(result);
 
@@ -100,7 +98,6 @@ class UpdateAccountJavalinEndpointTest {
         .type("BANK")
         .themeColor("#FF5733")
         .build();
-
     var result = Result.success(updateResult);
     when(usecase.process(any(Context.class), any(UpdateAccountInput.class))).thenReturn(result);
 
@@ -153,7 +150,6 @@ class UpdateAccountJavalinEndpointTest {
         .type("BANK")
         .themeColor("#000000")
         .build();
-
     var result = Result.success(updateResult);
     when(usecase.process(any(Context.class), any(UpdateAccountInput.class))).thenReturn(result);
 

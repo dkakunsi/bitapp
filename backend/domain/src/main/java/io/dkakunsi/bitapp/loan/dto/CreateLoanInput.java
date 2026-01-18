@@ -1,72 +1,64 @@
 package io.dkakunsi.bitapp.loan.dto;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Currency;
+import java.util.ArrayList;
 
-import io.dkakunsi.bitapp.common.Id;
-import io.dkakunsi.bitapp.common.ModelStatus;
+import org.apache.commons.lang3.StringUtils;
+
+import io.dkakunsi.bitapp.common.Validatable;
 import io.dkakunsi.bitapp.loan.model.Loan;
-import io.dkakunsi.bitapp.loan.validation.ValidDate;
-import io.dkakunsi.bitapp.loan.validation.ValidLoanType;
-import io.dkakunsi.bitapp.loan.validation.ValidTime;
-import io.dkakunsi.bitapp.user.model.User;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
 public final record CreateLoanInput(
-    @NotBlank @ValidLoanType String type,
-    @ValidDate String date,
-    @ValidTime String time,
+    String type,
+    String date,
+    String time,
     String partyName,
-    @NotBlank String title,
+    String title,
     String description,
-    @NotNull @DecimalMin(value = "0.01", message = "must be greater than 0") BigDecimal amount,
+    BigDecimal amount,
     String currency,
-    @DecimalMin(value = "0", message = "must be greater than or equal to 0") double interestRate) {
+    double interestRate) implements Validatable {
 
-  private static final String DEFAULT_CURRENCY = "IDR";
+  private static final String DATE_REGEX = "^(\\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$";
 
-  public Loan toLoan(String requester) {
-    final var userId = Id.of(requester);
-    final var user = User.builder().id(userId).build();
-    final var now = LocalDateTime.now();
-    final var executor = requester;
+  private static final String TIME_REGEX = "^([01]\\d|2[0-3]):([0-5]\\d):([0-5]\\d)?$";
 
-    LocalDate loanDate = (date != null && !date.isBlank())
-        ? LocalDate.parse(date)
-        : now.toLocalDate();
+  @Override
+  public void validate() throws IllegalArgumentException {
+    var errors = new ArrayList<String>();
 
-    LocalTime loanTime = (time != null && !time.isBlank())
-        ? LocalTime.parse(time)
-        : now.toLocalTime();
+    if (StringUtils.isBlank(title)) {
+      errors.add("title: invalid value");
+    }
+    if (!Loan.Type.isValid(type)) {
+      errors.add("type: invalid value");
+    }
+    if (date != null && (StringUtils.isBlank(date) || !date.matches(DATE_REGEX))) {
+      errors.add("date: invalid value");
+    }
+    if (time != null && (StringUtils.isBlank(time) || !time.matches(TIME_REGEX))) {
+      errors.add("time: invalid value");
+    }
+    if (amount == null || amount.compareTo(new BigDecimal("0.01")) < 0) {
+      errors.add("amount: invalid value");
+    }
+    if (StringUtils.isNotBlank(currency)) {
+      try {
+        java.util.Currency.getInstance(currency);
+      } catch (
 
-    Currency curr = (currency != null && !currency.isBlank())
-        ? Currency.getInstance(currency)
-        : Currency.getInstance(DEFAULT_CURRENCY);
+      IllegalArgumentException e) {
+        errors.add("currency: invalid value");
+      }
+    }
+    if (interestRate < 0) {
+      errors.add("interestRate: invalid value");
+    }
 
-    return new Loan(
-        Id.generate().value(),
-        user,
-        Loan.Type.from(type),
-        loanDate,
-        loanTime,
-        partyName,
-        title,
-        description,
-        amount,
-        amount, // remainingAmount equals amount initially
-        curr,
-        interestRate,
-        ModelStatus.ACTIVE,
-        now,
-        now,
-        executor,
-        executor);
+    if (!errors.isEmpty()) {
+      throw new IllegalArgumentException(String.join(", ", errors));
+    }
   }
 }

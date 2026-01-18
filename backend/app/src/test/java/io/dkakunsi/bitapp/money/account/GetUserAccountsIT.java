@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.math.BigDecimal;
 import java.util.Map;
 
-import org.json.JSONObject;
+import org.json.JSONArray;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -86,7 +86,7 @@ public class GetUserAccountsIT extends AppTestUtil {
    * 200 and complete details
    */
   @Test
-  public void shouldReturnAllAccountsForUser_WhenMultipleAccountsExist() {
+  public void getExistingUserAccountsShouldBeOk() {
     // Given
     // When
     var response = Unirest.get(baseUrl + "/users/{userId}/accounts")
@@ -97,15 +97,14 @@ public class GetUserAccountsIT extends AppTestUtil {
     // Then
     assertEquals(200, response.getStatus());
 
-    var responseBody = new JSONObject(response.getBody());
-    var accounts = responseBody.getJSONArray("accounts");
+    var responseBody = new JSONArray(response.getBody());
 
     // Should have at least 3 accounts for this user
-    assertTrue(accounts.length() >= 3, "Should have at least 3 accounts");
+    assertTrue(responseBody.length() >= 3, "Should have at least 3 accounts");
 
     // Verify all accounts belong to the correct user
-    for (int i = 0; i < accounts.length(); i++) {
-      var account = accounts.getJSONObject(i);
+    for (int i = 0; i < responseBody.length(); i++) {
+      var account = responseBody.getJSONObject(i);
       assertEquals(USER_ID, account.getString("userId"));
       assertNotNull(account.getString("id"));
       assertNotNull(account.getString("name"));
@@ -122,7 +121,7 @@ public class GetUserAccountsIT extends AppTestUtil {
    * other users
    */
   @Test
-  public void shouldReturnOnlyUserSpecificAccounts_NotOtherUsersAccounts() {
+  public void getUserSpecificAccountsShouldNotIncludeOtherUsersAccounts() {
     // Given
     // When
     var response = Unirest.get(baseUrl + "/users/{userId}/accounts")
@@ -133,12 +132,11 @@ public class GetUserAccountsIT extends AppTestUtil {
     // Then
     assertEquals(200, response.getStatus());
 
-    var responseBody = new JSONObject(response.getBody());
-    var accounts = responseBody.getJSONArray("accounts");
+    var responseBody = new JSONArray(response.getBody());
 
     // Verify none of the accounts belong to other users
-    for (int i = 0; i < accounts.length(); i++) {
-      var account = accounts.getJSONObject(i);
+    for (int i = 0; i < responseBody.length(); i++) {
+      var account = responseBody.getJSONObject(i);
       assertEquals(USER_ID, account.getString("userId"));
 
       // Ensure no account named "Other User Account" is returned
@@ -155,7 +153,7 @@ public class GetUserAccountsIT extends AppTestUtil {
    * type, color, balance)
    */
   @Test
-  public void shouldReturnAccountsWithCorrectDetails_WhenRequested() {
+  public void getAccountsWithCorrectDetailsShouldBeOk() {
     // Given
     // When
     var response = Unirest.get(baseUrl + "/users/{userId}/accounts")
@@ -166,16 +164,15 @@ public class GetUserAccountsIT extends AppTestUtil {
     // Then
     assertEquals(200, response.getStatus());
 
-    var responseBody = new JSONObject(response.getBody());
-    var accounts = responseBody.getJSONArray("accounts");
+    var responseBody = new JSONArray(response.getBody());
 
     // Find and verify the savings account
     boolean foundSavings = false;
     boolean foundCash = false;
     boolean foundEWallet = false;
 
-    for (int i = 0; i < accounts.length(); i++) {
-      var account = accounts.getJSONObject(i);
+    for (int i = 0; i < responseBody.length(); i++) {
+      var account = responseBody.getJSONObject(i);
       var name = account.getString("name");
 
       if (name.equals("Savings Account")) {
@@ -206,7 +203,7 @@ public class GetUserAccountsIT extends AppTestUtil {
    * <b>Then</b> an empty accounts array should be returned with status 200
    */
   @Test
-  public void shouldReturnEmptyList_WhenUserHasNoAccounts() {
+  public void getEmptyListWhenUserHasNoAccounts() {
     // Given
     var newUserId = "userwithnoaccount@email.com";
     var token = SecureTestUtil.generateToken(newUserId);
@@ -220,10 +217,9 @@ public class GetUserAccountsIT extends AppTestUtil {
     // Then
     assertEquals(200, response.getStatus());
 
-    var responseBody = new JSONObject(response.getBody());
-    var accounts = responseBody.getJSONArray("accounts");
+    var responseBody = new JSONArray(response.getBody());
 
-    assertEquals(0, accounts.length(), "Should return empty array for user with no accounts");
+    assertEquals(0, responseBody.length(), "Should return empty array for user with no accounts");
   }
 
   /**
@@ -234,7 +230,7 @@ public class GetUserAccountsIT extends AppTestUtil {
    * segregated
    */
   @Test
-  public void shouldReturnCorrectAccountsForDifferentUsers() {
+  public void getCorrectAccountsForDifferentUsers() {
     // Given
     // When - Get accounts for first user
     var response1 = Unirest.get(baseUrl + "/users/{userId}/accounts")
@@ -242,31 +238,29 @@ public class GetUserAccountsIT extends AppTestUtil {
         .header("Authorization", "Bearer " + token)
         .asString();
 
+    // Then - First user should have at least 3 accounts
+    assertEquals(200, response1.getStatus());
+    var responseBody1 = new JSONArray(response1.getBody());
+    assertTrue(responseBody1.length() >= 3);
+
+    // Verify accounts belong to correct users
+    for (int i = 0; i < responseBody1.length(); i++) {
+      assertEquals(USER_ID, responseBody1.getJSONObject(i).getString("userId"));
+    }
+
     // When - Get accounts for second user
     var response2 = Unirest.get(baseUrl + "/users/{userId}/accounts")
         .routeParam("userId", OTHER_USER_ID)
         .header("Authorization", "Bearer " + otherUserToken)
         .asString();
 
-    // Then - First user should have at least 3 accounts
-    assertEquals(200, response1.getStatus());
-    var responseBody1 = new JSONObject(response1.getBody());
-    var accounts1 = responseBody1.getJSONArray("accounts");
-    assertTrue(accounts1.length() >= 3);
-
     // Then - Second user should have at least 1 account
     assertEquals(200, response2.getStatus());
-    var responseBody2 = new JSONObject(response2.getBody());
-    var accounts2 = responseBody2.getJSONArray("accounts");
-    assertTrue(accounts2.length() >= 1);
+    var responseBody2 = new JSONArray(response2.getBody());
+    assertTrue(responseBody2.length() >= 1);
 
-    // Verify accounts belong to correct users
-    for (int i = 0; i < accounts1.length(); i++) {
-      assertEquals(USER_ID, accounts1.getJSONObject(i).getString("userId"));
-    }
-
-    for (int i = 0; i < accounts2.length(); i++) {
-      assertEquals(OTHER_USER_ID, accounts2.getJSONObject(i).getString("userId"));
+    for (int i = 0; i < responseBody2.length(); i++) {
+      assertEquals(OTHER_USER_ID, responseBody2.getJSONObject(i).getString("userId"));
     }
   }
 
@@ -276,7 +270,7 @@ public class GetUserAccountsIT extends AppTestUtil {
    * <b>Then</b> the request should be rejected with status 401 (Unauthorized)
    */
   @Test
-  public void shouldReturn401_WhenNoAuthorizationHeaderProvided() {
+  public void getUserAccountsWithoutAuthorizationHeaderShouldReturn401() {
     // When
     var response = Unirest.get(baseUrl + "/users/{userId}/accounts")
         .routeParam("userId", USER_ID)
@@ -292,7 +286,7 @@ public class GetUserAccountsIT extends AppTestUtil {
    * <b>Then</b> the request should be rejected with status 401 (Unauthorized)
    */
   @Test
-  public void shouldReturn401_WhenInvalidTokenProvided() {
+  public void getUserAccountsWithInvalidTokenShouldReturn401() {
     // When
     var response = Unirest.get(baseUrl + "/users/{userId}/accounts")
         .routeParam("userId", USER_ID)
@@ -311,7 +305,7 @@ public class GetUserAccountsIT extends AppTestUtil {
    * idempotency
    */
   @Test
-  public void shouldReturnConsistentResults_WhenCalledMultipleTimes() {
+  public void getUserAccountsMultipleTimesShouldReturnConsistentResults() {
     // Given
     // When - First call
     var response1 = Unirest.get(baseUrl + "/users/{userId}/accounts")
@@ -329,8 +323,8 @@ public class GetUserAccountsIT extends AppTestUtil {
     assertEquals(200, response1.getStatus());
     assertEquals(200, response2.getStatus());
 
-    var accounts1 = new JSONObject(response1.getBody()).getJSONArray("accounts");
-    var accounts2 = new JSONObject(response2.getBody()).getJSONArray("accounts");
+    var accounts1 = new JSONArray(response1.getBody());
+    var accounts2 = new JSONArray(response2.getBody());
 
     assertEquals(accounts1.length(), accounts2.length(),
         "Should return same number of accounts on consecutive calls");

@@ -11,8 +11,8 @@ public final record UpdateUserLanguageResult(
 
   public static UpdateUserLanguageResult from(User user) {
     return UpdateUserLanguageResult.builder()
-        .email(user.getId().value())
-        .language(user.getLanguage())
+        .email(user.id().value())
+        .language(user.language())
         .build();
   }
 }
