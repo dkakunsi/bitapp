@@ -239,4 +239,161 @@ public class MongoUserRepositoryIT {
     assertEquals("User One", foundUser1.get().name());
     assertEquals("User Two", foundUser2.get().name());
   }
+
+  @Test
+  public void givenUserWithDifferentLanguagesWhenSaveThenShouldPersistLanguage() {
+    // Given
+    var emailEn = "user-en@email.com";
+    var userEn = User.builder()
+        .id(Id.of(emailEn))
+        .name("English User")
+        .phone("081111111111")
+        .photoUrl("http://photo.url/en")
+        .language(Language.EN)
+        .status(ModelStatus.ACTIVE)
+        .createdAt(LocalDateTime.now())
+        .updatedAt(LocalDateTime.now())
+        .createdBy(emailEn)
+        .updatedBy(emailEn)
+        .build();
+
+    var emailId = "user-id@email.com";
+    var userId = User.builder()
+        .id(Id.of(emailId))
+        .name("Indonesian User")
+        .phone("082222222222")
+        .photoUrl("http://photo.url/id")
+        .language(Language.ID)
+        .status(ModelStatus.ACTIVE)
+        .createdAt(LocalDateTime.now())
+        .updatedAt(LocalDateTime.now())
+        .createdBy(emailId)
+        .updatedBy(emailId)
+        .build();
+
+    // When
+    repository.save(userEn);
+    repository.save(userId);
+
+    // Then
+    var foundUserEn = repository.findByEmail(emailEn);
+    var foundUserId = repository.findByEmail(emailId);
+
+    assertTrue(foundUserEn.isPresent());
+    assertTrue(foundUserId.isPresent());
+    assertEquals(Language.EN, foundUserEn.get().language());
+    assertEquals(Language.ID, foundUserId.get().language());
+  }
+
+  @Test
+  public void givenUserWhenSaveMultipleTimesThenShouldReflectLatestChanges() {
+    // Given
+    var email = "update-multiple@email.com";
+    var originalUser = User.builder()
+        .id(Id.of(email))
+        .name("Original Name")
+        .phone("081111111111")
+        .photoUrl("http://photo.url/original")
+        .language(Language.EN)
+        .status(ModelStatus.ACTIVE)
+        .createdAt(LocalDateTime.now())
+        .updatedAt(LocalDateTime.now())
+        .createdBy(email)
+        .updatedBy(email)
+        .build();
+    repository.save(originalUser);
+
+    // When - First update
+    var firstUpdate = User.builder()
+        .id(Id.of(email))
+        .name("First Update")
+        .phone("082222222222")
+        .photoUrl("http://photo.url/first")
+        .language(Language.ID)
+        .status(ModelStatus.ACTIVE)
+        .createdAt(LocalDateTime.now())
+        .updatedAt(LocalDateTime.now())
+        .createdBy(email)
+        .updatedBy("updater1")
+        .build();
+    repository.save(firstUpdate);
+
+    // When - Second update
+    var secondUpdate = User.builder()
+        .id(Id.of(email))
+        .name("Second Update")
+        .phone("083333333333")
+        .photoUrl("http://photo.url/second")
+        .language(Language.EN)
+        .status(ModelStatus.ACTIVE)
+        .createdAt(LocalDateTime.now())
+        .updatedAt(LocalDateTime.now())
+        .createdBy(email)
+        .updatedBy("updater2")
+        .build();
+    repository.save(secondUpdate);
+
+    // Then
+    var foundUser = repository.findByEmail(email);
+    assertTrue(foundUser.isPresent());
+    assertEquals("Second Update", foundUser.get().name());
+    assertEquals("083333333333", foundUser.get().phone());
+    assertEquals("http://photo.url/second", foundUser.get().photoUrl());
+    assertEquals(Language.EN, foundUser.get().language());
+    assertEquals("updater2", foundUser.get().updatedBy());
+  }
+
+  @Test
+  public void givenUserWithLongPhoneNumberWhenSaveThenShouldPersist() {
+    // Given
+    var email = "long-phone@email.com";
+    var longPhoneNumber = "+62-812-3456-7890-1234";
+    var user = User.builder()
+        .id(Id.of(email))
+        .name("User with Long Phone")
+        .phone(longPhoneNumber)
+        .photoUrl("http://photo.url/user")
+        .language(Language.EN)
+        .status(ModelStatus.ACTIVE)
+        .createdAt(LocalDateTime.now())
+        .updatedAt(LocalDateTime.now())
+        .createdBy(email)
+        .updatedBy(email)
+        .build();
+
+    // When
+    repository.save(user);
+    var foundUser = repository.findByEmail(email);
+
+    // Then
+    assertTrue(foundUser.isPresent());
+    assertEquals(longPhoneNumber, foundUser.get().phone());
+  }
+
+  @Test
+  public void givenUserWithSpecialCharactersInNameWhenSaveThenShouldPersist() {
+    // Given
+    var email = "special@email.com";
+    var specialName = "O'Brien-Smith & Associates, Inc.";
+    var user = User.builder()
+        .id(Id.of(email))
+        .name(specialName)
+        .phone("081234567890")
+        .photoUrl("http://photo.url/special")
+        .language(Language.EN)
+        .status(ModelStatus.ACTIVE)
+        .createdAt(LocalDateTime.now())
+        .updatedAt(LocalDateTime.now())
+        .createdBy(email)
+        .updatedBy(email)
+        .build();
+
+    // When
+    repository.save(user);
+    var foundUser = repository.findByEmail(email);
+
+    // Then
+    assertTrue(foundUser.isPresent());
+    assertEquals(specialName, foundUser.get().name());
+  }
 }
