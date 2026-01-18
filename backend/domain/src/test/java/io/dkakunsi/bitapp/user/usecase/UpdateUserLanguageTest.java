@@ -219,4 +219,105 @@ public final class UpdateUserLanguageTest {
     assertTrue(result.isSuccess());
     assertEquals(Language.EN, result.data().get().language());
   }
+
+  @Test
+  public void givenUpdateLanguageWithInvalidLanguageCodeWhenProcessedThenShouldFail() {
+    // Given
+    var email = "user@email.com";
+    var updateInput = UpdateUserLanguageInput.builder()
+        .email(email)
+        .language("INVALID")
+        .build();
+
+    var context = Context.builder().requester(email).build();
+
+    var existingUser = User.builder()
+        .id(Id.of(email))
+        .name("User Name")
+        .language(Language.EN)
+        .build();
+
+    when(userRepository.findByEmail(email)).thenReturn(Optional.of(existingUser));
+
+    // When
+    var result = underTest.process(context, updateInput);
+
+    // Then
+    assertFalse(result.isSuccess());
+    assertEquals(Code.BAD_REQUEST, result.error().get().code());
+  }
+
+  @Test
+  public void givenUpdateLanguageToSameLanguageWhenProcessedThenShouldSucceed() {
+    // Given
+    var email = "user@email.com";
+    var updateInput = UpdateUserLanguageInput.builder()
+        .email(email)
+        .language("EN")
+        .build();
+
+    var context = Context.builder().requester(email).build();
+
+    var existingUser = User.builder()
+        .id(Id.of(email))
+        .name("User Name")
+        .language(Language.EN)
+        .build();
+
+    when(userRepository.findByEmail(email)).thenReturn(Optional.of(existingUser));
+    when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+    // When
+    var result = underTest.process(context, updateInput);
+
+    // Then
+    assertTrue(result.isSuccess());
+    assertEquals(Language.EN, result.data().get().language());
+
+    var userCaptor = ArgumentCaptor.forClass(User.class);
+    verify(userRepository).save(userCaptor.capture());
+    var savedUser = userCaptor.getValue();
+    assertEquals(Language.EN, savedUser.language());
+  }
+
+  @Test
+  public void givenUpdateLanguageRequestWhenUserHasAllFieldsPopulatedThenShouldPreserveOtherFields() {
+    // Given
+    var email = "user@email.com";
+    var updateInput = UpdateUserLanguageInput.builder()
+        .email(email)
+        .language("ID")
+        .build();
+
+    var context = Context.builder().requester(email).build();
+
+    var existingUser = User.builder()
+        .id(Id.of(email))
+        .name("Complete User")
+        .phone("1234567890")
+        .photoUrl("http://example.com/photo.jpg")
+        .language(Language.EN)
+        .build();
+
+    when(userRepository.findByEmail(email)).thenReturn(Optional.of(existingUser));
+    when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+    // When
+    var result = underTest.process(context, updateInput);
+
+    // Then
+    assertTrue(result.isSuccess());
+
+    var userCaptor = ArgumentCaptor.forClass(User.class);
+    verify(userRepository).save(userCaptor.capture());
+    var savedUser = userCaptor.getValue();
+
+    // Verify language was updated
+    assertEquals(Language.ID, savedUser.language());
+
+    // Verify other fields were preserved
+    assertEquals("Complete User", savedUser.name());
+    assertEquals("1234567890", savedUser.phone());
+    assertEquals("http://example.com/photo.jpg", savedUser.photoUrl());
+  }
 }

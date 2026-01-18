@@ -101,4 +101,105 @@ public final class CreateAccountTest {
     assertEquals(Code.SERVER_ERROR, error.code());
     assertEquals("An error occurred", error.message());
   }
+
+  @Test
+  void givenCreateAccountRequestWithMinimalFieldsWhenProcessedThenShouldSucceed() {
+    // Given
+    final var createRequest = CreateAccountInput.builder()
+        .name("Minimal Account")
+        .type("CASH")
+        .build();
+    final var context = Context.builder().requester(REQUESTER).build();
+
+    when(accountRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+    // When
+    final var result = underTest.process(context, createRequest);
+
+    // Then
+    assertTrue(result.isSuccess());
+    assertTrue(result.data().isPresent());
+
+    final var resultData = result.data().get();
+    assertEquals("Minimal Account", resultData.name());
+    assertEquals("CASH", resultData.type().toString());
+  }
+
+  @Test
+  void givenCreateAccountRequestWithAllAccountTypesWhenProcessedThenShouldSucceed() {
+    // Given
+    String[] accountTypes = { "BANK", "CASH", "EWALLET", "OTHER" };
+    final var context = Context.builder().requester(REQUESTER).build();
+
+    for (String type : accountTypes) {
+      final var createRequest = CreateAccountInput.builder()
+          .name(type + " Account")
+          .type(type)
+          .themeColor("#FF5733")
+          .build();
+
+      when(accountRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+      // When
+      final var result = underTest.process(context, createRequest);
+
+      // Then
+      assertTrue(result.isSuccess(), "Should create account with type: " + type);
+      assertTrue(result.data().isPresent());
+      assertEquals(type, result.data().get().type().toString());
+    }
+  }
+
+  @Test
+  void givenCreateAccountRequestWithDifferentThemeColorsWhenProcessedThenShouldPreserveThemeColor() {
+    // Given
+    final var themeColor = "#00FF00";
+    final var createRequest = CreateAccountInput.builder()
+        .name("Green Account")
+        .type("BANK")
+        .themeColor(themeColor)
+        .build();
+    final var context = Context.builder().requester(REQUESTER).build();
+
+    when(accountRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+    // When
+    final var result = underTest.process(context, createRequest);
+
+    // Then
+    assertTrue(result.isSuccess());
+    assertTrue(result.data().isPresent());
+    assertEquals(themeColor, result.data().get().themeColor());
+
+    var savingAccountCaptor = ArgumentCaptor.forClass(Account.class);
+    verify(accountRepository).create(savingAccountCaptor.capture());
+    var capturedAccount = savingAccountCaptor.getValue();
+    assertEquals(themeColor, capturedAccount.themeColor());
+  }
+
+  @Test
+  void givenCreateAccountRequestWhenProcessedThenShouldInitializeBalanceToZero() {
+    // Given
+    final var createRequest = CreateAccountInput.builder()
+        .name("New Account")
+        .type("CASH")
+        .themeColor("#FF5733")
+        .build();
+    final var context = Context.builder().requester(REQUESTER).build();
+
+    when(accountRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+    // When
+    final var result = underTest.process(context, createRequest);
+
+    // Then
+    assertTrue(result.isSuccess());
+    assertTrue(result.data().isPresent());
+    assertEquals(BigDecimal.ZERO, result.data().get().balance());
+
+    var savingAccountCaptor = ArgumentCaptor.forClass(Account.class);
+    verify(accountRepository).create(savingAccountCaptor.capture());
+    var capturedAccount = savingAccountCaptor.getValue();
+    assertEquals(BigDecimal.ZERO, capturedAccount.balance());
+  }
 }
