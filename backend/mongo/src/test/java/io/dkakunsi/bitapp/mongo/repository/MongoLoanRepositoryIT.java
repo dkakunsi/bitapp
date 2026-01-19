@@ -744,4 +744,3 @@ public class MongoLoanRepositoryIT {
     assertEquals(userId2.value(), user2Loans.get(0).user().value());
   }
 }
-

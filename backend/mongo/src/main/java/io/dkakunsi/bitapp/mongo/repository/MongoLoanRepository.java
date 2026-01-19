@@ -1,6 +1,9 @@
 package io.dkakunsi.bitapp.mongo.repository;
 
+import java.util.List;
+
 import dev.morphia.Datastore;
+import dev.morphia.query.filters.Filters;
 import io.dkakunsi.bitapp.loan.entity.Loan;
 import io.dkakunsi.bitapp.loan.repository.LoanRepository;
 import io.dkakunsi.bitapp.mongo.model.LoanEntity;
@@ -18,5 +21,14 @@ public class MongoLoanRepository implements LoanRepository {
     var entity = LoanEntity.fromLoan(loan);
     datastore.save(entity);
     return loan;
+  }
+
+  @Override
+  public List<Loan> findByUserId(String userId) {
+    return datastore.find(LoanEntity.class)
+        .filter(Filters.eq("userId", userId))
+        .stream()
+        .map(LoanEntity::toLoan)
+        .toList();
   }
 }
