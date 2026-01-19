@@ -604,4 +604,144 @@ public class MongoLoanRepositoryIT {
     assertEquals("Loan with special chars: @#$%", createdLoan.title());
     assertEquals("Description with special characters: <>&\"'", createdLoan.description());
   }
+
+  @Test
+  public void givenUserWithMultipleLoansWhenFindByUserIdThenShouldReturnAllUserLoans() {
+    // Given
+    var userId = Id.of("user@email.com");
+    var requester = "user@email.com";
+    var now = LocalDateTime.now();
+
+    var loan1 = Loan.builder()
+        .id(Id.generate())
+        .user(userId)
+        .type(Loan.Type.BORROW)
+        .date(LocalDate.of(2024, 6, 15))
+        .time(LocalTime.of(14, 30))
+        .partyName("Bank ABC")
+        .title("Car Loan")
+        .description("Loan for purchasing a car")
+        .amount(BigDecimal.valueOf(500000000))
+        .remainingAmount(BigDecimal.valueOf(500000000))
+        .currency(Currency.getInstance("IDR"))
+        .interestRate(5.5)
+        .status(ModelStatus.ACTIVE)
+        .createdAt(now)
+        .updatedAt(now)
+        .createdBy(requester)
+        .updatedBy(requester)
+        .build();
+
+    var loan2 = Loan.builder()
+        .id(Id.generate())
+        .user(userId)
+        .type(Loan.Type.LEND)
+        .date(LocalDate.of(2024, 6, 20))
+        .time(LocalTime.of(10, 0))
+        .partyName("John Doe")
+        .title("Personal Loan")
+        .description("Money lent to friend")
+        .amount(BigDecimal.valueOf(10000000))
+        .remainingAmount(BigDecimal.valueOf(10000000))
+        .currency(Currency.getInstance("IDR"))
+        .interestRate(2.0)
+        .status(ModelStatus.ACTIVE)
+        .createdAt(now)
+        .updatedAt(now)
+        .createdBy(requester)
+        .updatedBy(requester)
+        .build();
+
+    repository.create(loan1);
+    repository.create(loan2);
+
+    // When
+    var loans = repository.findByUserId(userId.value());
+
+    // Then
+    assertNotNull(loans);
+    assertEquals(2, loans.size());
+
+    // Verify loans belong to correct user
+    loans.forEach(loan -> assertEquals(userId.value(), loan.user().value()));
+  }
+
+  @Test
+  public void givenUserWithNoLoansWhenFindByUserIdThenShouldReturnEmptyList() {
+    // Given
+    var userId = "nonexistent@email.com";
+
+    // When
+    var loans = repository.findByUserId(userId);
+
+    // Then
+    assertNotNull(loans);
+    assertEquals(0, loans.size());
+  }
+
+  @Test
+  public void givenMultipleUsersWithLoansWhenFindByUserIdThenShouldReturnOnlyUserLoans() {
+    // Given
+    var userId1 = Id.of("user1@email.com");
+    var userId2 = Id.of("user2@email.com");
+    var now = LocalDateTime.now();
+
+    var loan1 = Loan.builder()
+        .id(Id.generate())
+        .user(userId1)
+        .type(Loan.Type.BORROW)
+        .date(LocalDate.of(2024, 6, 15))
+        .time(LocalTime.of(14, 30))
+        .partyName("Bank ABC")
+        .title("User 1 Car Loan")
+        .description("Loan for user 1")
+        .amount(BigDecimal.valueOf(500000000))
+        .remainingAmount(BigDecimal.valueOf(500000000))
+        .currency(Currency.getInstance("IDR"))
+        .interestRate(5.5)
+        .status(ModelStatus.ACTIVE)
+        .createdAt(now)
+        .updatedAt(now)
+        .createdBy("user1@email.com")
+        .updatedBy("user1@email.com")
+        .build();
+
+    var loan2 = Loan.builder()
+        .id(Id.generate())
+        .user(userId2)
+        .type(Loan.Type.LEND)
+        .date(LocalDate.of(2024, 6, 20))
+        .time(LocalTime.of(10, 0))
+        .partyName("Jane Doe")
+        .title("User 2 Personal Loan")
+        .description("Loan for user 2")
+        .amount(BigDecimal.valueOf(10000000))
+        .remainingAmount(BigDecimal.valueOf(10000000))
+        .currency(Currency.getInstance("IDR"))
+        .interestRate(2.0)
+        .status(ModelStatus.ACTIVE)
+        .createdAt(now)
+        .updatedAt(now)
+        .createdBy("user2@email.com")
+        .updatedBy("user2@email.com")
+        .build();
+
+    repository.create(loan1);
+    repository.create(loan2);
+
+    // When
+    var user1Loans = repository.findByUserId(userId1.value());
+    var user2Loans = repository.findByUserId(userId2.value());
+
+    // Then
+    assertEquals(1, user1Loans.size());
+    assertEquals(1, user2Loans.size());
+
+    assertEquals("User 1 Car Loan", user1Loans.get(0).title());
+    assertEquals(userId1.value(), user1Loans.get(0).user().value());
+
+    assertEquals("User 2 Personal Loan", user2Loans.get(0).title());
+    assertEquals(userId2.value(), user2Loans.get(0).user().value());
+  }
 }
+
