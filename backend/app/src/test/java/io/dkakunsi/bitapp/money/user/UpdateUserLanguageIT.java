@@ -176,4 +176,59 @@ public class UpdateUserLanguageIT extends AppTestUtil {
     assertEquals(400, updateResponse.getStatus());
     assertEquals("language: invalid value", updateResponse.getBody());
   }
+
+  /**
+   * <b>Given</b> a registered user<br>
+   * <b>When</b> the PATCH /users/{email}/language endpoint is called without
+   * an authorization header<br>
+   * <b>Then</b> the request should fail with status 401
+   */
+  @Test
+  public void updateUserLanguageWithoutAuthorizationHeaderShouldReturn401() {
+    // First, register a user
+    var registerBody = """
+        {
+          "name": "Charlie Brown",
+          "email": "charlie.brown@example.com",
+          "phone": "5551112222",
+          "photoUrl": "http://example.com/charlie.jpg"
+        }
+        """;
+
+    var registerResponse = Unirest.post(baseUrl + "/users").body(registerBody).asString();
+    assertEquals(200, registerResponse.getStatus());
+
+    // Try to update language without authorization header
+    var updateResponse = Unirest.patch(baseUrl + "/users/charlie.brown@example.com/language/ID")
+        .asString();
+    assertEquals(401, updateResponse.getStatus());
+  }
+
+  /**
+   * <b>Given</b> a registered user<br>
+   * <b>When</b> the PATCH /users/{email}/language endpoint is called with
+   * an invalid authorization token<br>
+   * <b>Then</b> the request should fail with status 401
+   */
+  @Test
+  public void updateUserLanguageWithInvalidTokenShouldReturn401() {
+    // First, register a user
+    var registerBody = """
+        {
+          "name": "Diana Prince",
+          "email": "diana.prince@example.com",
+          "phone": "5553334444",
+          "photoUrl": "http://example.com/diana.jpg"
+        }
+        """;
+
+    var registerResponse = Unirest.post(baseUrl + "/users").body(registerBody).asString();
+    assertEquals(200, registerResponse.getStatus());
+
+    // Try to update language with invalid token
+    var updateResponse = Unirest.patch(baseUrl + "/users/diana.prince@example.com/language/ID")
+        .header("Authorization", "Bearer invalid-token")
+        .asString();
+    assertEquals(401, updateResponse.getStatus());
+  }
 }
