@@ -100,7 +100,7 @@
                 <directory>${project.basedir}</directory>
                 <includes>
                   <include>logs/</include>
-                  <include>*.tar.gz</include>
+                  <include>*.log.gz</include>
                 </includes>
               </fileset>
             </filesets>
