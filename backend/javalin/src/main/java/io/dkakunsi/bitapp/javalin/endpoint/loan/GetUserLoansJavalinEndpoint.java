@@ -5,12 +5,12 @@ import java.util.List;
 
 import io.dkakunsi.bitapp.javalin.JavalinEndpoint;
 import io.dkakunsi.bitapp.loan.dto.GetUserLoansInput;
-import io.dkakunsi.bitapp.loan.dto.GetUserLoansResult;
+import io.dkakunsi.bitapp.loan.dto.LoanResult;
 import io.dkakunsi.bitapp.loan.usecase.GetUserLoans;
 import io.javalin.http.Context;
 
 public class GetUserLoansJavalinEndpoint
-    extends JavalinEndpoint<GetUserLoansInput, List<GetUserLoansResult>> {
+    extends JavalinEndpoint<GetUserLoansInput, List<LoanResult>> {
 
   public GetUserLoansJavalinEndpoint(GetUserLoans usecase) {
     super(usecase);
@@ -28,7 +28,7 @@ public class GetUserLoansJavalinEndpoint
 
   @Override
   protected Type getOutputClass() {
-    return GetUserLoansResult.class;
+    return LoanResult.class;
   }
 
   @Override

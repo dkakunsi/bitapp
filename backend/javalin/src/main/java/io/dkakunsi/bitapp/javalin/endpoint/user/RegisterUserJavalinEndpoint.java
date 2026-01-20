@@ -4,11 +4,11 @@ import java.lang.reflect.Type;
 
 import io.dkakunsi.bitapp.javalin.JavalinEndpoint;
 import io.dkakunsi.bitapp.user.dto.RegisterUserInput;
-import io.dkakunsi.bitapp.user.dto.RegisterUserResult;
+import io.dkakunsi.bitapp.user.dto.UserResult;
 import io.dkakunsi.bitapp.user.usecase.RegisterUser;
 import io.javalin.http.Context;
 
-public class RegisterUserJavalinEndpoint extends JavalinEndpoint<RegisterUserInput, RegisterUserResult> {
+public class RegisterUserJavalinEndpoint extends JavalinEndpoint<RegisterUserInput, UserResult> {
 
   public RegisterUserJavalinEndpoint(RegisterUser usecase) {
     super(usecase);
@@ -26,7 +26,7 @@ public class RegisterUserJavalinEndpoint extends JavalinEndpoint<RegisterUserInp
 
   @Override
   protected Type getOutputClass() {
-    return RegisterUserResult.class;
+    return UserResult.class;
   }
 
   @Override

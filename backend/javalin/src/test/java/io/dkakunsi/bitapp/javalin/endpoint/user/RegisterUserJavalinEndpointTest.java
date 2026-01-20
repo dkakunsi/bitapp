@@ -17,7 +17,7 @@ import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.user.dto.RegisterUserInput;
-import io.dkakunsi.bitapp.user.dto.RegisterUserResult;
+import io.dkakunsi.bitapp.user.dto.UserResult;
 import io.dkakunsi.bitapp.user.entity.User.Language;
 import io.dkakunsi.bitapp.user.usecase.RegisterUser;
 import kong.unirest.Unirest;
@@ -50,7 +50,7 @@ class RegisterUserJavalinEndpointTest {
   @Test
   void givenValidRegistrationRequest_WhenRequested_ThenShouldOkAndReturnUser() {
     // Given
-    var registerResult = RegisterUserResult.builder()
+    var registerResult = UserResult.builder()
         .email("user@email.com")
         .name("User Name")
         .phone("081234567890")
@@ -88,7 +88,7 @@ class RegisterUserJavalinEndpointTest {
   @Test
   void givenValidRegistrationRequestAndEmptyResult_WhenRequested_ThenShouldOkWithEmptyResponse() {
     // Given
-    var result = Result.<RegisterUserResult>success();
+    var result = Result.<UserResult>success();
     when(usecase.process(any(Context.class), any(RegisterUserInput.class))).thenReturn(result);
 
     var requestBody = """
@@ -113,7 +113,7 @@ class RegisterUserJavalinEndpointTest {
   @Test
   void givenValidRegistrationRequestAndProcessReturnsError_WhenRequested_ThenShouldReturnProperMessage() {
     // Given
-    var result = Result.<RegisterUserResult>failure(Code.SERVER_ERROR, "Database error");
+    var result = Result.<UserResult>failure(Code.SERVER_ERROR, "Database error");
     when(usecase.process(any(Context.class), any(RegisterUserInput.class))).thenReturn(result);
 
     var requestBody = """
@@ -138,7 +138,7 @@ class RegisterUserJavalinEndpointTest {
   @Test
   void givenValidRegistrationRequestAndProcessReturnsBadRequest_WhenRequested_ThenShouldReturn400() {
     // Given
-    var result = Result.<RegisterUserResult>failure(Code.BAD_REQUEST, "email: must be a well-formed email address");
+    var result = Result.<UserResult>failure(Code.BAD_REQUEST, "email: must be a well-formed email address");
     when(usecase.process(any(Context.class), any(RegisterUserInput.class))).thenReturn(result);
 
     var requestBody = """
@@ -178,7 +178,7 @@ class RegisterUserJavalinEndpointTest {
   @Test
   void givenMinimalValidRequest_WhenRequested_ThenShouldOkAndReturnUser() {
     // Given
-    var registerUserResult = RegisterUserResult.builder()
+    var registerUserResult = UserResult.builder()
         .email("user@email.com")
         .name("User Name")
         .phone(null)

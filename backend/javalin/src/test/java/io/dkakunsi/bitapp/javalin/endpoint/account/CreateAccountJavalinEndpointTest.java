@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.account.dto.CreateAccountInput;
-import io.dkakunsi.bitapp.account.dto.CreateAccountResult;
+import io.dkakunsi.bitapp.account.dto.AccountResult;
 import io.dkakunsi.bitapp.account.entity.Account;
 import io.dkakunsi.bitapp.account.usecase.CreateAccount;
 import io.dkakunsi.bitapp.common.AppError.Code;
@@ -51,7 +51,7 @@ class CreateAccountJavalinEndpointTest {
   @Test
   void givenValidAccountRequest_WhenRequested_ThenShouldReturn200AndAccount() {
     // Given
-    var createAccountResult = CreateAccountResult.builder()
+    var createAccountResult = AccountResult.builder()
         .id("account-123")
         .name("Savings Account")
         .type(Account.Type.BANK.name())
@@ -88,7 +88,7 @@ class CreateAccountJavalinEndpointTest {
   @Test
   void givenValidRequestWithEmptyOutput_WhenRequested_ThenShouldReturn200() {
     // Given
-    var result = Result.<CreateAccountResult>success();
+    var result = Result.<AccountResult>success();
     when(usecase.process(any(Context.class), any(CreateAccountInput.class))).thenReturn(result);
 
     var requestBody = """
@@ -110,7 +110,7 @@ class CreateAccountJavalinEndpointTest {
   @Test
   void givenServerError_WhenRequested_ThenShouldReturn500() {
     // Given
-    var result = Result.<CreateAccountResult>failure(Code.SERVER_ERROR, "Failed to save account");
+    var result = Result.<AccountResult>failure(Code.SERVER_ERROR, "Failed to save account");
     when(usecase.process(any(Context.class), any(CreateAccountInput.class))).thenReturn(result);
 
     var requestBody = """
@@ -132,7 +132,7 @@ class CreateAccountJavalinEndpointTest {
   @Test
   void givenDuplicateAccount_WhenRequested_ThenShouldReturn400() {
     // Given
-    var result = Result.<CreateAccountResult>failure(Code.BAD_REQUEST, "Account with this name already exists");
+    var result = Result.<AccountResult>failure(Code.BAD_REQUEST, "Account with this name already exists");
     when(usecase.process(any(Context.class), any(CreateAccountInput.class))).thenReturn(result);
 
     var requestBody = """

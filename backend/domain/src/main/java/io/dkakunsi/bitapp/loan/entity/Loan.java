@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import io.dkakunsi.bitapp.common.Id;
 import io.dkakunsi.bitapp.common.ModelStatus;
 import io.dkakunsi.bitapp.loan.dto.CreateLoanInput;
+import io.dkakunsi.bitapp.loan.dto.LoanResult;
 import lombok.Builder;
 
 @Builder
@@ -91,5 +92,22 @@ public final record Loan(
         now,
         executor,
         executor);
+  }
+
+  public LoanResult toResult() {
+    return LoanResult.builder()
+        .id(this.id().value())
+        .user(this.user().value())
+        .type(this.type().name())
+        .date(this.date().toString())
+        .time(this.time().toString())
+        .partyName(this.partyName())
+        .title(this.title())
+        .description(this.description())
+        .amount(this.amount())
+        .remainingAmount(this.remainingAmount())
+        .currency(this.currency().getCurrencyCode())
+        .interestRate(this.interestRate())
+        .build();
   }
 }

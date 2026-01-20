@@ -4,11 +4,11 @@ import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.common.usecase.UseCase;
 import io.dkakunsi.bitapp.user.dto.RegisterUserInput;
-import io.dkakunsi.bitapp.user.dto.RegisterUserResult;
+import io.dkakunsi.bitapp.user.dto.UserResult;
 import io.dkakunsi.bitapp.user.entity.User;
 import io.dkakunsi.bitapp.user.repository.UserRepository;
 
-public final class RegisterUser implements UseCase<RegisterUserInput, RegisterUserResult> {
+public final class RegisterUser implements UseCase<RegisterUserInput, UserResult> {
 
   private UserRepository userRepository;
 
@@ -17,11 +17,11 @@ public final class RegisterUser implements UseCase<RegisterUserInput, RegisterUs
   }
 
   @Override
-  public Result<RegisterUserResult> execute(Context context, RegisterUserInput input) {
+  public Result<UserResult> execute(Context context, RegisterUserInput input) {
     User user = userRepository.findByEmail(input.email())
         .map(existing -> update(existing, input))
         .orElseGet(() -> create(input));
-    return Result.success(RegisterUserResult.from(user));
+    return Result.success(user.toResult());
   }
 
   private User update(User existingUser, RegisterUserInput userInput) {

@@ -6,6 +6,7 @@ import java.util.Objects;
 import io.dkakunsi.bitapp.common.Id;
 import io.dkakunsi.bitapp.common.ModelStatus;
 import io.dkakunsi.bitapp.user.dto.RegisterUserInput;
+import io.dkakunsi.bitapp.user.dto.UserResult;
 import lombok.Builder;
 
 @Builder
@@ -95,6 +96,16 @@ public final record User(
         .updatedAt(LocalDateTime.now())
         .createdBy(this.createdBy)
         .updatedBy(requester)
+        .build();
+  }
+
+  public UserResult toResult() {
+    return UserResult.builder()
+        .email(this.id().value())
+        .name(this.name())
+        .phone(this.phone())
+        .photoUrl(this.photoUrl())
+        .language(this.language().name())
         .build();
   }
 }

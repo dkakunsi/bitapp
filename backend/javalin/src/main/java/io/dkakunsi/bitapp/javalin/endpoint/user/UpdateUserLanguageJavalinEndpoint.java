@@ -4,12 +4,12 @@ import java.lang.reflect.Type;
 
 import io.dkakunsi.bitapp.javalin.JavalinEndpoint;
 import io.dkakunsi.bitapp.user.dto.UpdateUserLanguageInput;
-import io.dkakunsi.bitapp.user.dto.UpdateUserLanguageResult;
+import io.dkakunsi.bitapp.user.dto.UserResult;
 import io.dkakunsi.bitapp.user.usecase.UpdateUserLanguage;
 import io.javalin.http.Context;
 
 public class UpdateUserLanguageJavalinEndpoint
-    extends JavalinEndpoint<UpdateUserLanguageInput, UpdateUserLanguageResult> {
+    extends JavalinEndpoint<UpdateUserLanguageInput, UserResult> {
 
   public UpdateUserLanguageJavalinEndpoint(UpdateUserLanguage usecase) {
     super(usecase);
@@ -27,7 +27,7 @@ public class UpdateUserLanguageJavalinEndpoint
 
   @Override
   protected Type getOutputClass() {
-    return UpdateUserLanguageResult.class;
+    return UserResult.class;
   }
 
   @Override

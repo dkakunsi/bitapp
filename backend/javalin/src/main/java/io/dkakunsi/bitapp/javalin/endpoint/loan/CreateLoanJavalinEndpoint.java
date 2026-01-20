@@ -5,11 +5,11 @@ import java.math.BigDecimal;
 
 import io.dkakunsi.bitapp.javalin.JavalinEndpoint;
 import io.dkakunsi.bitapp.loan.dto.CreateLoanInput;
-import io.dkakunsi.bitapp.loan.dto.CreateLoanResult;
+import io.dkakunsi.bitapp.loan.dto.LoanResult;
 import io.dkakunsi.bitapp.loan.usecase.CreateLoan;
 import io.javalin.http.Context;
 
-public class CreateLoanJavalinEndpoint extends JavalinEndpoint<CreateLoanInput, CreateLoanResult> {
+public class CreateLoanJavalinEndpoint extends JavalinEndpoint<CreateLoanInput, LoanResult> {
 
   public CreateLoanJavalinEndpoint(CreateLoan usecase) {
     super(usecase);
@@ -27,7 +27,7 @@ public class CreateLoanJavalinEndpoint extends JavalinEndpoint<CreateLoanInput, 
 
   @Override
   protected Type getOutputClass() {
-    return CreateLoanResult.class;
+    return LoanResult.class;
   }
 
   @Override

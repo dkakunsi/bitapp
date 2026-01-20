@@ -2,13 +2,13 @@ package io.dkakunsi.bitapp.javalin.endpoint.account;
 
 import java.lang.reflect.Type;
 
+import io.dkakunsi.bitapp.account.dto.AccountResult;
 import io.dkakunsi.bitapp.account.dto.UpdateAccountInput;
-import io.dkakunsi.bitapp.account.dto.UpdateAccountResult;
 import io.dkakunsi.bitapp.account.usecase.UpdateAccount;
 import io.dkakunsi.bitapp.javalin.JavalinEndpoint;
 import io.javalin.http.Context;
 
-public class UpdateAccountJavalinEndpoint extends JavalinEndpoint<UpdateAccountInput, UpdateAccountResult> {
+public class UpdateAccountJavalinEndpoint extends JavalinEndpoint<UpdateAccountInput, AccountResult> {
 
   public UpdateAccountJavalinEndpoint(UpdateAccount usecase) {
     super(usecase);
@@ -26,7 +26,7 @@ public class UpdateAccountJavalinEndpoint extends JavalinEndpoint<UpdateAccountI
 
   @Override
   protected Type getOutputClass() {
-    return UpdateAccountResult.class;
+    return AccountResult.class;
   }
 
   @Override

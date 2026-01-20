@@ -108,7 +108,7 @@ public final class GetUserLoansTest {
     // Verify first loan
     var firstLoan = resultData.get(0);
     assertEquals("loan1", firstLoan.id());
-    assertEquals(USER_ID, firstLoan.userId());
+    assertEquals(USER_ID, firstLoan.user());
     assertEquals("BORROW", firstLoan.type());
     assertEquals("Bank ABC", firstLoan.partyName());
     assertEquals("Car Loan", firstLoan.title());
@@ -120,7 +120,7 @@ public final class GetUserLoansTest {
     // Verify second loan
     var secondLoan = resultData.get(1);
     assertEquals("loan2", secondLoan.id());
-    assertEquals(USER_ID, secondLoan.userId());
+    assertEquals(USER_ID, secondLoan.user());
     assertEquals("LEND", secondLoan.type());
     assertEquals("John Doe", secondLoan.partyName());
     assertEquals("Personal Loan", secondLoan.title());

@@ -17,8 +17,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import io.dkakunsi.bitapp.account.dto.AccountResult;
 import io.dkakunsi.bitapp.account.dto.GetUserAccountsInput;
-import io.dkakunsi.bitapp.account.dto.GetUserAccountsResult;
 import io.dkakunsi.bitapp.account.entity.Account;
 import io.dkakunsi.bitapp.account.usecase.GetUserAccounts;
 import io.dkakunsi.bitapp.common.AppError.Code;
@@ -62,21 +62,21 @@ class GetUserAccountsJavalinEndpointTest {
   @Test
   void givenValidUserIdWithMultipleAccounts_WhenRequested_ThenShouldReturn200AndAccountsList() {
     // Given
-    var accountItem1 = GetUserAccountsResult.builder()
+    var accountItem1 = AccountResult.builder()
         .id("account1")
         .name("Savings Account")
-        .type(Account.Type.BANK)
+        .type(Account.Type.BANK.name())
         .themeColor("#FF5733")
         .balance(BigDecimal.valueOf(1000.00))
-        .userId(USER_ID)
+        .user(USER_ID)
         .build();
-    var accountItem2 = GetUserAccountsResult.builder()
+    var accountItem2 = AccountResult.builder()
         .id("account2")
         .name("Checking Account")
-        .type(Account.Type.CASH)
+        .type(Account.Type.CASH.name())
         .themeColor("#3357FF")
         .balance(BigDecimal.valueOf(500.00))
-        .userId(USER_ID)
+        .user(USER_ID)
         .build();
     var getResult = List.of(accountItem1, accountItem2);
     var result = Result.success(getResult);
@@ -111,7 +111,7 @@ class GetUserAccountsJavalinEndpointTest {
   @Test
   void givenValidUserIdWithNoAccounts_WhenRequested_ThenShouldReturn200AndEmptyList() {
     // Given
-    var result = Result.<List<GetUserAccountsResult>>success(List.of());
+    var result = Result.<List<AccountResult>>success(List.of());
     when(usecase.process(any(Context.class), any(GetUserAccountsInput.class))).thenReturn(result);
 
     // When
@@ -131,13 +131,13 @@ class GetUserAccountsJavalinEndpointTest {
   @Test
   void givenValidUserIdWithSingleAccount_WhenRequested_ThenShouldReturn200AndSingleAccountList() {
     // Given
-    var accountItem = GetUserAccountsResult.builder()
+    var accountItem = AccountResult.builder()
         .id("account1")
         .name("E-Wallet")
-        .type(Account.Type.EWALLET)
+        .type(Account.Type.EWALLET.name())
         .themeColor("#00FF00")
         .balance(BigDecimal.valueOf(250.50))
-        .userId(USER_ID)
+        .user(USER_ID)
         .build();
     var result = Result.success(List.of(accountItem));
     when(usecase.process(any(Context.class), any(GetUserAccountsInput.class))).thenReturn(result);
@@ -161,7 +161,7 @@ class GetUserAccountsJavalinEndpointTest {
   @Test
   void givenValidRequest_WhenUseCaseReturnsEmpty_ThenShouldReturn200() {
     // Given
-    var result = Result.<List<GetUserAccountsResult>>success(List.of());
+    var result = Result.<List<AccountResult>>success(List.of());
     when(usecase.process(any(Context.class), any(GetUserAccountsInput.class))).thenReturn(result);
 
     // When
@@ -176,7 +176,7 @@ class GetUserAccountsJavalinEndpointTest {
   @Test
   void givenValidRequest_WhenUseCaseFails_ThenShouldReturn500() {
     // Given
-    var result = Result.<List<GetUserAccountsResult>>failure(Code.SERVER_ERROR, "Database error");
+    var result = Result.<List<AccountResult>>failure(Code.SERVER_ERROR, "Database error");
     when(usecase.process(any(Context.class), any(GetUserAccountsInput.class))).thenReturn(result);
 
     // When

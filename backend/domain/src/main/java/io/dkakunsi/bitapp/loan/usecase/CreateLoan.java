@@ -4,11 +4,11 @@ import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.common.usecase.UseCase;
 import io.dkakunsi.bitapp.loan.dto.CreateLoanInput;
-import io.dkakunsi.bitapp.loan.dto.CreateLoanResult;
+import io.dkakunsi.bitapp.loan.dto.LoanResult;
 import io.dkakunsi.bitapp.loan.entity.Loan;
 import io.dkakunsi.bitapp.loan.repository.LoanRepository;
 
-public final class CreateLoan implements UseCase<CreateLoanInput, CreateLoanResult> {
+public final class CreateLoan implements UseCase<CreateLoanInput, LoanResult> {
 
   private final LoanRepository loanRepository;
 
@@ -17,9 +17,9 @@ public final class CreateLoan implements UseCase<CreateLoanInput, CreateLoanResu
   }
 
   @Override
-  public Result<CreateLoanResult> execute(Context context, CreateLoanInput input) {
+  public Result<LoanResult> execute(Context context, CreateLoanInput input) {
     final var loan = Loan.from(input, context.requester());
-    var result = this.loanRepository.create(loan);
-    return Result.success(CreateLoanResult.from(result));
+    var createdLoan = this.loanRepository.create(loan);
+    return Result.success(createdLoan.toResult());
   }
 }

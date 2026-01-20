@@ -20,7 +20,7 @@ import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.loan.dto.CreateLoanInput;
-import io.dkakunsi.bitapp.loan.dto.CreateLoanResult;
+import io.dkakunsi.bitapp.loan.dto.LoanResult;
 import io.dkakunsi.bitapp.loan.usecase.CreateLoan;
 import kong.unirest.Unirest;
 
@@ -52,12 +52,12 @@ class CreateLoanJavalinEndpointTest {
   @Test
   void givenValidBorrowLoanRequest_WhenRequested_ThenShouldReturn200AndLoan() {
     // Given
-    var createLoanResult = CreateLoanResult.builder()
+    var createLoanResult = LoanResult.builder()
         .id("loan-123")
         .user("user@email.com")
         .type("BORROW")
-        .date(LocalDate.parse("2026-01-15"))
-        .time(LocalTime.parse("14:30:00"))
+        .date("2026-01-15")
+        .time("14:30:00")
         .partyName("John Doe")
         .title("Personal Loan")
         .description("Emergency loan")
@@ -65,9 +65,6 @@ class CreateLoanJavalinEndpointTest {
         .remainingAmount(new BigDecimal("5000.00"))
         .currency("USD")
         .interestRate(5.5)
-        .status("ACTIVE")
-        .createdBy("user@email.com")
-        .updatedBy("user@email.com")
         .build();
     var result = Result.success(createLoanResult);
     when(usecase.process(any(Context.class), any(CreateLoanInput.class))).thenReturn(result);
@@ -106,12 +103,12 @@ class CreateLoanJavalinEndpointTest {
   @Test
   void givenValidLendLoanRequest_WhenRequested_ThenShouldReturn200AndLoan() {
     // Given
-    var createLoanResult = CreateLoanResult.builder()
+    var createLoanResult = LoanResult.builder()
         .id("loan-456")
         .user("user@email.com")
         .type("LEND")
-        .date(LocalDate.parse("2026-01-20"))
-        .time(LocalTime.parse("10:00:00"))
+        .date("2026-01-20")
+        .time("10:00:00")
         .partyName("Jane Smith")
         .title("Business Loan")
         .description("Investment")
@@ -119,9 +116,6 @@ class CreateLoanJavalinEndpointTest {
         .remainingAmount(new BigDecimal("10000.00"))
         .currency("IDR")
         .interestRate(3.0)
-        .status("ACTIVE")
-        .createdBy("user@email.com")
-        .updatedBy("user@email.com")
         .build();
     var result = Result.success(createLoanResult);
     when(usecase.process(any(Context.class), any(CreateLoanInput.class))).thenReturn(result);
@@ -157,21 +151,18 @@ class CreateLoanJavalinEndpointTest {
   @Test
   void givenValidLoanRequestWithMinimalFields_WhenRequested_ThenShouldReturn200() {
     // Given
-    var createLoanResult = CreateLoanResult.builder()
+    var createLoanResult = LoanResult.builder()
         .id("loan-789")
         .user("user@email.com")
         .type("BORROW")
-        .date(LocalDate.now())
-        .time(LocalTime.now())
+        .date(LocalDate.now().toString())
+        .time(LocalTime.now().toString())
         .partyName("Test Party")
         .title("Test Loan")
         .amount(new BigDecimal("1000.00"))
         .remainingAmount(new BigDecimal("1000.00"))
         .currency("IDR")
         .interestRate(0.0)
-        .status("ACTIVE")
-        .createdBy("user@email.com")
-        .updatedBy("user@email.com")
         .build();
     var result = Result.success(createLoanResult);
     when(usecase.process(any(Context.class), any(CreateLoanInput.class))).thenReturn(result);
@@ -197,7 +188,7 @@ class CreateLoanJavalinEndpointTest {
   @Test
   void givenValidRequestWithEmptyOutput_WhenRequested_ThenShouldReturn200() {
     // Given
-    var result = Result.<CreateLoanResult>success();
+    var result = Result.<LoanResult>success();
     when(usecase.process(any(Context.class), any(CreateLoanInput.class))).thenReturn(result);
 
     var requestBody = """
@@ -221,7 +212,7 @@ class CreateLoanJavalinEndpointTest {
   @Test
   void givenServerError_WhenRequested_ThenShouldReturn500() {
     // Given
-    var result = Result.<CreateLoanResult>failure(Code.SERVER_ERROR, "Failed to save loan");
+    var result = Result.<LoanResult>failure(Code.SERVER_ERROR, "Failed to save loan");
     when(usecase.process(any(Context.class), any(CreateLoanInput.class))).thenReturn(result);
 
     var requestBody = """
@@ -245,7 +236,7 @@ class CreateLoanJavalinEndpointTest {
   @Test
   void givenBadRequest_WhenRequested_ThenShouldReturn400() {
     // Given
-    var result = Result.<CreateLoanResult>failure(Code.BAD_REQUEST, "Invalid loan type");
+    var result = Result.<LoanResult>failure(Code.BAD_REQUEST, "Invalid loan type");
     when(usecase.process(any(Context.class), any(CreateLoanInput.class))).thenReturn(result);
 
     var requestBody = """
@@ -269,7 +260,7 @@ class CreateLoanJavalinEndpointTest {
   @Test
   void givenNotFoundError_WhenRequested_ThenShouldReturn404() {
     // Given
-    var result = Result.<CreateLoanResult>failure(Code.NOT_FOUND, "Party not found");
+    var result = Result.<LoanResult>failure(Code.NOT_FOUND, "Party not found");
     when(usecase.process(any(Context.class), any(CreateLoanInput.class))).thenReturn(result);
 
     var requestBody = """
@@ -293,7 +284,7 @@ class CreateLoanJavalinEndpointTest {
   @Test
   void givenUnauthorizedError_WhenRequested_ThenShouldReturn401() {
     // Given
-    var result = Result.<CreateLoanResult>failure(Code.UNAUTHORIZED, "User not authorized");
+    var result = Result.<LoanResult>failure(Code.UNAUTHORIZED, "User not authorized");
     when(usecase.process(any(Context.class), any(CreateLoanInput.class))).thenReturn(result);
 
     var requestBody = """
@@ -317,21 +308,18 @@ class CreateLoanJavalinEndpointTest {
   @Test
   void givenLoanRequestWithZeroInterestRate_WhenRequested_ThenShouldReturn200() {
     // Given
-    var createLoanResult = CreateLoanResult.builder()
+    var createLoanResult = LoanResult.builder()
         .id("loan-zero")
         .user("user@email.com")
         .type("BORROW")
-        .date(LocalDate.now())
-        .time(LocalTime.now())
+        .date(LocalDate.now().toString())
+        .time(LocalTime.now().toString())
         .partyName("Interest Free Party")
         .title("No Interest Loan")
         .amount(new BigDecimal("3000.00"))
         .remainingAmount(new BigDecimal("3000.00"))
         .currency("IDR")
         .interestRate(0.0)
-        .status("ACTIVE")
-        .createdBy("user@email.com")
-        .updatedBy("user@email.com")
         .build();
     var result = Result.success(createLoanResult);
     when(usecase.process(any(Context.class), any(CreateLoanInput.class))).thenReturn(result);
@@ -359,12 +347,12 @@ class CreateLoanJavalinEndpointTest {
   @Test
   void givenLoanRequestWithDescription_WhenRequested_ThenShouldReturn200WithDescription() {
     // Given
-    var createLoanResult = CreateLoanResult.builder()
+    var createLoanResult = LoanResult.builder()
         .id("loan-desc")
         .user("user@email.com")
         .type("LEND")
-        .date(LocalDate.now())
-        .time(LocalTime.now())
+        .date(LocalDate.now().toString())
+        .time(LocalTime.now().toString())
         .partyName("Described Party")
         .title("Described Loan")
         .description("This loan has a detailed description")
@@ -372,9 +360,6 @@ class CreateLoanJavalinEndpointTest {
         .remainingAmount(new BigDecimal("7500.00"))
         .currency("USD")
         .interestRate(4.5)
-        .status("ACTIVE")
-        .createdBy("user@email.com")
-        .updatedBy("user@email.com")
         .build();
     var result = Result.success(createLoanResult);
     when(usecase.process(any(Context.class), any(CreateLoanInput.class))).thenReturn(result);

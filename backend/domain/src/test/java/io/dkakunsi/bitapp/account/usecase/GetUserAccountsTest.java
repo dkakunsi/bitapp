@@ -96,7 +96,7 @@ public final class GetUserAccountsTest {
     assertEquals(Account.Type.BANK, firstAccount.type());
     assertEquals("#FF5733", firstAccount.themeColor());
     assertEquals(BigDecimal.valueOf(1000.00), firstAccount.balance());
-    assertEquals(USER_ID, firstAccount.userId());
+    assertEquals(USER_ID, firstAccount.user());
 
     // Verify second account
     var secondAccount = resultData.get(1);
@@ -105,7 +105,7 @@ public final class GetUserAccountsTest {
     assertEquals(Account.Type.CASH, secondAccount.type());
     assertEquals("#3357FF", secondAccount.themeColor());
     assertEquals(BigDecimal.valueOf(500.00), secondAccount.balance());
-    assertEquals(USER_ID, secondAccount.userId());
+    assertEquals(USER_ID, secondAccount.user());
 
     verify(accountRepository).findByUserId(USER_ID);
   }
@@ -200,7 +200,7 @@ public final class GetUserAccountsTest {
     assertEquals(Account.Type.EWALLET, accountItem.type());
     assertEquals("#00FF00", accountItem.themeColor());
     assertEquals(BigDecimal.valueOf(250.50), accountItem.balance());
-    assertEquals(USER_ID, accountItem.userId());
+    assertEquals(USER_ID, accountItem.user());
 
     verify(accountRepository).findByUserId(USER_ID);
   }

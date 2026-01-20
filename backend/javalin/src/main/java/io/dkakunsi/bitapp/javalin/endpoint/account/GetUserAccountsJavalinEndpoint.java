@@ -3,14 +3,14 @@ package io.dkakunsi.bitapp.javalin.endpoint.account;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import io.dkakunsi.bitapp.account.dto.AccountResult;
 import io.dkakunsi.bitapp.account.dto.GetUserAccountsInput;
-import io.dkakunsi.bitapp.account.dto.GetUserAccountsResult;
 import io.dkakunsi.bitapp.account.usecase.GetUserAccounts;
 import io.dkakunsi.bitapp.javalin.JavalinEndpoint;
 import io.javalin.http.Context;
 
 public class GetUserAccountsJavalinEndpoint
-    extends JavalinEndpoint<GetUserAccountsInput, List<GetUserAccountsResult>> {
+    extends JavalinEndpoint<GetUserAccountsInput, List<AccountResult>> {
 
   public GetUserAccountsJavalinEndpoint(GetUserAccounts usecase) {
     super(usecase);
@@ -28,7 +28,7 @@ public class GetUserAccountsJavalinEndpoint
 
   @Override
   protected Type getOutputClass() {
-    return GetUserAccountsResult.class;
+    return AccountResult.class;
   }
 
   @Override

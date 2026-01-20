@@ -78,11 +78,6 @@ public final class CreateLoanTest {
     assertEquals(new BigDecimal("5000.00"), resultData.remainingAmount());
     assertEquals("USD", resultData.currency());
     assertEquals(5.5, resultData.interestRate());
-    assertEquals("ACTIVE", resultData.status());
-    assertNotNull(resultData.createdAt());
-    assertNotNull(resultData.updatedAt());
-    assertEquals(REQUESTER, resultData.createdBy());
-    assertEquals(REQUESTER, resultData.updatedBy());
 
     // Verify data passed to repository
     var loanCaptor = ArgumentCaptor.forClass(Loan.class);

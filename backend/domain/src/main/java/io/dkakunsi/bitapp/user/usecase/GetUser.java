@@ -5,10 +5,10 @@ import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.common.usecase.UseCase;
 import io.dkakunsi.bitapp.user.dto.GetUserInput;
-import io.dkakunsi.bitapp.user.dto.GetUserResult;
+import io.dkakunsi.bitapp.user.dto.UserResult;
 import io.dkakunsi.bitapp.user.repository.UserRepository;
 
-public final class GetUser implements UseCase<GetUserInput, GetUserResult> {
+public final class GetUser implements UseCase<GetUserInput, UserResult> {
 
   private UserRepository userRepository;
 
@@ -17,9 +17,9 @@ public final class GetUser implements UseCase<GetUserInput, GetUserResult> {
   }
 
   @Override
-  public Result<GetUserResult> execute(Context context, GetUserInput input) {
+  public Result<UserResult> execute(Context context, GetUserInput input) {
     return userRepository.findByEmail(input.email())
-        .map(user -> Result.success(GetUserResult.from(user)))
+        .map(user -> Result.success(user.toResult()))
         .orElse(Result.failure(Code.NOT_FOUND, "User not found"));
   }
 }

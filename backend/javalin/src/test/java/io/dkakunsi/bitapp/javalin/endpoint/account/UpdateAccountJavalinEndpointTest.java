@@ -12,8 +12,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import io.dkakunsi.bitapp.account.dto.AccountResult;
 import io.dkakunsi.bitapp.account.dto.UpdateAccountInput;
-import io.dkakunsi.bitapp.account.dto.UpdateAccountResult;
 import io.dkakunsi.bitapp.account.usecase.UpdateAccount;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
@@ -56,7 +56,7 @@ class UpdateAccountJavalinEndpointTest {
   @Test
   void givenValidUpdateRequestWhenProcessedThenShouldReturn200WithUpdatedAccount() {
     // Given
-    var updateResult = UpdateAccountResult.builder()
+    var updateResult = AccountResult.builder()
         .id(ACCOUNT_ID)
         .name("Updated Account")
         .type("CASH")
@@ -92,7 +92,7 @@ class UpdateAccountJavalinEndpointTest {
   @Test
   void givenPartialUpdateWithOnlyNameWhenProcessedThenShouldReturn200() {
     // Given
-    var updateResult = UpdateAccountResult.builder()
+    var updateResult = AccountResult.builder()
         .id(ACCOUNT_ID)
         .name("New Name")
         .type("BANK")
@@ -122,7 +122,7 @@ class UpdateAccountJavalinEndpointTest {
   @Test
   void givenUpdateRequestWhenUseCaseReturnsErrorThenShouldReturn500() {
     // Given
-    var result = Result.<UpdateAccountResult>failure(Code.SERVER_ERROR, "Update failed");
+    var result = Result.<AccountResult>failure(Code.SERVER_ERROR, "Update failed");
     when(usecase.process(any(Context.class), any(UpdateAccountInput.class))).thenReturn(result);
 
     var requestBody = """
@@ -144,7 +144,7 @@ class UpdateAccountJavalinEndpointTest {
   @Test
   void givenInvalidAccountIdInPathWhenProcessedThenShouldStillPassToUseCase() {
     // Given - ID will be validated at use case or repository level
-    var updateResult = UpdateAccountResult.builder()
+    var updateResult = AccountResult.builder()
         .id("invalid-id")
         .name("Test")
         .type("BANK")

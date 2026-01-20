@@ -9,8 +9,6 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -24,7 +22,7 @@ import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.loan.dto.GetUserLoansInput;
-import io.dkakunsi.bitapp.loan.dto.GetUserLoansResult;
+import io.dkakunsi.bitapp.loan.dto.LoanResult;
 import io.dkakunsi.bitapp.loan.usecase.GetUserLoans;
 import kong.unirest.Unirest;
 
@@ -63,12 +61,12 @@ class GetUserLoansJavalinEndpointTest {
   @Test
   void givenValidUserIdWithMultipleLoans_WhenRequested_ThenShouldReturn200AndLoansList() {
     // Given
-    var loanItem1 = GetUserLoansResult.builder()
+    var loanItem1 = LoanResult.builder()
         .id("loan1")
-        .userId(USER_ID)
+        .user(USER_ID)
         .type("BORROW")
-        .date(LocalDate.of(2024, 6, 15))
-        .time(LocalTime.of(14, 30))
+        .date("2024-06-15")
+        .time("14:30")
         .partyName("Bank ABC")
         .title("Car Loan")
         .description("Loan for purchasing a car")
@@ -77,12 +75,12 @@ class GetUserLoansJavalinEndpointTest {
         .currency("IDR")
         .interestRate(5.5)
         .build();
-    var loanItem2 = GetUserLoansResult.builder()
+    var loanItem2 = LoanResult.builder()
         .id("loan2")
-        .userId(USER_ID)
+        .user(USER_ID)
         .type("LEND")
-        .date(LocalDate.of(2024, 6, 20))
-        .time(LocalTime.of(10, 0))
+        .date("2024-06-20")
+        .time("10:00")
         .partyName("John Doe")
         .title("Personal Loan")
         .description("Money lent to friend")
@@ -126,7 +124,7 @@ class GetUserLoansJavalinEndpointTest {
   @Test
   void givenValidUserIdWithNoLoans_WhenRequested_ThenShouldReturn200AndEmptyList() {
     // Given
-    var result = Result.<List<GetUserLoansResult>>success(List.of());
+    var result = Result.<List<LoanResult>>success(List.of());
     when(usecase.process(any(Context.class), any(GetUserLoansInput.class))).thenReturn(result);
 
     // When
@@ -146,12 +144,12 @@ class GetUserLoansJavalinEndpointTest {
   @Test
   void givenValidUserIdWithSingleLoan_WhenRequested_ThenShouldReturn200AndSingleLoanList() {
     // Given
-    var loanItem = GetUserLoansResult.builder()
+    var loanItem = LoanResult.builder()
         .id("loan1")
-        .userId(USER_ID)
+        .user(USER_ID)
         .type("BORROW")
-        .date(LocalDate.of(2024, 6, 15))
-        .time(LocalTime.of(14, 30))
+        .date("2024-06-15")
+        .time("14:30")
         .partyName("Credit Union")
         .title("Home Renovation")
         .description("Loan for home improvement")
@@ -182,7 +180,7 @@ class GetUserLoansJavalinEndpointTest {
   @Test
   void givenValidRequest_WhenUseCaseReturnsEmpty_ThenShouldReturn200() {
     // Given
-    var result = Result.<List<GetUserLoansResult>>success(List.of());
+    var result = Result.<List<LoanResult>>success(List.of());
     when(usecase.process(any(Context.class), any(GetUserLoansInput.class))).thenReturn(result);
 
     // When
@@ -197,7 +195,7 @@ class GetUserLoansJavalinEndpointTest {
   @Test
   void givenValidRequest_WhenUseCaseFails_ThenShouldReturn500() {
     // Given
-    var result = Result.<List<GetUserLoansResult>>failure(Code.SERVER_ERROR, "Database error");
+    var result = Result.<List<LoanResult>>failure(Code.SERVER_ERROR, "Database error");
     when(usecase.process(any(Context.class), any(GetUserLoansInput.class))).thenReturn(result);
 
     // When

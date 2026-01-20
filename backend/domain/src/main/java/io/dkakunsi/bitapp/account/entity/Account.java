@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 import org.apache.commons.lang3.StringUtils;
 
+import io.dkakunsi.bitapp.account.dto.AccountResult;
 import io.dkakunsi.bitapp.account.dto.CreateAccountInput;
 import io.dkakunsi.bitapp.account.dto.UpdateAccountInput;
 import io.dkakunsi.bitapp.common.Id;
@@ -90,5 +91,16 @@ public final record Account(
 
   public boolean isOwner(String requester) {
     return this.user.equals(Id.of(requester));
+  }
+
+  public AccountResult toResult() {
+    return AccountResult.builder()
+        .id(this.id().value())
+        .name(this.name())
+        .type(this.type().name())
+        .themeColor(this.themeColor())
+        .balance(this.balance())
+        .user(this.user().value())
+        .build();
   }
 }

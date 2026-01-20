@@ -5,11 +5,11 @@ import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.common.usecase.UseCase;
 import io.dkakunsi.bitapp.user.dto.UpdateUserLanguageInput;
-import io.dkakunsi.bitapp.user.dto.UpdateUserLanguageResult;
+import io.dkakunsi.bitapp.user.dto.UserResult;
 import io.dkakunsi.bitapp.user.entity.User;
 import io.dkakunsi.bitapp.user.repository.UserRepository;
 
-public final class UpdateUserLanguage implements UseCase<UpdateUserLanguageInput, UpdateUserLanguageResult> {
+public final class UpdateUserLanguage implements UseCase<UpdateUserLanguageInput, UserResult> {
 
   private final UserRepository userRepository;
 
@@ -18,7 +18,7 @@ public final class UpdateUserLanguage implements UseCase<UpdateUserLanguageInput
   }
 
   @Override
-  public Result<UpdateUserLanguageResult> execute(Context context, UpdateUserLanguageInput input) {
+  public Result<UserResult> execute(Context context, UpdateUserLanguageInput input) {
     // Verify the authenticated user matches the email being updated
     var requester = context.requester();
     if (!requester.equals(input.email())) {
@@ -29,7 +29,7 @@ public final class UpdateUserLanguage implements UseCase<UpdateUserLanguageInput
         .map(user -> {
           var updatedUser = user.updateLanguage(User.Language.valueOf(input.language()), requester);
           var savedUser = userRepository.save(updatedUser);
-          return Result.success(UpdateUserLanguageResult.from(savedUser));
+          return Result.success(savedUser.toResult());
         })
         .orElse(Result.failure(Code.NOT_FOUND, "User not found"));
   }

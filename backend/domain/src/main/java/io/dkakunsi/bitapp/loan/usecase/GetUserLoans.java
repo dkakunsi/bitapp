@@ -6,10 +6,11 @@ import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.common.usecase.UseCase;
 import io.dkakunsi.bitapp.loan.dto.GetUserLoansInput;
-import io.dkakunsi.bitapp.loan.dto.GetUserLoansResult;
+import io.dkakunsi.bitapp.loan.dto.LoanResult;
+import io.dkakunsi.bitapp.loan.entity.Loan;
 import io.dkakunsi.bitapp.loan.repository.LoanRepository;
 
-public final class GetUserLoans implements UseCase<GetUserLoansInput, List<GetUserLoansResult>> {
+public final class GetUserLoans implements UseCase<GetUserLoansInput, List<LoanResult>> {
 
   private final LoanRepository loanRepository;
 
@@ -18,10 +19,10 @@ public final class GetUserLoans implements UseCase<GetUserLoansInput, List<GetUs
   }
 
   @Override
-  public Result<List<GetUserLoansResult>> execute(Context context, GetUserLoansInput input) {
+  public Result<List<LoanResult>> execute(Context context, GetUserLoansInput input) {
     var loans = loanRepository.findByUserId(input.userId());
     var results = loans.stream()
-        .map(GetUserLoansResult::from)
+        .map(Loan::toResult)
         .toList();
     return Result.success(results);
   }
