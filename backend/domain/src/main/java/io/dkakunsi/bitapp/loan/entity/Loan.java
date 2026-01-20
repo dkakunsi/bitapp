@@ -8,8 +8,8 @@ import java.util.Currency;
 
 import org.apache.commons.lang3.StringUtils;
 
+import io.dkakunsi.bitapp.common.EntityStatus;
 import io.dkakunsi.bitapp.common.Id;
-import io.dkakunsi.bitapp.common.ModelStatus;
 import io.dkakunsi.bitapp.loan.dto.CreateLoanInput;
 import io.dkakunsi.bitapp.loan.dto.LoanResult;
 import lombok.Builder;
@@ -31,7 +31,7 @@ public final record Loan(
     Currency currency,
     double interestRate,
 
-    ModelStatus status,
+    EntityStatus status,
     LocalDateTime createdAt,
     LocalDateTime updatedAt,
     String createdBy,
@@ -87,7 +87,7 @@ public final record Loan(
         input.amount(), // remainingAmount equals amount initially
         curr,
         input.interestRate(),
-        ModelStatus.ACTIVE,
+        EntityStatus.ACTIVE,
         now,
         now,
         executor,

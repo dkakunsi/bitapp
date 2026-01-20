@@ -20,7 +20,7 @@ import org.mockito.ArgumentCaptor;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
-import io.dkakunsi.bitapp.common.ModelStatus;
+import io.dkakunsi.bitapp.common.EntityStatus;
 import io.dkakunsi.bitapp.loan.dto.CreateLoanInput;
 import io.dkakunsi.bitapp.loan.entity.Loan;
 import io.dkakunsi.bitapp.loan.repository.LoanRepository;
@@ -95,7 +95,7 @@ public final class CreateLoanTest {
     assertEquals(new BigDecimal("5000.00"), capturedLoan.remainingAmount());
     assertEquals(Currency.getInstance("USD"), capturedLoan.currency());
     assertEquals(5.5, capturedLoan.interestRate());
-    assertEquals(ModelStatus.ACTIVE, capturedLoan.status());
+    assertEquals(EntityStatus.ACTIVE, capturedLoan.status());
     assertNotNull(capturedLoan.createdAt());
     assertNotNull(capturedLoan.updatedAt());
     assertEquals(REQUESTER, capturedLoan.createdBy());

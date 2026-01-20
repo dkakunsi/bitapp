@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 
 import dev.morphia.annotations.Entity;
 import io.dkakunsi.bitapp.account.entity.Account;
+import io.dkakunsi.bitapp.common.EntityStatus;
 import io.dkakunsi.bitapp.common.Id;
-import io.dkakunsi.bitapp.common.ModelStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AccountEntity {
+public class AccountModel {
 
   @dev.morphia.annotations.Id
   private String id;
@@ -47,7 +47,7 @@ public class AccountEntity {
         .themeColor(this.themeColor)
         .balance(BigDecimal.valueOf(this.balance))
         .user(userIdObj)
-        .status(ModelStatus.valueOf(this.status))
+        .status(EntityStatus.valueOf(this.status))
         .createdAt(this.createdAt)
         .updatedAt(this.updatedAt)
         .createdBy(this.createdBy)
@@ -58,10 +58,10 @@ public class AccountEntity {
   /**
    * Creates an entity from a domain Account model.
    */
-  public static AccountEntity fromAccount(Account account) {
+  public static AccountModel fromAccount(Account account) {
     // Morphia is not working properly with builder pattern, so we have to use the
     // constructor
-    return new AccountEntity(
+    return new AccountModel(
         account.id().value(),
         account.name(),
         account.type().name(),

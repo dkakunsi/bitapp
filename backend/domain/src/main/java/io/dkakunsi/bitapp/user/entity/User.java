@@ -3,8 +3,8 @@ package io.dkakunsi.bitapp.user.entity;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import io.dkakunsi.bitapp.common.EntityStatus;
 import io.dkakunsi.bitapp.common.Id;
-import io.dkakunsi.bitapp.common.ModelStatus;
 import io.dkakunsi.bitapp.user.dto.RegisterUserInput;
 import io.dkakunsi.bitapp.user.dto.UserResult;
 import lombok.Builder;
@@ -17,7 +17,7 @@ public final record User(
     String photoUrl,
     Language language,
 
-    ModelStatus status,
+    EntityStatus status,
     LocalDateTime createdAt,
     LocalDateTime updatedAt,
     String createdBy,
@@ -54,7 +54,7 @@ public final record User(
         .phone(input.phone())
         .photoUrl(input.photoUrl())
         .language(DEFAULT_LANGUAGE)
-        .status(ModelStatus.ACTIVE)
+        .status(EntityStatus.ACTIVE)
         .createdAt(now)
         .updatedAt(now)
         .createdBy(executor)

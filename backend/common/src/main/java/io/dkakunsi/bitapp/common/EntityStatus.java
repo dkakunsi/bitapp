@@ -1,6 +1,6 @@
 package io.dkakunsi.bitapp.common;
 
-public enum ModelStatus {
+public enum EntityStatus {
   ACTIVE,
   INACTIVE
 }

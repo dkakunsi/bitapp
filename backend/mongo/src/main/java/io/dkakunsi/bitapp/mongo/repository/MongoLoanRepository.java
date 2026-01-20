@@ -6,7 +6,7 @@ import dev.morphia.Datastore;
 import dev.morphia.query.filters.Filters;
 import io.dkakunsi.bitapp.loan.entity.Loan;
 import io.dkakunsi.bitapp.loan.repository.LoanRepository;
-import io.dkakunsi.bitapp.mongo.model.LoanEntity;
+import io.dkakunsi.bitapp.mongo.model.LoanModel;
 
 public class MongoLoanRepository implements LoanRepository {
 
@@ -18,17 +18,17 @@ public class MongoLoanRepository implements LoanRepository {
 
   @Override
   public Loan create(Loan loan) {
-    var entity = LoanEntity.fromLoan(loan);
+    var entity = LoanModel.fromLoan(loan);
     datastore.save(entity);
     return loan;
   }
 
   @Override
   public List<Loan> findByUserId(String userId) {
-    return datastore.find(LoanEntity.class)
+    return datastore.find(LoanModel.class)
         .filter(Filters.eq("userId", userId))
         .stream()
-        .map(LoanEntity::toLoan)
+        .map(LoanModel::toLoan)
         .toList();
   }
 }

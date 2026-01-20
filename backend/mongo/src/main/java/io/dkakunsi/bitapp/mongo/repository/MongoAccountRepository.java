@@ -7,7 +7,7 @@ import dev.morphia.Datastore;
 import dev.morphia.query.filters.Filters;
 import io.dkakunsi.bitapp.account.entity.Account;
 import io.dkakunsi.bitapp.account.repository.AccountRepository;
-import io.dkakunsi.bitapp.mongo.model.AccountEntity;
+import io.dkakunsi.bitapp.mongo.model.AccountModel;
 
 public class MongoAccountRepository implements AccountRepository {
 
@@ -19,21 +19,21 @@ public class MongoAccountRepository implements AccountRepository {
 
   @Override
   public Account create(Account account) {
-    var entity = AccountEntity.fromAccount(account);
+    var entity = AccountModel.fromAccount(account);
     datastore.save(entity);
     return account;
   }
 
   @Override
   public Account update(Account account) {
-    var entity = AccountEntity.fromAccount(account);
+    var entity = AccountModel.fromAccount(account);
     var updatedEntity = datastore.save(entity);
     return updatedEntity.toAccount();
   }
 
   @Override
   public Optional<Account> findById(String id) {
-    var entity = datastore.find(AccountEntity.class)
+    var entity = datastore.find(AccountModel.class)
         .filter(Filters.eq("_id", id))
         .first();
     return entity != null ? Optional.of(entity.toAccount()) : Optional.empty();
@@ -41,10 +41,10 @@ public class MongoAccountRepository implements AccountRepository {
 
   @Override
   public List<Account> findByUserId(String userId) {
-    return datastore.find(AccountEntity.class)
+    return datastore.find(AccountModel.class)
         .filter(Filters.eq("userId", userId))
         .stream()
-        .map(AccountEntity::toAccount)
+        .map(AccountModel::toAccount)
         .toList();
   }
 }

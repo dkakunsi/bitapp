@@ -3,8 +3,8 @@ package io.dkakunsi.bitapp.mongo.model;
 import java.time.LocalDateTime;
 
 import dev.morphia.annotations.Entity;
+import io.dkakunsi.bitapp.common.EntityStatus;
 import io.dkakunsi.bitapp.common.Id;
-import io.dkakunsi.bitapp.common.ModelStatus;
 import io.dkakunsi.bitapp.user.entity.User;
 import io.dkakunsi.bitapp.user.entity.User.Language;
 import lombok.AllArgsConstructor;
@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserEntity {
+public class UserModel {
 
   @dev.morphia.annotations.Id
   private String id;
@@ -41,7 +41,7 @@ public class UserEntity {
         .phone(this.phone)
         .photoUrl(this.photoUrl)
         .language(Language.valueOf(this.language))
-        .status(ModelStatus.valueOf(this.status))
+        .status(EntityStatus.valueOf(this.status))
         .createdAt(this.createdAt)
         .updatedAt(this.updatedAt)
         .createdBy(this.createdBy)
@@ -52,10 +52,10 @@ public class UserEntity {
   /**
    * Creates an entity from a domain User model.
    */
-  public static UserEntity fromUser(User user) {
+  public static UserModel fromUser(User user) {
     // Morphia is not working properly with builder pattern, so we have to use the
     // constructor
-    return new UserEntity(
+    return new UserModel(
         user.id().value(),
         user.name(),
         user.phone(),

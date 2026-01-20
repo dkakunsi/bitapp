@@ -21,8 +21,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.common.Context;
+import io.dkakunsi.bitapp.common.EntityStatus;
 import io.dkakunsi.bitapp.common.Id;
-import io.dkakunsi.bitapp.common.ModelStatus;
 import io.dkakunsi.bitapp.loan.dto.GetUserLoansInput;
 import io.dkakunsi.bitapp.loan.entity.Loan;
 import io.dkakunsi.bitapp.loan.repository.LoanRepository;
@@ -64,7 +64,7 @@ public final class GetUserLoansTest {
         .remainingAmount(BigDecimal.valueOf(500000000))
         .currency(Currency.getInstance("IDR"))
         .interestRate(5.5)
-        .status(ModelStatus.ACTIVE)
+        .status(EntityStatus.ACTIVE)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy(REQUESTER)
@@ -84,7 +84,7 @@ public final class GetUserLoansTest {
         .remainingAmount(BigDecimal.valueOf(10000000))
         .currency(Currency.getInstance("IDR"))
         .interestRate(2.0)
-        .status(ModelStatus.ACTIVE)
+        .status(EntityStatus.ACTIVE)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy(REQUESTER)
@@ -194,7 +194,7 @@ public final class GetUserLoansTest {
         .remainingAmount(BigDecimal.valueOf(200000000))
         .currency(Currency.getInstance("IDR"))
         .interestRate(4.5)
-        .status(ModelStatus.ACTIVE)
+        .status(EntityStatus.ACTIVE)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy(REQUESTER)

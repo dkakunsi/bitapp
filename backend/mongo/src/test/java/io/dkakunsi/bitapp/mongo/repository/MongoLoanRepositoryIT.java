@@ -15,9 +15,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import dev.morphia.Datastore;
+import io.dkakunsi.bitapp.common.EntityStatus;
 import io.dkakunsi.bitapp.common.EnvironmentConfiguration;
 import io.dkakunsi.bitapp.common.Id;
-import io.dkakunsi.bitapp.common.ModelStatus;
 import io.dkakunsi.bitapp.loan.entity.Loan;
 import io.dkakunsi.bitapp.mongo.MongoConfiguration;
 import io.dkakunsi.bitapp.test.MongoServer;
@@ -71,7 +71,7 @@ public class MongoLoanRepositoryIT {
         .remainingAmount(BigDecimal.valueOf(10000))
         .currency(Currency.getInstance("IDR"))
         .interestRate(5.5)
-        .status(ModelStatus.ACTIVE)
+        .status(EntityStatus.ACTIVE)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy("user@email.com")
@@ -95,7 +95,7 @@ public class MongoLoanRepositoryIT {
     assertEquals(BigDecimal.valueOf(10000), createdLoan.remainingAmount());
     assertEquals(Currency.getInstance("IDR"), createdLoan.currency());
     assertEquals(5.5, createdLoan.interestRate());
-    assertEquals(ModelStatus.ACTIVE, createdLoan.status());
+    assertEquals(EntityStatus.ACTIVE, createdLoan.status());
     assertEquals("user@email.com", createdLoan.createdBy());
     assertEquals("user@email.com", createdLoan.updatedBy());
   }
@@ -118,7 +118,7 @@ public class MongoLoanRepositoryIT {
         .remainingAmount(BigDecimal.valueOf(45000))
         .currency(Currency.getInstance("USD"))
         .interestRate(7.5)
-        .status(ModelStatus.ACTIVE)
+        .status(EntityStatus.ACTIVE)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy("lender@email.com")
@@ -156,7 +156,7 @@ public class MongoLoanRepositoryIT {
         .remainingAmount(BigDecimal.valueOf(5000))
         .currency(Currency.getInstance("IDR"))
         .interestRate(0.0)
-        .status(ModelStatus.ACTIVE)
+        .status(EntityStatus.ACTIVE)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy("user@email.com")
@@ -189,7 +189,7 @@ public class MongoLoanRepositoryIT {
         .remainingAmount(BigDecimal.valueOf(3000))
         .currency(Currency.getInstance("USD"))
         .interestRate(25.5)
-        .status(ModelStatus.ACTIVE)
+        .status(EntityStatus.ACTIVE)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy("borrower@email.com")
@@ -224,7 +224,7 @@ public class MongoLoanRepositoryIT {
         .remainingAmount(remainingAmount)
         .currency(Currency.getInstance("IDR"))
         .interestRate(5.0)
-        .status(ModelStatus.ACTIVE)
+        .status(EntityStatus.ACTIVE)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy("lender@email.com")
@@ -257,7 +257,7 @@ public class MongoLoanRepositoryIT {
         .remainingAmount(BigDecimal.valueOf(2000))
         .currency(Currency.getInstance("IDR"))
         .interestRate(3.0)
-        .status(ModelStatus.ACTIVE)
+        .status(EntityStatus.ACTIVE)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy("user@email.com")
@@ -290,7 +290,7 @@ public class MongoLoanRepositoryIT {
         .remainingAmount(BigDecimal.valueOf(1000))
         .currency(Currency.getInstance("IDR"))
         .interestRate(2.0)
-        .status(ModelStatus.ACTIVE)
+        .status(EntityStatus.ACTIVE)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy("user@email.com")
@@ -310,7 +310,7 @@ public class MongoLoanRepositoryIT {
         .remainingAmount(BigDecimal.valueOf(2000))
         .currency(Currency.getInstance("USD"))
         .interestRate(4.0)
-        .status(ModelStatus.ACTIVE)
+        .status(EntityStatus.ACTIVE)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy("user@email.com")
@@ -347,7 +347,7 @@ public class MongoLoanRepositoryIT {
         .remainingAmount(BigDecimal.valueOf(10000000))
         .currency(Currency.getInstance("IDR"))
         .interestRate(5.0)
-        .status(ModelStatus.ACTIVE)
+        .status(EntityStatus.ACTIVE)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy("user@email.com")
@@ -367,7 +367,7 @@ public class MongoLoanRepositoryIT {
         .remainingAmount(BigDecimal.valueOf(5000))
         .currency(Currency.getInstance("USD"))
         .interestRate(3.5)
-        .status(ModelStatus.ACTIVE)
+        .status(EntityStatus.ACTIVE)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy("user@email.com")
@@ -387,7 +387,7 @@ public class MongoLoanRepositoryIT {
         .remainingAmount(BigDecimal.valueOf(7500))
         .currency(Currency.getInstance("EUR"))
         .interestRate(4.0)
-        .status(ModelStatus.ACTIVE)
+        .status(EntityStatus.ACTIVE)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy("user@email.com")
@@ -427,7 +427,7 @@ public class MongoLoanRepositoryIT {
         .remainingAmount(BigDecimal.valueOf(5000))
         .currency(Currency.getInstance("IDR"))
         .interestRate(5.0)
-        .status(ModelStatus.ACTIVE)
+        .status(EntityStatus.ACTIVE)
         .createdAt(createdAt)
         .updatedAt(updatedAt)
         .createdBy("creator")
@@ -463,7 +463,7 @@ public class MongoLoanRepositoryIT {
         .remainingAmount(largeAmount)
         .currency(Currency.getInstance("USD"))
         .interestRate(2.5)
-        .status(ModelStatus.ACTIVE)
+        .status(EntityStatus.ACTIVE)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy("user@email.com")
@@ -497,7 +497,7 @@ public class MongoLoanRepositoryIT {
         .remainingAmount(smallAmount)
         .currency(Currency.getInstance("USD"))
         .interestRate(1.0)
-        .status(ModelStatus.ACTIVE)
+        .status(EntityStatus.ACTIVE)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy("user@email.com")
@@ -531,7 +531,7 @@ public class MongoLoanRepositoryIT {
         .remainingAmount(BigDecimal.valueOf(1000))
         .currency(Currency.getInstance("IDR"))
         .interestRate(3.0)
-        .status(ModelStatus.ACTIVE)
+        .status(EntityStatus.ACTIVE)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy("user1@email.com")
@@ -551,7 +551,7 @@ public class MongoLoanRepositoryIT {
         .remainingAmount(BigDecimal.valueOf(2000))
         .currency(Currency.getInstance("USD"))
         .interestRate(4.0)
-        .status(ModelStatus.ACTIVE)
+        .status(EntityStatus.ACTIVE)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy("user2@email.com")
@@ -588,7 +588,7 @@ public class MongoLoanRepositoryIT {
         .remainingAmount(BigDecimal.valueOf(3000))
         .currency(Currency.getInstance("IDR"))
         .interestRate(5.5)
-        .status(ModelStatus.ACTIVE)
+        .status(EntityStatus.ACTIVE)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy("user@email.com")
@@ -625,7 +625,7 @@ public class MongoLoanRepositoryIT {
         .remainingAmount(BigDecimal.valueOf(500000000))
         .currency(Currency.getInstance("IDR"))
         .interestRate(5.5)
-        .status(ModelStatus.ACTIVE)
+        .status(EntityStatus.ACTIVE)
         .createdAt(now)
         .updatedAt(now)
         .createdBy(requester)
@@ -645,7 +645,7 @@ public class MongoLoanRepositoryIT {
         .remainingAmount(BigDecimal.valueOf(10000000))
         .currency(Currency.getInstance("IDR"))
         .interestRate(2.0)
-        .status(ModelStatus.ACTIVE)
+        .status(EntityStatus.ACTIVE)
         .createdAt(now)
         .updatedAt(now)
         .createdBy(requester)
@@ -699,7 +699,7 @@ public class MongoLoanRepositoryIT {
         .remainingAmount(BigDecimal.valueOf(500000000))
         .currency(Currency.getInstance("IDR"))
         .interestRate(5.5)
-        .status(ModelStatus.ACTIVE)
+        .status(EntityStatus.ACTIVE)
         .createdAt(now)
         .updatedAt(now)
         .createdBy("user1@email.com")
@@ -719,7 +719,7 @@ public class MongoLoanRepositoryIT {
         .remainingAmount(BigDecimal.valueOf(10000000))
         .currency(Currency.getInstance("IDR"))
         .interestRate(2.0)
-        .status(ModelStatus.ACTIVE)
+        .status(EntityStatus.ACTIVE)
         .createdAt(now)
         .updatedAt(now)
         .createdBy("user2@email.com")

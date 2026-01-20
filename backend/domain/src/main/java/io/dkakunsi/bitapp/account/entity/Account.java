@@ -8,8 +8,8 @@ import org.apache.commons.lang3.StringUtils;
 import io.dkakunsi.bitapp.account.dto.AccountResult;
 import io.dkakunsi.bitapp.account.dto.CreateAccountInput;
 import io.dkakunsi.bitapp.account.dto.UpdateAccountInput;
+import io.dkakunsi.bitapp.common.EntityStatus;
 import io.dkakunsi.bitapp.common.Id;
-import io.dkakunsi.bitapp.common.ModelStatus;
 import lombok.Builder;
 
 @Builder
@@ -22,7 +22,7 @@ public final record Account(
     String themeColor,
     BigDecimal balance,
 
-    ModelStatus status,
+    EntityStatus status,
     LocalDateTime createdAt,
     LocalDateTime updatedAt,
     String createdBy,
@@ -61,7 +61,7 @@ public final record Account(
         .themeColor(input.themeColor() != null ? input.themeColor() : DEFAULT_THEME_COLOR)
         .user(userId)
         .balance(BigDecimal.ZERO)
-        .status(ModelStatus.ACTIVE)
+        .status(EntityStatus.ACTIVE)
         .createdAt(now)
         .updatedAt(now)
         .createdBy(executor)
