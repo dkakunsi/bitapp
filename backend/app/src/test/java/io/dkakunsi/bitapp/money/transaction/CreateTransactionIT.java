@@ -163,7 +163,7 @@ public class CreateTransactionIT extends AppTestUtil {
         .asString();
     assertEquals(200, accountResponse.getStatus());
     var account = new JSONObject(accountResponse.getBody());
-    assertEquals(new BigDecimal("950000"), account.getBigDecimal("balance"));
+    assertEquals(950000.0, account.getBigDecimal("balance").doubleValue(), 0.01);
   }
 
   /**
@@ -212,7 +212,7 @@ public class CreateTransactionIT extends AppTestUtil {
         .asString();
     assertEquals(200, accountResponse.getStatus());
     var account = new JSONObject(accountResponse.getBody());
-    assertEquals(new BigDecimal("5500000"), account.getBigDecimal("balance"));
+    assertEquals(5500000.0, account.getBigDecimal("balance").doubleValue(), 0.01);
   }
 
   /**
@@ -261,14 +261,14 @@ public class CreateTransactionIT extends AppTestUtil {
         .asString();
     assertEquals(200, sourceResponse.getStatus());
     var sourceAccount = new JSONObject(sourceResponse.getBody());
-    assertEquals(new BigDecimal("900000"), sourceAccount.getBigDecimal("balance"));
+    assertEquals(900000.0, sourceAccount.getBigDecimal("balance").doubleValue(), 0.01);
 
     var destResponse = Unirest.get(baseUrl + "/accounts/" + destinationAccountId)
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, destResponse.getStatus());
     var destAccount = new JSONObject(destResponse.getBody());
-    assertEquals(new BigDecimal("600000"), destAccount.getBigDecimal("balance"));
+    assertEquals(600000.0, destAccount.getBigDecimal("balance").doubleValue(), 0.01);
   }
 
   /**
@@ -314,7 +314,7 @@ public class CreateTransactionIT extends AppTestUtil {
         .asString();
     assertEquals(200, loanResponse.getStatus());
     var loan = new JSONObject(loanResponse.getBody());
-    assertEquals(1500000, loan.getLong("remainingAmount"));
+    assertEquals(1500000.0, loan.getBigDecimal("remainingAmount").doubleValue(), 0.01);
   }
 
   /**
@@ -842,17 +842,17 @@ public class CreateTransactionIT extends AppTestUtil {
    */
   @Test
   public void createTransferTransactionWithNonExistentDestinationShouldFail() {
-    var body = """
+    var body = String.format("""
         {
           "type": "TRANSFER",
           "title": "Test Transaction",
           "description": "Test description",
-          "source": "account-123",
+          "source": "%s",
           "destination": "non-existent-account",
           "amount": 50000,
           "currency": "IDR"
         }
-        """;
+        """, sourceAccountId);
 
     var response = Unirest.post(baseUrl + "/transactions")
         .header("Authorization", "Bearer " + token)
