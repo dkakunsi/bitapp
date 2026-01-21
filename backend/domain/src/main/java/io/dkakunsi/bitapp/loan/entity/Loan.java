@@ -159,4 +159,8 @@ public final record Loan(
         .interestRate(this.interestRate())
         .build();
   }
+
+  public boolean isOwner(String requester) {
+    return this.user().value().equals(requester);
+  }
 }

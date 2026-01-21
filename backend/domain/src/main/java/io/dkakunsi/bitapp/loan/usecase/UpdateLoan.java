@@ -6,6 +6,7 @@ import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.common.usecase.UseCase;
 import io.dkakunsi.bitapp.loan.dto.LoanResult;
 import io.dkakunsi.bitapp.loan.dto.UpdateLoanInput;
+import io.dkakunsi.bitapp.loan.entity.Loan;
 import io.dkakunsi.bitapp.loan.repository.LoanRepository;
 
 public final class UpdateLoan implements UseCase<UpdateLoanInput, LoanResult> {
@@ -18,22 +19,17 @@ public final class UpdateLoan implements UseCase<UpdateLoanInput, LoanResult> {
 
   @Override
   public Result<LoanResult> execute(Context context, UpdateLoanInput input) {
-    var existingLoanOpt = loanRepository.findById(input.id());
+    return loanRepository.findById(input.id())
+        .map(loan -> onLoan(loan, input, context.requester()))
+        .orElse(Result.failure(AppError.Code.NOT_FOUND, "Loan not found"));
+  }
 
-    if (existingLoanOpt.isEmpty()) {
-      return Result.failure(AppError.Code.NOT_FOUND, "Loan not found");
-    }
-
-    var existingLoan = existingLoanOpt.get();
-
-    // Check if the requester owns the loan
-    if (!existingLoan.user().value().equals(context.requester())) {
+  private Result<LoanResult> onLoan(Loan loan, UpdateLoanInput input, String requester) {
+    if (!loan.isOwner(requester)) {
       return Result.failure(AppError.Code.FORBIDDEN, "You are not authorized to update this loan");
     }
 
-    var updatedLoan = existingLoan.update(input, context.requester());
-    var savedLoan = loanRepository.update(updatedLoan);
-
-    return Result.success(savedLoan.toResult());
+    var updatedLoan = loanRepository.update(loan.update(input, requester));
+    return Result.success(updatedLoan.toResult());
   }
 }
