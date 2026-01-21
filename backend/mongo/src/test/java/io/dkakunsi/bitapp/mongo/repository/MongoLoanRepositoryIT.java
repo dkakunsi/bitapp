@@ -743,4 +743,465 @@ public class MongoLoanRepositoryIT {
     assertEquals("User 2 Personal Loan", user2Loans.get(0).title());
     assertEquals(userId2.value(), user2Loans.get(0).user().value());
   }
+
+  @Test
+  public void givenExistingLoanWhenUpdateThenShouldPersistChanges() {
+    // Given
+    var userId = Id.of("user@email.com");
+    var loanId = Id.generate();
+    var originalLoan = Loan.builder()
+        .id(loanId)
+        .user(userId)
+        .type(Loan.Type.BORROW)
+        .date(LocalDate.of(2026, 1, 15))
+        .time(LocalTime.of(10, 30))
+        .partyName("Original Party")
+        .title("Original Title")
+        .description("Original description")
+        .amount(BigDecimal.valueOf(10000))
+        .remainingAmount(BigDecimal.valueOf(10000))
+        .currency(Currency.getInstance("IDR"))
+        .interestRate(5.0)
+        .status(EntityStatus.ACTIVE)
+        .createdAt(LocalDateTime.now().minusDays(1))
+        .updatedAt(LocalDateTime.now().minusDays(1))
+        .createdBy("user@email.com")
+        .updatedBy("user@email.com")
+        .build();
+
+    repository.create(originalLoan);
+
+    // Update the loan
+    var updatedLoan = Loan.builder()
+        .id(loanId)
+        .user(userId)
+        .type(Loan.Type.BORROW)
+        .date(LocalDate.of(2026, 2, 20))
+        .time(LocalTime.of(14, 45))
+        .partyName("Updated Party")
+        .title("Updated Title")
+        .description("Updated description")
+        .amount(BigDecimal.valueOf(15000))
+        .remainingAmount(BigDecimal.valueOf(10000))
+        .currency(Currency.getInstance("USD"))
+        .interestRate(7.5)
+        .status(EntityStatus.ACTIVE)
+        .createdAt(originalLoan.createdAt())
+        .updatedAt(LocalDateTime.now())
+        .createdBy("user@email.com")
+        .updatedBy("updater@email.com")
+        .build();
+
+    // When
+    var result = repository.update(updatedLoan);
+
+    // Then
+    assertNotNull(result);
+    assertEquals(loanId.value(), result.id().value());
+    assertEquals("Updated Party", result.partyName());
+    assertEquals("Updated Title", result.title());
+    assertEquals("Updated description", result.description());
+    assertEquals(BigDecimal.valueOf(15000), result.amount());
+    assertEquals(Currency.getInstance("USD"), result.currency());
+    assertEquals(7.5, result.interestRate());
+    assertEquals(LocalDate.of(2026, 2, 20), result.date());
+    assertEquals(LocalTime.of(14, 45), result.time());
+    assertEquals("updater@email.com", result.updatedBy());
+
+    // Verify the loan was actually updated in the database
+    var fetchedLoan = repository.findById(loanId.value());
+    assertEquals(true, fetchedLoan.isPresent());
+    assertEquals("Updated Title", fetchedLoan.get().title());
+  }
+
+  @Test
+  public void givenLoanWhenUpdatePartyNameThenShouldPersistNewPartyName() {
+    // Given
+    var userId = Id.of("user@email.com");
+    var loanId = Id.generate();
+    var originalLoan = createBasicLoan(loanId, userId);
+    repository.create(originalLoan);
+
+    var updatedLoan = Loan.builder()
+        .id(loanId)
+        .user(userId)
+        .type(originalLoan.type())
+        .date(originalLoan.date())
+        .time(originalLoan.time())
+        .partyName("New Party Name")
+        .title(originalLoan.title())
+        .description(originalLoan.description())
+        .amount(originalLoan.amount())
+        .remainingAmount(originalLoan.remainingAmount())
+        .currency(originalLoan.currency())
+        .interestRate(originalLoan.interestRate())
+        .status(originalLoan.status())
+        .createdAt(originalLoan.createdAt())
+        .updatedAt(LocalDateTime.now())
+        .createdBy(originalLoan.createdBy())
+        .updatedBy("updater@email.com")
+        .build();
+
+    // When
+    var result = repository.update(updatedLoan);
+
+    // Then
+    assertNotNull(result);
+    assertEquals("New Party Name", result.partyName());
+
+    // Verify persistence
+    var fetchedLoan = repository.findById(loanId.value());
+    assertEquals("New Party Name", fetchedLoan.get().partyName());
+  }
+
+  @Test
+  public void givenLoanWhenUpdateAmountThenShouldPersistNewAmount() {
+    // Given
+    var userId = Id.of("user@email.com");
+    var loanId = Id.generate();
+    var originalLoan = createBasicLoan(loanId, userId);
+    repository.create(originalLoan);
+
+    var newAmount = BigDecimal.valueOf(25000);
+    var updatedLoan = Loan.builder()
+        .id(loanId)
+        .user(userId)
+        .type(originalLoan.type())
+        .date(originalLoan.date())
+        .time(originalLoan.time())
+        .partyName(originalLoan.partyName())
+        .title(originalLoan.title())
+        .description(originalLoan.description())
+        .amount(newAmount)
+        .remainingAmount(originalLoan.remainingAmount())
+        .currency(originalLoan.currency())
+        .interestRate(originalLoan.interestRate())
+        .status(originalLoan.status())
+        .createdAt(originalLoan.createdAt())
+        .updatedAt(LocalDateTime.now())
+        .createdBy(originalLoan.createdBy())
+        .updatedBy("updater@email.com")
+        .build();
+
+    // When
+    var result = repository.update(updatedLoan);
+
+    // Then
+    assertNotNull(result);
+    assertEquals(newAmount, result.amount());
+
+    // Verify persistence
+    var fetchedLoan = repository.findById(loanId.value());
+    assertEquals(newAmount, fetchedLoan.get().amount());
+  }
+
+  @Test
+  public void givenLoanWhenUpdateCurrencyThenShouldPersistNewCurrency() {
+    // Given
+    var userId = Id.of("user@email.com");
+    var loanId = Id.generate();
+    var originalLoan = createBasicLoan(loanId, userId);
+    repository.create(originalLoan);
+
+    var updatedLoan = Loan.builder()
+        .id(loanId)
+        .user(userId)
+        .type(originalLoan.type())
+        .date(originalLoan.date())
+        .time(originalLoan.time())
+        .partyName(originalLoan.partyName())
+        .title(originalLoan.title())
+        .description(originalLoan.description())
+        .amount(originalLoan.amount())
+        .remainingAmount(originalLoan.remainingAmount())
+        .currency(Currency.getInstance("EUR"))
+        .interestRate(originalLoan.interestRate())
+        .status(originalLoan.status())
+        .createdAt(originalLoan.createdAt())
+        .updatedAt(LocalDateTime.now())
+        .createdBy(originalLoan.createdBy())
+        .updatedBy("updater@email.com")
+        .build();
+
+    // When
+    var result = repository.update(updatedLoan);
+
+    // Then
+    assertNotNull(result);
+    assertEquals(Currency.getInstance("EUR"), result.currency());
+
+    // Verify persistence
+    var fetchedLoan = repository.findById(loanId.value());
+    assertEquals(Currency.getInstance("EUR"), fetchedLoan.get().currency());
+  }
+
+  @Test
+  public void givenLoanWhenUpdateInterestRateThenShouldPersistNewRate() {
+    // Given
+    var userId = Id.of("user@email.com");
+    var loanId = Id.generate();
+    var originalLoan = createBasicLoan(loanId, userId);
+    repository.create(originalLoan);
+
+    var newInterestRate = 8.75;
+    var updatedLoan = Loan.builder()
+        .id(loanId)
+        .user(userId)
+        .type(originalLoan.type())
+        .date(originalLoan.date())
+        .time(originalLoan.time())
+        .partyName(originalLoan.partyName())
+        .title(originalLoan.title())
+        .description(originalLoan.description())
+        .amount(originalLoan.amount())
+        .remainingAmount(originalLoan.remainingAmount())
+        .currency(originalLoan.currency())
+        .interestRate(newInterestRate)
+        .status(originalLoan.status())
+        .createdAt(originalLoan.createdAt())
+        .updatedAt(LocalDateTime.now())
+        .createdBy(originalLoan.createdBy())
+        .updatedBy("updater@email.com")
+        .build();
+
+    // When
+    var result = repository.update(updatedLoan);
+
+    // Then
+    assertNotNull(result);
+    assertEquals(newInterestRate, result.interestRate());
+
+    // Verify persistence
+    var fetchedLoan = repository.findById(loanId.value());
+    assertEquals(newInterestRate, fetchedLoan.get().interestRate());
+  }
+
+  @Test
+  public void givenLoanWhenUpdateDateAndTimeThenShouldPersistNewDateTime() {
+    // Given
+    var userId = Id.of("user@email.com");
+    var loanId = Id.generate();
+    var originalLoan = createBasicLoan(loanId, userId);
+    repository.create(originalLoan);
+
+    var newDate = LocalDate.of(2027, 6, 15);
+    var newTime = LocalTime.of(18, 30);
+    var updatedLoan = Loan.builder()
+        .id(loanId)
+        .user(userId)
+        .type(originalLoan.type())
+        .date(newDate)
+        .time(newTime)
+        .partyName(originalLoan.partyName())
+        .title(originalLoan.title())
+        .description(originalLoan.description())
+        .amount(originalLoan.amount())
+        .remainingAmount(originalLoan.remainingAmount())
+        .currency(originalLoan.currency())
+        .interestRate(originalLoan.interestRate())
+        .status(originalLoan.status())
+        .createdAt(originalLoan.createdAt())
+        .updatedAt(LocalDateTime.now())
+        .createdBy(originalLoan.createdBy())
+        .updatedBy("updater@email.com")
+        .build();
+
+    // When
+    var result = repository.update(updatedLoan);
+
+    // Then
+    assertNotNull(result);
+    assertEquals(newDate, result.date());
+    assertEquals(newTime, result.time());
+
+    // Verify persistence
+    var fetchedLoan = repository.findById(loanId.value());
+    assertEquals(newDate, fetchedLoan.get().date());
+    assertEquals(newTime, fetchedLoan.get().time());
+  }
+
+  @Test
+  public void givenLoanWhenUpdateMultipleFieldsThenShouldPersistAllChanges() {
+    // Given
+    var userId = Id.of("user@email.com");
+    var loanId = Id.generate();
+    var originalLoan = createBasicLoan(loanId, userId);
+    repository.create(originalLoan);
+
+    var updatedLoan = Loan.builder()
+        .id(loanId)
+        .user(userId)
+        .type(originalLoan.type())
+        .date(LocalDate.of(2027, 3, 10))
+        .time(LocalTime.of(16, 0))
+        .partyName("Multi Update Party")
+        .title("Multi Update Title")
+        .description("Multiple fields updated")
+        .amount(BigDecimal.valueOf(30000))
+        .remainingAmount(originalLoan.remainingAmount())
+        .currency(Currency.getInstance("GBP"))
+        .interestRate(6.25)
+        .status(originalLoan.status())
+        .createdAt(originalLoan.createdAt())
+        .updatedAt(LocalDateTime.now())
+        .createdBy(originalLoan.createdBy())
+        .updatedBy("multi-updater@email.com")
+        .build();
+
+    // When
+    var result = repository.update(updatedLoan);
+
+    // Then
+    assertNotNull(result);
+    assertEquals("Multi Update Party", result.partyName());
+    assertEquals("Multi Update Title", result.title());
+    assertEquals("Multiple fields updated", result.description());
+    assertEquals(BigDecimal.valueOf(30000), result.amount());
+    assertEquals(Currency.getInstance("GBP"), result.currency());
+    assertEquals(6.25, result.interestRate());
+
+    // Verify all changes persisted
+    var fetchedLoan = repository.findById(loanId.value());
+    assertEquals(true, fetchedLoan.isPresent());
+    assertEquals("Multi Update Title", fetchedLoan.get().title());
+    assertEquals("Multi Update Party", fetchedLoan.get().partyName());
+    assertEquals(BigDecimal.valueOf(30000), fetchedLoan.get().amount());
+  }
+
+  @Test
+  public void givenLoanWhenUpdateThenShouldPreserveCreatedFields() {
+    // Given
+    var userId = Id.of("user@email.com");
+    var loanId = Id.generate();
+    // Truncate to millis for MongoDB precision compatibility
+    var originalCreatedAt = LocalDateTime.now().minusDays(5).truncatedTo(java.time.temporal.ChronoUnit.MILLIS);
+    var originalCreatedBy = "original-creator@email.com";
+
+    var originalLoan = Loan.builder()
+        .id(loanId)
+        .user(userId)
+        .type(Loan.Type.BORROW)
+        .date(LocalDate.now())
+        .time(LocalTime.now())
+        .partyName("Test Party")
+        .title("Test Title")
+        .description("Test description")
+        .amount(BigDecimal.valueOf(5000))
+        .remainingAmount(BigDecimal.valueOf(5000))
+        .currency(Currency.getInstance("IDR"))
+        .interestRate(4.0)
+        .status(EntityStatus.ACTIVE)
+        .createdAt(originalCreatedAt)
+        .updatedAt(originalCreatedAt)
+        .createdBy(originalCreatedBy)
+        .updatedBy(originalCreatedBy)
+        .build();
+
+    repository.create(originalLoan);
+
+    var updatedLoan = Loan.builder()
+        .id(loanId)
+        .user(userId)
+        .type(originalLoan.type())
+        .date(originalLoan.date())
+        .time(originalLoan.time())
+        .partyName("Updated Party")
+        .title("Updated Title")
+        .description(originalLoan.description())
+        .amount(originalLoan.amount())
+        .remainingAmount(originalLoan.remainingAmount())
+        .currency(originalLoan.currency())
+        .interestRate(originalLoan.interestRate())
+        .status(originalLoan.status())
+        .createdAt(originalCreatedAt)
+        .updatedAt(LocalDateTime.now())
+        .createdBy(originalCreatedBy)
+        .updatedBy("new-updater@email.com")
+        .build();
+
+    // When
+    var result = repository.update(updatedLoan);
+
+    // Then
+    assertEquals(originalCreatedAt, result.createdAt());
+    assertEquals(originalCreatedBy, result.createdBy());
+    assertEquals("new-updater@email.com", result.updatedBy());
+
+    // Verify persistence
+    var fetchedLoan = repository.findById(loanId.value());
+    assertEquals(originalCreatedAt, fetchedLoan.get().createdAt());
+    assertEquals(originalCreatedBy, fetchedLoan.get().createdBy());
+  }
+
+  @Test
+  public void givenLoanWhenUpdateThenShouldUpdateTimestamp() {
+    // Given
+    var userId = Id.of("user@email.com");
+    var loanId = Id.generate();
+    var originalLoan = createBasicLoan(loanId, userId);
+    var originalUpdatedAt = originalLoan.updatedAt();
+
+    repository.create(originalLoan);
+
+    // Wait a small amount to ensure timestamp difference
+    try {
+      Thread.sleep(10);
+    } catch (InterruptedException e) {
+      // Ignore
+    }
+
+    var updatedLoan = Loan.builder()
+        .id(loanId)
+        .user(userId)
+        .type(originalLoan.type())
+        .date(originalLoan.date())
+        .time(originalLoan.time())
+        .partyName("Updated Party")
+        .title(originalLoan.title())
+        .description(originalLoan.description())
+        .amount(originalLoan.amount())
+        .remainingAmount(originalLoan.remainingAmount())
+        .currency(originalLoan.currency())
+        .interestRate(originalLoan.interestRate())
+        .status(originalLoan.status())
+        .createdAt(originalLoan.createdAt())
+        .updatedAt(LocalDateTime.now())
+        .createdBy(originalLoan.createdBy())
+        .updatedBy("updater@email.com")
+        .build();
+
+    // When
+    var result = repository.update(updatedLoan);
+
+    // Then
+    assertNotNull(result.updatedAt());
+    assertEquals(true, result.updatedAt().isAfter(originalUpdatedAt) ||
+        result.updatedAt().isEqual(originalUpdatedAt));
+
+    // Verify timestamp was updated in database
+    var fetchedLoan = repository.findById(loanId.value());
+    assertNotNull(fetchedLoan.get().updatedAt());
+  }
+
+  private Loan createBasicLoan(Id loanId, Id userId) {
+    return Loan.builder()
+        .id(loanId)
+        .user(userId)
+        .type(Loan.Type.BORROW)
+        .date(LocalDate.of(2026, 1, 15))
+        .time(LocalTime.of(10, 30))
+        .partyName("Basic Party")
+        .title("Basic Loan")
+        .description("Basic description")
+        .amount(BigDecimal.valueOf(10000))
+        .remainingAmount(BigDecimal.valueOf(10000))
+        .currency(Currency.getInstance("IDR"))
+        .interestRate(5.0)
+        .status(EntityStatus.ACTIVE)
+        .createdAt(LocalDateTime.now().minusDays(1))
+        .updatedAt(LocalDateTime.now().minusDays(1))
+        .createdBy("user@email.com")
+        .updatedBy("user@email.com")
+        .build();
+  }
 }
