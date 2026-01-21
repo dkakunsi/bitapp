@@ -39,6 +39,7 @@ public final record Loan(
     String updatedBy) {
 
   private static final String DEFAULT_CURRENCY = "IDR";
+  private static final int TIME_FORMAT_LENGTH = 5;
 
   public static enum Type {
     BORROW,
@@ -114,13 +115,30 @@ public final record Loan(
     }
 
     BigDecimal updatedAmount = this.amount;
+    BigDecimal updatedRemainingAmount = this.remainingAmount;
     if (input.amount() != null) {
       updatedAmount = input.amount();
+      updatedRemainingAmount = input.amount();
     }
 
     double updatedInterestRate = this.interestRate;
     if (input.interestRate() != null) {
       updatedInterestRate = input.interestRate();
+    }
+
+    String updatedPartyName = this.partyName;
+    if (input.partyName() != null) {
+      updatedPartyName = input.partyName();
+    }
+
+    String updatedTitle = this.title;
+    if (input.title() != null) {
+      updatedTitle = input.title();
+    }
+
+    String updatedDescription = this.description;
+    if (input.description() != null) {
+      updatedDescription = input.description();
     }
 
     return new Loan(
@@ -129,11 +147,11 @@ public final record Loan(
         this.type,
         updatedDate,
         updatedTime,
-        input.partyName(),
-        input.title(),
-        input.description(),
+        updatedPartyName,
+        updatedTitle,
+        updatedDescription,
         updatedAmount,
-        this.remainingAmount,
+        updatedRemainingAmount,
         updatedCurrency,
         updatedInterestRate,
         this.status,
@@ -144,12 +162,17 @@ public final record Loan(
   }
 
   public LoanResult toResult() {
+    String timeStr = this.time().toString();
+    if (timeStr.length() > TIME_FORMAT_LENGTH) {
+      timeStr = timeStr.substring(0, TIME_FORMAT_LENGTH);
+    }
+    
     return LoanResult.builder()
         .id(this.id().value())
         .user(this.user().value())
         .type(this.type().name())
         .date(this.date().toString())
-        .time(this.time().toString())
+        .time(timeStr)
         .partyName(this.partyName())
         .title(this.title())
         .description(this.description())

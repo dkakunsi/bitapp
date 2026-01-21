@@ -208,7 +208,7 @@ public final class UpdateLoanTest {
 
     var resultData = result.data().get();
     assertEquals("2026-12-31", resultData.date());
-    assertEquals("23:59:59", resultData.time());
+    assertEquals("23:59", resultData.time());
 
     // Verify date and time updated
     var loanCaptor = ArgumentCaptor.forClass(Loan.class);

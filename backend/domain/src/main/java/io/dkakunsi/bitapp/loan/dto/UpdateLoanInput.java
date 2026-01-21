@@ -31,10 +31,10 @@ public final record UpdateLoanInput(
     if (StringUtils.isBlank(id)) {
       errors.add("id: invalid value");
     }
-    if (StringUtils.isBlank(partyName)) {
+    if (partyName != null && StringUtils.isBlank(partyName)) {
       errors.add("partyName: invalid value");
     }
-    if (StringUtils.isBlank(title)) {
+    if (title != null && StringUtils.isBlank(title)) {
       errors.add("title: invalid value");
     }
     if (date != null && (StringUtils.isBlank(date) || !date.matches(DATE_REGEX))) {
@@ -46,7 +46,7 @@ public final record UpdateLoanInput(
     if (amount != null && amount.compareTo(new BigDecimal("0.01")) < 0) {
       errors.add("amount: invalid value");
     }
-    if (StringUtils.isNotBlank(currency)) {
+    if (currency != null && StringUtils.isNotBlank(currency)) {
       try {
         java.util.Currency.getInstance(currency);
       } catch (IllegalArgumentException e) {

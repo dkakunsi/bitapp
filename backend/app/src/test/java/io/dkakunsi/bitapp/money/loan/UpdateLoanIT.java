@@ -369,15 +369,15 @@ public class UpdateLoanIT extends AppTestUtil {
   /**
    * <b>Given</b> a loan update request with missing title<br>
    * <b>When</b> the PUT /loans/{id} endpoint is called<br>
-   * <b>Then</b> the request should fail with a 400 status code
+   * <b>Then</b> the request should succeed with a 200 status code (partial update allowed)
    */
   @Test
-  public void shouldFailOnMissingTitle() throws Exception {
+  public void shouldSucceedOnMissingTitle() throws Exception {
     var loanId = createTestLoan();
     var body = """
         {
-          "partyName": "John Doe",
-          "description": "Original description"
+          "partyName": "John Doe Updated",
+          "description": "Updated description"
         }
         """;
 
@@ -386,8 +386,11 @@ public class UpdateLoanIT extends AppTestUtil {
         .body(body)
         .asString();
 
-    assertEquals(400, response.getStatus());
-    assertEquals("title: invalid value", response.getBody());
+    assertEquals(200, response.getStatus());
+    var responseBody = new JSONObject(response.getBody());
+    assertEquals("John Doe Updated", responseBody.getString("partyName"));
+    assertEquals("Updated description", responseBody.getString("description"));
+    assertEquals("Original Loan", responseBody.getString("title")); // title should remain unchanged
   }
 
   /**
