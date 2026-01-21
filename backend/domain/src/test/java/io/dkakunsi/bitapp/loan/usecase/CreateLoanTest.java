@@ -69,8 +69,8 @@ public final class CreateLoanTest {
     assertNotNull(resultData.id());
     assertEquals(REQUESTER, resultData.user());
     assertEquals("BORROW", resultData.type());
-    assertEquals(LocalDate.parse("2026-01-15"), resultData.date());
-    assertEquals(LocalTime.parse("14:30:00"), resultData.time());
+    assertEquals("2026-01-15", resultData.date());
+    assertEquals("14:30", resultData.time());
     assertEquals("John Doe", resultData.partyName());
     assertEquals("Personal Loan", resultData.title());
     assertEquals("Emergency loan", resultData.description());

@@ -105,7 +105,7 @@ public class GetUserAccountsIT extends AppTestUtil {
     // Verify all accounts belong to the correct user
     for (int i = 0; i < responseBody.length(); i++) {
       var account = responseBody.getJSONObject(i);
-      assertEquals(USER_ID, account.getString("userId"));
+      assertEquals(USER_ID, account.getString("user"));
       assertNotNull(account.getString("id"));
       assertNotNull(account.getString("name"));
       assertNotNull(account.getString("type"));
@@ -137,7 +137,7 @@ public class GetUserAccountsIT extends AppTestUtil {
     // Verify none of the accounts belong to other users
     for (int i = 0; i < responseBody.length(); i++) {
       var account = responseBody.getJSONObject(i);
-      assertEquals(USER_ID, account.getString("userId"));
+      assertEquals(USER_ID, account.getString("user"));
 
       // Ensure no account named "Other User Account" is returned
       assertTrue(!account.getString("name").equals("Other User Account"),
@@ -180,7 +180,7 @@ public class GetUserAccountsIT extends AppTestUtil {
         assertEquals("BANK", account.getString("type"));
         assertEquals("#FF5733", account.getString("themeColor"));
         assertEquals(0, new BigDecimal("0").compareTo(account.getBigDecimal("balance")));
-        assertEquals(USER_ID, account.getString("userId"));
+        assertEquals(USER_ID, account.getString("user"));
       } else if (name.equals("Cash Wallet")) {
         foundCash = true;
         assertEquals("CASH", account.getString("type"));
@@ -245,7 +245,7 @@ public class GetUserAccountsIT extends AppTestUtil {
 
     // Verify accounts belong to correct users
     for (int i = 0; i < responseBody1.length(); i++) {
-      assertEquals(USER_ID, responseBody1.getJSONObject(i).getString("userId"));
+      assertEquals(USER_ID, responseBody1.getJSONObject(i).getString("user"));
     }
 
     // When - Get accounts for second user
@@ -260,7 +260,7 @@ public class GetUserAccountsIT extends AppTestUtil {
     assertTrue(responseBody2.length() >= 1);
 
     for (int i = 0; i < responseBody2.length(); i++) {
-      assertEquals(OTHER_USER_ID, responseBody2.getJSONObject(i).getString("userId"));
+      assertEquals(OTHER_USER_ID, responseBody2.getJSONObject(i).getString("user"));
     }
   }
 

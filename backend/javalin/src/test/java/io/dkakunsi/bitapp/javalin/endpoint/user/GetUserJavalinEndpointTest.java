@@ -16,7 +16,7 @@ import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.user.dto.GetUserInput;
-import io.dkakunsi.bitapp.user.dto.GetUserResult;
+import io.dkakunsi.bitapp.user.dto.UserResult;
 import io.dkakunsi.bitapp.user.entity.User.Language;
 import io.dkakunsi.bitapp.user.usecase.GetUser;
 import kong.unirest.Unirest;
@@ -50,7 +50,7 @@ class GetUserJavalinEndpointTest {
   void givenValidEmail_WhenRequested_ThenShouldReturnUser() {
     // Given
     var email = "user@email.com";
-    var getResult = GetUserResult.builder()
+    var getResult = UserResult.builder()
         .email(email)
         .name("User Name")
         .phone("081234567890")
@@ -80,7 +80,7 @@ class GetUserJavalinEndpointTest {
   void givenNonExistentEmail_WhenRequested_ThenShouldReturn404() {
     // Given
     var email = "nonexistent@email.com";
-    var result = Result.<GetUserResult>failure(Code.NOT_FOUND, "User not found");
+    var result = Result.<UserResult>failure(Code.NOT_FOUND, "User not found");
     when(usecase.process(any(Context.class), any(GetUserInput.class))).thenReturn(result);
 
     // When
@@ -95,7 +95,7 @@ class GetUserJavalinEndpointTest {
   void givenServerError_WhenRequested_ThenShouldReturn500() {
     // Given
     var email = "user@email.com";
-    var result = Result.<GetUserResult>failure(Code.SERVER_ERROR, "Database connection failed");
+    var result = Result.<UserResult>failure(Code.SERVER_ERROR, "Database connection failed");
     when(usecase.process(any(Context.class), any(GetUserInput.class))).thenReturn(result);
 
     // When

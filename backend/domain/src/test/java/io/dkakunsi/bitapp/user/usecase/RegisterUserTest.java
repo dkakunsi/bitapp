@@ -68,7 +68,7 @@ public final class RegisterUserTest {
     assertEquals(name, createdUser.name());
     assertEquals(phone, createdUser.phone());
     assertEquals(photoUrl, createdUser.photoUrl());
-    assertEquals(Language.EN, createdUser.language());
+    assertEquals(Language.EN.name(), createdUser.language());
     verify(userRepository).findByEmail(email);
 
     var userCaptor = ArgumentCaptor.forClass(User.class);
@@ -121,7 +121,8 @@ public final class RegisterUserTest {
     assertEquals(updatingUserName, createdUser.name());
     assertEquals(phone, createdUser.phone());
     assertEquals(photoUrl, createdUser.photoUrl());
-    assertEquals(Language.EN, createdUser.language());
+    assertEquals(Language.EN.name(), createdUser.language());
+
     var userCaptor = ArgumentCaptor.forClass(User.class);
     verify(userRepository).save(userCaptor.capture());
     var savedUser = userCaptor.getValue();
@@ -171,7 +172,7 @@ public final class RegisterUserTest {
     assertEquals(username, createdUser.name());
     assertEquals(phone, createdUser.phone());
     assertEquals(photoUrl, createdUser.photoUrl());
-    assertEquals(Language.EN, createdUser.language());
+    assertEquals(Language.EN.name(), createdUser.language());
     verify(userRepository, never()).save(any(User.class));
   }
 

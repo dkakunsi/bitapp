@@ -55,7 +55,7 @@ class RegisterUserJavalinEndpointTest {
         .name("User Name")
         .phone("081234567890")
         .photoUrl("http://photo.url/user")
-        .language(Language.EN)
+        .language(Language.EN.name())
         .build();
     var result = Result.success(registerResult);
     when(usecase.process(any(Context.class), any(RegisterUserInput.class))).thenReturn(result);
@@ -183,7 +183,7 @@ class RegisterUserJavalinEndpointTest {
         .name("User Name")
         .phone(null)
         .photoUrl(null)
-        .language(Language.EN)
+        .language(Language.EN.name())
         .build();
     var result = Result.success(registerUserResult);
     when(usecase.process(any(Context.class), any(RegisterUserInput.class))).thenReturn(result);

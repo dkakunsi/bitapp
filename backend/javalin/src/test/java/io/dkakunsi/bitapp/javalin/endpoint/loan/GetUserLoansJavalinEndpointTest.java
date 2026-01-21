@@ -107,7 +107,7 @@ class GetUserLoansJavalinEndpointTest {
     assertEquals(2, resultBody.length());
     var loan1 = resultBody.getJSONObject(0);
     assertEquals("loan1", loan1.getString("id"));
-    assertEquals(USER_ID, loan1.getString("userId"));
+    assertEquals(USER_ID, loan1.getString("user"));
     assertEquals("BORROW", loan1.getString("type"));
     assertEquals("Bank ABC", loan1.getString("partyName"));
     assertEquals("Car Loan", loan1.getString("title"));

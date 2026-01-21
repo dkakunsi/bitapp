@@ -93,7 +93,7 @@ public final class GetUserAccountsTest {
     var firstAccount = resultData.get(0);
     assertEquals("account1", firstAccount.id());
     assertEquals("Savings Account", firstAccount.name());
-    assertEquals(Account.Type.BANK, firstAccount.type());
+    assertEquals(Account.Type.BANK.name(), firstAccount.type());
     assertEquals("#FF5733", firstAccount.themeColor());
     assertEquals(BigDecimal.valueOf(1000.00), firstAccount.balance());
     assertEquals(USER_ID, firstAccount.user());
@@ -102,7 +102,7 @@ public final class GetUserAccountsTest {
     var secondAccount = resultData.get(1);
     assertEquals("account2", secondAccount.id());
     assertEquals("Checking Account", secondAccount.name());
-    assertEquals(Account.Type.CASH, secondAccount.type());
+    assertEquals(Account.Type.CASH.name(), secondAccount.type());
     assertEquals("#3357FF", secondAccount.themeColor());
     assertEquals(BigDecimal.valueOf(500.00), secondAccount.balance());
     assertEquals(USER_ID, secondAccount.user());
@@ -197,7 +197,7 @@ public final class GetUserAccountsTest {
     var accountItem = resultData.get(0);
     assertEquals("account1", accountItem.id());
     assertEquals("E-Wallet", accountItem.name());
-    assertEquals(Account.Type.EWALLET, accountItem.type());
+    assertEquals(Account.Type.EWALLET.name(), accountItem.type());
     assertEquals("#00FF00", accountItem.themeColor());
     assertEquals(BigDecimal.valueOf(250.50), accountItem.balance());
     assertEquals(USER_ID, accountItem.user());

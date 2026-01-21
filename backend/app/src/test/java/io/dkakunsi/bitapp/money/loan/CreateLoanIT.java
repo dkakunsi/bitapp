@@ -102,7 +102,7 @@ public class CreateLoanIT extends AppTestUtil {
     assertEquals("BORROW", responseBody.getString("type"));
     assertEquals("John Doe", responseBody.getString("partyName"));
     assertEquals("2024-06-15", responseBody.getString("date"));
-    assertEquals("14:30:00", responseBody.getString("time"));
+    assertEquals("14:30", responseBody.getString("time"));
     assertEquals("Loan for Car", responseBody.getString("title"));
     assertEquals("Borrowing money to buy a car", responseBody.getString("description"));
     assertEquals(500000000, responseBody.getLong("amount"));
@@ -145,7 +145,7 @@ public class CreateLoanIT extends AppTestUtil {
     assertEquals("BORROW", responseBody.getString("type"));
     assertEquals("John Doe", responseBody.getString("partyName"));
     assertEquals("2024-06-15", responseBody.getString("date"));
-    assertEquals("14:30:00", responseBody.getString("time"));
+    assertEquals("14:30", responseBody.getString("time"));
     assertEquals("Loan for Car", responseBody.getString("title"));
     assertEquals("Borrowing money to buy a car", responseBody.getString("description"));
     assertEquals(500000000, responseBody.getLong("amount"));

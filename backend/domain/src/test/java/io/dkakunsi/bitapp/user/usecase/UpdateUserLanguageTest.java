@@ -65,7 +65,7 @@ public final class UpdateUserLanguageTest {
 
     var updatedResult = result.data().get();
     assertEquals(email, updatedResult.email());
-    assertEquals(Language.ID, updatedResult.language());
+    assertEquals(Language.ID.name(), updatedResult.language());
 
     var userCaptor = ArgumentCaptor.forClass(User.class);
     verify(userRepository).save(userCaptor.capture());
@@ -189,7 +189,7 @@ public final class UpdateUserLanguageTest {
 
     // Then
     assertTrue(result.isSuccess());
-    assertEquals(Language.ID, result.data().get().language());
+    assertEquals(Language.ID.name(), result.data().get().language());
   }
 
   @Test
@@ -217,7 +217,7 @@ public final class UpdateUserLanguageTest {
 
     // Then
     assertTrue(result.isSuccess());
-    assertEquals(Language.EN, result.data().get().language());
+    assertEquals(Language.EN.name(), result.data().get().language());
   }
 
   @Test
@@ -272,7 +272,7 @@ public final class UpdateUserLanguageTest {
 
     // Then
     assertTrue(result.isSuccess());
-    assertEquals(Language.EN, result.data().get().language());
+    assertEquals(Language.EN.name(), result.data().get().language());
 
     var userCaptor = ArgumentCaptor.forClass(User.class);
     verify(userRepository).save(userCaptor.capture());

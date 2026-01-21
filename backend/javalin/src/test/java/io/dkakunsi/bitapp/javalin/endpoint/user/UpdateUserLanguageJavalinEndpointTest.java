@@ -20,7 +20,7 @@ import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.user.dto.UpdateUserLanguageInput;
-import io.dkakunsi.bitapp.user.dto.UpdateUserLanguageResult;
+import io.dkakunsi.bitapp.user.dto.UserResult;
 import io.dkakunsi.bitapp.user.entity.User.Language;
 import io.dkakunsi.bitapp.user.usecase.UpdateUserLanguage;
 import kong.unirest.Unirest;
@@ -60,9 +60,9 @@ class UpdateUserLanguageJavalinEndpointTest {
   void givenValidUpdateLanguageToIdRequest_WhenRequested_ThenShouldOkAndReturnUpdatedUser() {
     // Given
     var email = "user@email.com";
-    var updateResult = UpdateUserLanguageResult.builder()
+    var updateResult = UserResult.builder()
         .email(email)
-        .language(Language.ID)
+        .language(Language.ID.name())
         .build();
     var result = Result.success(updateResult);
     when(usecase.process(any(Context.class), any(UpdateUserLanguageInput.class))).thenReturn(result);
@@ -90,9 +90,9 @@ class UpdateUserLanguageJavalinEndpointTest {
   void givenValidUpdateLanguageToEnRequest_WhenRequested_ThenShouldOkAndReturnUpdatedUser() {
     // Given
     var email = "user@email.com";
-    var updateResult = UpdateUserLanguageResult.builder()
+    var updateResult = UserResult.builder()
         .email(email)
-        .language(Language.EN)
+        .language(Language.EN.name())
         .build();
     var result = Result.success(updateResult);
     when(usecase.process(any(Context.class), any(UpdateUserLanguageInput.class))).thenReturn(result);
@@ -118,9 +118,9 @@ class UpdateUserLanguageJavalinEndpointTest {
   void givenUpdateLanguageRequest_WhenRequested_ThenShouldBuildInputWithEmailFromPath() {
     // Given
     var email = "test@example.com";
-    var updateResult = UpdateUserLanguageResult.builder()
+    var updateResult = UserResult.builder()
         .email(email)
-        .language(Language.ID)
+        .language(Language.ID.name())
         .build();
     var result = Result.success(updateResult);
     when(usecase.process(any(Context.class), any(UpdateUserLanguageInput.class))).thenReturn(result);
@@ -148,7 +148,7 @@ class UpdateUserLanguageJavalinEndpointTest {
   void givenValidUpdateLanguageRequestAndEmptyResult_WhenRequested_ThenShouldOkWithEmptyResponse() {
     // Given
     var email = "user@email.com";
-    var result = Result.<UpdateUserLanguageResult>success();
+    var result = Result.<UserResult>success();
     when(usecase.process(any(Context.class), any(UpdateUserLanguageInput.class))).thenReturn(result);
 
     // When
@@ -170,7 +170,7 @@ class UpdateUserLanguageJavalinEndpointTest {
   void givenUpdateLanguageRequestForNonExistentUser_WhenRequested_ThenShouldReturn404() {
     // Given
     var email = "nonexistent@email.com";
-    var result = Result.<UpdateUserLanguageResult>failure(Code.NOT_FOUND, "User not found");
+    var result = Result.<UserResult>failure(Code.NOT_FOUND, "User not found");
     when(usecase.process(any(Context.class), any(UpdateUserLanguageInput.class))).thenReturn(result);
 
     // When
@@ -192,7 +192,7 @@ class UpdateUserLanguageJavalinEndpointTest {
   void givenUpdateLanguageRequestAndProcessReturnsError_WhenRequested_ThenShouldReturn500() {
     // Given
     var email = "user@email.com";
-    var result = Result.<UpdateUserLanguageResult>failure(Code.SERVER_ERROR, "Database connection failed");
+    var result = Result.<UserResult>failure(Code.SERVER_ERROR, "Database connection failed");
     when(usecase.process(any(Context.class), any(UpdateUserLanguageInput.class))).thenReturn(result);
 
     // When
@@ -246,16 +246,16 @@ class UpdateUserLanguageJavalinEndpointTest {
   void givenUpdateLanguageRequestsForDifferentUsers_WhenRequested_ThenShouldUpdateRespectiveUsers() {
     // Given
     var email1 = "user1@email.com";
-    var updateResult1 = UpdateUserLanguageResult.builder()
+    var updateResult1 = UserResult.builder()
         .email(email1)
-        .language(Language.ID)
+        .language(Language.ID.name())
         .build();
     var result1 = Result.success(updateResult1);
 
     var email2 = "user2@email.com";
-    var updateResult2 = UpdateUserLanguageResult.builder()
+    var updateResult2 = UserResult.builder()
         .email(email2)
-        .language(Language.ID)
+        .language(Language.ID.name())
         .build();
     var result2 = Result.success(updateResult2);
 
