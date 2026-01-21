@@ -12,6 +12,7 @@ import io.dkakunsi.bitapp.common.EntityStatus;
 import io.dkakunsi.bitapp.common.Id;
 import io.dkakunsi.bitapp.loan.dto.CreateLoanInput;
 import io.dkakunsi.bitapp.loan.dto.LoanResult;
+import io.dkakunsi.bitapp.loan.dto.UpdateLoanInput;
 import lombok.Builder;
 
 @Builder
@@ -92,6 +93,54 @@ public final record Loan(
         now,
         executor,
         executor);
+  }
+
+  public Loan update(UpdateLoanInput input, String requester) {
+    final var now = LocalDateTime.now();
+
+    LocalDate updatedDate = this.date;
+    if (input.date() != null && !input.date().isBlank()) {
+      updatedDate = LocalDate.parse(input.date());
+    }
+
+    LocalTime updatedTime = this.time;
+    if (input.time() != null && !input.time().isBlank()) {
+      updatedTime = LocalTime.parse(input.time());
+    }
+
+    Currency updatedCurrency = this.currency;
+    if (input.currency() != null && !input.currency().isBlank()) {
+      updatedCurrency = Currency.getInstance(input.currency());
+    }
+
+    BigDecimal updatedAmount = this.amount;
+    if (input.amount() != null) {
+      updatedAmount = input.amount();
+    }
+
+    double updatedInterestRate = this.interestRate;
+    if (input.interestRate() != null) {
+      updatedInterestRate = input.interestRate();
+    }
+
+    return new Loan(
+        this.id,
+        this.user,
+        this.type,
+        updatedDate,
+        updatedTime,
+        input.partyName(),
+        input.title(),
+        input.description(),
+        updatedAmount,
+        this.remainingAmount,
+        updatedCurrency,
+        updatedInterestRate,
+        this.status,
+        this.createdAt,
+        now,
+        this.createdBy,
+        requester);
   }
 
   public LoanResult toResult() {

@@ -8,6 +8,7 @@ public final record AppError(Code code, String message) {
     SERVER_ERROR(500),
     BAD_REQUEST(400),
     UNAUTHORIZED(401),
+    FORBIDDEN(403),
     NOT_FOUND(404);
 
     private int httpCode;
