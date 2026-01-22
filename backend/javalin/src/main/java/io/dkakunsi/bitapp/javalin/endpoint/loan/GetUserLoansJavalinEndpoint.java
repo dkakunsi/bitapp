@@ -9,7 +9,7 @@ import io.dkakunsi.bitapp.loan.dto.LoanResult;
 import io.dkakunsi.bitapp.loan.usecase.GetUserLoans;
 import io.javalin.http.Context;
 
-public class GetUserLoansJavalinEndpoint
+public final class GetUserLoansJavalinEndpoint
     extends JavalinEndpoint<GetUserLoansInput, List<LoanResult>> {
 
   public GetUserLoansJavalinEndpoint(GetUserLoans usecase) {

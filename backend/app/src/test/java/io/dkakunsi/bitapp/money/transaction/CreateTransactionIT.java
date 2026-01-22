@@ -3,7 +3,6 @@ package io.dkakunsi.bitapp.money.transaction;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.math.BigDecimal;
 import java.util.Map;
 
 import org.json.JSONObject;

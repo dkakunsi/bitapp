@@ -6,12 +6,10 @@ import io.dkakunsi.bitapp.javalin.JavalinEndpoint;
 import io.dkakunsi.bitapp.transaction.dto.CreateTransactionInput;
 import io.dkakunsi.bitapp.transaction.dto.TransactionResult;
 import io.dkakunsi.bitapp.transaction.usecase.CreateTransaction;
-import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
-import io.javalin.http.NotFoundResponse;
 
-public class CreateTransactionJavalinEndpoint extends JavalinEndpoint<CreateTransactionInput, TransactionResult> {
+public final class CreateTransactionJavalinEndpoint extends JavalinEndpoint<CreateTransactionInput, TransactionResult> {
 
   public CreateTransactionJavalinEndpoint(CreateTransaction usecase) {
     super(usecase);
@@ -62,8 +60,7 @@ public class CreateTransactionJavalinEndpoint extends JavalinEndpoint<CreateTran
         body.amount(),
         body.currency(),
         body.category(),
-        body.type()
-    );
+        body.type());
   }
 }
 

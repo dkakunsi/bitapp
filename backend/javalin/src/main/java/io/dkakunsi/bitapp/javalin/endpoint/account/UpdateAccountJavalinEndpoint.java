@@ -8,7 +8,7 @@ import io.dkakunsi.bitapp.account.usecase.UpdateAccount;
 import io.dkakunsi.bitapp.javalin.JavalinEndpoint;
 import io.javalin.http.Context;
 
-public class UpdateAccountJavalinEndpoint extends JavalinEndpoint<UpdateAccountInput, AccountResult> {
+public final class UpdateAccountJavalinEndpoint extends JavalinEndpoint<UpdateAccountInput, AccountResult> {
 
   public UpdateAccountJavalinEndpoint(UpdateAccount usecase) {
     super(usecase);

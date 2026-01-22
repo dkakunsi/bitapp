@@ -7,7 +7,7 @@ import io.dkakunsi.bitapp.account.usecase.GetAccount;
 import io.dkakunsi.bitapp.javalin.JavalinEndpoint;
 import io.javalin.http.Context;
 
-public class GetAccountJavalinEndpoint extends JavalinEndpoint<String, AccountResult> {
+public final class GetAccountJavalinEndpoint extends JavalinEndpoint<String, AccountResult> {
 
   public GetAccountJavalinEndpoint(GetAccount usecase) {
     super(usecase);

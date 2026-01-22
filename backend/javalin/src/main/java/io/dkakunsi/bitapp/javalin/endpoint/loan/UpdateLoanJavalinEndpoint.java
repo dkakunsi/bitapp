@@ -9,7 +9,7 @@ import io.dkakunsi.bitapp.loan.dto.UpdateLoanInput;
 import io.dkakunsi.bitapp.loan.usecase.UpdateLoan;
 import io.javalin.http.Context;
 
-public class UpdateLoanJavalinEndpoint extends JavalinEndpoint<UpdateLoanInput, LoanResult> {
+public final class UpdateLoanJavalinEndpoint extends JavalinEndpoint<UpdateLoanInput, LoanResult> {
 
   public UpdateLoanJavalinEndpoint(UpdateLoan usecase) {
     super(usecase);
