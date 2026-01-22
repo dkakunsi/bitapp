@@ -369,7 +369,8 @@ public class UpdateLoanIT extends AppTestUtil {
   /**
    * <b>Given</b> a loan update request with missing title<br>
    * <b>When</b> the PUT /loans/{id} endpoint is called<br>
-   * <b>Then</b> the request should succeed with a 200 status code (partial update allowed)
+   * <b>Then</b> the request should succeed with a 200 status code (partial update
+   * allowed)
    */
   @Test
   public void shouldSucceedOnMissingTitle() throws Exception {
@@ -628,9 +629,205 @@ public class UpdateLoanIT extends AppTestUtil {
     assertEquals(403, response.getStatus());
   }
 
-  // TODO: when updating amount on a partially repaid loan, should adjust
-  // remainingAmount
+  /**
+   * <b>Given</b> a partially repaid loan with original amount 500,000,000 and
+   * repaid 200,000,000 (remaining 300,000,000)<br>
+   * <b>When</b> the amount is updated to 800,000,000<br>
+   * <b>Then</b> the remainingAmount should be adjusted to 600,000,000 (new amount
+   * - repaid amount)
+   */
+  @Test
+  public void updateAmountOnPartiallyRepaidLoanShouldAdjustRemainingAmount() throws Exception {
+    var loanId = createTestLoan();
 
-  // TODO: when updating amount to a value less than (original amount - repaid
-  // amount), should set remainingAmount to negative value
+    // Create source account for transaction
+    var accountBody = """
+        {
+          "name": "Repayment Account",
+          "type": "BANK",
+          "themeColor": "#0000FF"
+        }
+        """;
+
+    var accountResponse = Unirest.post(baseUrl + "/accounts")
+        .header("Authorization", "Bearer " + token)
+        .body(accountBody)
+        .asString();
+
+    assertEquals(200, accountResponse.getStatus());
+    var accountResponseBody = new JSONObject(accountResponse.getBody());
+    var sourceAccountId = accountResponseBody.getString("id");
+
+    // Add initial balance to account via CREDIT transaction
+    var creditBody = """
+        {
+          "type": "CREDIT",
+          "title": "Initial Balance",
+          "description": "Initial balance setup",
+          "destination": "%s",
+          "amount": 500000000,
+          "currency": "IDR"
+        }
+        """.formatted(sourceAccountId);
+
+    var creditResponse = Unirest.post(baseUrl + "/transactions")
+        .header("Authorization", "Bearer " + token)
+        .body(creditBody)
+        .asString();
+
+    assertEquals(200, creditResponse.getStatus());
+
+    // Make a partial payment of 200,000,000 (40% of 500,000,000) via transaction
+    var transactionBody = """
+        {
+          "type": "DEBIT",
+          "date": "2024-07-01",
+          "time": "10:00:00",
+          "title": "Partial Repayment",
+          "description": "Partial loan repayment",
+          "amount": 200000000,
+          "currency": "IDR",
+          "source": "%s",
+          "loan": "%s",
+          "category": "LOAN"
+        }
+        """.formatted(sourceAccountId, loanId);
+
+    var transactionResponse = Unirest.post(baseUrl + "/transactions")
+        .header("Authorization", "Bearer " + token)
+        .body(transactionBody)
+        .asString();
+
+    assertEquals(200, transactionResponse.getStatus());
+
+    // Verify the loan has remaining amount of 300,000,000
+    var getLoanResponse = Unirest.get(baseUrl + "/loans/" + loanId)
+        .header("Authorization", "Bearer " + token)
+        .asString();
+
+    var loanBeforeUpdate = new JSONObject(getLoanResponse.getBody());
+    assertEquals(500000000, loanBeforeUpdate.getLong("amount"));
+    assertEquals(300000000, loanBeforeUpdate.getLong("remainingAmount"));
+
+    // Update the loan amount to 800,000,000
+    var updateBody = """
+        {
+          "amount": 800000000
+        }
+        """;
+
+    var updateResponse = Unirest.put(baseUrl + "/loans/" + loanId)
+        .header("Authorization", "Bearer " + token)
+        .body(updateBody)
+        .asString();
+
+    assertEquals(200, updateResponse.getStatus());
+    var updatedLoan = new JSONObject(updateResponse.getBody());
+    assertEquals(800000000, updatedLoan.getLong("amount"));
+    // remainingAmount should be: new amount - repaid amount = 800,000,000 -
+    // 200,000,000 = 600,000,000
+    assertEquals(600000000, updatedLoan.getLong("remainingAmount"));
+  }
+
+  /**
+   * <b>Given</b> a partially repaid loan with original amount 500,000,000 and
+   * repaid 400,000,000 (remaining 100,000,000)<br>
+   * <b>When</b> the amount is updated to 300,000,000 (less than the repaid
+   * amount)<br>
+   * <b>Then</b> the remainingAmount should be set to -100,000,000 (indicating
+   * overpayment)
+   */
+  @Test
+  public void updateAmountBelowRepaidAmountShouldSetNegativeRemainingAmount() throws Exception {
+    var loanId = createTestLoan();
+
+    // Create source account for transaction
+    var accountBody = """
+        {
+          "name": "Repayment Account",
+          "type": "BANK",
+          "themeColor": "#0000FF"
+        }
+        """;
+
+    var accountResponse = Unirest.post(baseUrl + "/accounts")
+        .header("Authorization", "Bearer " + token)
+        .body(accountBody)
+        .asString();
+
+    assertEquals(200, accountResponse.getStatus());
+    var accountResponseBody = new JSONObject(accountResponse.getBody());
+    var sourceAccountId = accountResponseBody.getString("id");
+
+    // Add initial balance to account via CREDIT transaction
+    var creditBody = """
+        {
+          "type": "CREDIT",
+          "title": "Initial Balance",
+          "description": "Initial balance setup",
+          "destination": "%s",
+          "amount": 500000000,
+          "currency": "IDR"
+        }
+        """.formatted(sourceAccountId);
+
+    var creditResponse = Unirest.post(baseUrl + "/transactions")
+        .header("Authorization", "Bearer " + token)
+        .body(creditBody)
+        .asString();
+
+    assertEquals(200, creditResponse.getStatus());
+
+    // Make a large partial payment of 400,000,000 (80% of 500,000,000) via
+    // transaction
+    var transactionBody = """
+        {
+          "type": "DEBIT",
+          "date": "2024-07-01",
+          "time": "10:00:00",
+          "title": "Large Partial Repayment",
+          "description": "Large partial loan repayment",
+          "amount": 400000000,
+          "currency": "IDR",
+          "source": "%s",
+          "loan": "%s",
+          "category": "LOAN"
+        }
+        """.formatted(sourceAccountId, loanId);
+
+    var transactionResponse = Unirest.post(baseUrl + "/transactions")
+        .header("Authorization", "Bearer " + token)
+        .body(transactionBody)
+        .asString();
+
+    assertEquals(200, transactionResponse.getStatus());
+
+    // Verify the loan has remaining amount of 100,000,000
+    var getLoanResponse = Unirest.get(baseUrl + "/loans/" + loanId)
+        .header("Authorization", "Bearer " + token)
+        .asString();
+
+    var loanBeforeUpdate = new JSONObject(getLoanResponse.getBody());
+    assertEquals(500000000, loanBeforeUpdate.getLong("amount"));
+    assertEquals(100000000, loanBeforeUpdate.getLong("remainingAmount"));
+
+    // Update the loan amount to 300,000,000 (less than the repaid 400,000,000)
+    var updateBody = """
+        {
+          "amount": 300000000
+        }
+        """;
+
+    var updateResponse = Unirest.put(baseUrl + "/loans/" + loanId)
+        .header("Authorization", "Bearer " + token)
+        .body(updateBody)
+        .asString();
+
+    assertEquals(200, updateResponse.getStatus());
+    var updatedLoan = new JSONObject(updateResponse.getBody());
+    assertEquals(300000000, updatedLoan.getLong("amount"));
+    // remainingAmount should be: new amount - repaid amount = 300,000,000 -
+    // 400,000,000 = -100,000,000
+    assertEquals(-100000000, updatedLoan.getLong("remainingAmount"));
+  }
 }

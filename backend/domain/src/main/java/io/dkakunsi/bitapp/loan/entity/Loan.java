@@ -118,7 +118,9 @@ public final record Loan(
     BigDecimal updatedRemainingAmount = this.remainingAmount;
     if (input.amount() != null) {
       updatedAmount = input.amount();
-      updatedRemainingAmount = input.amount();
+      // Calculate repaid amount and adjust remaining amount
+      BigDecimal repaidAmount = this.amount.subtract(this.remainingAmount);
+      updatedRemainingAmount = updatedAmount.subtract(repaidAmount);
     }
 
     double updatedInterestRate = this.interestRate;
@@ -166,7 +168,7 @@ public final record Loan(
     if (timeStr.length() > TIME_FORMAT_LENGTH) {
       timeStr = timeStr.substring(0, TIME_FORMAT_LENGTH);
     }
-    
+
     return LoanResult.builder()
         .id(this.id().value())
         .user(this.user().value())
