@@ -18,7 +18,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.account.dto.AccountResult;
-import io.dkakunsi.bitapp.account.dto.GetUserAccountsInput;
 import io.dkakunsi.bitapp.account.entity.Account;
 import io.dkakunsi.bitapp.account.usecase.GetUserAccounts;
 import io.dkakunsi.bitapp.common.AppError.Code;
@@ -80,7 +79,7 @@ class GetUserAccountsJavalinEndpointTest {
         .build();
     var getResult = List.of(accountItem1, accountItem2);
     var result = Result.success(getResult);
-    when(usecase.process(any(Context.class), any(GetUserAccountsInput.class))).thenReturn(result);
+    when(usecase.process(any(Context.class), any(String.class))).thenReturn(result);
 
     // When
     var response = Unirest.get(baseUrl + "/users/{userId}/accounts")
@@ -112,7 +111,7 @@ class GetUserAccountsJavalinEndpointTest {
   void givenValidUserIdWithNoAccounts_WhenRequested_ThenShouldReturn200AndEmptyList() {
     // Given
     var result = Result.<List<AccountResult>>success(List.of());
-    when(usecase.process(any(Context.class), any(GetUserAccountsInput.class))).thenReturn(result);
+    when(usecase.process(any(Context.class), any(String.class))).thenReturn(result);
 
     // When
     var response = Unirest.get(baseUrl + "/users/{userId}/accounts")
@@ -140,7 +139,7 @@ class GetUserAccountsJavalinEndpointTest {
         .user(USER_ID)
         .build();
     var result = Result.success(List.of(accountItem));
-    when(usecase.process(any(Context.class), any(GetUserAccountsInput.class))).thenReturn(result);
+    when(usecase.process(any(Context.class), any(String.class))).thenReturn(result);
 
     // When
     var response = Unirest.get(baseUrl + "/users/{userId}/accounts")
@@ -162,7 +161,7 @@ class GetUserAccountsJavalinEndpointTest {
   void givenValidRequest_WhenUseCaseReturnsEmpty_ThenShouldReturn200() {
     // Given
     var result = Result.<List<AccountResult>>success(List.of());
-    when(usecase.process(any(Context.class), any(GetUserAccountsInput.class))).thenReturn(result);
+    when(usecase.process(any(Context.class), any(String.class))).thenReturn(result);
 
     // When
     var response = Unirest.get(baseUrl + "/users/{userId}/accounts")
@@ -177,7 +176,7 @@ class GetUserAccountsJavalinEndpointTest {
   void givenValidRequest_WhenUseCaseFails_ThenShouldReturn500() {
     // Given
     var result = Result.<List<AccountResult>>failure(Code.SERVER_ERROR, "Database error");
-    when(usecase.process(any(Context.class), any(GetUserAccountsInput.class))).thenReturn(result);
+    when(usecase.process(any(Context.class), any(String.class))).thenReturn(result);
 
     // When
     var response = Unirest.get(baseUrl + "/users/{userId}/accounts")

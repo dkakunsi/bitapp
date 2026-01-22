@@ -15,7 +15,6 @@ import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
-import io.dkakunsi.bitapp.user.dto.GetUserInput;
 import io.dkakunsi.bitapp.user.dto.UserResult;
 import io.dkakunsi.bitapp.user.entity.User.Language;
 import io.dkakunsi.bitapp.user.usecase.GetUser;
@@ -58,7 +57,7 @@ class GetUserJavalinEndpointTest {
         .language(Language.EN.name())
         .build();
     var result = Result.success(getResult);
-    when(usecase.process(any(Context.class), any(GetUserInput.class))).thenReturn(result);
+    when(usecase.process(any(Context.class), any(String.class))).thenReturn(result);
 
     // When
     var response = Unirest.get(baseUrl + "/users/" + email).asString();
@@ -81,7 +80,7 @@ class GetUserJavalinEndpointTest {
     // Given
     var email = "nonexistent@email.com";
     var result = Result.<UserResult>failure(Code.NOT_FOUND, "User not found");
-    when(usecase.process(any(Context.class), any(GetUserInput.class))).thenReturn(result);
+    when(usecase.process(any(Context.class), any(String.class))).thenReturn(result);
 
     // When
     var response = Unirest.get(baseUrl + "/users/" + email).asString();
@@ -96,7 +95,7 @@ class GetUserJavalinEndpointTest {
     // Given
     var email = "user@email.com";
     var result = Result.<UserResult>failure(Code.SERVER_ERROR, "Database connection failed");
-    when(usecase.process(any(Context.class), any(GetUserInput.class))).thenReturn(result);
+    when(usecase.process(any(Context.class), any(String.class))).thenReturn(result);
 
     // When
     var response = Unirest.get(baseUrl + "/users/" + email).asString();

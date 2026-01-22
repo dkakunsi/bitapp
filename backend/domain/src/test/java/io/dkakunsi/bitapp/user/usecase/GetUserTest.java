@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.Id;
-import io.dkakunsi.bitapp.user.dto.GetUserInput;
 import io.dkakunsi.bitapp.user.entity.User;
 import io.dkakunsi.bitapp.user.entity.User.Language;
 import io.dkakunsi.bitapp.user.repository.UserRepository;
@@ -48,9 +47,7 @@ public final class GetUserTest {
     when(userRepository.findByEmail(email)).thenReturn(Optional.of(existingUser));
 
     // When
-    var inputData = GetUserInput.builder()
-        .email(email)
-        .build();
+    var inputData = email;
     var context = Context.builder().requester(REQUESTER).build();
     var result = underTest.process(context, inputData);
 
@@ -73,9 +70,7 @@ public final class GetUserTest {
     when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
 
     // When
-    var inputData = GetUserInput.builder()
-        .email(email)
-        .build();
+    var inputData = email;
     var context = Context.builder().requester(REQUESTER).build();
     var result = underTest.process(context, inputData);
 
@@ -94,9 +89,7 @@ public final class GetUserTest {
     when(userRepository.findByEmail(email)).thenThrow(new RuntimeException("Database error"));
 
     // When
-    var inputData = GetUserInput.builder()
-        .email(email)
-        .build();
+    var inputData = email;
     var context = Context.builder().requester(REQUESTER).build();
     var result = underTest.process(context, inputData);
 

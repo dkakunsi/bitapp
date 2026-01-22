@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
@@ -29,7 +29,6 @@ import io.dkakunsi.bitapp.common.Id;
 import io.dkakunsi.bitapp.loan.entity.Loan;
 import io.dkakunsi.bitapp.loan.repository.LoanRepository;
 import io.dkakunsi.bitapp.transaction.dto.CreateTransactionInput;
-import io.dkakunsi.bitapp.transaction.entity.Transaction;
 import io.dkakunsi.bitapp.transaction.repository.TransactionRepository;
 
 public final class CreateTransactionTest {

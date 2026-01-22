@@ -3,12 +3,11 @@ package io.dkakunsi.bitapp.javalin.endpoint.user;
 import java.lang.reflect.Type;
 
 import io.dkakunsi.bitapp.javalin.JavalinEndpoint;
-import io.dkakunsi.bitapp.user.dto.GetUserInput;
 import io.dkakunsi.bitapp.user.dto.UserResult;
 import io.dkakunsi.bitapp.user.usecase.GetUser;
 import io.javalin.http.Context;
 
-public final class GetUserJavalinEndpoint extends JavalinEndpoint<GetUserInput, UserResult> {
+public final class GetUserJavalinEndpoint extends JavalinEndpoint<String, UserResult> {
 
   public GetUserJavalinEndpoint(GetUser usecase) {
     super(usecase);
@@ -30,8 +29,7 @@ public final class GetUserJavalinEndpoint extends JavalinEndpoint<GetUserInput, 
   }
 
   @Override
-  protected GetUserInput buildInput(Context ctx) {
-    var email = ctx.pathParam("email");
-    return GetUserInput.builder().email(email).build();
+  protected String buildInput(Context ctx) {
+    return ctx.pathParam("email");
   }
 }

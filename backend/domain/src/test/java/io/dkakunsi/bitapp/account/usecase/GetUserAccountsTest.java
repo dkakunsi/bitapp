@@ -18,7 +18,6 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import io.dkakunsi.bitapp.account.dto.GetUserAccountsInput;
 import io.dkakunsi.bitapp.account.entity.Account;
 import io.dkakunsi.bitapp.account.repository.AccountRepository;
 import io.dkakunsi.bitapp.common.AppError.Code;
@@ -43,9 +42,7 @@ public final class GetUserAccountsTest {
   @Test
   void givenValidUserIdWhenAccountsExistThenShouldReturnAccountsList() {
     // Given
-    var input = GetUserAccountsInput.builder()
-        .userId(USER_ID)
-        .build();
+    var input = USER_ID;
     var context = Context.builder().requester(REQUESTER).build();
 
     var user = Id.of(USER_ID);
@@ -113,9 +110,7 @@ public final class GetUserAccountsTest {
   @Test
   void givenValidUserIdWhenNoAccountsExistThenShouldReturnEmptyList() {
     // Given
-    var input = GetUserAccountsInput.builder()
-        .userId(USER_ID)
-        .build();
+    var input = USER_ID;
     var context = Context.builder().requester(REQUESTER).build();
 
     when(accountRepository.findByUserId(USER_ID)).thenReturn(Collections.emptyList());
@@ -137,9 +132,7 @@ public final class GetUserAccountsTest {
   @Test
   void givenValidUserIdWhenRepositoryThrowsExceptionThenShouldReturnFailure() {
     // Given
-    var input = GetUserAccountsInput.builder()
-        .userId(USER_ID)
-        .build();
+    var input = USER_ID;
     var context = Context.builder().requester(REQUESTER).build();
 
     when(accountRepository.findByUserId(anyString()))
@@ -162,9 +155,7 @@ public final class GetUserAccountsTest {
   @Test
   void givenUserIdWhenSingleAccountExistsThenShouldReturnSingleAccountList() {
     // Given
-    var input = GetUserAccountsInput.builder()
-        .userId(USER_ID)
-        .build();
+    var input = USER_ID;
     var context = Context.builder().requester(REQUESTER).build();
 
     var user = Id.of(USER_ID);
@@ -210,16 +201,14 @@ public final class GetUserAccountsTest {
     // Given
     var userId1 = "user111";
     var userId2 = "user222";
-    var input1 = GetUserAccountsInput.builder().userId(userId1).build();
-    var input2 = GetUserAccountsInput.builder().userId(userId2).build();
     var context = Context.builder().requester(REQUESTER).build();
 
     when(accountRepository.findByUserId(userId1)).thenReturn(Collections.emptyList());
     when(accountRepository.findByUserId(userId2)).thenReturn(Collections.emptyList());
 
     // When
-    underTest.process(context, input1);
-    underTest.process(context, input2);
+    underTest.process(context, userId1);
+    underTest.process(context, userId2);
 
     // Then
     verify(accountRepository).findByUserId(userId1);

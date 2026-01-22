@@ -3,14 +3,13 @@ package io.dkakunsi.bitapp.account.usecase;
 import java.util.List;
 
 import io.dkakunsi.bitapp.account.dto.AccountResult;
-import io.dkakunsi.bitapp.account.dto.GetUserAccountsInput;
 import io.dkakunsi.bitapp.account.entity.Account;
 import io.dkakunsi.bitapp.account.repository.AccountRepository;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.common.usecase.UseCase;
 
-public final class GetUserAccounts implements UseCase<GetUserAccountsInput, List<AccountResult>> {
+public final class GetUserAccounts implements UseCase<String, List<AccountResult>> {
 
   private final AccountRepository accountRepository;
 
@@ -19,8 +18,8 @@ public final class GetUserAccounts implements UseCase<GetUserAccountsInput, List
   }
 
   @Override
-  public Result<List<AccountResult>> execute(Context context, GetUserAccountsInput input) {
-    var accounts = accountRepository.findByUserId(input.userId());
+  public Result<List<AccountResult>> execute(Context context, String userId) {
+    var accounts = accountRepository.findByUserId(userId);
     var results = accounts.stream()
         .map(Account::toResult)
         .toList();

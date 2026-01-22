@@ -541,9 +541,9 @@
     <module>common</module>
     <module>test</module>
     <module>domain</module>
+    <module>jwt</module>
     <module>mongo</module>
     <module>javalin</module>
-    <module>jwt</module>
     <module>app</module>
   </modules>
 </project>

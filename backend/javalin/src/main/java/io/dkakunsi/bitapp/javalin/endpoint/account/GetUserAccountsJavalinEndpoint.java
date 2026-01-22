@@ -4,13 +4,12 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 import io.dkakunsi.bitapp.account.dto.AccountResult;
-import io.dkakunsi.bitapp.account.dto.GetUserAccountsInput;
 import io.dkakunsi.bitapp.account.usecase.GetUserAccounts;
 import io.dkakunsi.bitapp.javalin.JavalinEndpoint;
 import io.javalin.http.Context;
 
 public final class GetUserAccountsJavalinEndpoint
-    extends JavalinEndpoint<GetUserAccountsInput, List<AccountResult>> {
+    extends JavalinEndpoint<String, List<AccountResult>> {
 
   public GetUserAccountsJavalinEndpoint(GetUserAccounts usecase) {
     super(usecase);
@@ -32,8 +31,7 @@ public final class GetUserAccountsJavalinEndpoint
   }
 
   @Override
-  protected GetUserAccountsInput buildInput(Context ctx) {
-    var userId = ctx.pathParam("userId");
-    return GetUserAccountsInput.builder().userId(userId).build();
+  protected String buildInput(Context ctx) {
+    return ctx.pathParam("userId");
   }
 }

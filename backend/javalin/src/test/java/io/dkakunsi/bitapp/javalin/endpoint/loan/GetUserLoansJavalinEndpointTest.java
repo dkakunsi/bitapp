@@ -21,7 +21,6 @@ import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
-import io.dkakunsi.bitapp.loan.dto.GetUserLoansInput;
 import io.dkakunsi.bitapp.loan.dto.LoanResult;
 import io.dkakunsi.bitapp.loan.usecase.GetUserLoans;
 import kong.unirest.Unirest;
@@ -91,7 +90,7 @@ class GetUserLoansJavalinEndpointTest {
         .build();
     var getResult = List.of(loanItem1, loanItem2);
     var result = Result.success(getResult);
-    when(usecase.process(any(Context.class), any(GetUserLoansInput.class))).thenReturn(result);
+    when(usecase.process(any(Context.class), any(String.class))).thenReturn(result);
 
     // When
     var response = Unirest.get(baseUrl + "/users/{userId}/loans")
@@ -125,7 +124,7 @@ class GetUserLoansJavalinEndpointTest {
   void givenValidUserIdWithNoLoans_WhenRequested_ThenShouldReturn200AndEmptyList() {
     // Given
     var result = Result.<List<LoanResult>>success(List.of());
-    when(usecase.process(any(Context.class), any(GetUserLoansInput.class))).thenReturn(result);
+    when(usecase.process(any(Context.class), any(String.class))).thenReturn(result);
 
     // When
     var response = Unirest.get(baseUrl + "/users/{userId}/loans")
@@ -159,7 +158,7 @@ class GetUserLoansJavalinEndpointTest {
         .interestRate(4.5)
         .build();
     var result = Result.success(List.of(loanItem));
-    when(usecase.process(any(Context.class), any(GetUserLoansInput.class))).thenReturn(result);
+    when(usecase.process(any(Context.class), any(String.class))).thenReturn(result);
 
     // When
     var response = Unirest.get(baseUrl + "/users/{userId}/loans")
@@ -181,7 +180,7 @@ class GetUserLoansJavalinEndpointTest {
   void givenValidRequest_WhenUseCaseReturnsEmpty_ThenShouldReturn200() {
     // Given
     var result = Result.<List<LoanResult>>success(List.of());
-    when(usecase.process(any(Context.class), any(GetUserLoansInput.class))).thenReturn(result);
+    when(usecase.process(any(Context.class), any(String.class))).thenReturn(result);
 
     // When
     var response = Unirest.get(baseUrl + "/users/{userId}/loans")
@@ -196,7 +195,7 @@ class GetUserLoansJavalinEndpointTest {
   void givenValidRequest_WhenUseCaseFails_ThenShouldReturn500() {
     // Given
     var result = Result.<List<LoanResult>>failure(Code.SERVER_ERROR, "Database error");
-    when(usecase.process(any(Context.class), any(GetUserLoansInput.class))).thenReturn(result);
+    when(usecase.process(any(Context.class), any(String.class))).thenReturn(result);
 
     // When
     var response = Unirest.get(baseUrl + "/users/{userId}/loans")

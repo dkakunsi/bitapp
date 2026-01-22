@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Test;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.EntityStatus;
 import io.dkakunsi.bitapp.common.Id;
-import io.dkakunsi.bitapp.loan.dto.GetUserLoansInput;
 import io.dkakunsi.bitapp.loan.entity.Loan;
 import io.dkakunsi.bitapp.loan.repository.LoanRepository;
 
@@ -45,9 +44,7 @@ public final class GetUserLoansTest {
   @Test
   void givenValidUserIdWhenLoansExistThenShouldReturnLoansList() {
     // Given
-    var input = GetUserLoansInput.builder()
-        .userId(USER_ID)
-        .build();
+    var input = USER_ID;
     var context = Context.builder().requester(REQUESTER).build();
 
     var user = Id.of(USER_ID);
@@ -131,9 +128,7 @@ public final class GetUserLoansTest {
   @Test
   void givenValidUserIdWhenNoLoansExistThenShouldReturnEmptyList() {
     // Given
-    var input = GetUserLoansInput.builder()
-        .userId(USER_ID)
-        .build();
+    var input = USER_ID;
     var context = Context.builder().requester(REQUESTER).build();
 
     when(loanRepository.findByUserId(USER_ID)).thenReturn(Collections.emptyList());
@@ -155,9 +150,7 @@ public final class GetUserLoansTest {
   @Test
   void givenValidUserIdWhenRepositoryThrowsExceptionThenShouldReturnFailure() {
     // Given
-    var input = GetUserLoansInput.builder()
-        .userId(USER_ID)
-        .build();
+    var input = USER_ID;
     var context = Context.builder().requester(REQUESTER).build();
 
     when(loanRepository.findByUserId(anyString())).thenThrow(new RuntimeException("Database error"));
@@ -175,9 +168,7 @@ public final class GetUserLoansTest {
   @Test
   void givenUserIdWhenSingleLoanExistsThenShouldReturnSingleLoanList() {
     // Given
-    var input = GetUserLoansInput.builder()
-        .userId(USER_ID)
-        .build();
+    var input = USER_ID;
     var context = Context.builder().requester(REQUESTER).build();
 
     var user = Id.of(USER_ID);
@@ -227,16 +218,14 @@ public final class GetUserLoansTest {
     // Given
     var userId1 = "user111";
     var userId2 = "user222";
-    var input1 = GetUserLoansInput.builder().userId(userId1).build();
-    var input2 = GetUserLoansInput.builder().userId(userId2).build();
     var context = Context.builder().requester(REQUESTER).build();
 
     when(loanRepository.findByUserId(userId1)).thenReturn(Collections.emptyList());
     when(loanRepository.findByUserId(userId2)).thenReturn(Collections.emptyList());
 
     // When
-    underTest.process(context, input1);
-    underTest.process(context, input2);
+    underTest.process(context, userId1);
+    underTest.process(context, userId2);
 
     // Then
     verify(loanRepository).findByUserId(userId1);

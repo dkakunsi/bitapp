@@ -22,7 +22,7 @@ import kong.unirest.Unirest;
 
 class CreateTransactionJavalinEndpointTest {
 
-  private static final int PORT = 20010;
+  private static final int PORT = 20012;
 
   private static String baseUrl;
 
