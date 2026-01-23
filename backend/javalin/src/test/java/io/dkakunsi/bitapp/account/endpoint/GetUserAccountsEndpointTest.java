@@ -26,7 +26,7 @@ import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import kong.unirest.Unirest;
 
-class GetUserAccountsJavalinEndpointTest {
+class GetUserAccountsEndpointTest {
 
   private static final int PORT = 20002;
 
@@ -42,7 +42,7 @@ class GetUserAccountsJavalinEndpointTest {
   static void setup() throws Exception {
     baseUrl = "http://localhost:" + PORT;
     usecase = mock(GetUserAccounts.class);
-    var endpoint = new GetUserAccountsJavalinEndpoint(usecase);
+    var endpoint = new GetUserAccountsEndpoint(usecase);
     server = JavalinServer.of(PORT);
     server.addEndpoint(endpoint);
     server.start();

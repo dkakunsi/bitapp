@@ -1,15 +1,15 @@
-package io.dkakunsi.bitapp.account.endpoint;
+package io.dkakunsi.bitapp.loan.endpoint;
 
 import java.lang.reflect.Type;
 
-import io.dkakunsi.bitapp.account.dto.AccountResult;
-import io.dkakunsi.bitapp.account.usecase.GetAccount;
 import io.dkakunsi.bitapp.javalin.JavalinEndpoint;
+import io.dkakunsi.bitapp.loan.dto.LoanResult;
+import io.dkakunsi.bitapp.loan.usecase.GetLoan;
 import io.javalin.http.Context;
 
-public final class GetAccountJavalinEndpoint extends JavalinEndpoint<String, AccountResult> {
+public final class GetLoanEndpoint extends JavalinEndpoint<String, LoanResult> {
 
-  public GetAccountJavalinEndpoint(GetAccount usecase) {
+  public GetLoanEndpoint(GetLoan usecase) {
     super(usecase);
   }
 
@@ -20,12 +20,12 @@ public final class GetAccountJavalinEndpoint extends JavalinEndpoint<String, Acc
 
   @Override
   public String getPath() {
-    return "/accounts/{id}";
+    return "/loans/{id}";
   }
 
   @Override
   protected Type getOutputClass() {
-    return AccountResult.class;
+    return LoanResult.class;
   }
 
   @Override

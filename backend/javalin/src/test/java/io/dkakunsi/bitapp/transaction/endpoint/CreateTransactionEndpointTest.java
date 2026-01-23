@@ -20,7 +20,7 @@ import io.dkakunsi.bitapp.transaction.dto.TransactionResult;
 import io.dkakunsi.bitapp.transaction.usecase.CreateTransaction;
 import kong.unirest.Unirest;
 
-class CreateTransactionJavalinEndpointTest {
+class CreateTransactionEndpointTest {
 
   private static final int PORT = 20012;
 
@@ -34,7 +34,7 @@ class CreateTransactionJavalinEndpointTest {
   static void setup() throws Exception {
     baseUrl = "http://localhost:" + PORT;
     usecase = mock(CreateTransaction.class);
-    var endpoint = new CreateTransactionJavalinEndpoint(usecase);
+    var endpoint = new CreateTransactionEndpoint(usecase);
     server = JavalinServer.of(PORT);
     server.addEndpoint(endpoint);
     server.start();

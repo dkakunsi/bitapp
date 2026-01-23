@@ -8,10 +8,10 @@ import io.dkakunsi.bitapp.account.usecase.GetUserAccounts;
 import io.dkakunsi.bitapp.javalin.JavalinEndpoint;
 import io.javalin.http.Context;
 
-public final class GetUserAccountsJavalinEndpoint
+public final class GetUserAccountsEndpoint
     extends JavalinEndpoint<String, List<AccountResult>> {
 
-  public GetUserAccountsJavalinEndpoint(GetUserAccounts usecase) {
+  public GetUserAccountsEndpoint(GetUserAccounts usecase) {
     super(usecase);
   }
 

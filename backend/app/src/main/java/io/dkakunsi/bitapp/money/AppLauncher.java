@@ -2,10 +2,10 @@ package io.dkakunsi.bitapp.money;
 
 import java.util.function.Function;
 
-import io.dkakunsi.bitapp.account.endpoint.CreateAccountJavalinEndpoint;
-import io.dkakunsi.bitapp.account.endpoint.GetAccountJavalinEndpoint;
-import io.dkakunsi.bitapp.account.endpoint.GetUserAccountsJavalinEndpoint;
-import io.dkakunsi.bitapp.account.endpoint.UpdateAccountJavalinEndpoint;
+import io.dkakunsi.bitapp.account.endpoint.CreateAccountEndpoint;
+import io.dkakunsi.bitapp.account.endpoint.GetAccountEndpoint;
+import io.dkakunsi.bitapp.account.endpoint.GetUserAccountsEndpoint;
+import io.dkakunsi.bitapp.account.endpoint.UpdateAccountEndpoint;
 import io.dkakunsi.bitapp.account.repository.MongoAccountRepository;
 import io.dkakunsi.bitapp.account.usecase.CreateAccount;
 import io.dkakunsi.bitapp.account.usecase.GetAccount;
@@ -15,22 +15,22 @@ import io.dkakunsi.bitapp.common.EnvironmentConfiguration;
 import io.dkakunsi.bitapp.common.Launcher;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.jwt.JWTAuthorizer;
-import io.dkakunsi.bitapp.loan.endpoint.CreateLoanJavalinEndpoint;
-import io.dkakunsi.bitapp.loan.endpoint.GetLoanJavalinEndpoint;
-import io.dkakunsi.bitapp.loan.endpoint.GetUserLoansJavalinEndpoint;
-import io.dkakunsi.bitapp.loan.endpoint.UpdateLoanJavalinEndpoint;
+import io.dkakunsi.bitapp.loan.endpoint.CreateLoanEndpoint;
+import io.dkakunsi.bitapp.loan.endpoint.GetLoanEndpoint;
+import io.dkakunsi.bitapp.loan.endpoint.GetUserLoansEndpoint;
+import io.dkakunsi.bitapp.loan.endpoint.UpdateLoanEndpoint;
 import io.dkakunsi.bitapp.loan.repository.MongoLoanRepository;
 import io.dkakunsi.bitapp.loan.usecase.CreateLoan;
 import io.dkakunsi.bitapp.loan.usecase.GetLoan;
 import io.dkakunsi.bitapp.loan.usecase.GetUserLoans;
 import io.dkakunsi.bitapp.loan.usecase.UpdateLoan;
 import io.dkakunsi.bitapp.mongo.MongoConfiguration;
-import io.dkakunsi.bitapp.transaction.endpoint.CreateTransactionJavalinEndpoint;
+import io.dkakunsi.bitapp.transaction.endpoint.CreateTransactionEndpoint;
 import io.dkakunsi.bitapp.transaction.repository.MongoTransactionRepository;
 import io.dkakunsi.bitapp.transaction.usecase.CreateTransaction;
-import io.dkakunsi.bitapp.user.endpoint.GetUserJavalinEndpoint;
-import io.dkakunsi.bitapp.user.endpoint.RegisterUserJavalinEndpoint;
-import io.dkakunsi.bitapp.user.endpoint.UpdateUserLanguageJavalinEndpoint;
+import io.dkakunsi.bitapp.user.endpoint.GetUserEndpoint;
+import io.dkakunsi.bitapp.user.endpoint.RegisterUserEndpoint;
+import io.dkakunsi.bitapp.user.endpoint.UpdateUserLanguageEndpoint;
 import io.dkakunsi.bitapp.user.repository.MongoUserRepository;
 import io.dkakunsi.bitapp.user.usecase.GetUser;
 import io.dkakunsi.bitapp.user.usecase.RegisterUser;
@@ -70,28 +70,28 @@ public final class AppLauncher implements Launcher {
 
     // endpoints
     var authorizer = JWTAuthorizer.of(configuration);
-    var registerUserEndpoint = new RegisterUserJavalinEndpoint(registerUser);
-    var getUserEndpoint = new GetUserJavalinEndpoint(getUser)
+    var registerUserEndpoint = new RegisterUserEndpoint(registerUser);
+    var getUserEndpoint = new GetUserEndpoint(getUser)
         .setAuthorizer(authorizer);
-    var updateUserLanguageEndpoint = new UpdateUserLanguageJavalinEndpoint(updateUserLanguage)
+    var updateUserLanguageEndpoint = new UpdateUserLanguageEndpoint(updateUserLanguage)
         .setAuthorizer(authorizer);
-    var createAccountEndpoint = new CreateAccountJavalinEndpoint(createAccount)
+    var createAccountEndpoint = new CreateAccountEndpoint(createAccount)
         .setAuthorizer(authorizer);
-    var getAccountEndpoint = new GetAccountJavalinEndpoint(getAccount)
+    var getAccountEndpoint = new GetAccountEndpoint(getAccount)
         .setAuthorizer(authorizer);
-    var getUserAccountsEndpoint = new GetUserAccountsJavalinEndpoint(getUserAccounts)
+    var getUserAccountsEndpoint = new GetUserAccountsEndpoint(getUserAccounts)
         .setAuthorizer(authorizer);
-    var updateAccountEndpoint = new UpdateAccountJavalinEndpoint(updateAccount)
+    var updateAccountEndpoint = new UpdateAccountEndpoint(updateAccount)
         .setAuthorizer(authorizer);
-    var createLoanEndpoint = new CreateLoanJavalinEndpoint(createLoan)
+    var createLoanEndpoint = new CreateLoanEndpoint(createLoan)
         .setAuthorizer(authorizer);
-    var getLoanEndpoint = new GetLoanJavalinEndpoint(getLoan)
+    var getLoanEndpoint = new GetLoanEndpoint(getLoan)
         .setAuthorizer(authorizer);
-    var getUserLoansEndpoint = new GetUserLoansJavalinEndpoint(getUserLoans)
+    var getUserLoansEndpoint = new GetUserLoansEndpoint(getUserLoans)
         .setAuthorizer(authorizer);
-    var updateLoanEndpoint = new UpdateLoanJavalinEndpoint(updateLoan)
+    var updateLoanEndpoint = new UpdateLoanEndpoint(updateLoan)
         .setAuthorizer(authorizer);
-    var createTransactionEndpoint = new CreateTransactionJavalinEndpoint(createTransaction)
+    var createTransactionEndpoint = new CreateTransactionEndpoint(createTransaction)
         .setAuthorizer(authorizer);
 
     var appPort = configuration.get(APP_PORT).orElse("8080");

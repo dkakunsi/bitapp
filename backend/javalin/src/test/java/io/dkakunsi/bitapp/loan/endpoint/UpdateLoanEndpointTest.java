@@ -22,7 +22,7 @@ import io.dkakunsi.bitapp.loan.dto.UpdateLoanInput;
 import io.dkakunsi.bitapp.loan.usecase.UpdateLoan;
 import kong.unirest.Unirest;
 
-class UpdateLoanJavalinEndpointTest {
+class UpdateLoanEndpointTest {
 
   private static final int PORT = 20008;
 
@@ -36,7 +36,7 @@ class UpdateLoanJavalinEndpointTest {
   static void setup() throws Exception {
     baseUrl = "http://localhost:" + PORT;
     usecase = mock(UpdateLoan.class);
-    var endpoint = new UpdateLoanJavalinEndpoint(usecase);
+    var endpoint = new UpdateLoanEndpoint(usecase);
     server = JavalinServer.of(PORT);
     server.addEndpoint(endpoint);
     server.start();

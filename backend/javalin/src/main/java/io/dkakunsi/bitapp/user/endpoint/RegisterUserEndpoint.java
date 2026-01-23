@@ -8,9 +8,9 @@ import io.dkakunsi.bitapp.user.dto.UserResult;
 import io.dkakunsi.bitapp.user.usecase.RegisterUser;
 import io.javalin.http.Context;
 
-public final class RegisterUserJavalinEndpoint extends JavalinEndpoint<RegisterUserInput, UserResult> {
+public final class RegisterUserEndpoint extends JavalinEndpoint<RegisterUserInput, UserResult> {
 
-  public RegisterUserJavalinEndpoint(RegisterUser usecase) {
+  public RegisterUserEndpoint(RegisterUser usecase) {
     super(usecase);
   }
 

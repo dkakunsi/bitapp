@@ -25,7 +25,7 @@ import io.dkakunsi.bitapp.user.entity.User.Language;
 import io.dkakunsi.bitapp.user.usecase.UpdateUserLanguage;
 import kong.unirest.Unirest;
 
-class UpdateUserLanguageJavalinEndpointTest {
+class UpdateUserLanguageEndpointTest {
 
   private static final int PORT = 20006;
 
@@ -39,7 +39,7 @@ class UpdateUserLanguageJavalinEndpointTest {
   static void setup() throws Exception {
     baseUrl = "http://localhost:" + PORT;
     usecase = mock(UpdateUserLanguage.class);
-    var endpoint = new UpdateUserLanguageJavalinEndpoint(usecase);
+    var endpoint = new UpdateUserLanguageEndpoint(usecase);
     server = JavalinServer.of(PORT);
     server.addEndpoint(endpoint);
     server.start();

@@ -23,7 +23,7 @@ import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import kong.unirest.Unirest;
 
-class CreateAccountJavalinEndpointTest {
+class CreateAccountEndpointTest {
 
   private static final int PORT = 20001;
 
@@ -37,7 +37,7 @@ class CreateAccountJavalinEndpointTest {
   static void setup() throws Exception {
     baseUrl = "http://localhost:" + PORT;
     usecase = mock(CreateAccount.class);
-    var endpoint = new CreateAccountJavalinEndpoint(usecase);
+    var endpoint = new CreateAccountEndpoint(usecase);
     server = JavalinServer.of(PORT);
     server.addEndpoint(endpoint);
     server.start();

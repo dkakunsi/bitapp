@@ -7,9 +7,9 @@ import io.dkakunsi.bitapp.user.dto.UserResult;
 import io.dkakunsi.bitapp.user.usecase.GetUser;
 import io.javalin.http.Context;
 
-public final class GetUserJavalinEndpoint extends JavalinEndpoint<String, UserResult> {
+public final class GetUserEndpoint extends JavalinEndpoint<String, UserResult> {
 
-  public GetUserJavalinEndpoint(GetUser usecase) {
+  public GetUserEndpoint(GetUser usecase) {
     super(usecase);
   }
 

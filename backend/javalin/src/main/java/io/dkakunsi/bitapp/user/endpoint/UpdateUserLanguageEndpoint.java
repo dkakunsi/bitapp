@@ -8,10 +8,10 @@ import io.dkakunsi.bitapp.user.dto.UserResult;
 import io.dkakunsi.bitapp.user.usecase.UpdateUserLanguage;
 import io.javalin.http.Context;
 
-public final class UpdateUserLanguageJavalinEndpoint
+public final class UpdateUserLanguageEndpoint
     extends JavalinEndpoint<UpdateUserLanguageInput, UserResult> {
 
-  public UpdateUserLanguageJavalinEndpoint(UpdateUserLanguage usecase) {
+  public UpdateUserLanguageEndpoint(UpdateUserLanguage usecase) {
     super(usecase);
   }
 

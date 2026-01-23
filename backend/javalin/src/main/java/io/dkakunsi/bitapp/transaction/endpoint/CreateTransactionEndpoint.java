@@ -9,9 +9,9 @@ import io.dkakunsi.bitapp.transaction.usecase.CreateTransaction;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 
-public final class CreateTransactionJavalinEndpoint extends JavalinEndpoint<CreateTransactionInput, TransactionResult> {
+public final class CreateTransactionEndpoint extends JavalinEndpoint<CreateTransactionInput, TransactionResult> {
 
-  public CreateTransactionJavalinEndpoint(CreateTransaction usecase) {
+  public CreateTransactionEndpoint(CreateTransaction usecase) {
     super(usecase);
   }
 

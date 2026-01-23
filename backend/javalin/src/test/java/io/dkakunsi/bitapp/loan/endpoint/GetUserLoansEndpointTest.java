@@ -25,7 +25,7 @@ import io.dkakunsi.bitapp.loan.dto.LoanResult;
 import io.dkakunsi.bitapp.loan.usecase.GetUserLoans;
 import kong.unirest.Unirest;
 
-class GetUserLoansJavalinEndpointTest {
+class GetUserLoansEndpointTest {
 
   private static final int PORT = 20009;
 
@@ -41,7 +41,7 @@ class GetUserLoansJavalinEndpointTest {
   static void setup() throws Exception {
     baseUrl = "http://localhost:" + PORT;
     usecase = mock(GetUserLoans.class);
-    var endpoint = new GetUserLoansJavalinEndpoint(usecase);
+    var endpoint = new GetUserLoansEndpoint(usecase);
     server = JavalinServer.of(PORT);
     server.addEndpoint(endpoint);
     server.start();

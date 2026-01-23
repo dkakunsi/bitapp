@@ -8,9 +8,9 @@ import io.dkakunsi.bitapp.account.usecase.CreateAccount;
 import io.dkakunsi.bitapp.javalin.JavalinEndpoint;
 import io.javalin.http.Context;
 
-public final class CreateAccountJavalinEndpoint extends JavalinEndpoint<CreateAccountInput, AccountResult> {
+public final class CreateAccountEndpoint extends JavalinEndpoint<CreateAccountInput, AccountResult> {
 
-  public CreateAccountJavalinEndpoint(CreateAccount usecase) {
+  public CreateAccountEndpoint(CreateAccount usecase) {
     super(usecase);
   }
 
