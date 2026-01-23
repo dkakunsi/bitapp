@@ -1,6 +1,7 @@
 package io.dkakunsi.bitapp.transaction.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import dev.morphia.Datastore;
 import dev.morphia.query.filters.Filters;
@@ -20,6 +21,14 @@ public class MongoTransactionRepository implements TransactionRepository {
     var entity = TransactionModel.fromTransaction(transaction);
     datastore.save(entity);
     return transaction;
+  }
+
+  @Override
+  public Optional<Transaction> findById(String id) {
+    var entity = datastore.find(TransactionModel.class)
+        .filter(Filters.eq("_id", id))
+        .first();
+    return Optional.ofNullable(entity).map(TransactionModel::toTransaction);
   }
 
   @Override

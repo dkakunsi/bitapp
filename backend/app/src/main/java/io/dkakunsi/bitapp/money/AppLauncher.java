@@ -26,9 +26,11 @@ import io.dkakunsi.bitapp.loan.usecase.GetUserLoans;
 import io.dkakunsi.bitapp.loan.usecase.UpdateLoan;
 import io.dkakunsi.bitapp.mongo.MongoConfiguration;
 import io.dkakunsi.bitapp.transaction.endpoint.CreateTransactionEndpoint;
+import io.dkakunsi.bitapp.transaction.endpoint.GetTransactionEndpoint;
 import io.dkakunsi.bitapp.transaction.endpoint.GetUserTransactionsEndpoint;
 import io.dkakunsi.bitapp.transaction.repository.MongoTransactionRepository;
 import io.dkakunsi.bitapp.transaction.usecase.CreateTransaction;
+import io.dkakunsi.bitapp.transaction.usecase.GetTransaction;
 import io.dkakunsi.bitapp.transaction.usecase.GetUserTransactions;
 import io.dkakunsi.bitapp.user.endpoint.GetUserEndpoint;
 import io.dkakunsi.bitapp.user.endpoint.RegisterUserEndpoint;
@@ -69,6 +71,7 @@ public final class AppLauncher implements Launcher {
     var getUserLoans = new GetUserLoans(loanRepository);
     var updateLoan = new UpdateLoan(loanRepository);
     var createTransaction = new CreateTransaction(transactionRepository, accountRepository, loanRepository);
+    var getTransaction = new GetTransaction(transactionRepository);
     var getUserTransactions = new GetUserTransactions(transactionRepository);
 
     // endpoints
@@ -96,6 +99,8 @@ public final class AppLauncher implements Launcher {
         .setAuthorizer(authorizer);
     var createTransactionEndpoint = new CreateTransactionEndpoint(createTransaction)
         .setAuthorizer(authorizer);
+    var getTransactionEndpoint = new GetTransactionEndpoint(getTransaction)
+        .setAuthorizer(authorizer);
     var getUserTransactionsEndpoint = new GetUserTransactionsEndpoint(getUserTransactions)
         .setAuthorizer(authorizer);
 
@@ -113,6 +118,7 @@ public final class AppLauncher implements Launcher {
         .addEndpoint(getUserLoansEndpoint)
         .addEndpoint(updateLoanEndpoint)
         .addEndpoint(createTransactionEndpoint)
+        .addEndpoint(getTransactionEndpoint)
         .addEndpoint(getUserTransactionsEndpoint)
         .start();
   }
