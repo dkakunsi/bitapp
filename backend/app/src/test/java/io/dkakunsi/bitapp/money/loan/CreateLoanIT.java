@@ -1,8 +1,8 @@
 package io.dkakunsi.bitapp.money.loan;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 
@@ -813,5 +813,372 @@ public class CreateLoanIT extends AppTestUtil {
     assertEquals(400, response.getStatus());
     assertTrue(response.getBody().contains("date: invalid value"));
     assertTrue(response.getBody().contains("time: invalid value"));
+  }
+
+  /**
+   * <b>Given</b> a loan creation request without an account reference<br>
+   * <b>When</b> the POST /loans endpoint is called<br>
+   * <b>Then</b> the request should fail with a 400 status code
+   */
+  @Test
+  public void createLoanWithoutAccountShouldFail() throws Exception {
+    var body = """
+        {
+          "type": "BORROW",
+          "partyName": "Bank XYZ",
+          "title": "Personal Loan",
+          "description": "Personal loan without account",
+          "amount": 10000000,
+          "currency": "IDR",
+          "interestRate": 5.5
+        }
+        """;
+
+    var response = Unirest.post(baseUrl + "/loans")
+        .header("Authorization", "Bearer " + token)
+        .body(body)
+        .asString();
+
+    assertEquals(400, response.getStatus());
+    assertEquals("account: invalid value", response.getBody());
+  }
+
+  /**
+   * <b>Given</b> a loan creation request with a non-existent account<br>
+   * <b>When</b> the POST /loans endpoint is called<br>
+   * <b>Then</b> the request should fail with a 404 status code
+   */
+  @Test
+  public void createLoanWithNonExistentAccountShouldFail() throws Exception {
+    var body = """
+        {
+          "type": "BORROW",
+          "partyName": "Bank XYZ",
+          "title": "Personal Loan",
+          "description": "Loan with non-existent account",
+          "amount": 10000000,
+          "currency": "IDR",
+          "interestRate": 5.5,
+          "account": "non-existent-account-id"
+        }
+        """;
+
+    var response = Unirest.post(baseUrl + "/loans")
+        .header("Authorization", "Bearer " + token)
+        .body(body)
+        .asString();
+
+    assertEquals(404, response.getStatus());
+    assertEquals("Account not found", response.getBody());
+  }
+
+  /**
+   * <b>Given</b> a valid loan creation request with an account<br>
+   * <b>When</b> the POST /loans endpoint is called<br>
+   * <b>Then</b> a disbursement CREDIT transaction should be automatically created
+   */
+  @Test
+  public void createLoanShouldAutomaticallyCreateDisbursementTransaction() throws Exception {
+    // First create an account
+    var accountBody = """
+        {
+          "name": "Loan Disbursement Account",
+          "type": "BANK",
+          "themeColor": "#FF5733"
+        }
+        """;
+
+    var accountResponse = Unirest.post(baseUrl + "/accounts")
+        .header("Authorization", "Bearer " + token)
+        .body(accountBody)
+        .asString();
+
+    assertEquals(200, accountResponse.getStatus());
+    var accountId = new JSONObject(accountResponse.getBody()).getString("id");
+
+    // Create a loan linked to this account
+    var loanBody = String.format("""
+        {
+          "type": "BORROW",
+          "partyName": "Bank ABC",
+          "title": "Car Loan",
+          "description": "Loan for purchasing a car",
+          "amount": 50000000,
+          "currency": "IDR",
+          "interestRate": 4.5,
+          "account": "%s"
+        }
+        """, accountId);
+
+    var loanResponse = Unirest.post(baseUrl + "/loans")
+        .header("Authorization", "Bearer " + token)
+        .body(loanBody)
+        .asString();
+
+    assertEquals(200, loanResponse.getStatus());
+    var loanResponseBody = new JSONObject(loanResponse.getBody());
+    var loanId = loanResponseBody.getString("id");
+    assertNotNull(loanId);
+
+    // Verify the account balance increased (disbursement happened)
+    var accountCheckResponse = Unirest.get(baseUrl + "/accounts/" + accountId)
+        .header("Authorization", "Bearer " + token)
+        .asString();
+
+    assertEquals(200, accountCheckResponse.getStatus());
+    var accountData = new JSONObject(accountCheckResponse.getBody());
+    assertEquals(0, accountData.getBigDecimal("balance").compareTo(new java.math.BigDecimal("50000000")));
+
+    // Verify a CREDIT transaction was created for disbursement
+    var transactionsResponse = Unirest.get(baseUrl + "/users/" + USER_ID + "/transactions")
+        .header("Authorization", "Bearer " + token)
+        .asString();
+
+    assertEquals(200, transactionsResponse.getStatus());
+    var transactions = new org.json.JSONArray(transactionsResponse.getBody());
+
+    boolean foundDisbursementTransaction = false;
+    for (int i = 0; i < transactions.length(); i++) {
+      var transaction = transactions.getJSONObject(i);
+      if (transaction.has("loan") && loanId.equals(transaction.getString("loan"))) {
+        foundDisbursementTransaction = true;
+        assertEquals("CREDIT", transaction.getString("type"));
+        assertEquals(accountId, transaction.getString("destination"));
+        assertEquals(50000000, transaction.getLong("amount"));
+        assertTrue(transaction.getString("title").toLowerCase().contains("disbursement")
+            || transaction.getString("title").toLowerCase().contains("loan"));
+        break;
+      }
+    }
+
+    assertTrue(foundDisbursementTransaction, "A disbursement transaction should be automatically created");
+  }
+
+  /**
+   * <b>Given</b> a LEND loan creation request with an account<br>
+   * <b>When</b> the POST /loans endpoint is called<br>
+   * <b>Then</b> a disbursement DEBIT transaction should be automatically created
+   */
+  @Test
+  public void createLendLoanShouldAutomaticallyCreateDebitDisbursementTransaction() throws Exception {
+    // First create an account with initial balance
+    var accountBody = """
+        {
+          "name": "Lending Account",
+          "type": "BANK",
+          "themeColor": "#3357FF"
+        }
+        """;
+
+    var accountResponse = Unirest.post(baseUrl + "/accounts")
+        .header("Authorization", "Bearer " + token)
+        .body(accountBody)
+        .asString();
+
+    assertEquals(200, accountResponse.getStatus());
+    var accountId = new JSONObject(accountResponse.getBody()).getString("id");
+
+    // Add initial balance to the account
+    var depositBody = String.format("""
+        {
+          "type": "CREDIT",
+          "title": "Initial Balance",
+          "description": "Initial balance setup",
+          "destination": "%s",
+          "amount": 100000000,
+          "currency": "IDR"
+        }
+        """, accountId);
+
+    var depositResponse = Unirest.post(baseUrl + "/transactions")
+        .header("Authorization", "Bearer " + token)
+        .body(depositBody)
+        .asString();
+
+    assertEquals(200, depositResponse.getStatus());
+
+    // Create a LEND loan linked to this account
+    var loanBody = String.format("""
+        {
+          "type": "LEND",
+          "partyName": "Friend John",
+          "title": "Personal Lend",
+          "description": "Lending money to a friend",
+          "amount": 20000000,
+          "currency": "IDR",
+          "interestRate": 2.0,
+          "account": "%s"
+        }
+        """, accountId);
+
+    var loanResponse = Unirest.post(baseUrl + "/loans")
+        .header("Authorization", "Bearer " + token)
+        .body(loanBody)
+        .asString();
+
+    assertEquals(200, loanResponse.getStatus());
+    var loanResponseBody = new JSONObject(loanResponse.getBody());
+    var loanId = loanResponseBody.getString("id");
+    assertNotNull(loanId);
+
+    // Verify the account balance decreased (disbursement happened)
+    var accountCheckResponse = Unirest.get(baseUrl + "/accounts/" + accountId)
+        .header("Authorization", "Bearer " + token)
+        .asString();
+
+    assertEquals(200, accountCheckResponse.getStatus());
+    var accountData = new JSONObject(accountCheckResponse.getBody());
+    // Balance should be 100000000 - 20000000 = 80000000
+    assertEquals(0, accountData.getBigDecimal("balance").compareTo(new java.math.BigDecimal("80000000")));
+
+    // Verify a DEBIT transaction was created for disbursement
+    var transactionsResponse = Unirest.get(baseUrl + "/users/" + USER_ID + "/transactions")
+        .header("Authorization", "Bearer " + token)
+        .asString();
+
+    assertEquals(200, transactionsResponse.getStatus());
+    var transactions = new org.json.JSONArray(transactionsResponse.getBody());
+
+    boolean foundDisbursementTransaction = false;
+    for (int i = 0; i < transactions.length(); i++) {
+      var transaction = transactions.getJSONObject(i);
+      if (transaction.has("loan") && loanId.equals(transaction.getString("loan"))) {
+        foundDisbursementTransaction = true;
+        assertEquals("DEBIT", transaction.getString("type"));
+        assertEquals(accountId, transaction.getString("source"));
+        assertEquals(20000000, transaction.getLong("amount"));
+        assertTrue(transaction.getString("title").toLowerCase().contains("disbursement")
+            || transaction.getString("title").toLowerCase().contains("lend"));
+        break;
+      }
+    }
+
+    assertTrue(foundDisbursementTransaction, "A disbursement transaction should be automatically created for LEND");
+  }
+
+  /**
+   * <b>Given</b> a loan creation request with an account from another user<br>
+   * <b>When</b> the POST /loans endpoint is called<br>
+   * <b>Then</b> the request should fail with a 403 or 404 status code
+   */
+  @Test
+  public void createLoanWithAnotherUserAccountShouldFail() throws Exception {
+    // Create account with different user
+    var otherUserToken = SecureTestUtil.generateToken("otheruser@email.com");
+
+    var accountBody = """
+        {
+          "name": "Other User Account",
+          "type": "BANK",
+          "themeColor": "#FF5733"
+        }
+        """;
+
+    var accountResponse = Unirest.post(baseUrl + "/accounts")
+        .header("Authorization", "Bearer " + otherUserToken)
+        .body(accountBody)
+        .asString();
+
+    assertEquals(200, accountResponse.getStatus());
+    var accountId = new JSONObject(accountResponse.getBody()).getString("id");
+
+    // Try to create loan with this account using original user
+    var loanBody = String.format("""
+        {
+          "type": "BORROW",
+          "partyName": "Bank ABC",
+          "title": "Car Loan",
+          "description": "Loan for purchasing a car",
+          "amount": 50000000,
+          "currency": "IDR",
+          "interestRate": 4.5,
+          "account": "%s"
+        }
+        """, accountId);
+
+    var loanResponse = Unirest.post(baseUrl + "/loans")
+        .header("Authorization", "Bearer " + token)
+        .body(loanBody)
+        .asString();
+
+    // Should fail with 403 (Forbidden) or 404 (Not Found)
+    assertTrue(loanResponse.getStatus() == 403 || loanResponse.getStatus() == 404);
+  }
+
+  /**
+   * <b>Given</b> multiple loans are created with the same account<br>
+   * <b>When</b> checking the account balance<br>
+   * <b>Then</b> all disbursements should be reflected in the balance
+   */
+  @Test
+  public void multipleLoansToSameAccountShouldAccumulateDisbursements() throws Exception {
+    // Create an account
+    var accountBody = """
+        {
+          "name": "Multiple Loans Account",
+          "type": "BANK",
+          "themeColor": "#FF5733"
+        }
+        """;
+
+    var accountResponse = Unirest.post(baseUrl + "/accounts")
+        .header("Authorization", "Bearer " + token)
+        .body(accountBody)
+        .asString();
+
+    assertEquals(200, accountResponse.getStatus());
+    var accountId = new JSONObject(accountResponse.getBody()).getString("id");
+
+    // Create first loan
+    var loan1Body = String.format("""
+        {
+          "type": "BORROW",
+          "partyName": "Bank A",
+          "title": "Loan 1",
+          "description": "First loan",
+          "amount": 10000000,
+          "currency": "IDR",
+          "interestRate": 4.0,
+          "account": "%s"
+        }
+        """, accountId);
+
+    var loan1Response = Unirest.post(baseUrl + "/loans")
+        .header("Authorization", "Bearer " + token)
+        .body(loan1Body)
+        .asString();
+
+    assertEquals(200, loan1Response.getStatus());
+
+    // Create second loan
+    var loan2Body = String.format("""
+        {
+          "type": "BORROW",
+          "partyName": "Bank B",
+          "title": "Loan 2",
+          "description": "Second loan",
+          "amount": 15000000,
+          "currency": "IDR",
+          "interestRate": 5.0,
+          "account": "%s"
+        }
+        """, accountId);
+
+    var loan2Response = Unirest.post(baseUrl + "/loans")
+        .header("Authorization", "Bearer " + token)
+        .body(loan2Body)
+        .asString();
+
+    assertEquals(200, loan2Response.getStatus());
+
+    // Verify the account balance reflects both disbursements
+    var accountCheckResponse = Unirest.get(baseUrl + "/accounts/" + accountId)
+        .header("Authorization", "Bearer " + token)
+        .asString();
+
+    assertEquals(200, accountCheckResponse.getStatus());
+    var accountData = new JSONObject(accountCheckResponse.getBody());
+    // Balance should be 10000000 + 15000000 = 25000000
+    assertEquals(0, accountData.getBigDecimal("balance").compareTo(new java.math.BigDecimal("25000000")));
   }
 }
