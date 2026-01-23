@@ -4,25 +4,24 @@ import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.common.usecase.UseCase;
-import io.dkakunsi.bitapp.user.dto.UpdateUserLanguageInput;
+import io.dkakunsi.bitapp.user.dto.UpdateUserInput;
 import io.dkakunsi.bitapp.user.dto.UserResult;
 import io.dkakunsi.bitapp.user.entity.User;
 import io.dkakunsi.bitapp.user.repository.UserRepository;
 
-public final class UpdateUserLanguage implements UseCase<UpdateUserLanguageInput, UserResult> {
+public final class UpdateUser implements UseCase<UpdateUserInput, UserResult> {
 
   private final UserRepository userRepository;
 
-  public UpdateUserLanguage(UserRepository userRepository) {
+  public UpdateUser(UserRepository userRepository) {
     this.userRepository = userRepository;
   }
 
   @Override
-  public Result<UserResult> execute(Context context, UpdateUserLanguageInput input) {
-    // Verify the authenticated user matches the email being updated
+  public Result<UserResult> execute(Context context, UpdateUserInput input) {
     var requester = context.requester();
     if (!requester.equals(input.email())) {
-      return Result.failure(Code.BAD_REQUEST, "User can only update their own language preference");
+      return Result.failure(Code.BAD_REQUEST, "User can only update their own data");
     }
 
     return userRepository.findByEmail(input.email())

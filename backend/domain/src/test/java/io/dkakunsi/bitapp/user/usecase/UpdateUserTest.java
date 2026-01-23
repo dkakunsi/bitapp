@@ -17,28 +17,28 @@ import org.mockito.ArgumentCaptor;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.Id;
-import io.dkakunsi.bitapp.user.dto.UpdateUserLanguageInput;
+import io.dkakunsi.bitapp.user.dto.UpdateUserInput;
 import io.dkakunsi.bitapp.user.entity.User;
 import io.dkakunsi.bitapp.user.entity.User.Language;
 import io.dkakunsi.bitapp.user.repository.UserRepository;
 
-public final class UpdateUserLanguageTest {
+public final class UpdateUserTest {
 
-  private UpdateUserLanguage underTest;
+  private UpdateUser underTest;
 
   private UserRepository userRepository;
 
   @BeforeEach
   void setUp() {
     userRepository = mock(UserRepository.class);
-    underTest = new UpdateUserLanguage(userRepository);
+    underTest = new UpdateUser(userRepository);
   }
 
   @Test
   public void givenValidUpdateLanguageRequestWhenUserExistsThenShouldUpdateLanguageAndSuccess() {
     // Given
     var email = "user@email.com";
-    var updateInput = UpdateUserLanguageInput.builder()
+    var updateInput = UpdateUserInput.builder()
         .email(email)
         .language("ID")
         .build();
@@ -82,7 +82,7 @@ public final class UpdateUserLanguageTest {
     // Given
     var email = "user@email.com";
     var differentEmail = "other@email.com";
-    var updateInput = UpdateUserLanguageInput.builder()
+    var updateInput = UpdateUserInput.builder()
         .email(email)
         .language("ID")
         .build();
@@ -95,14 +95,14 @@ public final class UpdateUserLanguageTest {
     // Then
     assertFalse(result.isSuccess());
     assertEquals(Code.BAD_REQUEST, result.error().get().code());
-    assertEquals("User can only update their own language preference", result.error().get().message());
+    assertEquals("User can only update their own data", result.error().get().message());
   }
 
   @Test
   public void givenValidUpdateLanguageRequestWhenUserDoesNotExistThenShouldReturnEmpty() {
     // Given
     var email = "nonexistent@email.com";
-    var updateInput = UpdateUserLanguageInput.builder()
+    var updateInput = UpdateUserInput.builder()
         .email(email)
         .language("ID")
         .build();
@@ -124,7 +124,7 @@ public final class UpdateUserLanguageTest {
   public void givenValidUpdateLanguageRequestWhenRepositoryThrowsErrorThenShouldFail() {
     // Given
     var email = "user@email.com";
-    var updateInput = UpdateUserLanguageInput.builder()
+    var updateInput = UpdateUserInput.builder()
         .email(email)
         .language("ID")
         .build();
@@ -146,7 +146,7 @@ public final class UpdateUserLanguageTest {
   public void givenInvalidUpdateLanguageRequestWhenIllegalArgumentExceptionThenShouldReturnBadRequest() {
     // Given
     var email = "user@email.com";
-    var updateInput = UpdateUserLanguageInput.builder()
+    var updateInput = UpdateUserInput.builder()
         .email(email)
         .language("EN")
         .build();
@@ -168,7 +168,7 @@ public final class UpdateUserLanguageTest {
   public void givenUpdateLanguageFromEnToIdWhenProcessedThenShouldUpdateCorrectly() {
     // Given
     var email = "user@email.com";
-    var updateInput = UpdateUserLanguageInput.builder()
+    var updateInput = UpdateUserInput.builder()
         .email(email)
         .language("ID")
         .build();
@@ -196,7 +196,7 @@ public final class UpdateUserLanguageTest {
   public void givenUpdateLanguageFromIdToEnWhenProcessedThenShouldUpdateCorrectly() {
     // Given
     var email = "user@email.com";
-    var updateInput = UpdateUserLanguageInput.builder()
+    var updateInput = UpdateUserInput.builder()
         .email(email)
         .language("EN")
         .build();
@@ -224,7 +224,7 @@ public final class UpdateUserLanguageTest {
   public void givenUpdateLanguageWithInvalidLanguageCodeWhenProcessedThenShouldFail() {
     // Given
     var email = "user@email.com";
-    var updateInput = UpdateUserLanguageInput.builder()
+    var updateInput = UpdateUserInput.builder()
         .email(email)
         .language("INVALID")
         .build();
@@ -251,7 +251,7 @@ public final class UpdateUserLanguageTest {
   public void givenUpdateLanguageToSameLanguageWhenProcessedThenShouldSucceed() {
     // Given
     var email = "user@email.com";
-    var updateInput = UpdateUserLanguageInput.builder()
+    var updateInput = UpdateUserInput.builder()
         .email(email)
         .language("EN")
         .build();
@@ -284,7 +284,7 @@ public final class UpdateUserLanguageTest {
   public void givenUpdateLanguageRequestWhenUserHasAllFieldsPopulatedThenShouldPreserveOtherFields() {
     // Given
     var email = "user@email.com";
-    var updateInput = UpdateUserLanguageInput.builder()
+    var updateInput = UpdateUserInput.builder()
         .email(email)
         .language("ID")
         .build();

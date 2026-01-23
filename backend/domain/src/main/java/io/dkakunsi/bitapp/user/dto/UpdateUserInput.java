@@ -9,7 +9,7 @@ import io.dkakunsi.bitapp.user.entity.User;
 import lombok.Builder;
 
 @Builder
-public final record UpdateUserLanguageInput(
+public final record UpdateUserInput(
     String email,
     String language) implements Validatable {
 

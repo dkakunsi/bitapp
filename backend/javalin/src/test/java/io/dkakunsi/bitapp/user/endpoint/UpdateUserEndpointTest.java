@@ -19,27 +19,27 @@ import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
-import io.dkakunsi.bitapp.user.dto.UpdateUserLanguageInput;
+import io.dkakunsi.bitapp.user.dto.UpdateUserInput;
 import io.dkakunsi.bitapp.user.dto.UserResult;
 import io.dkakunsi.bitapp.user.entity.User.Language;
-import io.dkakunsi.bitapp.user.usecase.UpdateUserLanguage;
+import io.dkakunsi.bitapp.user.usecase.UpdateUser;
 import kong.unirest.Unirest;
 
-class UpdateUserLanguageEndpointTest {
+class UpdateUserEndpointTest {
 
   private static final int PORT = 20006;
 
   private static String baseUrl;
 
-  private static UpdateUserLanguage usecase;
+  private static UpdateUser usecase;
 
   private static JavalinServer server;
 
   @BeforeAll
   static void setup() throws Exception {
     baseUrl = "http://localhost:" + PORT;
-    usecase = mock(UpdateUserLanguage.class);
-    var endpoint = new UpdateUserLanguageEndpoint(usecase);
+    usecase = mock(UpdateUser.class);
+    var endpoint = new UpdateUserEndpoint(usecase);
     server = JavalinServer.of(PORT);
     server.addEndpoint(endpoint);
     server.start();
@@ -52,7 +52,7 @@ class UpdateUserLanguageEndpointTest {
 
   /**
    * <b>Given</b> a valid update language request to change language to ID<br>
-   * <b>When</b> the PATCH /users/{email}/language endpoint is called<br>
+   * <b>When</b> the PATCH /users/{email} endpoint is called<br>
    * <b>Then</b> the language should be updated and return status 200 with the
    * updated result
    */
@@ -65,10 +65,10 @@ class UpdateUserLanguageEndpointTest {
         .language(Language.ID.name())
         .build();
     var result = Result.success(updateResult);
-    when(usecase.process(any(Context.class), any(UpdateUserLanguageInput.class))).thenReturn(result);
+    when(usecase.process(any(Context.class), any(UpdateUserInput.class))).thenReturn(result);
 
     // When
-    var response = Unirest.patch(baseUrl + "/users/" + email + "/language/ID").asString();
+    var response = Unirest.patch(baseUrl + "/users/" + email + "?language=ID").asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -82,7 +82,7 @@ class UpdateUserLanguageEndpointTest {
 
   /**
    * <b>Given</b> a valid update language request to change language to EN<br>
-   * <b>When</b> the PATCH /users/{email}/language endpoint is called<br>
+   * <b>When</b> the PATCH /users/{email} endpoint is called<br>
    * <b>Then</b> the language should be updated and return status 200 with the
    * updated result
    */
@@ -95,10 +95,10 @@ class UpdateUserLanguageEndpointTest {
         .language(Language.EN.name())
         .build();
     var result = Result.success(updateResult);
-    when(usecase.process(any(Context.class), any(UpdateUserLanguageInput.class))).thenReturn(result);
+    when(usecase.process(any(Context.class), any(UpdateUserInput.class))).thenReturn(result);
 
     // When
-    var response = Unirest.patch(baseUrl + "/users/" + email + "/language/EN").asString();
+    var response = Unirest.patch(baseUrl + "/users/" + email + "?language=EN").asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -123,15 +123,15 @@ class UpdateUserLanguageEndpointTest {
         .language(Language.ID.name())
         .build();
     var result = Result.success(updateResult);
-    when(usecase.process(any(Context.class), any(UpdateUserLanguageInput.class))).thenReturn(result);
+    when(usecase.process(any(Context.class), any(UpdateUserInput.class))).thenReturn(result);
 
     // When
-    var response = Unirest.patch(baseUrl + "/users/" + email + "/language/ID").asString();
+    var response = Unirest.patch(baseUrl + "/users/" + email + "?language=ID").asString();
 
     // Then
     assertEquals(200, response.getStatus());
 
-    ArgumentCaptor<UpdateUserLanguageInput> inputCaptor = ArgumentCaptor.forClass(UpdateUserLanguageInput.class);
+    ArgumentCaptor<UpdateUserInput> inputCaptor = ArgumentCaptor.forClass(UpdateUserInput.class);
     verify(usecase, atLeast(0)).process(any(Context.class), inputCaptor.capture());
 
     var capturedInput = inputCaptor.getValue();
@@ -141,7 +141,7 @@ class UpdateUserLanguageEndpointTest {
 
   /**
    * <b>Given</b> a valid update language request with empty result<br>
-   * <b>When</b> the PATCH /users/{email}/language endpoint is called<br>
+   * <b>When</b> the PATCH /users/{email} endpoint is called<br>
    * <b>Then</b> should return status 200 with empty response body
    */
   @Test
@@ -149,10 +149,10 @@ class UpdateUserLanguageEndpointTest {
     // Given
     var email = "user@email.com";
     var result = Result.<UserResult>success();
-    when(usecase.process(any(Context.class), any(UpdateUserLanguageInput.class))).thenReturn(result);
+    when(usecase.process(any(Context.class), any(UpdateUserInput.class))).thenReturn(result);
 
     // When
-    var response = Unirest.patch(baseUrl + "/users/" + email + "/language/ID").asString();
+    var response = Unirest.patch(baseUrl + "/users/" + email + "?language=ID").asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -163,7 +163,7 @@ class UpdateUserLanguageEndpointTest {
 
   /**
    * <b>Given</b> an update language request for a non-existent user<br>
-   * <b>When</b> the PATCH /users/{email}/language endpoint is called<br>
+   * <b>When</b> the PATCH /users/{email} endpoint is called<br>
    * <b>Then</b> should return status 404 with "User not found" message
    */
   @Test
@@ -171,10 +171,10 @@ class UpdateUserLanguageEndpointTest {
     // Given
     var email = "nonexistent@email.com";
     var result = Result.<UserResult>failure(Code.NOT_FOUND, "User not found");
-    when(usecase.process(any(Context.class), any(UpdateUserLanguageInput.class))).thenReturn(result);
+    when(usecase.process(any(Context.class), any(UpdateUserInput.class))).thenReturn(result);
 
     // When
-    var response = Unirest.patch(baseUrl + "/users/" + email + "/language/ID").asString();
+    var response = Unirest.patch(baseUrl + "/users/" + email + "?language=ID").asString();
 
     // Then
     assertEquals(404, response.getStatus());
@@ -185,7 +185,7 @@ class UpdateUserLanguageEndpointTest {
 
   /**
    * <b>Given</b> an update language request with server error<br>
-   * <b>When</b> the PATCH /users/{email}/language endpoint is called<br>
+   * <b>When</b> the PATCH /users/{email} endpoint is called<br>
    * <b>Then</b> should return status 500 with error message
    */
   @Test
@@ -193,10 +193,10 @@ class UpdateUserLanguageEndpointTest {
     // Given
     var email = "user@email.com";
     var result = Result.<UserResult>failure(Code.SERVER_ERROR, "Database connection failed");
-    when(usecase.process(any(Context.class), any(UpdateUserLanguageInput.class))).thenReturn(result);
+    when(usecase.process(any(Context.class), any(UpdateUserInput.class))).thenReturn(result);
 
     // When
-    var response = Unirest.patch(baseUrl + "/users/" + email + "/language/ID").asString();
+    var response = Unirest.patch(baseUrl + "/users/" + email + "?language=ID").asString();
 
     // Then
     assertEquals(500, response.getStatus());
@@ -231,7 +231,7 @@ class UpdateUserLanguageEndpointTest {
     var email = "user@email.com";
 
     // When
-    var response = Unirest.post(baseUrl + "/users/" + email + "/language/ID").asString();
+    var response = Unirest.post(baseUrl + "/users/" + email + "?language=ID").asString();
 
     // Then
     assertEquals(404, response.getStatus());
@@ -239,7 +239,7 @@ class UpdateUserLanguageEndpointTest {
 
   /**
    * <b>Given</b> an update language request with different email addresses<br>
-   * <b>When</b> the PATCH /users/{email}/language endpoint is called for each<br>
+   * <b>When</b> the PATCH /users/{email} endpoint is called for each<br>
    * <b>Then</b> each request should update the respective user's language
    */
   @Test
@@ -259,13 +259,13 @@ class UpdateUserLanguageEndpointTest {
         .build();
     var result2 = Result.success(updateResult2);
 
-    when(usecase.process(any(Context.class), any(UpdateUserLanguageInput.class)))
+    when(usecase.process(any(Context.class), any(UpdateUserInput.class)))
         .thenReturn(result1)
         .thenReturn(result2);
 
     // When
-    var response1 = Unirest.patch(baseUrl + "/users/" + email1 + "/language/ID").asString();
-    var response2 = Unirest.patch(baseUrl + "/users/" + email2 + "/language/ID").asString();
+    var response1 = Unirest.patch(baseUrl + "/users/" + email1 + "?language=ID").asString();
+    var response2 = Unirest.patch(baseUrl + "/users/" + email2 + "?language=ID").asString();
 
     // Then
     assertEquals(200, response1.getStatus());

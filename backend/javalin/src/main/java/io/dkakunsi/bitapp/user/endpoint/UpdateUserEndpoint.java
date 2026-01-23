@@ -3,15 +3,15 @@ package io.dkakunsi.bitapp.user.endpoint;
 import java.lang.reflect.Type;
 
 import io.dkakunsi.bitapp.javalin.JavalinEndpoint;
-import io.dkakunsi.bitapp.user.dto.UpdateUserLanguageInput;
+import io.dkakunsi.bitapp.user.dto.UpdateUserInput;
 import io.dkakunsi.bitapp.user.dto.UserResult;
-import io.dkakunsi.bitapp.user.usecase.UpdateUserLanguage;
+import io.dkakunsi.bitapp.user.usecase.UpdateUser;
 import io.javalin.http.Context;
 
-public final class UpdateUserLanguageEndpoint
-    extends JavalinEndpoint<UpdateUserLanguageInput, UserResult> {
+public final class UpdateUserEndpoint
+    extends JavalinEndpoint<UpdateUserInput, UserResult> {
 
-  public UpdateUserLanguageEndpoint(UpdateUserLanguage usecase) {
+  public UpdateUserEndpoint(UpdateUser usecase) {
     super(usecase);
   }
 
@@ -22,7 +22,7 @@ public final class UpdateUserLanguageEndpoint
 
   @Override
   public String getPath() {
-    return "/users/{email}/language/{language}";
+    return "/users/{email}";
   }
 
   @Override
@@ -31,11 +31,11 @@ public final class UpdateUserLanguageEndpoint
   }
 
   @Override
-  protected UpdateUserLanguageInput buildInput(Context ctx) {
+  protected UpdateUserInput buildInput(Context ctx) {
     var email = ctx.pathParam("email");
-    var language = ctx.pathParam("language");
+    var language = ctx.queryParam("language");
 
-    return UpdateUserLanguageInput.builder()
+    return UpdateUserInput.builder()
         .email(email)
         .language(language)
         .build();

@@ -30,11 +30,11 @@ import io.dkakunsi.bitapp.transaction.repository.MongoTransactionRepository;
 import io.dkakunsi.bitapp.transaction.usecase.CreateTransaction;
 import io.dkakunsi.bitapp.user.endpoint.GetUserEndpoint;
 import io.dkakunsi.bitapp.user.endpoint.RegisterUserEndpoint;
-import io.dkakunsi.bitapp.user.endpoint.UpdateUserLanguageEndpoint;
+import io.dkakunsi.bitapp.user.endpoint.UpdateUserEndpoint;
 import io.dkakunsi.bitapp.user.repository.MongoUserRepository;
 import io.dkakunsi.bitapp.user.usecase.GetUser;
 import io.dkakunsi.bitapp.user.usecase.RegisterUser;
-import io.dkakunsi.bitapp.user.usecase.UpdateUserLanguage;
+import io.dkakunsi.bitapp.user.usecase.UpdateUser;
 
 public final class AppLauncher implements Launcher {
 
@@ -57,7 +57,7 @@ public final class AppLauncher implements Launcher {
     // UseCases
     var registerUser = new RegisterUser(userRepository);
     var getUser = new GetUser(userRepository);
-    var updateUserLanguage = new UpdateUserLanguage(userRepository);
+    var updateUser = new UpdateUser(userRepository);
     var createAccount = new CreateAccount(accountRepository);
     var getAccount = new GetAccount(accountRepository);
     var getUserAccounts = new GetUserAccounts(accountRepository);
@@ -73,7 +73,7 @@ public final class AppLauncher implements Launcher {
     var registerUserEndpoint = new RegisterUserEndpoint(registerUser);
     var getUserEndpoint = new GetUserEndpoint(getUser)
         .setAuthorizer(authorizer);
-    var updateUserLanguageEndpoint = new UpdateUserLanguageEndpoint(updateUserLanguage)
+    var updateUserEndpoint = new UpdateUserEndpoint(updateUser)
         .setAuthorizer(authorizer);
     var createAccountEndpoint = new CreateAccountEndpoint(createAccount)
         .setAuthorizer(authorizer);
@@ -98,7 +98,7 @@ public final class AppLauncher implements Launcher {
     server = JavalinServer.of(Integer.parseInt(appPort))
         .addEndpoint(registerUserEndpoint)
         .addEndpoint(getUserEndpoint)
-        .addEndpoint(updateUserLanguageEndpoint)
+        .addEndpoint(updateUserEndpoint)
         .addEndpoint(createAccountEndpoint)
         .addEndpoint(getAccountEndpoint)
         .addEndpoint(getUserAccountsEndpoint)
