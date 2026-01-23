@@ -4,12 +4,11 @@ import java.lang.reflect.Type;
 
 import io.dkakunsi.bitapp.account.dto.AccountResult;
 import io.dkakunsi.bitapp.account.dto.CreateAccountInput;
-import io.dkakunsi.bitapp.account.entity.Account;
 import io.dkakunsi.bitapp.account.usecase.CreateAccount;
 import io.dkakunsi.bitapp.javalin.JavalinEndpoint;
 import io.javalin.http.Context;
 
-public final class CreateAccountJavalinEndpoint extends JavalinEndpoint<CreateAccountInput, Account> {
+public final class CreateAccountJavalinEndpoint extends JavalinEndpoint<CreateAccountInput, AccountResult> {
 
   public CreateAccountJavalinEndpoint(CreateAccount usecase) {
     super(usecase);
