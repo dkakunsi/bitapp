@@ -26,8 +26,10 @@ import io.dkakunsi.bitapp.loan.usecase.GetUserLoans;
 import io.dkakunsi.bitapp.loan.usecase.UpdateLoan;
 import io.dkakunsi.bitapp.mongo.MongoConfiguration;
 import io.dkakunsi.bitapp.transaction.endpoint.CreateTransactionEndpoint;
+import io.dkakunsi.bitapp.transaction.endpoint.GetUserTransactionsEndpoint;
 import io.dkakunsi.bitapp.transaction.repository.MongoTransactionRepository;
 import io.dkakunsi.bitapp.transaction.usecase.CreateTransaction;
+import io.dkakunsi.bitapp.transaction.usecase.GetUserTransactions;
 import io.dkakunsi.bitapp.user.endpoint.GetUserEndpoint;
 import io.dkakunsi.bitapp.user.endpoint.RegisterUserEndpoint;
 import io.dkakunsi.bitapp.user.endpoint.UpdateUserEndpoint;
@@ -67,6 +69,7 @@ public final class AppLauncher implements Launcher {
     var getUserLoans = new GetUserLoans(loanRepository);
     var updateLoan = new UpdateLoan(loanRepository);
     var createTransaction = new CreateTransaction(transactionRepository, accountRepository, loanRepository);
+    var getUserTransactions = new GetUserTransactions(transactionRepository);
 
     // endpoints
     var authorizer = JWTAuthorizer.of(configuration);
@@ -93,6 +96,8 @@ public final class AppLauncher implements Launcher {
         .setAuthorizer(authorizer);
     var createTransactionEndpoint = new CreateTransactionEndpoint(createTransaction)
         .setAuthorizer(authorizer);
+    var getUserTransactionsEndpoint = new GetUserTransactionsEndpoint(getUserTransactions)
+        .setAuthorizer(authorizer);
 
     var appPort = configuration.get(APP_PORT).orElse("8080");
     server = JavalinServer.of(Integer.parseInt(appPort))
@@ -108,6 +113,7 @@ public final class AppLauncher implements Launcher {
         .addEndpoint(getUserLoansEndpoint)
         .addEndpoint(updateLoanEndpoint)
         .addEndpoint(createTransactionEndpoint)
+        .addEndpoint(getUserTransactionsEndpoint)
         .start();
   }
 

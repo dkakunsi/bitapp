@@ -2,6 +2,7 @@ package io.dkakunsi.bitapp.transaction.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -10,12 +11,15 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import dev.morphia.Datastore;
+import dev.morphia.query.MorphiaQuery;
+import dev.morphia.query.filters.Filter;
 import io.dkakunsi.bitapp.common.EntityStatus;
 import io.dkakunsi.bitapp.common.Id;
 import io.dkakunsi.bitapp.transaction.entity.Transaction;
@@ -284,5 +288,129 @@ public final class MongoTransactionRepositoryTest {
     assertEquals(REQUESTER, savedModel.getCreatedBy());
     assertEquals(REQUESTER, savedModel.getUpdatedBy());
     assertEquals(EntityStatus.ACTIVE.name(), savedModel.getStatus());
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  void givenUserIdWithMultipleTransactionsWhenFindByUserIdThenShouldReturnAllUserTransactions() {
+    // Given
+    var userId = Id.of(REQUESTER);
+    var transaction1Model = TransactionModel.builder()
+        .id("trans-1")
+        .userId(userId.value())
+        .title("Grocery Shopping")
+        .description("Monthly groceries")
+        .date(LocalDate.of(2026, 1, 22))
+        .time(LocalTime.of(10, 30))
+        .source(ACCOUNT_ID)
+        .amount(50000L)
+        .currency("IDR")
+        .category("FOOD")
+        .type("DEBIT")
+        .status(EntityStatus.ACTIVE.name())
+        .createdAt(LocalDateTime.now())
+        .updatedAt(LocalDateTime.now())
+        .createdBy(REQUESTER)
+        .updatedBy(REQUESTER)
+        .build();
+
+    var transaction2Model = TransactionModel.builder()
+        .id("trans-2")
+        .userId(userId.value())
+        .title("Salary")
+        .description("Monthly salary")
+        .date(LocalDate.of(2026, 1, 22))
+        .time(LocalTime.of(8, 0))
+        .destination(ACCOUNT_ID)
+        .amount(5000000L)
+        .currency("IDR")
+        .category("INCOME")
+        .type("CREDIT")
+        .status(EntityStatus.ACTIVE.name())
+        .createdAt(LocalDateTime.now())
+        .updatedAt(LocalDateTime.now())
+        .createdBy(REQUESTER)
+        .updatedBy(REQUESTER)
+        .build();
+
+    var query = mock(MorphiaQuery.class);
+    when(datastore.find(TransactionModel.class)).thenReturn(query);
+    when(query.filter(any(Filter.class))).thenReturn(query);
+    when(query.stream()).thenReturn(Stream.of(transaction1Model, transaction2Model));
+
+    // When
+    var transactions = underTest.findByUserId(userId.value());
+
+    // Then
+    assertNotNull(transactions);
+    assertEquals(2, transactions.size());
+
+    var firstTransaction = transactions.get(0);
+    assertEquals("trans-1", firstTransaction.id().value());
+    assertEquals(userId.value(), firstTransaction.user().value());
+    assertEquals("Grocery Shopping", firstTransaction.title());
+    assertEquals(Transaction.Type.DEBIT, firstTransaction.type());
+
+    var secondTransaction = transactions.get(1);
+    assertEquals("trans-2", secondTransaction.id().value());
+    assertEquals("Salary", secondTransaction.title());
+    assertEquals(Transaction.Type.CREDIT, secondTransaction.type());
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  void givenUserIdWithNoTransactionsWhenFindByUserIdThenShouldReturnEmptyList() {
+    // Given
+    var userId = "user-no-transactions@email.com";
+
+    var query = mock(MorphiaQuery.class);
+    when(datastore.find(TransactionModel.class)).thenReturn(query);
+    when(query.filter(any(Filter.class))).thenReturn(query);
+    when(query.stream()).thenReturn(Stream.empty());
+
+    // When
+    var transactions = underTest.findByUserId(userId);
+
+    // Then
+    assertNotNull(transactions);
+    assertTrue(transactions.isEmpty());
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  void givenMultipleUsersWithTransactionsWhenFindByUserIdThenShouldReturnOnlyUserTransactions() {
+    // Given
+    var userId1 = Id.of("user1@email.com");
+
+    var user1Transaction = TransactionModel.builder()
+        .id("trans-user1")
+        .userId(userId1.value())
+        .title("User 1 Transaction")
+        .date(LocalDate.now())
+        .time(LocalTime.now())
+        .source(ACCOUNT_ID)
+        .amount(10000L)
+        .currency("IDR")
+        .type("DEBIT")
+        .status(EntityStatus.ACTIVE.name())
+        .createdAt(LocalDateTime.now())
+        .updatedAt(LocalDateTime.now())
+        .createdBy(userId1.value())
+        .updatedBy(userId1.value())
+        .build();
+
+    var query = mock(MorphiaQuery.class);
+    when(datastore.find(TransactionModel.class)).thenReturn(query);
+    when(query.filter(any(Filter.class))).thenReturn(query);
+    when(query.stream()).thenReturn(Stream.of(user1Transaction));
+
+    // When
+    var user1Transactions = underTest.findByUserId(userId1.value());
+
+    // Then
+    assertNotNull(user1Transactions);
+    assertEquals(1, user1Transactions.size());
+    assertEquals(userId1.value(), user1Transactions.get(0).user().value());
+    assertEquals("User 1 Transaction", user1Transactions.get(0).title());
   }
 }
