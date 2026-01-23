@@ -52,7 +52,7 @@ class UpdateUserEndpointTest {
 
   /**
    * <b>Given</b> a valid update language request to change language to ID<br>
-   * <b>When</b> the PATCH /users/{email} endpoint is called<br>
+   * <b>When</b> the PUT /users/{email} endpoint is called<br>
    * <b>Then</b> the language should be updated and return status 200 with the
    * updated result
    */
@@ -68,7 +68,8 @@ class UpdateUserEndpointTest {
     when(usecase.process(any(Context.class), any(UpdateUserInput.class))).thenReturn(result);
 
     // When
-    var response = Unirest.patch(baseUrl + "/users/" + email + "?language=ID").asString();
+    var body = new JSONObject().put("language", "ID").toString();
+    var response = Unirest.put(baseUrl + "/users/" + email).body(body).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -82,7 +83,7 @@ class UpdateUserEndpointTest {
 
   /**
    * <b>Given</b> a valid update language request to change language to EN<br>
-   * <b>When</b> the PATCH /users/{email} endpoint is called<br>
+   * <b>When</b> the PUT /users/{email} endpoint is called<br>
    * <b>Then</b> the language should be updated and return status 200 with the
    * updated result
    */
@@ -98,7 +99,8 @@ class UpdateUserEndpointTest {
     when(usecase.process(any(Context.class), any(UpdateUserInput.class))).thenReturn(result);
 
     // When
-    var response = Unirest.patch(baseUrl + "/users/" + email + "?language=EN").asString();
+    var body = new JSONObject().put("language", "EN").toString();
+    var response = Unirest.put(baseUrl + "/users/" + email).body(body).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -126,7 +128,8 @@ class UpdateUserEndpointTest {
     when(usecase.process(any(Context.class), any(UpdateUserInput.class))).thenReturn(result);
 
     // When
-    var response = Unirest.patch(baseUrl + "/users/" + email + "?language=ID").asString();
+    var body = new JSONObject().put("language", "ID").toString();
+    var response = Unirest.put(baseUrl + "/users/" + email).body(body).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -141,7 +144,7 @@ class UpdateUserEndpointTest {
 
   /**
    * <b>Given</b> a valid update language request with empty result<br>
-   * <b>When</b> the PATCH /users/{email} endpoint is called<br>
+   * <b>When</b> the PUT /users/{email} endpoint is called<br>
    * <b>Then</b> should return status 200 with empty response body
    */
   @Test
@@ -152,7 +155,8 @@ class UpdateUserEndpointTest {
     when(usecase.process(any(Context.class), any(UpdateUserInput.class))).thenReturn(result);
 
     // When
-    var response = Unirest.patch(baseUrl + "/users/" + email + "?language=ID").asString();
+    var body = new JSONObject().put("language", "ID").toString();
+    var response = Unirest.put(baseUrl + "/users/" + email).body(body).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -163,7 +167,7 @@ class UpdateUserEndpointTest {
 
   /**
    * <b>Given</b> an update language request for a non-existent user<br>
-   * <b>When</b> the PATCH /users/{email} endpoint is called<br>
+   * <b>When</b> the PUT /users/{email} endpoint is called<br>
    * <b>Then</b> should return status 404 with "User not found" message
    */
   @Test
@@ -174,7 +178,8 @@ class UpdateUserEndpointTest {
     when(usecase.process(any(Context.class), any(UpdateUserInput.class))).thenReturn(result);
 
     // When
-    var response = Unirest.patch(baseUrl + "/users/" + email + "?language=ID").asString();
+    var body = new JSONObject().put("language", "ID").toString();
+    var response = Unirest.put(baseUrl + "/users/" + email).body(body).asString();
 
     // Then
     assertEquals(404, response.getStatus());
@@ -185,7 +190,7 @@ class UpdateUserEndpointTest {
 
   /**
    * <b>Given</b> an update language request with server error<br>
-   * <b>When</b> the PATCH /users/{email} endpoint is called<br>
+   * <b>When</b> the PUT /users/{email} endpoint is called<br>
    * <b>Then</b> should return status 500 with error message
    */
   @Test
@@ -196,7 +201,8 @@ class UpdateUserEndpointTest {
     when(usecase.process(any(Context.class), any(UpdateUserInput.class))).thenReturn(result);
 
     // When
-    var response = Unirest.patch(baseUrl + "/users/" + email + "?language=ID").asString();
+    var body = new JSONObject().put("language", "ID").toString();
+    var response = Unirest.put(baseUrl + "/users/" + email).body(body).asString();
 
     // Then
     assertEquals(500, response.getStatus());
@@ -214,7 +220,7 @@ class UpdateUserEndpointTest {
   void givenInvalidTargetUrl_WhenRequested_ThenShouldReturnNotFound() {
     // Given
     // When
-    var response = Unirest.patch(baseUrl + "/users/invalid/wrongpath").asString();
+    var response = Unirest.put(baseUrl + "/users/invalid/wrongpath").asString();
 
     // Then
     assertEquals(404, response.getStatus());
@@ -222,16 +228,17 @@ class UpdateUserEndpointTest {
 
   /**
    * <b>Given</b> an update language request using wrong HTTP method<br>
-   * <b>When</b> using POST instead of PATCH<br>
+   * <b>When</b> using POST instead of PUT<br>
    * <b>Then</b> should return status 404 (Method Not Allowed)
    */
   @Test
   void givenUpdateLanguageRequestWithWrongMethod_WhenRequested_ThenShouldReturnNotFound() {
     // Given
     var email = "user@email.com";
+    var body = new JSONObject().put("language", "ID").toString();
 
     // When
-    var response = Unirest.post(baseUrl + "/users/" + email + "?language=ID").asString();
+    var response = Unirest.post(baseUrl + "/users/" + email).body(body).asString();
 
     // Then
     assertEquals(404, response.getStatus());
@@ -239,7 +246,7 @@ class UpdateUserEndpointTest {
 
   /**
    * <b>Given</b> an update language request with different email addresses<br>
-   * <b>When</b> the PATCH /users/{email} endpoint is called for each<br>
+   * <b>When</b> the PUT /users/{email} endpoint is called for each<br>
    * <b>Then</b> each request should update the respective user's language
    */
   @Test
@@ -264,8 +271,10 @@ class UpdateUserEndpointTest {
         .thenReturn(result2);
 
     // When
-    var response1 = Unirest.patch(baseUrl + "/users/" + email1 + "?language=ID").asString();
-    var response2 = Unirest.patch(baseUrl + "/users/" + email2 + "?language=ID").asString();
+    var body1 = new JSONObject().put("language", "ID").toString();
+    var response1 = Unirest.put(baseUrl + "/users/" + email1).body(body1).asString();
+    var body2 = new JSONObject().put("language", "ID").toString();
+    var response2 = Unirest.put(baseUrl + "/users/" + email2).body(body2).asString();
 
     // Then
     assertEquals(200, response1.getStatus());

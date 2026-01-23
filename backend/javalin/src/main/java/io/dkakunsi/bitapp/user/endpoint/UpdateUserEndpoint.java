@@ -17,7 +17,7 @@ public final class UpdateUserEndpoint
 
   @Override
   public Method getMethod() {
-    return Method.PATCH;
+    return Method.PUT;
   }
 
   @Override
@@ -33,11 +33,15 @@ public final class UpdateUserEndpoint
   @Override
   protected UpdateUserInput buildInput(Context ctx) {
     var email = ctx.pathParam("email");
-    var language = ctx.queryParam("language");
+    var input = ctx.bodyAsClass(UpdateUserRequest.class);
 
     return UpdateUserInput.builder()
         .email(email)
-        .language(language)
+        .language(input.language())
         .build();
   }
+}
+
+final record UpdateUserRequest(
+    String language) {
 }

@@ -39,7 +39,7 @@ public class UpdateUserIT extends AppTestUtil {
 
   /**
    * <b>Given</b> a registered user with default language EN<br>
-   * <b>When</b> the PATCH /users/{email} endpoint is called with
+   * <b>When</b> the PUT /users/{email} endpoint is called with
    * language ID<br>
    * <b>Then</b> the user's language should be updated to ID with status 200 and
    * verified via GET
@@ -62,9 +62,15 @@ public class UpdateUserIT extends AppTestUtil {
     assertEquals("EN", registerResponseBody.getString("language"));
 
     // Update the language to ID
+    var updateBody = """
+        {
+          "language": "ID"
+        }
+        """;
     var janeToken = SecureTestUtil.generateToken("jane.doe@example.com");
-    var updateResponse = Unirest.patch(baseUrl + "/users/jane.doe@example.com?language=ID")
+    var updateResponse = Unirest.put(baseUrl + "/users/jane.doe@example.com")
         .header("Authorization", "Bearer " + janeToken)
+        .body(updateBody)
         .asString();
     assertEquals(200, updateResponse.getStatus());
     var updateResponseBody = new JSONObject(updateResponse.getBody());
@@ -84,7 +90,7 @@ public class UpdateUserIT extends AppTestUtil {
 
   /**
    * <b>Given</b> a registered user with language ID<br>
-   * <b>When</b> the PATCH /users/{email} endpoint is called with
+   * <b>When</b> the PUT /users/{email} endpoint is called with
    * language EN<br>
    * <b>Then</b> the user's language should be updated back to EN with status 200
    * and verified via GET
@@ -105,17 +111,29 @@ public class UpdateUserIT extends AppTestUtil {
     assertEquals(200, registerResponse.getStatus());
 
     // Update to ID first
+    var updateBodyId = """
+        {
+          "language": "ID"
+        }
+        """;
     var bobToken = SecureTestUtil.generateToken("bob.smith@example.com");
-    var updateToIdResponse = Unirest.patch(baseUrl + "/users/bob.smith@example.com?language=ID")
+    var updateToIdResponse = Unirest.put(baseUrl + "/users/bob.smith@example.com")
         .header("Authorization", "Bearer " + bobToken)
+        .body(updateBodyId)
         .asString();
     assertEquals(200, updateToIdResponse.getStatus());
     var updateToIdResponseBody = new JSONObject(updateToIdResponse.getBody());
     assertEquals("ID", updateToIdResponseBody.getString("language"));
 
     // Update back to EN
-    var updateToEnResponse = Unirest.patch(baseUrl + "/users/bob.smith@example.com?language=EN")
+    var updateBodyEn = """
+        {
+          "language": "EN"
+        }
+        """;
+    var updateToEnResponse = Unirest.put(baseUrl + "/users/bob.smith@example.com")
         .header("Authorization", "Bearer " + bobToken)
+        .body(updateBodyEn)
         .asString();
     assertEquals(200, updateToEnResponse.getStatus());
     var updateToEnResponseBody = new JSONObject(updateToEnResponse.getBody());
@@ -133,15 +151,21 @@ public class UpdateUserIT extends AppTestUtil {
 
   /**
    * <b>Given</b> a user email that does not exist in the system<br>
-   * <b>When</b> the PATCH /users/{email} endpoint is called<br>
+   * <b>When</b> the PUT /users/{email} endpoint is called<br>
    * <b>Then</b> the request should fail with status 404 and "User not found"
    * message
    */
   @Test
   public void updateUserLanguageNonExistingUserShouldReturn404() {
+    var updateBody = """
+        {
+          "language": "ID"
+        }
+        """;
     var nonExistentUserToken = SecureTestUtil.generateToken("nonexistent@example.com");
-    var updateResponse = Unirest.patch(baseUrl + "/users/nonexistent@example.com?language=ID")
+    var updateResponse = Unirest.put(baseUrl + "/users/nonexistent@example.com")
         .header("Authorization", "Bearer " + nonExistentUserToken)
+        .body(updateBody)
         .asString();
     assertEquals(404, updateResponse.getStatus());
     assertEquals("User not found", updateResponse.getBody());
@@ -149,7 +173,7 @@ public class UpdateUserIT extends AppTestUtil {
 
   /**
    * <b>Given</b> a registered user with language EN<br>
-   * <b>When</b> the PATCH /users/{email} endpoint is called with
+   * <b>When</b> the PUT /users/{email} endpoint is called with
    * an unsupported language code<br>
    * <b>Then</b> the request should fail with status 400
    */
@@ -169,9 +193,15 @@ public class UpdateUserIT extends AppTestUtil {
     assertEquals(200, registerResponse.getStatus());
 
     // Try to update to an unsupported language
+    var updateBodyUnsupported = """
+        {
+          "language": "FR"
+        }
+        """;
     var aliceToken = SecureTestUtil.generateToken("alice.johnson@example.com");
-    var updateResponse = Unirest.patch(baseUrl + "/users/alice.johnson@example.com?language=FR")
+    var updateResponse = Unirest.put(baseUrl + "/users/alice.johnson@example.com")
         .header("Authorization", "Bearer " + aliceToken)
+        .body(updateBodyUnsupported)
         .asString();
     assertEquals(400, updateResponse.getStatus());
     assertEquals("language: invalid value", updateResponse.getBody());
@@ -179,7 +209,7 @@ public class UpdateUserIT extends AppTestUtil {
 
   /**
    * <b>Given</b> a registered user<br>
-   * <b>When</b> the PATCH /users/{email} endpoint is called without
+   * <b>When</b> the PUT /users/{email} endpoint is called without
    * an authorization header<br>
    * <b>Then</b> the request should fail with status 401
    */
@@ -199,14 +229,20 @@ public class UpdateUserIT extends AppTestUtil {
     assertEquals(200, registerResponse.getStatus());
 
     // Try to update language without authorization header
-    var updateResponse = Unirest.patch(baseUrl + "/users/charlie.brown@example.com?language=ID")
+    var updateBodyId = """
+        {
+          "language": "ID"
+        }
+        """;
+    var updateResponse = Unirest.put(baseUrl + "/users/charlie.brown@example.com")
+        .body(updateBodyId)
         .asString();
     assertEquals(401, updateResponse.getStatus());
   }
 
   /**
    * <b>Given</b> a registered user<br>
-   * <b>When</b> the PATCH /users/{email} endpoint is called with
+   * <b>When</b> the PUT /users/{email} endpoint is called with
    * an invalid authorization token<br>
    * <b>Then</b> the request should fail with status 401
    */
@@ -226,8 +262,14 @@ public class UpdateUserIT extends AppTestUtil {
     assertEquals(200, registerResponse.getStatus());
 
     // Try to update language with invalid token
-    var updateResponse = Unirest.patch(baseUrl + "/users/diana.prince@example.com?language=ID")
+    var updateBodyId = """
+        {
+          "language": "ID"
+        }
+        """;
+    var updateResponse = Unirest.put(baseUrl + "/users/diana.prince@example.com")
         .header("Authorization", "Bearer invalid-token")
+        .body(updateBodyId)
         .asString();
     assertEquals(401, updateResponse.getStatus());
   }
