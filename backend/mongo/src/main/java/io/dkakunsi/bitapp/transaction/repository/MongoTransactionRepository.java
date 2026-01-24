@@ -39,4 +39,11 @@ public class MongoTransactionRepository implements TransactionRepository {
         .map(TransactionModel::toTransaction)
         .toList();
   }
+
+  @Override
+  public void deleteById(String id) {
+    datastore.find(TransactionModel.class)
+        .filter(Filters.eq("_id", id))
+        .delete();
+  }
 }

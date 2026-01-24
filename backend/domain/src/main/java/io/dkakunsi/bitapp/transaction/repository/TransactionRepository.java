@@ -11,4 +11,6 @@ public interface TransactionRepository {
   Optional<Transaction> findById(String id);
 
   List<Transaction> findByUserId(String userId);
+
+  void deleteById(String id);
 }

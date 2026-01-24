@@ -163,6 +163,27 @@ public final record Loan(
         requester);
   }
 
+  public Loan updateRemainingAmount(BigDecimal newRemainingAmount) {
+    return new Loan(
+        this.id,
+        this.user,
+        this.type,
+        this.date,
+        this.time,
+        this.partyName,
+        this.title,
+        this.description,
+        this.amount,
+        newRemainingAmount,
+        this.currency,
+        this.interestRate,
+        this.status,
+        this.createdAt,
+        this.updatedAt,
+        this.createdBy,
+        this.updatedBy);
+  }
+
   public LoanResult toResult() {
     String timeStr = this.time().toString();
     if (timeStr.length() > TIME_FORMAT_LENGTH) {

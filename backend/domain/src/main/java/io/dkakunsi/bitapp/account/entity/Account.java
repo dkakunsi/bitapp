@@ -89,6 +89,22 @@ public final record Account(
         .build();
   }
 
+  public Account updateBalance(BigDecimal newBalance) {
+    return Account.builder()
+        .id(this.id)
+        .name(this.name)
+        .type(this.type)
+        .themeColor(this.themeColor)
+        .balance(newBalance)
+        .user(this.user)
+        .status(this.status)
+        .createdAt(this.createdAt)
+        .updatedAt(this.updatedAt)
+        .createdBy(this.createdBy)
+        .updatedBy(this.updatedBy)
+        .build();
+  }
+
   public boolean isOwner(String requester) {
     return this.user.equals(Id.of(requester));
   }
