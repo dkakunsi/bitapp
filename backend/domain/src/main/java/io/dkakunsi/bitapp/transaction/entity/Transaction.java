@@ -59,6 +59,7 @@ public final record Transaction(
   public static enum Category {
     FOOD,
     TRANSPORT,
+    TRANSPORTATION,
     SHOPPING,
     ENTERTAINMENT,
     HEALTH,

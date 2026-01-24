@@ -263,6 +263,36 @@ public class MongoAccountRepositoryIT {
   }
 
   @Test
+  public void givenExistingAccountWhenDeleteByIdThenShouldRemoveAccount() {
+    // Given
+    var accountId = Id.generate();
+    var userId = Id.of("delete@email.com");
+    var now = LocalDateTime.now();
+    var account = Account.builder()
+        .id(accountId)
+        .name("Delete Account")
+        .type(Type.BANK)
+        .themeColor("#ABCDEF")
+        .balance(BigDecimal.ZERO)
+        .user(userId)
+        .status(EntityStatus.ACTIVE)
+        .createdAt(now)
+        .updatedAt(now)
+        .createdBy(userId.value())
+        .updatedBy(userId.value())
+        .build();
+
+    repository.create(account);
+    assertEquals(true, repository.findById(accountId.value()).isPresent());
+
+    // When
+    repository.deleteById(accountId.value());
+
+    // Then
+    assertEquals(false, repository.findById(accountId.value()).isPresent());
+  }
+
+  @Test
   public void givenAccountWithLargeBalanceWhenCreateThenShouldPersistLargeBalance() {
     // Given
     var userId = Id.of("user@email.com");

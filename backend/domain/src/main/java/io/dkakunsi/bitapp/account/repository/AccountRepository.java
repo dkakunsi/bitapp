@@ -13,4 +13,6 @@ public interface AccountRepository {
   Optional<Account> findById(String id);
 
   List<Account> findByUserId(String userId);
+
+  void deleteById(String id);
 }

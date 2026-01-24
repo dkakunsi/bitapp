@@ -5,11 +5,13 @@ import java.util.function.Function;
 import io.dkakunsi.bitapp.account.endpoint.CreateAccountEndpoint;
 import io.dkakunsi.bitapp.account.endpoint.GetAccountEndpoint;
 import io.dkakunsi.bitapp.account.endpoint.GetUserAccountsEndpoint;
+import io.dkakunsi.bitapp.account.endpoint.RemoveAccountEndpoint;
 import io.dkakunsi.bitapp.account.endpoint.UpdateAccountEndpoint;
 import io.dkakunsi.bitapp.account.repository.MongoAccountRepository;
 import io.dkakunsi.bitapp.account.usecase.CreateAccount;
 import io.dkakunsi.bitapp.account.usecase.GetAccount;
 import io.dkakunsi.bitapp.account.usecase.GetUserAccounts;
+import io.dkakunsi.bitapp.account.usecase.RemoveAccount;
 import io.dkakunsi.bitapp.account.usecase.UpdateAccount;
 import io.dkakunsi.bitapp.common.EnvironmentConfiguration;
 import io.dkakunsi.bitapp.common.Launcher;
@@ -70,7 +72,8 @@ public final class AppLauncher implements Launcher {
                 var getAccount = new GetAccount(accountRepository);
                 var getUserAccounts = new GetUserAccounts(accountRepository);
                 var updateAccount = new UpdateAccount(accountRepository);
-                var createLoan = new CreateLoan(loanRepository);
+                var removeAccount = new RemoveAccount(accountRepository, transactionRepository, loanRepository);
+                var createLoan = new CreateLoan(loanRepository, accountRepository, transactionRepository);
                 var getLoan = new GetLoan(loanRepository);
                 var getUserLoans = new GetUserLoans(loanRepository);
                 var updateLoan = new UpdateLoan(loanRepository);
@@ -94,6 +97,8 @@ public final class AppLauncher implements Launcher {
                 var getUserAccountsEndpoint = new GetUserAccountsEndpoint(getUserAccounts)
                                 .setAuthorizer(authorizer);
                 var updateAccountEndpoint = new UpdateAccountEndpoint(updateAccount)
+                                .setAuthorizer(authorizer);
+                var removeAccountEndpoint = new RemoveAccountEndpoint(removeAccount)
                                 .setAuthorizer(authorizer);
                 var createLoanEndpoint = new CreateLoanEndpoint(createLoan)
                                 .setAuthorizer(authorizer);
@@ -123,6 +128,7 @@ public final class AppLauncher implements Launcher {
                                 .addEndpoint(getAccountEndpoint)
                                 .addEndpoint(getUserAccountsEndpoint)
                                 .addEndpoint(updateAccountEndpoint)
+                                .addEndpoint(removeAccountEndpoint)
                                 .addEndpoint(createLoanEndpoint)
                                 .addEndpoint(getLoanEndpoint)
                                 .addEndpoint(getUserLoansEndpoint)

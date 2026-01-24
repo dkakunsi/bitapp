@@ -1,7 +1,5 @@
 package io.dkakunsi.bitapp.loan.usecase;
 
-import java.time.LocalDateTime;
-
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.usecase.Result;
@@ -9,8 +7,8 @@ import io.dkakunsi.bitapp.common.usecase.UseCase;
 import io.dkakunsi.bitapp.loan.dto.LoanResult;
 import io.dkakunsi.bitapp.loan.entity.Loan;
 import io.dkakunsi.bitapp.loan.repository.LoanRepository;
-import io.dkakunsi.bitapp.transaction.entity.Transaction;
 import io.dkakunsi.bitapp.transaction.repository.TransactionRepository;
+import io.dkakunsi.bitapp.transaction.util.TransactionUpdateHelper;
 
 public final class RemoveLoan implements UseCase<String, LoanResult> {
 
@@ -36,7 +34,7 @@ public final class RemoveLoan implements UseCase<String, LoanResult> {
 
     var transactions = transactionRepository.findByLoanId(loan.id().value());
     for (var transaction : transactions) {
-      var updatedTransaction = removeLoanReference(transaction, context.requester());
+      var updatedTransaction = TransactionUpdateHelper.removeLoanReference(transaction, context.requester());
       transactionRepository.update(updatedTransaction);
     }
 
@@ -44,26 +42,4 @@ public final class RemoveLoan implements UseCase<String, LoanResult> {
     return Result.success(loan.toResult());
   }
 
-  private Transaction removeLoanReference(Transaction transaction, String requester) {
-    return Transaction.builder()
-        .id(transaction.id())
-        .user(transaction.user())
-        .title(transaction.title())
-        .description(transaction.description())
-        .date(transaction.date())
-        .time(transaction.time())
-        .source(transaction.source())
-        .destination(transaction.destination())
-        .loan(null)
-        .amount(transaction.amount())
-        .currency(transaction.currency())
-        .category(transaction.category())
-        .type(transaction.type())
-        .status(transaction.status())
-        .createdAt(transaction.createdAt())
-        .updatedAt(LocalDateTime.now())
-        .createdBy(transaction.createdBy())
-        .updatedBy(requester)
-        .build();
-  }
 }

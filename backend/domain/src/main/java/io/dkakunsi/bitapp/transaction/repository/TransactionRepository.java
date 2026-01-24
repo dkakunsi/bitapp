@@ -12,6 +12,8 @@ public interface TransactionRepository {
 
   List<Transaction> findByUserId(String userId);
 
+  List<Transaction> findByAccountId(String accountId);
+
   List<Transaction> findByLoanId(String loanId);
 
   Transaction update(Transaction transaction);

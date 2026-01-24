@@ -1,6 +1,5 @@
 package io.dkakunsi.bitapp.money.user;
 
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -101,8 +100,8 @@ public class RegisterUserIT extends AppTestUtil {
     var postResponseBody = new JSONObject(postResponse.getBody());
     assertEquals("Jane Doe", postResponseBody.getString("name"));
     assertEquals("jane.doe@example.com", postResponseBody.getString("email"));
-    assertNull(postResponseBody.get("phone"));
-    assertNull(postResponseBody.get("photoUrl"));
+    assertTrue(postResponseBody.isNull("phone"));
+    assertTrue(postResponseBody.isNull("photoUrl"));
     assertEquals("EN", postResponseBody.getString("language"));
 
     var getResponse = Unirest.get(baseUrl + "/users/jane.doe@example.com")
@@ -112,8 +111,8 @@ public class RegisterUserIT extends AppTestUtil {
     var getResponseBody = new JSONObject(getResponse.getBody());
     assertEquals("Jane Doe", getResponseBody.getString("name"));
     assertEquals("jane.doe@example.com", getResponseBody.getString("email"));
-    assertNull(getResponseBody.get("phone"));
-    assertNull(getResponseBody.get("photoUrl"));
+    assertTrue(getResponseBody.isNull("phone"));
+    assertTrue(getResponseBody.isNull("photoUrl"));
     assertEquals("EN", getResponseBody.getString("language"));
   }
 

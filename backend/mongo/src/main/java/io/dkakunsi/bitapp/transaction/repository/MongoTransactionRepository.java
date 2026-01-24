@@ -41,6 +41,17 @@ public class MongoTransactionRepository implements TransactionRepository {
   }
 
   @Override
+  public List<Transaction> findByAccountId(String accountId) {
+    return datastore.find(TransactionModel.class)
+        .filter(Filters.or(
+            Filters.eq("source", accountId),
+            Filters.eq("destination", accountId)))
+        .stream()
+        .map(TransactionModel::toTransaction)
+        .toList();
+  }
+
+  @Override
   public List<Transaction> findByLoanId(String loanId) {
     return datastore.find(TransactionModel.class)
         .filter(Filters.eq("loan", loanId))

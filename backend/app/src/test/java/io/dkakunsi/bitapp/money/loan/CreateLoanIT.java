@@ -830,7 +830,8 @@ public class CreateLoanIT extends AppTestUtil {
           "description": "Personal loan without account",
           "amount": 10000000,
           "currency": "IDR",
-          "interestRate": 5.5
+          "interestRate": 5.5,
+          "account": ""
         }
         """;
 

@@ -43,6 +43,7 @@ public final class CreateLoanEndpoint extends JavalinEndpoint<CreateLoanInput, L
         .amount(body.amount())
         .currency(body.currency())
         .interestRate(body.interestRate())
+        .account(body.account())
         .build();
   }
 }
@@ -56,5 +57,6 @@ final record CreateLoanRequest(
     String description,
     BigDecimal amount,
     String currency,
-    double interestRate) {
+    double interestRate,
+    String account) {
 }

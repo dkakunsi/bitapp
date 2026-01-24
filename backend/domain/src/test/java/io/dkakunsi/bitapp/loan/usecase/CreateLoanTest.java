@@ -21,22 +21,28 @@ import org.mockito.ArgumentCaptor;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.EntityStatus;
+import io.dkakunsi.bitapp.account.repository.AccountRepository;
 import io.dkakunsi.bitapp.loan.dto.CreateLoanInput;
 import io.dkakunsi.bitapp.loan.entity.Loan;
 import io.dkakunsi.bitapp.loan.repository.LoanRepository;
+import io.dkakunsi.bitapp.transaction.repository.TransactionRepository;
 
 public final class CreateLoanTest {
 
   private CreateLoan underTest;
 
   private LoanRepository loanRepository;
+  private AccountRepository accountRepository;
+  private TransactionRepository transactionRepository;
 
   private static final String REQUESTER = "testUser";
 
   @BeforeEach
   void setUp() {
     loanRepository = mock(LoanRepository.class);
-    underTest = new CreateLoan(loanRepository);
+    accountRepository = mock(AccountRepository.class);
+    transactionRepository = mock(TransactionRepository.class);
+    underTest = new CreateLoan(loanRepository, accountRepository, transactionRepository);
   }
 
   @Test

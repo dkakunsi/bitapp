@@ -19,7 +19,8 @@ public final record CreateLoanInput(
     String description,
     BigDecimal amount,
     String currency,
-    double interestRate) implements Validatable {
+    double interestRate,
+    String account) implements Validatable {
 
   private static final String DATE_REGEX = "^(\\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$";
 
@@ -55,6 +56,9 @@ public final record CreateLoanInput(
     }
     if (interestRate < 0) {
       errors.add("interestRate: invalid value");
+    }
+    if (account != null && StringUtils.isBlank(account)) {
+      errors.add("account: invalid value");
     }
 
     if (!errors.isEmpty()) {
