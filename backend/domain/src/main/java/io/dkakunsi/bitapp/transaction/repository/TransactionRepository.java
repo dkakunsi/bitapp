@@ -12,5 +12,9 @@ public interface TransactionRepository {
 
   List<Transaction> findByUserId(String userId);
 
+  List<Transaction> findByLoanId(String loanId);
+
+  Transaction update(Transaction transaction);
+
   void deleteById(String id);
 }

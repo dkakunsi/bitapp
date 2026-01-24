@@ -13,4 +13,6 @@ public interface LoanRepository {
   List<Loan> findByUserId(String userId);
 
   Loan update(Loan loan);
+
+  void deleteById(String id);
 }

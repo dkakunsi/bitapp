@@ -1183,6 +1183,23 @@ public class MongoLoanRepositoryIT {
     assertNotNull(fetchedLoan.get().updatedAt());
   }
 
+  @Test
+  public void givenExistingLoanWhenDeleteByIdThenShouldRemoveLoan() {
+    // Given
+    var loanId = Id.generate();
+    var userId = Id.of("delete@email.com");
+    var loan = createBasicLoan(loanId, userId);
+
+    repository.create(loan);
+    assertEquals(true, repository.findById(loanId.value()).isPresent());
+
+    // When
+    repository.deleteById(loanId.value());
+
+    // Then
+    assertEquals(false, repository.findById(loanId.value()).isPresent());
+  }
+
   private Loan createBasicLoan(Id loanId, Id userId) {
     return Loan.builder()
         .id(loanId)

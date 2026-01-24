@@ -41,6 +41,22 @@ public class MongoTransactionRepository implements TransactionRepository {
   }
 
   @Override
+  public List<Transaction> findByLoanId(String loanId) {
+    return datastore.find(TransactionModel.class)
+        .filter(Filters.eq("loan", loanId))
+        .stream()
+        .map(TransactionModel::toTransaction)
+        .toList();
+  }
+
+  @Override
+  public Transaction update(Transaction transaction) {
+    var entity = TransactionModel.fromTransaction(transaction);
+    datastore.save(entity);
+    return transaction;
+  }
+
+  @Override
   public void deleteById(String id) {
     datastore.find(TransactionModel.class)
         .filter(Filters.eq("_id", id))

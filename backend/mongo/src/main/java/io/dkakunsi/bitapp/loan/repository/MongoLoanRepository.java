@@ -46,4 +46,11 @@ public class MongoLoanRepository implements LoanRepository {
     datastore.save(entity);
     return loan;
   }
+
+  @Override
+  public void deleteById(String id) {
+    datastore.find(LoanModel.class)
+        .filter(Filters.eq("_id", id))
+        .delete();
+  }
 }
