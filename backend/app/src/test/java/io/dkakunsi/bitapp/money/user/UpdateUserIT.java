@@ -182,10 +182,10 @@ public class UpdateUserIT extends AppTestUtil {
     // First, register a user
     var registerBody = """
         {
-         "name": "Alice Johnson",
-         "email": "alice.johnson@example.com",
-         "phone": "5559876543",
-         "photoUrl": "http://example.com/alice.jpg"
+          "name": "Alice Johnson",
+          "email": "alice.johnson@example.com",
+          "phone": "5559876543",
+          "photoUrl": "http://example.com/alice.jpg"
         }
         """;
 

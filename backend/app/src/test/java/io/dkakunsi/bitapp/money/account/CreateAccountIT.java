@@ -145,9 +145,9 @@ public class CreateAccountIT extends AppTestUtil {
   public void createAccountWithInvalidTypeShouldFail() {
     var body = """
         {
-         "name": "Invalid Type Account",
-         "type": "INVALID_TYPE",
-         "themeColor": "#0000FF"
+          "name": "Invalid Type Account",
+          "type": "INVALID_TYPE",
+          "themeColor": "#0000FF"
         }
         """;
 
@@ -169,8 +169,8 @@ public class CreateAccountIT extends AppTestUtil {
   public void createAccountWithMissingTypeShouldFail() {
     var body = """
         {
-         "name": "No Type Account",
-         "themeColor": "#0000FF"
+          "name": "No Type Account",
+          "themeColor": "#0000FF"
         }
         """;
 
@@ -271,9 +271,9 @@ public class CreateAccountIT extends AppTestUtil {
   public void createAccountWithNoTokenShouldFail() {
     var body = """
         {
-         "name": "Unauthorized Account",
-         "type": "BANK",
-         "themeColor": "#0000FF"
+          "name": "Unauthorized Account",
+          "type": "BANK",
+          "themeColor": "#0000FF"
         }
         """;
 
@@ -294,9 +294,9 @@ public class CreateAccountIT extends AppTestUtil {
   public void createAccountWithInvalidTokenShouldFail() {
     var body = """
         {
-         "name": "Unauthorized Account",
-         "type": "BANK",
-         "themeColor": "#0000FF"
+          "name": "Unauthorized Account",
+          "type": "BANK",
+          "themeColor": "#0000FF"
         }
         """;
 

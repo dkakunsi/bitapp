@@ -303,8 +303,8 @@ public class RemoveTransactionIT extends AppTestUtil {
   @Test
   public void removeLoanDisbursementShouldRevertAccountAndLoanBalances() {
     // Create a credit transaction with loan (disbursement)
-    var transactionId = createTransaction("CREDIT", "Loan Disbursement", "Loan received", null, destinationAccountId,
-        loanId, 500000, "LOAN");
+    var transactionId = createTransaction("CREDIT", "Loan Disbursement", "Loan received", null,
+        destinationAccountId, loanId, 500000, "LOAN");
 
     // Get balances after transaction
     var accountBalanceAfterDisbursement = getAccountBalance(destinationAccountId);
