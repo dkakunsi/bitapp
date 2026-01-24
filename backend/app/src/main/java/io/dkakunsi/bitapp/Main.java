@@ -1,4 +1,4 @@
-package io.dkakunsi.bitapp.money;
+package io.dkakunsi.bitapp;
 
 import java.util.UUID;
 

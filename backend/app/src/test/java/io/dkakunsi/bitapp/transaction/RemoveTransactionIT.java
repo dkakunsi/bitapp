@@ -1,4 +1,4 @@
-package io.dkakunsi.bitapp.money.transaction;
+package io.dkakunsi.bitapp.transaction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -12,8 +12,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import io.dkakunsi.bitapp.AppLauncher;
 import io.dkakunsi.bitapp.jwt.JWTAuthorizer;
-import io.dkakunsi.bitapp.money.AppLauncher;
 import io.dkakunsi.bitapp.test.AppTestUtil;
 import io.dkakunsi.bitapp.test.SecureTestUtil;
 import kong.unirest.Unirest;
@@ -637,7 +637,8 @@ public class RemoveTransactionIT extends AppTestUtil {
       }
     }
 
-    assertEquals(false, foundDeletedTransaction, "Deleted transaction should not appear in user's transaction list");
+    assertEquals(false, foundDeletedTransaction,
+        "Deleted transaction should not appear in user's transaction list");
     assertEquals(true, foundTransaction1, "Non-deleted transaction 1 should still exist");
     assertEquals(true, foundTransaction3, "Non-deleted transaction 3 should still exist");
   }
