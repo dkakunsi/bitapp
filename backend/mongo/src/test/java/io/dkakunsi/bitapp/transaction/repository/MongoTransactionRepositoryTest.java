@@ -413,4 +413,20 @@ public final class MongoTransactionRepositoryTest {
     assertEquals(userId1.value(), user1Transactions.get(0).user().value());
     assertEquals("User 1 Transaction", user1Transactions.get(0).title());
   }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  void givenTransactionIdWhenDeletedThenShouldRemoveFromDatastore() {
+    // Given
+    var transactionId = "trans-delete";
+    var query = mock(MorphiaQuery.class);
+    when(datastore.find(TransactionModel.class)).thenReturn(query);
+    when(query.filter(any(Filter.class))).thenReturn(query);
+
+    // When
+    underTest.deleteById(transactionId);
+
+    // Then
+    verify(query).delete();
+  }
 }
