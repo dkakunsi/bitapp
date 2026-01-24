@@ -35,8 +35,8 @@ public final class CreateLoan implements UseCase<CreateLoanInput, LoanResult> {
   @Override
   public Result<LoanResult> execute(Context context, CreateLoanInput input) {
     final var loan = Loan.from(input, context.requester());
-    var createdLoan = this.loanRepository.create(loan);
     if (input.account() == null) {
+      var createdLoan = this.loanRepository.create(loan);
       return Result.success(createdLoan.toResult());
     }
 
@@ -51,6 +51,7 @@ public final class CreateLoan implements UseCase<CreateLoanInput, LoanResult> {
       return Result.failure(Code.FORBIDDEN, "You are not authorized to use this account");
     }
 
+    var createdLoan = this.loanRepository.create(loan);
     var disbursementResult = createDisbursementTransaction(context, createdLoan, account.id().value());
     if (disbursementResult.isFailed()) {
       var error = disbursementResult.error().get();

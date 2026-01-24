@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -851,6 +852,13 @@ public class CreateLoanIT extends AppTestUtil {
    */
   @Test
   public void createLoanWithNonExistentAccountShouldFail() throws Exception {
+    var beforeLoansResponse = Unirest.get(baseUrl + "/users/" + USER_ID + "/loans")
+        .header("Authorization", "Bearer " + token)
+        .asString();
+
+    assertEquals(200, beforeLoansResponse.getStatus());
+    var beforeLoans = new JSONArray(beforeLoansResponse.getBody());
+
     var body = """
         {
           "type": "BORROW",
@@ -871,6 +879,14 @@ public class CreateLoanIT extends AppTestUtil {
 
     assertEquals(404, response.getStatus());
     assertEquals("Account not found", response.getBody());
+
+    var afterLoansResponse = Unirest.get(baseUrl + "/users/" + USER_ID + "/loans")
+        .header("Authorization", "Bearer " + token)
+        .asString();
+
+    assertEquals(200, afterLoansResponse.getStatus());
+    var afterLoans = new JSONArray(afterLoansResponse.getBody());
+    assertEquals(beforeLoans.length(), afterLoans.length());
   }
 
   /**
