@@ -20,7 +20,7 @@ import org.mockito.ArgumentCaptor;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
-import io.dkakunsi.bitapp.common.EntityStatus;
+import io.dkakunsi.bitapp.domain.entity.EntityStatus;
 import io.dkakunsi.bitapp.account.repository.AccountRepository;
 import io.dkakunsi.bitapp.loan.dto.CreateLoanInput;
 import io.dkakunsi.bitapp.loan.entity.Loan;

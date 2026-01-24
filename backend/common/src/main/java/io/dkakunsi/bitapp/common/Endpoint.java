@@ -1,6 +1,6 @@
 package io.dkakunsi.bitapp.common;
 
-import io.dkakunsi.bitapp.common.usecase.UseCase;
+import io.dkakunsi.bitapp.domain.usecase.UseCase;
 import lombok.Getter;
 
 public abstract class Endpoint<S, T> {

@@ -7,8 +7,8 @@ import java.time.LocalTime;
 import java.util.Currency;
 
 import dev.morphia.annotations.Entity;
-import io.dkakunsi.bitapp.common.EntityStatus;
-import io.dkakunsi.bitapp.common.Id;
+import io.dkakunsi.bitapp.domain.entity.EntityStatus;
+import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.loan.entity.Loan;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

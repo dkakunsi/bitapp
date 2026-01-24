@@ -1,4 +1,4 @@
-package io.dkakunsi.bitapp.common.usecase;
+package io.dkakunsi.bitapp.domain.usecase;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;

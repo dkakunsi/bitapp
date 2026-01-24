@@ -18,7 +18,7 @@ import io.dkakunsi.bitapp.account.entity.Account.Type;
 import io.dkakunsi.bitapp.account.repository.AccountRepository;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
-import io.dkakunsi.bitapp.common.Id;
+import io.dkakunsi.bitapp.domain.entity.Id;
 
 public final class GetAccountTest {
 

@@ -21,8 +21,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.common.Context;
-import io.dkakunsi.bitapp.common.EntityStatus;
-import io.dkakunsi.bitapp.common.Id;
+import io.dkakunsi.bitapp.domain.entity.EntityStatus;
+import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.loan.entity.Loan;
 import io.dkakunsi.bitapp.loan.repository.LoanRepository;
 

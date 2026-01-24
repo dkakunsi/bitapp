@@ -20,8 +20,8 @@ import org.mockito.ArgumentCaptor;
 import dev.morphia.Datastore;
 import dev.morphia.query.MorphiaQuery;
 import dev.morphia.query.filters.Filter;
-import io.dkakunsi.bitapp.common.EntityStatus;
-import io.dkakunsi.bitapp.common.Id;
+import io.dkakunsi.bitapp.domain.entity.EntityStatus;
+import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.transaction.entity.Transaction;
 import io.dkakunsi.bitapp.transaction.model.TransactionModel;
 

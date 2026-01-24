@@ -2,8 +2,8 @@ package io.dkakunsi.bitapp.transaction.usecase;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
-import io.dkakunsi.bitapp.common.usecase.Result;
-import io.dkakunsi.bitapp.common.usecase.UseCase;
+import io.dkakunsi.bitapp.domain.usecase.Result;
+import io.dkakunsi.bitapp.domain.usecase.UseCase;
 import io.dkakunsi.bitapp.transaction.dto.TransactionResult;
 import io.dkakunsi.bitapp.transaction.repository.TransactionRepository;
 

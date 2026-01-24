@@ -5,8 +5,8 @@ import io.dkakunsi.bitapp.account.dto.CreateAccountInput;
 import io.dkakunsi.bitapp.account.entity.Account;
 import io.dkakunsi.bitapp.account.repository.AccountRepository;
 import io.dkakunsi.bitapp.common.Context;
-import io.dkakunsi.bitapp.common.usecase.Result;
-import io.dkakunsi.bitapp.common.usecase.UseCase;
+import io.dkakunsi.bitapp.domain.usecase.Result;
+import io.dkakunsi.bitapp.domain.usecase.UseCase;
 
 public final class CreateAccount implements UseCase<CreateAccountInput, AccountResult> {
 

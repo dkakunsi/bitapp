@@ -1,4 +1,4 @@
-package io.dkakunsi.bitapp.common;
+package io.dkakunsi.bitapp.domain.entity;
 
 import java.util.UUID;
 

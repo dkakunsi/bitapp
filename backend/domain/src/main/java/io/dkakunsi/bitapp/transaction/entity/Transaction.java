@@ -6,8 +6,8 @@ import java.time.LocalTime;
 
 import org.apache.commons.lang3.StringUtils;
 
-import io.dkakunsi.bitapp.common.EntityStatus;
-import io.dkakunsi.bitapp.common.Id;
+import io.dkakunsi.bitapp.domain.entity.EntityStatus;
+import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.transaction.dto.CreateTransactionInput;
 import io.dkakunsi.bitapp.transaction.dto.TransactionResult;
 import lombok.Builder;

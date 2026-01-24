@@ -2,8 +2,8 @@ package io.dkakunsi.bitapp.user.usecase;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
-import io.dkakunsi.bitapp.common.usecase.Result;
-import io.dkakunsi.bitapp.common.usecase.UseCase;
+import io.dkakunsi.bitapp.domain.usecase.Result;
+import io.dkakunsi.bitapp.domain.usecase.UseCase;
 import io.dkakunsi.bitapp.user.dto.UserResult;
 import io.dkakunsi.bitapp.user.repository.UserRepository;
 

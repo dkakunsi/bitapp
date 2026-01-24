@@ -22,7 +22,7 @@ import io.dkakunsi.bitapp.account.entity.Account;
 import io.dkakunsi.bitapp.account.usecase.GetUserAccounts;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
-import io.dkakunsi.bitapp.common.usecase.Result;
+import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import kong.unirest.Unirest;
 

@@ -14,9 +14,9 @@ import org.junit.jupiter.api.Test;
 import dev.morphia.Datastore;
 import io.dkakunsi.bitapp.account.entity.Account;
 import io.dkakunsi.bitapp.account.entity.Account.Type;
-import io.dkakunsi.bitapp.common.EntityStatus;
+import io.dkakunsi.bitapp.domain.entity.EntityStatus;
 import io.dkakunsi.bitapp.common.EnvironmentConfiguration;
-import io.dkakunsi.bitapp.common.Id;
+import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.mongo.MongoConfiguration;
 import io.dkakunsi.bitapp.test.MongoServer;
 

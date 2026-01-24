@@ -3,8 +3,8 @@ package io.dkakunsi.bitapp.loan.usecase;
 import java.util.List;
 
 import io.dkakunsi.bitapp.common.Context;
-import io.dkakunsi.bitapp.common.usecase.Result;
-import io.dkakunsi.bitapp.common.usecase.UseCase;
+import io.dkakunsi.bitapp.domain.usecase.Result;
+import io.dkakunsi.bitapp.domain.usecase.UseCase;
 import io.dkakunsi.bitapp.loan.dto.LoanResult;
 import io.dkakunsi.bitapp.loan.entity.Loan;
 import io.dkakunsi.bitapp.loan.repository.LoanRepository;
