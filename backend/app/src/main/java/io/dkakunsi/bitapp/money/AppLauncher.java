@@ -48,103 +48,103 @@ import io.dkakunsi.bitapp.user.usecase.UpdateUser;
 
 public final class AppLauncher implements Launcher {
 
-        private static final String APP_PORT = "app.port";
+  private static final String APP_PORT = "app.port";
 
-        private JavalinServer server;
+  private JavalinServer server;
 
-        @Override
-        public void launch(Function<String, String> envProvider) {
-                var configuration = EnvironmentConfiguration.of(envProvider);
-                var mongoConfig = new MongoConfiguration(configuration);
+  @Override
+  public void launch(Function<String, String> envProvider) {
+    var configuration = EnvironmentConfiguration.of(envProvider);
+    var mongoConfig = new MongoConfiguration(configuration);
 
-                // Repositories
-                var datastore = mongoConfig.getDatastore();
-                var userRepository = new MongoUserRepository(datastore);
-                var accountRepository = new MongoAccountRepository(datastore);
-                var loanRepository = new MongoLoanRepository(datastore);
-                var transactionRepository = new MongoTransactionRepository(datastore);
+    // Repositories
+    var datastore = mongoConfig.getDatastore();
+    var userRepository = new MongoUserRepository(datastore);
+    var accountRepository = new MongoAccountRepository(datastore);
+    var loanRepository = new MongoLoanRepository(datastore);
+    var transactionRepository = new MongoTransactionRepository(datastore);
 
-                // UseCases
-                var registerUser = new RegisterUser(userRepository);
-                var getUser = new GetUser(userRepository);
-                var updateUser = new UpdateUser(userRepository);
-                var createAccount = new CreateAccount(accountRepository);
-                var getAccount = new GetAccount(accountRepository);
-                var getUserAccounts = new GetUserAccounts(accountRepository);
-                var updateAccount = new UpdateAccount(accountRepository);
-                var removeAccount = new RemoveAccount(accountRepository, transactionRepository, loanRepository);
-                var createLoan = new CreateLoan(loanRepository, accountRepository, transactionRepository);
-                var getLoan = new GetLoan(loanRepository);
-                var getUserLoans = new GetUserLoans(loanRepository);
-                var updateLoan = new UpdateLoan(loanRepository);
-                var removeLoan = new RemoveLoan(loanRepository, transactionRepository);
-                var createTransaction = new CreateTransaction(transactionRepository, accountRepository, loanRepository);
-                var getTransaction = new GetTransaction(transactionRepository);
-                var getUserTransactions = new GetUserTransactions(transactionRepository);
-                var removeTransaction = new RemoveTransaction(transactionRepository, accountRepository, loanRepository);
+    // UseCases
+    var registerUser = new RegisterUser(userRepository);
+    var getUser = new GetUser(userRepository);
+    var updateUser = new UpdateUser(userRepository);
+    var createAccount = new CreateAccount(accountRepository);
+    var getAccount = new GetAccount(accountRepository);
+    var getUserAccounts = new GetUserAccounts(accountRepository);
+    var updateAccount = new UpdateAccount(accountRepository);
+    var removeAccount = new RemoveAccount(accountRepository, transactionRepository, loanRepository);
+    var createLoan = new CreateLoan(loanRepository, accountRepository, transactionRepository);
+    var getLoan = new GetLoan(loanRepository);
+    var getUserLoans = new GetUserLoans(loanRepository);
+    var updateLoan = new UpdateLoan(loanRepository);
+    var removeLoan = new RemoveLoan(loanRepository, transactionRepository);
+    var createTransaction = new CreateTransaction(transactionRepository, accountRepository, loanRepository);
+    var getTransaction = new GetTransaction(transactionRepository);
+    var getUserTransactions = new GetUserTransactions(transactionRepository);
+    var removeTransaction = new RemoveTransaction(transactionRepository, accountRepository, loanRepository);
 
-                // endpoints
-                var authorizer = JWTAuthorizer.of(configuration);
-                var registerUserEndpoint = new RegisterUserEndpoint(registerUser);
-                var getUserEndpoint = new GetUserEndpoint(getUser)
-                                .setAuthorizer(authorizer);
-                var updateUserEndpoint = new UpdateUserEndpoint(updateUser)
-                                .setAuthorizer(authorizer);
-                var createAccountEndpoint = new CreateAccountEndpoint(createAccount)
-                                .setAuthorizer(authorizer);
-                var getAccountEndpoint = new GetAccountEndpoint(getAccount)
-                                .setAuthorizer(authorizer);
-                var getUserAccountsEndpoint = new GetUserAccountsEndpoint(getUserAccounts)
-                                .setAuthorizer(authorizer);
-                var updateAccountEndpoint = new UpdateAccountEndpoint(updateAccount)
-                                .setAuthorizer(authorizer);
-                var removeAccountEndpoint = new RemoveAccountEndpoint(removeAccount)
-                                .setAuthorizer(authorizer);
-                var createLoanEndpoint = new CreateLoanEndpoint(createLoan)
-                                .setAuthorizer(authorizer);
-                var getLoanEndpoint = new GetLoanEndpoint(getLoan)
-                                .setAuthorizer(authorizer);
-                var getUserLoansEndpoint = new GetUserLoansEndpoint(getUserLoans)
-                                .setAuthorizer(authorizer);
-                var updateLoanEndpoint = new UpdateLoanEndpoint(updateLoan)
-                                .setAuthorizer(authorizer);
-                var removeLoanEndpoint = new RemoveLoanEndpoint(removeLoan)
-                                .setAuthorizer(authorizer);
-                var createTransactionEndpoint = new CreateTransactionEndpoint(createTransaction)
-                                .setAuthorizer(authorizer);
-                var getTransactionEndpoint = new GetTransactionEndpoint(getTransaction)
-                                .setAuthorizer(authorizer);
-                var getUserTransactionsEndpoint = new GetUserTransactionsEndpoint(getUserTransactions)
-                                .setAuthorizer(authorizer);
-                var removeTransactionEndpoint = new RemoveTransactionEndpoint(removeTransaction)
-                                .setAuthorizer(authorizer);
+    // endpoints
+    var authorizer = JWTAuthorizer.of(configuration);
+    var registerUserEndpoint = new RegisterUserEndpoint(registerUser);
+    var getUserEndpoint = new GetUserEndpoint(getUser)
+        .setAuthorizer(authorizer);
+    var updateUserEndpoint = new UpdateUserEndpoint(updateUser)
+        .setAuthorizer(authorizer);
+    var createAccountEndpoint = new CreateAccountEndpoint(createAccount)
+        .setAuthorizer(authorizer);
+    var getAccountEndpoint = new GetAccountEndpoint(getAccount)
+        .setAuthorizer(authorizer);
+    var getUserAccountsEndpoint = new GetUserAccountsEndpoint(getUserAccounts)
+        .setAuthorizer(authorizer);
+    var updateAccountEndpoint = new UpdateAccountEndpoint(updateAccount)
+        .setAuthorizer(authorizer);
+    var removeAccountEndpoint = new RemoveAccountEndpoint(removeAccount)
+        .setAuthorizer(authorizer);
+    var createLoanEndpoint = new CreateLoanEndpoint(createLoan)
+        .setAuthorizer(authorizer);
+    var getLoanEndpoint = new GetLoanEndpoint(getLoan)
+        .setAuthorizer(authorizer);
+    var getUserLoansEndpoint = new GetUserLoansEndpoint(getUserLoans)
+        .setAuthorizer(authorizer);
+    var updateLoanEndpoint = new UpdateLoanEndpoint(updateLoan)
+        .setAuthorizer(authorizer);
+    var removeLoanEndpoint = new RemoveLoanEndpoint(removeLoan)
+        .setAuthorizer(authorizer);
+    var createTransactionEndpoint = new CreateTransactionEndpoint(createTransaction)
+        .setAuthorizer(authorizer);
+    var getTransactionEndpoint = new GetTransactionEndpoint(getTransaction)
+        .setAuthorizer(authorizer);
+    var getUserTransactionsEndpoint = new GetUserTransactionsEndpoint(getUserTransactions)
+        .setAuthorizer(authorizer);
+    var removeTransactionEndpoint = new RemoveTransactionEndpoint(removeTransaction)
+        .setAuthorizer(authorizer);
 
-                var appPort = configuration.get(APP_PORT).orElse("8080");
-                server = JavalinServer.of(Integer.parseInt(appPort))
-                                .addEndpoint(registerUserEndpoint)
-                                .addEndpoint(getUserEndpoint)
-                                .addEndpoint(updateUserEndpoint)
-                                .addEndpoint(createAccountEndpoint)
-                                .addEndpoint(getAccountEndpoint)
-                                .addEndpoint(getUserAccountsEndpoint)
-                                .addEndpoint(updateAccountEndpoint)
-                                .addEndpoint(removeAccountEndpoint)
-                                .addEndpoint(createLoanEndpoint)
-                                .addEndpoint(getLoanEndpoint)
-                                .addEndpoint(getUserLoansEndpoint)
-                                .addEndpoint(updateLoanEndpoint)
-                                .addEndpoint(removeLoanEndpoint)
-                                .addEndpoint(createTransactionEndpoint)
-                                .addEndpoint(getTransactionEndpoint)
-                                .addEndpoint(getUserTransactionsEndpoint)
-                                .addEndpoint(removeTransactionEndpoint)
-                                .start();
-        }
+    var appPort = configuration.get(APP_PORT).orElse("8080");
+    server = JavalinServer.of(Integer.parseInt(appPort))
+        .addEndpoint(registerUserEndpoint)
+        .addEndpoint(getUserEndpoint)
+        .addEndpoint(updateUserEndpoint)
+        .addEndpoint(createAccountEndpoint)
+        .addEndpoint(getAccountEndpoint)
+        .addEndpoint(getUserAccountsEndpoint)
+        .addEndpoint(updateAccountEndpoint)
+        .addEndpoint(removeAccountEndpoint)
+        .addEndpoint(createLoanEndpoint)
+        .addEndpoint(getLoanEndpoint)
+        .addEndpoint(getUserLoansEndpoint)
+        .addEndpoint(updateLoanEndpoint)
+        .addEndpoint(removeLoanEndpoint)
+        .addEndpoint(createTransactionEndpoint)
+        .addEndpoint(getTransactionEndpoint)
+        .addEndpoint(getUserTransactionsEndpoint)
+        .addEndpoint(removeTransactionEndpoint)
+        .start();
+  }
 
-        @Override
-        public void stop() {
-                if (server != null) {
-                        server.stop();
-                }
-        }
+  @Override
+  public void stop() {
+    if (server != null) {
+      server.stop();
+    }
+  }
 }
