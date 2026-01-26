@@ -7,6 +7,8 @@ import io.dkakunsi.bitapp.account.dto.AccountResult;
 import io.dkakunsi.bitapp.account.entity.Account;
 import io.dkakunsi.bitapp.account.repository.AccountRepository;
 import io.dkakunsi.bitapp.common.AppError.Code;
+import io.dkakunsi.bitapp.database.Session;
+import io.dkakunsi.bitapp.database.SessionManager;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.domain.usecase.UseCase;
@@ -21,13 +23,17 @@ public final class RemoveAccount implements UseCase<String, AccountResult> {
   private final TransactionRepository transactionRepository;
   private final LoanRepository loanRepository;
 
+  private final SessionManager sessionManager;
+
   public RemoveAccount(
       AccountRepository accountRepository,
       TransactionRepository transactionRepository,
-      LoanRepository loanRepository) {
+      LoanRepository loanRepository,
+      SessionManager sessionManager) {
     this.accountRepository = accountRepository;
     this.transactionRepository = transactionRepository;
     this.loanRepository = loanRepository;
+    this.sessionManager = sessionManager;
   }
 
   @Override
@@ -42,6 +48,7 @@ public final class RemoveAccount implements UseCase<String, AccountResult> {
       return Result.failure(Code.FORBIDDEN, "You are not authorized to delete this account");
     }
 
+    var session = sessionManager.createSession();
     var transactions = transactionRepository.findByAccountId(account.id().value());
     var loanIds = new HashSet<String>();
     for (var transaction : transactions) {
@@ -51,25 +58,25 @@ public final class RemoveAccount implements UseCase<String, AccountResult> {
     }
 
     for (var loanId : loanIds) {
-      clearLoanReferences(loanId, context.requester());
+      clearLoanReferences(loanId, context.requester(), session);
       loanRepository.findById(loanId)
           .filter(loan -> loan.isOwner(context.requester()))
-          .ifPresent(loan -> loanRepository.deleteById(loanId));
+          .ifPresent(loan -> loanRepository.deleteById(loanId, session));
     }
 
     for (var transaction : transactions) {
-      handleTransaction(account.id().value(), transaction, context.requester(), loanIds);
+      handleTransaction(account.id().value(), transaction, context.requester(), loanIds, session);
     }
 
-    accountRepository.deleteById(account.id().value());
+    accountRepository.deleteById(account.id().value(), session);
     return Result.success(account.toResult());
   }
 
-  private void clearLoanReferences(String loanId, String requester) {
+  private void clearLoanReferences(String loanId, String requester, Session session) {
     var loanTransactions = transactionRepository.findByLoanId(loanId);
     for (var transaction : loanTransactions) {
       var updatedTransaction = TransactionUpdateHelper.removeLoanReference(transaction, requester);
-      transactionRepository.update(updatedTransaction);
+      transactionRepository.update(updatedTransaction, session);
     }
   }
 
@@ -77,23 +84,24 @@ public final class RemoveAccount implements UseCase<String, AccountResult> {
       String accountId,
       Transaction transaction,
       String requester,
-      HashSet<String> loanIds) {
+      HashSet<String> loanIds,
+      Session session) {
     switch (transaction.type()) {
       case DEBIT:
       case CREDIT:
-        transactionRepository.deleteById(transaction.id().value());
+        transactionRepository.deleteById(transaction.id().value(), session);
         break;
       case TRANSFER:
         var isSource = transaction.source() != null && transaction.source().value().equals(accountId);
         var isDestination = transaction.destination() != null && transaction.destination().value().equals(accountId);
         if (isSource && isDestination) {
-          transactionRepository.deleteById(transaction.id().value());
+          transactionRepository.deleteById(transaction.id().value(), session);
           break;
         }
 
         var removeLoan = transaction.loan() != null && loanIds.contains(transaction.loan().value());
         var updatedTransfer = convertTransfer(accountId, transaction, requester, removeLoan);
-        transactionRepository.update(updatedTransfer);
+        transactionRepository.update(updatedTransfer, session);
         break;
     }
   }

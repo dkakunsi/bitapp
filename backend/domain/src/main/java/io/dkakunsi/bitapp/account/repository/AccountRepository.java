@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import io.dkakunsi.bitapp.account.entity.Account;
+import io.dkakunsi.bitapp.database.Session;
 
 public interface AccountRepository {
   Account create(Account account);
@@ -15,4 +16,6 @@ public interface AccountRepository {
   List<Account> findByUserId(String userId);
 
   void deleteById(String id);
+
+  void deleteById(String id, Session session);
 }
