@@ -101,4 +101,8 @@ public final class MongoConfiguration {
       mongoClient = Optional.empty();
     }
   }
+
+  public MongoSessionManager getSessionManager() {
+    return new MongoSessionManager(getDatastore());
+  }
 }

@@ -10,7 +10,10 @@ public abstract class MongoServer {
   static final String MONGO_SECURE = "MONGO_SECURE";
 
   private static final String TEST_DATABASE = "testdb";
-  private static MongoDBContainer mongoContainer = new MongoDBContainer("mongo:8.0");
+
+  @SuppressWarnings("resource")
+  private static final MongoDBContainer mongoContainer = new MongoDBContainer("mongo:8.0")
+      .withCommand("--replSet", "rs0");
 
   public static boolean isRunning() {
     return mongoContainer.isRunning();

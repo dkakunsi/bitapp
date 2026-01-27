@@ -5,8 +5,11 @@ import java.util.Optional;
 
 import dev.morphia.Datastore;
 import dev.morphia.query.filters.Filters;
+import dev.morphia.transactions.MorphiaSession;
 import io.dkakunsi.bitapp.account.entity.Account;
 import io.dkakunsi.bitapp.account.model.AccountModel;
+import io.dkakunsi.bitapp.database.Session;
+import io.dkakunsi.bitapp.mongo.MongoSession;
 
 public class MongoAccountRepository implements AccountRepository {
 
@@ -49,7 +52,17 @@ public class MongoAccountRepository implements AccountRepository {
 
   @Override
   public void deleteById(String id) {
-    datastore.find(AccountModel.class)
+    deleteById(datastore, id);
+  }
+
+  @Override
+  public void deleteById(Session session, String id) {
+    MorphiaSession morphiaSession = ((MongoSession) session).getSession();
+    deleteById(morphiaSession, id);
+  }
+
+  private void deleteById(Datastore ds, String id) {
+    ds.find(AccountModel.class)
         .filter(Filters.eq("_id", id))
         .delete();
   }

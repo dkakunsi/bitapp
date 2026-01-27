@@ -57,6 +57,8 @@ public final class AppLauncher implements Launcher {
     var configuration = EnvironmentConfiguration.of(envProvider);
     var mongoConfig = new MongoConfiguration(configuration);
 
+    var sessionManager = mongoConfig.getSessionManager();
+
     // Repositories
     var datastore = mongoConfig.getDatastore();
     var userRepository = new MongoUserRepository(datastore);
@@ -72,7 +74,7 @@ public final class AppLauncher implements Launcher {
     var getAccount = new GetAccount(accountRepository);
     var getUserAccounts = new GetUserAccounts(accountRepository);
     var updateAccount = new UpdateAccount(accountRepository);
-    var removeAccount = new RemoveAccount(accountRepository, transactionRepository, loanRepository);
+    var removeAccount = new RemoveAccount(accountRepository, transactionRepository, loanRepository, sessionManager);
     var createLoan = new CreateLoan(loanRepository, accountRepository, transactionRepository);
     var getLoan = new GetLoan(loanRepository);
     var getUserLoans = new GetUserLoans(loanRepository);

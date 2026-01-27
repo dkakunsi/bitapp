@@ -17,5 +17,5 @@ public interface LoanRepository {
 
   void deleteById(String id);
 
-  void deleteById(String id, Session session);
+  void deleteById(Session session, String id);
 }

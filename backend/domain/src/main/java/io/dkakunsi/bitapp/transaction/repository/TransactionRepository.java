@@ -19,9 +19,9 @@ public interface TransactionRepository {
 
   Transaction update(Transaction transaction);
 
-  Transaction update(Transaction transaction, Session session);
+  Transaction update(Session session, Transaction transaction);
 
   void deleteById(String id);
 
-  void deleteById(String id, Session session);
+  void deleteById(Session session, String id);
 }
