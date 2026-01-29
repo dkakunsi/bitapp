@@ -3,7 +3,6 @@ package io.dkakunsi.bitapp.loan.repository;
 import java.util.List;
 import java.util.Optional;
 
-import io.dkakunsi.bitapp.database.Session;
 import io.dkakunsi.bitapp.loan.entity.Loan;
 
 public interface LoanRepository {
@@ -16,6 +15,4 @@ public interface LoanRepository {
   Loan update(Loan loan);
 
   void deleteById(String id);
-
-  void deleteById(Session session, String id);
 }

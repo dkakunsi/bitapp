@@ -8,7 +8,6 @@ import io.dkakunsi.bitapp.account.entity.Account;
 import io.dkakunsi.bitapp.account.repository.AccountRepository;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
-import io.dkakunsi.bitapp.database.Session;
 import io.dkakunsi.bitapp.database.SessionManager;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.domain.usecase.UseCase;
@@ -48,8 +47,7 @@ public final class RemoveAccount implements UseCase<String, AccountResult> {
       return Result.failure(Code.FORBIDDEN, "You are not authorized to delete this account");
     }
 
-    Session session = sessionManager.createSession();
-    try {
+    return sessionManager.executeInSession(() -> {
       var transactions = transactionRepository.findByAccountId(account.id().value());
       var loanIds = new HashSet<String>();
       for (var transaction : transactions) {
@@ -59,32 +57,26 @@ public final class RemoveAccount implements UseCase<String, AccountResult> {
       }
 
       for (var loanId : loanIds) {
-        clearLoanReferences(loanId, context.requester(), session);
+        clearLoanReferences(loanId, context.requester());
         loanRepository.findById(loanId)
             .filter(loan -> loan.isOwner(context.requester()))
-            .ifPresent(loan -> loanRepository.deleteById(session, loanId));
+            .ifPresent(loan -> loanRepository.deleteById(loanId));
       }
 
       for (var transaction : transactions) {
-        handleTransaction(account.id().value(), transaction, context.requester(), loanIds, session);
+        handleTransaction(account.id().value(), transaction, context.requester(), loanIds);
       }
 
-      accountRepository.deleteById(session, account.id().value());
-      session.commit();
+      accountRepository.deleteById(account.id().value());
       return Result.success(account.toResult());
-    } catch (Exception e) {
-      session.rollback();
-      return Result.failure(Code.INTERNAL_ERROR, "An error occurred while deleting the account");
-    } finally {
-      session.close();
-    }
+    });
   }
 
-  private void clearLoanReferences(String loanId, String requester, Session session) {
+  private void clearLoanReferences(String loanId, String requester) {
     var loanTransactions = transactionRepository.findByLoanId(loanId);
     for (var transaction : loanTransactions) {
       var updatedTransaction = TransactionUpdateHelper.removeLoanReference(transaction, requester);
-      transactionRepository.update(session, updatedTransaction);
+      transactionRepository.update(updatedTransaction);
     }
   }
 
@@ -92,24 +84,23 @@ public final class RemoveAccount implements UseCase<String, AccountResult> {
       String accountId,
       Transaction transaction,
       String requester,
-      HashSet<String> loanIds,
-      Session session) {
+      HashSet<String> loanIds) {
     switch (transaction.type()) {
       case DEBIT:
       case CREDIT:
-        transactionRepository.deleteById(session, transaction.id().value());
+        transactionRepository.deleteById(transaction.id().value());
         break;
       case TRANSFER:
         var isSource = transaction.source() != null && transaction.source().value().equals(accountId);
         var isDestination = transaction.destination() != null && transaction.destination().value().equals(accountId);
         if (isSource && isDestination) {
-          transactionRepository.deleteById(session, transaction.id().value());
+          transactionRepository.deleteById(transaction.id().value());
           break;
         }
 
         var removeLoan = transaction.loan() != null && loanIds.contains(transaction.loan().value());
         var updatedTransfer = convertTransfer(accountId, transaction, requester, removeLoan);
-        transactionRepository.update(session, updatedTransfer);
+        transactionRepository.update(updatedTransfer);
         break;
     }
   }

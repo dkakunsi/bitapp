@@ -6,7 +6,7 @@ import java.util.Optional;
 import dev.morphia.Datastore;
 import dev.morphia.query.filters.Filters;
 import dev.morphia.transactions.MorphiaSession;
-import io.dkakunsi.bitapp.database.Session;
+import io.dkakunsi.bitapp.database.SessionManager;
 import io.dkakunsi.bitapp.mongo.MongoSession;
 import io.dkakunsi.bitapp.transaction.entity.Transaction;
 import io.dkakunsi.bitapp.transaction.model.TransactionModel;
@@ -65,16 +65,16 @@ public class MongoTransactionRepository implements TransactionRepository {
 
   @Override
   public Transaction update(Transaction transaction) {
-    return update(datastore, transaction);
+    var session = SessionManager.SESSION.get();
+    if (session != null) {
+      MorphiaSession morphiaSession = ((MongoSession) session).getSession();
+      return update(morphiaSession, transaction);
+    } else {
+      return update(datastore, transaction);
+    }
   }
 
-  @Override
-  public Transaction update(Session session, Transaction transaction) {
-    MorphiaSession morphiaSession = ((MongoSession) session).getSession();
-    return update(morphiaSession, transaction);
-  }
-
-  private Transaction update(Datastore ds, Transaction transaction) {
+  private static Transaction update(Datastore ds, Transaction transaction) {
     var entity = TransactionModel.fromTransaction(transaction);
     ds.save(entity);
     return transaction;
@@ -82,16 +82,16 @@ public class MongoTransactionRepository implements TransactionRepository {
 
   @Override
   public void deleteById(String id) {
-    deleteById(datastore, id);
+    var session = SessionManager.SESSION.get();
+    if (session != null) {
+      MorphiaSession morphiaSession = ((MongoSession) session).getSession();
+      deleteById(morphiaSession, id);
+    } else {
+      deleteById(datastore, id);
+    }
   }
 
-  @Override
-  public void deleteById(Session session, String id) {
-    MorphiaSession morphiaSession = ((MongoSession) session).getSession();
-    deleteById(morphiaSession, id);
-  }
-
-  private void deleteById(Datastore ds, String id) {
+  private static void deleteById(Datastore ds, String id) {
     ds.find(TransactionModel.class)
         .filter(Filters.eq("_id", id))
         .delete();
