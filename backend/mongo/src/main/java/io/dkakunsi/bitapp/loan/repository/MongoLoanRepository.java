@@ -5,25 +5,35 @@ import java.util.Optional;
 
 import dev.morphia.Datastore;
 import dev.morphia.query.filters.Filters;
-import dev.morphia.transactions.MorphiaSession;
-import io.dkakunsi.bitapp.database.SessionManager;
 import io.dkakunsi.bitapp.loan.entity.Loan;
 import io.dkakunsi.bitapp.loan.model.LoanModel;
-import io.dkakunsi.bitapp.mongo.MongoSession;
+import io.dkakunsi.bitapp.mongo.MongoRepository;
 
-public class MongoLoanRepository implements LoanRepository {
-
-  private final Datastore datastore;
+public class MongoLoanRepository extends MongoRepository implements LoanRepository {
 
   public MongoLoanRepository(Datastore datastore) {
-    this.datastore = datastore;
+    super(datastore);
   }
 
   @Override
   public Loan create(Loan loan) {
     var entity = LoanModel.fromLoan(loan);
-    datastore.save(entity);
+    pickDatastore().save(entity);
     return loan;
+  }
+
+  @Override
+  public Loan update(Loan loan) {
+    var entity = LoanModel.fromLoan(loan);
+    pickDatastore().save(entity);
+    return loan;
+  }
+
+  @Override
+  public void deleteById(String id) {
+    pickDatastore().find(LoanModel.class)
+        .filter(Filters.eq("_id", id))
+        .delete();
   }
 
   @Override
@@ -41,29 +51,5 @@ public class MongoLoanRepository implements LoanRepository {
         .stream()
         .map(LoanModel::toLoan)
         .toList();
-  }
-
-  @Override
-  public Loan update(Loan loan) {
-    var entity = LoanModel.fromLoan(loan);
-    datastore.save(entity);
-    return loan;
-  }
-
-  @Override
-  public void deleteById(String id) {
-    var session = SessionManager.SESSION.get();
-    if (session != null) {
-      MorphiaSession morphiaSession = ((MongoSession) session).getSession();
-      deleteById(morphiaSession, id);
-    } else {
-      deleteById(datastore, id);
-    }
-  }
-
-  private static void deleteById(Datastore ds, String id) {
-    ds.find(LoanModel.class)
-        .filter(Filters.eq("_id", id))
-        .delete();
   }
 }

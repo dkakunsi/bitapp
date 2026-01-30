@@ -3,6 +3,7 @@ package io.dkakunsi.bitapp.account.usecase;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -105,6 +106,12 @@ public final class RemoveAccountUseCaseTest {
         .thenReturn(List.of(debit, credit, transferSource, transferDestination, loanTransaction));
     when(transactionRepository.findByLoanId(LOAN_ID)).thenReturn(List.of(loanTransaction));
     when(loanRepository.findById(LOAN_ID)).thenReturn(Optional.of(createLoan(LOAN_ID, REQUESTER)));
+
+    when(sessionManager.executeInSession(any()))
+        .thenAnswer(invocation -> {
+          var callable = invocation.getArgument(0, java.util.function.Supplier.class);
+          return callable.get();
+        });
 
     // When
     var context = Context.builder().requester(REQUESTER).build();

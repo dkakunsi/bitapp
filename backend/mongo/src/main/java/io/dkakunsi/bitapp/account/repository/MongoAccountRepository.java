@@ -5,32 +5,35 @@ import java.util.Optional;
 
 import dev.morphia.Datastore;
 import dev.morphia.query.filters.Filters;
-import dev.morphia.transactions.MorphiaSession;
 import io.dkakunsi.bitapp.account.entity.Account;
 import io.dkakunsi.bitapp.account.model.AccountModel;
-import io.dkakunsi.bitapp.database.SessionManager;
-import io.dkakunsi.bitapp.mongo.MongoSession;
+import io.dkakunsi.bitapp.mongo.MongoRepository;
 
-public class MongoAccountRepository implements AccountRepository {
-
-  private final Datastore datastore;
+public class MongoAccountRepository extends MongoRepository implements AccountRepository {
 
   public MongoAccountRepository(Datastore datastore) {
-    this.datastore = datastore;
+    super(datastore);
   }
 
   @Override
   public Account create(Account account) {
     var entity = AccountModel.fromAccount(account);
-    datastore.save(entity);
+    pickDatastore().save(entity);
     return account;
   }
 
   @Override
   public Account update(Account account) {
     var entity = AccountModel.fromAccount(account);
-    var updatedEntity = datastore.save(entity);
+    var updatedEntity = pickDatastore().save(entity);
     return updatedEntity.toAccount();
+  }
+
+  @Override
+  public void deleteById(String id) {
+    pickDatastore().find(AccountModel.class)
+        .filter(Filters.eq("_id", id))
+        .delete();
   }
 
   @Override
@@ -48,22 +51,5 @@ public class MongoAccountRepository implements AccountRepository {
         .stream()
         .map(AccountModel::toAccount)
         .toList();
-  }
-
-  @Override
-  public void deleteById(String id) {
-    var session = SessionManager.SESSION.get();
-    if (session != null) {
-      MorphiaSession morphiaSession = ((MongoSession) session).getSession();
-      deleteById(morphiaSession, id);
-    } else {
-      deleteById(datastore, id);
-    }
-  }
-
-  private static void deleteById(Datastore ds, String id) {
-    ds.find(AccountModel.class)
-        .filter(Filters.eq("_id", id))
-        .delete();
   }
 }

@@ -20,7 +20,7 @@ public class MongoSessionManager implements SessionManager {
   @Override
   public <T> Result<T> executeInSession(Supplier<Result<T>> function) {
     try (Session session = createSession()) {
-      return ScopedValue.callWhere(SESSION, session, () -> {
+      return ScopedValue.where(SESSION, session).call(() -> {
         try {
           Result<T> functionResult = function.get();
           if (functionResult.isSuccess()) {
