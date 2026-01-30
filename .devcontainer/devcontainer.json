@@ -39,7 +39,7 @@
         "mhutchie.git-graph"
       ],
       "settings": {
-        "java.jdt.ls.java.home": "/usr/lib/jvm/temurin-25-jdk"
+        "java.jdt.ls.java.home": "/home/vscode/.sdkman/candidates/java/current"
       }
     }
   },

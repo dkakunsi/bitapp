@@ -42,12 +42,15 @@ RUN groupadd --gid $USER_GID $USERNAME 2>/dev/null || groupmod -n $USERNAME $(ge
     echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME && \
     chmod 0440 /etc/sudoers.d/$USERNAME
 
+# Switch to vscode user for SDKMAN installation
+USER vscode
+
 ## SDKMAN SETUP
 # Install SDKMAN
 RUN curl -s "https://get.sdkman.io" | bash && \
-    bash -c "source /root/.sdkman/bin/sdkman-init.sh && sdk version"
+    bash -c "source /home/vscode/.sdkman/bin/sdkman-init.sh && sdk version"
 
-ENV SDKMAN_DIR="/root/.sdkman"
+ENV SDKMAN_DIR="/home/vscode/.sdkman"
 ENV PATH="${SDKMAN_DIR}/bin:${PATH}"
 
 ## JAVA AND MAVEN SETUP
@@ -75,6 +78,9 @@ RUN bash -c "source ${SDKMAN_DIR}/bin/sdkman-init.sh && \
 
 ENV GRADLE_HOME="${SDKMAN_DIR}/candidates/gradle/current"
 ENV PATH="${GRADLE_HOME}/bin:${PATH}"
+
+# Switch back to root user for cleanup and final steps
+USER root
 
 ## NODE.JS SETUP
 # Install Node.js 22
@@ -147,6 +153,8 @@ USER vscode
 RUN curl -fsSL https://raw.githubusercontent.com/mkasberg/ghostty-ubuntu/HEAD/install.sh && \
     curl -fsSL https://opencode.ai/install | bash && \
     curl -fsSL https://gh.io/copilot-install | bash
+
+# Switch back to root user for cleanup and final steps
 USER root
 
 # Clean everything
