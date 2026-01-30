@@ -4,9 +4,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-  <groupId>io.dkakunsi</groupId>
-  <artifactId>bitapp</artifactId>
-  <version>1.0-SNAPSHOT</version>
+    <groupId>io.dkakunsi</groupId>
+    <artifactId>bitapp</artifactId>
+    <version>1.0-SNAPSHOT</version>
   </parent>
 
   <groupId>io.dkakunsi.bitapp</groupId>
@@ -15,56 +15,56 @@
   <packaging>jar</packaging>
   <name>Dkakunsi :: BitApp :: MongoDB Database Library</name>
   <properties>
-  <mongodb.driver.version>5.6.2</mongodb.driver.version>
-  <morphia.version>2.5.2</morphia.version>
+    <mongodb.driver.version>5.6.2</mongodb.driver.version>
+    <morphia.version>2.5.2</morphia.version>
 
-  <minimum.class.line.coverage>0.30</minimum.class.line.coverage>
-  <minimum.bundle.line.coverage>0.70</minimum.bundle.line.coverage>
+    <minimum.class.line.coverage>0.30</minimum.class.line.coverage>
+    <minimum.bundle.line.coverage>0.70</minimum.bundle.line.coverage>
   </properties>
 
   <dependencies>
-  <dependency>
-    <groupId>io.dkakunsi.bitapp</groupId>
-    <artifactId>domain</artifactId>
-    <version>${project.version}</version>
-  </dependency>
-  <dependency>
-    <groupId>io.dkakunsi.bitapp</groupId>
-    <artifactId>test</artifactId>
-    <version>${project.version}</version>
-  </dependency>
-  <dependency>
-    <groupId>org.mongodb</groupId>
-    <artifactId>mongodb-driver-sync</artifactId>
-    <version>${mongodb.driver.version}</version>
-  </dependency>
-  <dependency>
-    <groupId>dev.morphia.morphia</groupId>
-    <artifactId>morphia-core</artifactId>
-    <version>${morphia.version}</version>
-  </dependency>
+    <dependency>
+      <groupId>io.dkakunsi.bitapp</groupId>
+      <artifactId>domain</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.dkakunsi.bitapp</groupId>
+      <artifactId>test</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mongodb</groupId>
+      <artifactId>mongodb-driver-sync</artifactId>
+      <version>${mongodb.driver.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>dev.morphia.morphia</groupId>
+      <artifactId>morphia-core</artifactId>
+      <version>${morphia.version}</version>
+    </dependency>
   </dependencies>
 
   <build>
-  <plugins>
-    <plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-surefire-plugin</artifactId>
-    </plugin>
-    <plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-failsafe-plugin</artifactId>
-    </plugin>
-    <!-- Override to exclude rules -->
-    <plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-pmd-plugin</artifactId>
-    <configuration>
-    <rulesets>
-    <ruleset>pmd-ruleset.xml</ruleset>
-    </rulesets>
-    </configuration>
-    </plugin>
-  </plugins>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+      </plugin>
+      <!-- Override to exclude rules -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <configuration>
+          <rulesets>
+            <ruleset>pmd-ruleset.xml</ruleset>
+          </rulesets>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 </project>
