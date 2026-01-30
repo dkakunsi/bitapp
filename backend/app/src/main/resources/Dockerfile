@@ -1,13 +1,13 @@
 FROM alpine:3.22.2 AS packager
 
-RUN apk --no-cache add openjdk21-jdk openjdk21-jmods
+RUN apk --no-cache add openjdk25-jdk openjdk25-jmods
 RUN apk --no-cache add freetype binutils
 
 ENV JAVA_MINIMAL="/opt/java-minimal"
 ENV MY_USER="bitapp"
 
 # build minimal JRE
-RUN /usr/lib/jvm/java-21-openjdk/bin/jlink \
+RUN /usr/lib/jvm/java-25-openjdk/bin/jlink \
   --verbose \
   --add-modules java.base,java.desktop,java.management,java.logging,java.security.sasl,jdk.crypto.cryptoki,java.naming,java.instrument,java.sql \
   --compress 2 --strip-debug --no-header-files --no-man-pages \

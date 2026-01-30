@@ -43,19 +43,19 @@ RUN groupadd --gid $USER_GID $USERNAME 2>/dev/null || groupmod -n $USERNAME $(ge
     chmod 0440 /etc/sudoers.d/$USERNAME
 
 ## JAVA AND MAVEN SETUP
-# Install JDK 21 Temurin
+# Install JDK 25 Temurin
 # Set JAVA_HOME dynamically based on architecture
 RUN apt-get install -y apt-transport-https && \
     wget -O - https://packages.adoptium.net/artifactory/api/gpg/key/public | apt-key add - && \
     echo "deb https://packages.adoptium.net/artifactory/deb $(awk -F= '/^VERSION_CODENAME/{print$2}' /etc/os-release) main" | tee /etc/apt/sources.list.d/adoptium.list && \
     apt-get update && \
-    apt-get install -y temurin-21-jdk && \
-    JAVA_DIR=$(ls -d /usr/lib/jvm/temurin-21-jdk-* 2>/dev/null | head -n 1) && \
+    apt-get install -y temurin-25-jdk && \
+    JAVA_DIR=$(ls -d /usr/lib/jvm/temurin-25-jdk-* 2>/dev/null | head -n 1) && \
     echo "export JAVA_HOME=${JAVA_DIR}" >> /etc/environment && \
     echo "export PATH=\${JAVA_HOME}/bin:\${PATH}" >> /etc/environment && \
-    ln -s ${JAVA_DIR} /usr/lib/jvm/temurin-21-jdk
+    ln -s ${JAVA_DIR} /usr/lib/jvm/temurin-25-jdk
 
-ENV JAVA_HOME=/usr/lib/jvm/temurin-21-jdk
+ENV JAVA_HOME=/usr/lib/jvm/temurin-25-jdk
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
 
 # Install Maven
