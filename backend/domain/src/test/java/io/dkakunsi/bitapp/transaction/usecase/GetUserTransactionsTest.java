@@ -6,10 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
+import java.util.Currency;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +30,7 @@ public final class GetUserTransactionsTest {
   private TransactionRepository transactionRepository;
 
   private static final String USER_ID = "user@email.com";
+  private static final Id USER = Id.of(USER_ID);
   private static final String REQUESTER = "test@email.com";
   private static final String ACCOUNT_ID_1 = "account-1";
   private static final String ACCOUNT_ID_2 = "account-2";
@@ -51,7 +54,7 @@ public final class GetUserTransactionsTest {
         null);
 
     var transactions = Arrays.asList(transaction1, transaction2, transaction3);
-    when(transactionRepository.findByUserId(USER_ID)).thenReturn(transactions);
+    when(transactionRepository.findByUserId(USER)).thenReturn(transactions);
 
     // When
     var result = underTest.process(context, input);
@@ -94,7 +97,7 @@ public final class GetUserTransactionsTest {
     var input = USER_ID;
     var context = Context.builder().requester(REQUESTER).build();
 
-    when(transactionRepository.findByUserId(USER_ID)).thenReturn(List.of());
+    when(transactionRepository.findByUserId(USER)).thenReturn(List.of());
 
     // When
     var result = underTest.process(context, input);
@@ -115,7 +118,7 @@ public final class GetUserTransactionsTest {
     var context = Context.builder().requester(REQUESTER).build();
 
     var transaction = createTransaction("trans1", "DEBIT", "Shopping", ACCOUNT_ID_1, null, null);
-    when(transactionRepository.findByUserId(USER_ID)).thenReturn(List.of(transaction));
+    when(transactionRepository.findByUserId(USER)).thenReturn(List.of(transaction));
 
     // When
     var result = underTest.process(context, input);
@@ -140,7 +143,7 @@ public final class GetUserTransactionsTest {
     var context = Context.builder().requester(REQUESTER).build();
 
     var transaction = createTransaction("trans1", "CREDIT", "Loan Disbursement", null, ACCOUNT_ID_2, LOAN_ID);
-    when(transactionRepository.findByUserId(USER_ID)).thenReturn(List.of(transaction));
+    when(transactionRepository.findByUserId(USER)).thenReturn(List.of(transaction));
 
     // When
     var result = underTest.process(context, input);
@@ -161,7 +164,7 @@ public final class GetUserTransactionsTest {
       String loan) {
     return Transaction.builder()
         .id(Id.of(id))
-        .user(Id.of(USER_ID))
+        .user(USER)
         .title(title)
         .description("Test description")
         .date(LocalDate.of(2026, 1, 23))
@@ -169,8 +172,8 @@ public final class GetUserTransactionsTest {
         .source(source != null ? Id.of(source) : null)
         .destination(destination != null ? Id.of(destination) : null)
         .loan(loan != null ? Id.of(loan) : null)
-        .amount(100000L)
-        .currency("IDR")
+        .amount(BigDecimal.valueOf(100000))
+        .currency(Currency.getInstance("IDR"))
         .category(Transaction.Category.FOOD)
         .type(Transaction.Type.valueOf(type))
         .status(EntityStatus.ACTIVE)

@@ -6,6 +6,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
+
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -61,7 +63,7 @@ class GetTransactionEndpointTest {
         .source("account-1")
         .destination(null)
         .loan(null)
-        .amount(150000L)
+        .amount(BigDecimal.valueOf(150000))
         .currency("IDR")
         .category("FOOD")
         .build();
@@ -85,7 +87,7 @@ class GetTransactionEndpointTest {
     assertEquals("2026-01-23", resultBody.getString("date"));
     assertEquals("14:30", resultBody.getString("time"));
     assertEquals("account-1", resultBody.getString("source"));
-    assertEquals(150000, resultBody.getLong("amount"));
+    assertEquals(150000, resultBody.getBigDecimal("amount").intValue());
     assertEquals("IDR", resultBody.getString("currency"));
     assertEquals("FOOD", resultBody.getString("category"));
   }
@@ -105,7 +107,7 @@ class GetTransactionEndpointTest {
         .source(null)
         .destination("account-2")
         .loan(null)
-        .amount(5000000L)
+        .amount(BigDecimal.valueOf(5000000))
         .currency("IDR")
         .category("INCOME")
         .build();
@@ -144,7 +146,7 @@ class GetTransactionEndpointTest {
         .source("account-1")
         .destination("account-2")
         .loan(null)
-        .amount(200000L)
+        .amount(BigDecimal.valueOf(200000))
         .currency("IDR")
         .category(null)
         .build();
@@ -183,7 +185,7 @@ class GetTransactionEndpointTest {
         .source("account-1")
         .destination(null)
         .loan(loanId)
-        .amount(100000L)
+        .amount(BigDecimal.valueOf(100000))
         .currency("IDR")
         .category("LOAN")
         .build();

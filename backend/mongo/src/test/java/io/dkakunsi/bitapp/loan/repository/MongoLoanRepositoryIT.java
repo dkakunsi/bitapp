@@ -15,8 +15,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import dev.morphia.Datastore;
-import io.dkakunsi.bitapp.domain.entity.EntityStatus;
 import io.dkakunsi.bitapp.common.EnvironmentConfiguration;
+import io.dkakunsi.bitapp.domain.entity.EntityStatus;
 import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.loan.entity.Loan;
 import io.dkakunsi.bitapp.mongo.MongoConfiguration;
@@ -656,7 +656,7 @@ public class MongoLoanRepositoryIT {
     repository.create(loan2);
 
     // When
-    var loans = repository.findByUserId(userId.value());
+    var loans = repository.findByUserId(userId);
 
     // Then
     assertNotNull(loans);
@@ -669,7 +669,7 @@ public class MongoLoanRepositoryIT {
   @Test
   public void givenUserWithNoLoansWhenFindByUserIdThenShouldReturnEmptyList() {
     // Given
-    var userId = "nonexistent@email.com";
+    var userId = Id.of("nonexistent@email.com");
 
     // When
     var loans = repository.findByUserId(userId);
@@ -730,8 +730,8 @@ public class MongoLoanRepositoryIT {
     repository.create(loan2);
 
     // When
-    var user1Loans = repository.findByUserId(userId1.value());
-    var user2Loans = repository.findByUserId(userId2.value());
+    var user1Loans = repository.findByUserId(userId1);
+    var user2Loans = repository.findByUserId(userId2);
 
     // Then
     assertEquals(1, user1Loans.size());
@@ -809,7 +809,7 @@ public class MongoLoanRepositoryIT {
     assertEquals("updater@email.com", result.updatedBy());
 
     // Verify the loan was actually updated in the database
-    var fetchedLoan = repository.findById(loanId.value());
+    var fetchedLoan = repository.findById(loanId);
     assertEquals(true, fetchedLoan.isPresent());
     assertEquals("Updated Title", fetchedLoan.get().title());
   }
@@ -850,7 +850,7 @@ public class MongoLoanRepositoryIT {
     assertEquals("New Party Name", result.partyName());
 
     // Verify persistence
-    var fetchedLoan = repository.findById(loanId.value());
+    var fetchedLoan = repository.findById(loanId);
     assertEquals("New Party Name", fetchedLoan.get().partyName());
   }
 
@@ -891,7 +891,7 @@ public class MongoLoanRepositoryIT {
     assertEquals(newAmount, result.amount());
 
     // Verify persistence
-    var fetchedLoan = repository.findById(loanId.value());
+    var fetchedLoan = repository.findById(loanId);
     assertEquals(newAmount, fetchedLoan.get().amount());
   }
 
@@ -931,7 +931,7 @@ public class MongoLoanRepositoryIT {
     assertEquals(Currency.getInstance("EUR"), result.currency());
 
     // Verify persistence
-    var fetchedLoan = repository.findById(loanId.value());
+    var fetchedLoan = repository.findById(loanId);
     assertEquals(Currency.getInstance("EUR"), fetchedLoan.get().currency());
   }
 
@@ -972,7 +972,7 @@ public class MongoLoanRepositoryIT {
     assertEquals(newInterestRate, result.interestRate());
 
     // Verify persistence
-    var fetchedLoan = repository.findById(loanId.value());
+    var fetchedLoan = repository.findById(loanId);
     assertEquals(newInterestRate, fetchedLoan.get().interestRate());
   }
 
@@ -1015,7 +1015,7 @@ public class MongoLoanRepositoryIT {
     assertEquals(newTime, result.time());
 
     // Verify persistence
-    var fetchedLoan = repository.findById(loanId.value());
+    var fetchedLoan = repository.findById(loanId);
     assertEquals(newDate, fetchedLoan.get().date());
     assertEquals(newTime, fetchedLoan.get().time());
   }
@@ -1061,7 +1061,7 @@ public class MongoLoanRepositoryIT {
     assertEquals(6.25, result.interestRate());
 
     // Verify all changes persisted
-    var fetchedLoan = repository.findById(loanId.value());
+    var fetchedLoan = repository.findById(loanId);
     assertEquals(true, fetchedLoan.isPresent());
     assertEquals("Multi Update Title", fetchedLoan.get().title());
     assertEquals("Multi Update Party", fetchedLoan.get().partyName());
@@ -1128,7 +1128,7 @@ public class MongoLoanRepositoryIT {
     assertEquals("new-updater@email.com", result.updatedBy());
 
     // Verify persistence
-    var fetchedLoan = repository.findById(loanId.value());
+    var fetchedLoan = repository.findById(loanId);
     assertEquals(originalCreatedAt, fetchedLoan.get().createdAt());
     assertEquals(originalCreatedBy, fetchedLoan.get().createdBy());
   }
@@ -1179,7 +1179,7 @@ public class MongoLoanRepositoryIT {
         result.updatedAt().isEqual(originalUpdatedAt));
 
     // Verify timestamp was updated in database
-    var fetchedLoan = repository.findById(loanId.value());
+    var fetchedLoan = repository.findById(loanId);
     assertNotNull(fetchedLoan.get().updatedAt());
   }
 
@@ -1191,13 +1191,13 @@ public class MongoLoanRepositoryIT {
     var loan = createBasicLoan(loanId, userId);
 
     repository.create(loan);
-    assertEquals(true, repository.findById(loanId.value()).isPresent());
+    assertEquals(true, repository.findById(loanId).isPresent());
 
     // When
-    repository.deleteById(loanId.value());
+    repository.deleteById(loanId);
 
     // Then
-    assertEquals(false, repository.findById(loanId.value()).isPresent());
+    assertEquals(false, repository.findById(loanId).isPresent());
   }
 
   private Loan createBasicLoan(Id loanId, Id userId) {

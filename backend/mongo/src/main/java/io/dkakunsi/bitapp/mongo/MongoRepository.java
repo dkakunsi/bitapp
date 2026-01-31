@@ -1,11 +1,11 @@
 package io.dkakunsi.bitapp.mongo;
 
-import java.util.NoSuchElementException;
-
 import dev.morphia.Datastore;
 import io.dkakunsi.bitapp.database.SessionManager;
 
 public abstract class MongoRepository {
+
+  protected static final String MONGO_ID = "_id";
 
   protected final Datastore datastore;
 
@@ -14,19 +14,9 @@ public abstract class MongoRepository {
   }
 
   protected Datastore pickDatastore() {
-    var session = getCurrentSession();
-    if (session != null) {
-      return session.getSession();
-    } else {
-      return datastore;
-    }
-  }
-
-  private MongoSession getCurrentSession() {
-    try {
-      return (MongoSession) SessionManager.SESSION.get();
-    } catch (NoSuchElementException e) {
-      return null;
-    }
+    return SessionManager.getCurrentSession()
+        .filter(s -> s instanceof MongoSession)
+        .map(s -> (Datastore) ((MongoSession) s).getSession())
+        .orElse(datastore);
   }
 }

@@ -19,6 +19,13 @@ public class MongoSessionManager implements SessionManager {
 
   @Override
   public <T> Result<T> executeInSession(Supplier<Result<T>> function) {
+    return SessionManager.getCurrentSession()
+        .filter(s -> s instanceof MongoSession)
+        .map(s -> function.get())
+        .orElseGet(() -> executeNewSession(function));
+  }
+
+  private <T> Result<T> executeNewSession(Supplier<Result<T>> function) {
     try (Session session = createSession()) {
       return ScopedValue.where(SESSION, session).call(() -> {
         try {

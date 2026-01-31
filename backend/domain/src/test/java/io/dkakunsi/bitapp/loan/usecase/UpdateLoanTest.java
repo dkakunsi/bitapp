@@ -37,6 +37,7 @@ public final class UpdateLoanTest {
 
   private static final String REQUESTER = "testUser@email.com";
   private static final String LOAN_ID = "loan-123";
+  private static final Id LOAN = Id.of(LOAN_ID);
 
   @BeforeEach
   void setUp() {
@@ -56,7 +57,7 @@ public final class UpdateLoanTest {
         .build();
     var context = Context.builder().requester(REQUESTER).build();
 
-    when(loanRepository.findById(LOAN_ID)).thenReturn(Optional.of(existingLoan));
+    when(loanRepository.findById(LOAN)).thenReturn(Optional.of(existingLoan));
     when(loanRepository.update(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
@@ -96,7 +97,7 @@ public final class UpdateLoanTest {
         .build();
     var context = Context.builder().requester(REQUESTER).build();
 
-    when(loanRepository.findById(LOAN_ID)).thenReturn(Optional.of(existingLoan));
+    when(loanRepository.findById(LOAN)).thenReturn(Optional.of(existingLoan));
     when(loanRepository.update(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
@@ -129,7 +130,7 @@ public final class UpdateLoanTest {
         .build();
     var context = Context.builder().requester(REQUESTER).build();
 
-    when(loanRepository.findById(LOAN_ID)).thenReturn(Optional.of(existingLoan));
+    when(loanRepository.findById(LOAN)).thenReturn(Optional.of(existingLoan));
     when(loanRepository.update(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
@@ -162,7 +163,7 @@ public final class UpdateLoanTest {
         .build();
     var context = Context.builder().requester(REQUESTER).build();
 
-    when(loanRepository.findById(LOAN_ID)).thenReturn(Optional.of(existingLoan));
+    when(loanRepository.findById(LOAN)).thenReturn(Optional.of(existingLoan));
     when(loanRepository.update(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
@@ -196,7 +197,7 @@ public final class UpdateLoanTest {
         .build();
     var context = Context.builder().requester(REQUESTER).build();
 
-    when(loanRepository.findById(LOAN_ID)).thenReturn(Optional.of(existingLoan));
+    when(loanRepository.findById(LOAN)).thenReturn(Optional.of(existingLoan));
     when(loanRepository.update(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
@@ -235,7 +236,7 @@ public final class UpdateLoanTest {
         .build();
     var context = Context.builder().requester(REQUESTER).build();
 
-    when(loanRepository.findById(LOAN_ID)).thenReturn(Optional.of(existingLoan));
+    when(loanRepository.findById(LOAN)).thenReturn(Optional.of(existingLoan));
     when(loanRepository.update(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
@@ -259,15 +260,17 @@ public final class UpdateLoanTest {
   @Test
   void givenNonExistentLoanIdWhenProcessedThenShouldReturnNotFound() {
     // Given
+    var nonExistentLoanId = "non-existent-id";
+    var nonExistingLoan = Id.of(nonExistentLoanId);
     var updateRequest = UpdateLoanInput.builder()
-        .id("non-existent-id")
+        .id(nonExistentLoanId)
         .partyName("John Doe")
         .title("Personal Loan")
         .description("Test loan")
         .build();
     var context = Context.builder().requester(REQUESTER).build();
 
-    when(loanRepository.findById("non-existent-id")).thenReturn(Optional.empty());
+    when(loanRepository.findById(nonExistingLoan)).thenReturn(Optional.empty());
 
     // When
     var result = underTest.process(context, updateRequest);
@@ -295,7 +298,7 @@ public final class UpdateLoanTest {
         .build();
     var context = Context.builder().requester("differentUser@email.com").build();
 
-    when(loanRepository.findById(LOAN_ID)).thenReturn(Optional.of(existingLoan));
+    when(loanRepository.findById(LOAN)).thenReturn(Optional.of(existingLoan));
 
     // When
     var result = underTest.process(context, updateRequest);
@@ -328,7 +331,7 @@ public final class UpdateLoanTest {
         .build();
     var context = Context.builder().requester(REQUESTER).build();
 
-    when(loanRepository.findById(LOAN_ID)).thenReturn(Optional.of(existingLoan));
+    when(loanRepository.findById(LOAN)).thenReturn(Optional.of(existingLoan));
     when(loanRepository.update(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
@@ -363,7 +366,7 @@ public final class UpdateLoanTest {
         .build();
     var context = Context.builder().requester(REQUESTER).build();
 
-    when(loanRepository.findById(LOAN_ID)).thenReturn(Optional.of(existingLoan));
+    when(loanRepository.findById(LOAN)).thenReturn(Optional.of(existingLoan));
     when(loanRepository.update(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When

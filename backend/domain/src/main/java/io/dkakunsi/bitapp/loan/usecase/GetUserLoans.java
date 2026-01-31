@@ -3,6 +3,7 @@ package io.dkakunsi.bitapp.loan.usecase;
 import java.util.List;
 
 import io.dkakunsi.bitapp.common.Context;
+import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.domain.usecase.UseCase;
 import io.dkakunsi.bitapp.loan.dto.LoanResult;
@@ -19,7 +20,7 @@ public final class GetUserLoans implements UseCase<String, List<LoanResult>> {
 
   @Override
   public Result<List<LoanResult>> execute(Context context, String userId) {
-    var loans = loanRepository.findByUserId(userId);
+    var loans = loanRepository.findByUserId(Id.of(userId));
     var results = loans.stream()
         .map(Loan::toResult)
         .toList();

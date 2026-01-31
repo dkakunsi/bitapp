@@ -24,7 +24,7 @@ public class MongoUserRepository extends MongoRepository implements UserReposito
   @Override
   public Optional<User> findByEmail(String email) {
     var entity = datastore.find(UserModel.class)
-        .filter(Filters.eq("_id", email))
+        .filter(Filters.eq(MONGO_ID, email))
         .first();
     return Optional.ofNullable(entity).map(UserModel::toUser);
   }

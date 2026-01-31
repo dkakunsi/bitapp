@@ -6,6 +6,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
+
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -56,7 +58,7 @@ class RemoveTransactionEndpointTest {
         .date("2026-01-24")
         .time("10:00")
         .source("account-1")
-        .amount(150000L)
+        .amount(BigDecimal.valueOf(150000))
         .currency("IDR")
         .category("FOOD")
         .type("DEBIT")

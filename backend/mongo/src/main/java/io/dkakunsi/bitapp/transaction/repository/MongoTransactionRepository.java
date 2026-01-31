@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import dev.morphia.Datastore;
 import dev.morphia.query.filters.Filters;
+import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.mongo.MongoRepository;
 import io.dkakunsi.bitapp.transaction.entity.Transaction;
 import io.dkakunsi.bitapp.transaction.model.TransactionModel;
@@ -30,44 +31,44 @@ public class MongoTransactionRepository extends MongoRepository implements Trans
   }
 
   @Override
-  public void deleteById(String id) {
+  public void deleteById(Id id) {
     pickDatastore().find(TransactionModel.class)
-        .filter(Filters.eq("_id", id))
+        .filter(Filters.eq(MONGO_ID, id.value()))
         .delete();
   }
 
   @Override
-  public Optional<Transaction> findById(String id) {
+  public Optional<Transaction> findById(Id id) {
     var entity = datastore.find(TransactionModel.class)
-        .filter(Filters.eq("_id", id))
+        .filter(Filters.eq(MONGO_ID, id.value()))
         .first();
     return Optional.ofNullable(entity).map(TransactionModel::toTransaction);
   }
 
   @Override
-  public List<Transaction> findByUserId(String userId) {
+  public List<Transaction> findByUserId(Id userId) {
     return datastore.find(TransactionModel.class)
-        .filter(Filters.eq("userId", userId))
+        .filter(Filters.eq("userId", userId.value()))
         .stream()
         .map(TransactionModel::toTransaction)
         .toList();
   }
 
   @Override
-  public List<Transaction> findByAccountId(String accountId) {
+  public List<Transaction> findByAccountId(Id accountId) {
     return datastore.find(TransactionModel.class)
         .filter(Filters.or(
-            Filters.eq("source", accountId),
-            Filters.eq("destination", accountId)))
+            Filters.eq("source", accountId.value()),
+            Filters.eq("destination", accountId.value())))
         .stream()
         .map(TransactionModel::toTransaction)
         .toList();
   }
 
   @Override
-  public List<Transaction> findByLoanId(String loanId) {
+  public List<Transaction> findByLoanId(Id loanId) {
     return datastore.find(TransactionModel.class)
-        .filter(Filters.eq("loan", loanId))
+        .filter(Filters.eq("loan", loanId.value()))
         .stream()
         .map(TransactionModel::toTransaction)
         .toList();

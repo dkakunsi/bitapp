@@ -35,8 +35,11 @@ public final class RemoveTransactionUseCaseTest {
   private static final String REQUESTER = "user@email.com";
   private static final String OTHER_USER = "other@email.com";
   private static final String ACCOUNT_ID_1 = "account-1";
+  private static final Id ACCOUNT_1 = Id.of(ACCOUNT_ID_1);
   private static final String ACCOUNT_ID_2 = "account-2";
+  private static final Id ACCOUNT_2 = Id.of(ACCOUNT_ID_2);
   private static final String LOAN_ID = "loan-1";
+  private static final Id LOAN = Id.of(LOAN_ID);
 
   private RemoveTransaction underTest;
 
@@ -56,7 +59,8 @@ public final class RemoveTransactionUseCaseTest {
   void returnNotFoundWhenTransactionDoesNotExist() {
     // Given
     var transactionId = "trans-404";
-    when(transactionRepository.findById(transactionId)).thenReturn(Optional.empty());
+    var transactionIdObj = Id.of(transactionId);
+    when(transactionRepository.findById(transactionIdObj)).thenReturn(Optional.empty());
 
     // When
     var context = Context.builder().requester(REQUESTER).build();
@@ -68,18 +72,19 @@ public final class RemoveTransactionUseCaseTest {
     var error = result.error().get();
     assertEquals(Code.NOT_FOUND, error.code());
     assertEquals("Transaction not found", error.message());
-    verify(transactionRepository).findById(transactionId);
+    verify(transactionRepository).findById(transactionIdObj);
   }
 
   @Test
   void returnNotFoundWhenTransactionBelongsToAnotherUser() {
     // Given
     var transactionId = "trans-other-user";
+    var transactionIdObj = Id.of(transactionId);
     var transaction = baseTransaction(transactionId, OTHER_USER, Transaction.Type.DEBIT)
-        .source(Id.of(ACCOUNT_ID_1))
-        .amount(50000L)
+        .source(ACCOUNT_1)
+        .amount(BigDecimal.valueOf(50000))
         .build();
-    when(transactionRepository.findById(transactionId)).thenReturn(Optional.of(transaction));
+    when(transactionRepository.findById(transactionIdObj)).thenReturn(Optional.of(transaction));
 
     // When
     var context = Context.builder().requester(REQUESTER).build();
@@ -89,21 +94,22 @@ public final class RemoveTransactionUseCaseTest {
     assertFalse(result.isSuccess());
     assertTrue(result.error().isPresent());
     assertEquals(Code.NOT_FOUND, result.error().get().code());
-    verify(transactionRepository, never()).deleteById(transactionId);
+    verify(transactionRepository, never()).deleteById(transactionIdObj);
   }
 
   @Test
   void revertDebitTransactionAndDelete() {
     // Given
     var transactionId = "trans-debit";
+    var transactionIdObj = Id.of(transactionId);
     var transaction = baseTransaction(transactionId, REQUESTER, Transaction.Type.DEBIT)
-        .source(Id.of(ACCOUNT_ID_1))
-        .amount(100000L)
+        .source(ACCOUNT_1)
+        .amount(BigDecimal.valueOf(100000))
         .build();
 
     var sourceAccount = createAccount(ACCOUNT_ID_1, new BigDecimal("900000"));
-    when(transactionRepository.findById(transactionId)).thenReturn(Optional.of(transaction));
-    when(accountRepository.findById(ACCOUNT_ID_1)).thenReturn(Optional.of(sourceAccount));
+    when(transactionRepository.findById(transactionIdObj)).thenReturn(Optional.of(transaction));
+    when(accountRepository.findById(ACCOUNT_1)).thenReturn(Optional.of(sourceAccount));
 
     // When
     var context = Context.builder().requester(REQUESTER).build();
@@ -117,21 +123,22 @@ public final class RemoveTransactionUseCaseTest {
     var accountCaptor = ArgumentCaptor.forClass(Account.class);
     verify(accountRepository).update(accountCaptor.capture());
     assertEquals(new BigDecimal("1000000"), accountCaptor.getValue().balance());
-    verify(transactionRepository).deleteById(transactionId);
+    verify(transactionRepository).deleteById(transactionIdObj);
   }
 
   @Test
   void revertCreditTransactionAndDelete() {
     // Given
     var transactionId = "trans-credit";
+    var transactionIdObj = Id.of(transactionId);
     var transaction = baseTransaction(transactionId, REQUESTER, Transaction.Type.CREDIT)
-        .destination(Id.of(ACCOUNT_ID_2))
-        .amount(100000L)
+        .destination(ACCOUNT_2)
+        .amount(BigDecimal.valueOf(100000))
         .build();
 
     var destinationAccount = createAccount(ACCOUNT_ID_2, new BigDecimal("600000"));
-    when(transactionRepository.findById(transactionId)).thenReturn(Optional.of(transaction));
-    when(accountRepository.findById(ACCOUNT_ID_2)).thenReturn(Optional.of(destinationAccount));
+    when(transactionRepository.findById(transactionIdObj)).thenReturn(Optional.of(transaction));
+    when(accountRepository.findById(ACCOUNT_2)).thenReturn(Optional.of(destinationAccount));
 
     // When
     var context = Context.builder().requester(REQUESTER).build();
@@ -145,24 +152,25 @@ public final class RemoveTransactionUseCaseTest {
     var accountCaptor = ArgumentCaptor.forClass(Account.class);
     verify(accountRepository).update(accountCaptor.capture());
     assertEquals(new BigDecimal("500000"), accountCaptor.getValue().balance());
-    verify(transactionRepository).deleteById(transactionId);
+    verify(transactionRepository).deleteById(transactionIdObj);
   }
 
   @Test
   void revertTransferTransactionAndDelete() {
     // Given
     var transactionId = "trans-transfer";
+    var transactionIdObj = Id.of(transactionId);
     var transaction = baseTransaction(transactionId, REQUESTER, Transaction.Type.TRANSFER)
-        .source(Id.of(ACCOUNT_ID_1))
-        .destination(Id.of(ACCOUNT_ID_2))
-        .amount(200000L)
+        .source(ACCOUNT_1)
+        .destination(ACCOUNT_2)
+        .amount(BigDecimal.valueOf(200000))
         .build();
 
     var sourceAccount = createAccount(ACCOUNT_ID_1, new BigDecimal("800000"));
     var destinationAccount = createAccount(ACCOUNT_ID_2, new BigDecimal("700000"));
-    when(transactionRepository.findById(transactionId)).thenReturn(Optional.of(transaction));
-    when(accountRepository.findById(ACCOUNT_ID_1)).thenReturn(Optional.of(sourceAccount));
-    when(accountRepository.findById(ACCOUNT_ID_2)).thenReturn(Optional.of(destinationAccount));
+    when(transactionRepository.findById(transactionIdObj)).thenReturn(Optional.of(transaction));
+    when(accountRepository.findById(ACCOUNT_1)).thenReturn(Optional.of(sourceAccount));
+    when(accountRepository.findById(ACCOUNT_2)).thenReturn(Optional.of(destinationAccount));
 
     // When
     var context = Context.builder().requester(REQUESTER).build();
@@ -178,24 +186,25 @@ public final class RemoveTransactionUseCaseTest {
     var updatedAccounts = accountCaptor.getAllValues();
     assertEquals(new BigDecimal("1000000"), updatedAccounts.get(0).balance());
     assertEquals(new BigDecimal("500000"), updatedAccounts.get(1).balance());
-    verify(transactionRepository).deleteById(transactionId);
+    verify(transactionRepository).deleteById(transactionIdObj);
   }
 
   @Test
   void revertLoanAndDelete() {
     // Given
     var transactionId = "trans-loan";
+    var transactionIdObj = Id.of(transactionId);
     var transaction = baseTransaction(transactionId, REQUESTER, Transaction.Type.DEBIT)
-        .source(Id.of(ACCOUNT_ID_1))
-        .loan(Id.of(LOAN_ID))
-        .amount(100000L)
+        .source(ACCOUNT_1)
+        .loan(LOAN)
+        .amount(BigDecimal.valueOf(100000))
         .build();
 
     var sourceAccount = createAccount(ACCOUNT_ID_1, new BigDecimal("900000"));
     var loan = createLoan(LOAN_ID, new BigDecimal("1900000"));
-    when(transactionRepository.findById(transactionId)).thenReturn(Optional.of(transaction));
-    when(accountRepository.findById(ACCOUNT_ID_1)).thenReturn(Optional.of(sourceAccount));
-    when(loanRepository.findById(LOAN_ID)).thenReturn(Optional.of(loan));
+    when(transactionRepository.findById(transactionIdObj)).thenReturn(Optional.of(transaction));
+    when(accountRepository.findById(ACCOUNT_1)).thenReturn(Optional.of(sourceAccount));
+    when(loanRepository.findById(LOAN)).thenReturn(Optional.of(loan));
 
     // When
     var context = Context.builder().requester(REQUESTER).build();
@@ -209,7 +218,7 @@ public final class RemoveTransactionUseCaseTest {
     var loanCaptor = ArgumentCaptor.forClass(Loan.class);
     verify(loanRepository).update(loanCaptor.capture());
     assertEquals(new BigDecimal("2000000"), loanCaptor.getValue().remainingAmount());
-    verify(transactionRepository).deleteById(transactionId);
+    verify(transactionRepository).deleteById(transactionIdObj);
   }
 
   private static Transaction.TransactionBuilder baseTransaction(String id, String user, Transaction.Type type) {
@@ -220,7 +229,7 @@ public final class RemoveTransactionUseCaseTest {
         .description("Test Description")
         .date(LocalDate.of(2026, 1, 24))
         .time(LocalTime.of(10, 0))
-        .currency("IDR")
+        .currency(Currency.getInstance("IDR"))
         .category(Transaction.Category.OTHER)
         .type(type)
         .status(EntityStatus.ACTIVE)

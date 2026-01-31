@@ -2,6 +2,7 @@ package io.dkakunsi.bitapp.account.usecase;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Set;
 
 import io.dkakunsi.bitapp.account.dto.AccountResult;
 import io.dkakunsi.bitapp.account.entity.Account;
@@ -9,6 +10,7 @@ import io.dkakunsi.bitapp.account.repository.AccountRepository;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.database.SessionManager;
+import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.domain.usecase.UseCase;
 import io.dkakunsi.bitapp.loan.repository.LoanRepository;
@@ -37,7 +39,7 @@ public final class RemoveAccount implements UseCase<String, AccountResult> {
 
   @Override
   public Result<AccountResult> execute(Context context, String accountId) {
-    return accountRepository.findById(accountId)
+    return accountRepository.findById(Id.of(accountId))
         .map(account -> onAccount(context, account))
         .orElse(Result.failure(Code.NOT_FOUND, "Account not found"));
   }
@@ -48,11 +50,11 @@ public final class RemoveAccount implements UseCase<String, AccountResult> {
     }
 
     return sessionManager.executeInSession(() -> {
-      var transactions = transactionRepository.findByAccountId(account.id().value());
-      var loanIds = new HashSet<String>();
+      var transactions = transactionRepository.findByAccountId(account.id());
+      var loanIds = new HashSet<Id>();
       for (var transaction : transactions) {
         if (transaction.loan() != null) {
-          loanIds.add(transaction.loan().value());
+          loanIds.add(transaction.loan());
         }
       }
 
@@ -64,15 +66,15 @@ public final class RemoveAccount implements UseCase<String, AccountResult> {
       }
 
       for (var transaction : transactions) {
-        handleTransaction(account.id().value(), transaction, context.requester(), loanIds);
+        handleTransaction(account.id(), transaction, context.requester(), loanIds);
       }
 
-      accountRepository.deleteById(account.id().value());
+      accountRepository.deleteById(account.id());
       return Result.success(account.toResult());
     });
   }
 
-  private void clearLoanReferences(String loanId, String requester) {
+  private void clearLoanReferences(Id loanId, String requester) {
     var loanTransactions = transactionRepository.findByLoanId(loanId);
     for (var transaction : loanTransactions) {
       var updatedTransaction = TransactionUpdateHelper.removeLoanReference(transaction, requester);
@@ -81,24 +83,24 @@ public final class RemoveAccount implements UseCase<String, AccountResult> {
   }
 
   private void handleTransaction(
-      String accountId,
+      Id accountId,
       Transaction transaction,
       String requester,
-      HashSet<String> loanIds) {
+      Set<Id> loanIds) {
     switch (transaction.type()) {
       case DEBIT:
       case CREDIT:
-        transactionRepository.deleteById(transaction.id().value());
+        transactionRepository.deleteById(transaction.id());
         break;
       case TRANSFER:
-        var isSource = transaction.source() != null && transaction.source().value().equals(accountId);
-        var isDestination = transaction.destination() != null && transaction.destination().value().equals(accountId);
+        var isSource = transaction.source() != null && transaction.source().equals(accountId);
+        var isDestination = transaction.destination() != null && transaction.destination().equals(accountId);
         if (isSource && isDestination) {
-          transactionRepository.deleteById(transaction.id().value());
+          transactionRepository.deleteById(transaction.id());
           break;
         }
 
-        var removeLoan = transaction.loan() != null && loanIds.contains(transaction.loan().value());
+        var removeLoan = transaction.loan() != null && loanIds.contains(transaction.loan());
         var updatedTransfer = convertTransfer(accountId, transaction, requester, removeLoan);
         transactionRepository.update(updatedTransfer);
         break;
@@ -106,12 +108,12 @@ public final class RemoveAccount implements UseCase<String, AccountResult> {
   }
 
   private Transaction convertTransfer(
-      String accountId,
+      Id accountId,
       Transaction transaction,
       String requester,
       boolean removeLoan) {
-    var isSource = transaction.source() != null && transaction.source().value().equals(accountId);
-    var isDestination = transaction.destination() != null && transaction.destination().value().equals(accountId);
+    var isSource = transaction.source() != null && transaction.source().equals(accountId);
+    var isDestination = transaction.destination() != null && transaction.destination().equals(accountId);
 
     var newType = transaction.type();
 

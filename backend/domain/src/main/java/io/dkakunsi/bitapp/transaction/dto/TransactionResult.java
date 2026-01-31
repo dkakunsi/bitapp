@@ -1,5 +1,7 @@
 package io.dkakunsi.bitapp.transaction.dto;
 
+import java.math.BigDecimal;
+
 import lombok.Builder;
 
 @Builder
@@ -13,7 +15,7 @@ public final record TransactionResult(
     String source,
     String destination,
     String loan,
-    Long amount,
+    BigDecimal amount,
     String currency,
     String category,
     String type) {

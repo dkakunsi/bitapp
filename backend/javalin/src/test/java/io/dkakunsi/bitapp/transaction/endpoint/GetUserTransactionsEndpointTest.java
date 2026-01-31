@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -70,7 +71,7 @@ class GetUserTransactionsEndpointTest {
         .date("2026-01-23")
         .time("10:30")
         .source("account-1")
-        .amount(50000L)
+        .amount(BigDecimal.valueOf(150000))
         .currency("IDR")
         .category("FOOD")
         .build();
@@ -84,7 +85,7 @@ class GetUserTransactionsEndpointTest {
         .date("2026-01-23")
         .time("08:00")
         .destination("account-2")
-        .amount(5000000L)
+        .amount(BigDecimal.valueOf(5000000))
         .currency("IDR")
         .category("INCOME")
         .build();
@@ -150,7 +151,7 @@ class GetUserTransactionsEndpointTest {
         .time("14:30")
         .source("account-1")
         .destination("account-2")
-        .amount(100000L)
+        .amount(BigDecimal.valueOf(100000))
         .currency("IDR")
         .category("OTHER")
         .build();

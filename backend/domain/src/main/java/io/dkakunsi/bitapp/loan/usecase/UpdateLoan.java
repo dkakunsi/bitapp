@@ -2,6 +2,7 @@ package io.dkakunsi.bitapp.loan.usecase;
 
 import io.dkakunsi.bitapp.common.AppError;
 import io.dkakunsi.bitapp.common.Context;
+import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.domain.usecase.UseCase;
 import io.dkakunsi.bitapp.loan.dto.LoanResult;
@@ -19,7 +20,7 @@ public final class UpdateLoan implements UseCase<UpdateLoanInput, LoanResult> {
 
   @Override
   public Result<LoanResult> execute(Context context, UpdateLoanInput input) {
-    return loanRepository.findById(input.id())
+    return loanRepository.findById(Id.of(input.id()))
         .map(loan -> onLoan(loan, input, context.requester()))
         .orElse(Result.failure(AppError.Code.NOT_FOUND, "Loan not found"));
   }

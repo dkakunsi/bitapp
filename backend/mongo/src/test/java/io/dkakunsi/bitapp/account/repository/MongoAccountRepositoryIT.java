@@ -14,8 +14,8 @@ import org.junit.jupiter.api.Test;
 import dev.morphia.Datastore;
 import io.dkakunsi.bitapp.account.entity.Account;
 import io.dkakunsi.bitapp.account.entity.Account.Type;
-import io.dkakunsi.bitapp.domain.entity.EntityStatus;
 import io.dkakunsi.bitapp.common.EnvironmentConfiguration;
+import io.dkakunsi.bitapp.domain.entity.EntityStatus;
 import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.mongo.MongoConfiguration;
 import io.dkakunsi.bitapp.test.MongoServer;
@@ -283,13 +283,13 @@ public class MongoAccountRepositoryIT {
         .build();
 
     repository.create(account);
-    assertEquals(true, repository.findById(accountId.value()).isPresent());
+    assertEquals(true, repository.findById(accountId).isPresent());
 
     // When
-    repository.deleteById(accountId.value());
+    repository.deleteById(accountId);
 
     // Then
-    assertEquals(false, repository.findById(accountId.value()).isPresent());
+    assertEquals(false, repository.findById(accountId).isPresent());
   }
 
   @Test
@@ -461,7 +461,7 @@ public class MongoAccountRepositoryIT {
     repository.create(account);
 
     // When
-    var result = repository.findById(account.id().value());
+    var result = repository.findById(account.id());
 
     // Then
     assertNotNull(result);
@@ -474,7 +474,7 @@ public class MongoAccountRepositoryIT {
   @Test
   public void givenNonExistingAccountIdWhenFindByIdThenShouldReturnEmpty() {
     // Given
-    var nonExistingId = "non-existing-account-id";
+    var nonExistingId = Id.of("non-existing-account-id");
 
     // When
     var result = repository.findById(nonExistingId);
@@ -538,7 +538,7 @@ public class MongoAccountRepositoryIT {
     repository.create(account3);
 
     // When
-    var result = repository.findByUserId(userId.value());
+    var result = repository.findByUserId(userId);
 
     // Then
     assertNotNull(result);
@@ -551,7 +551,7 @@ public class MongoAccountRepositoryIT {
   @Test
   public void givenUserIdWithNoAccountsWhenFindByUserIdThenShouldReturnEmptyList() {
     // Given
-    var userId = "user-with-no-accounts@email.com";
+    var userId = Id.of("user-with-no-accounts@email.com");
 
     // When
     var result = repository.findByUserId(userId);
@@ -600,13 +600,13 @@ public class MongoAccountRepositoryIT {
     repository.create(account2);
 
     // When
-    var result = repository.findByUserId(userId1.value());
+    var result = repository.findByUserId(userId1);
 
     // Then
     assertNotNull(result);
     assertEquals(1, result.size());
     assertEquals("User1 Account", result.get(0).name());
-    assertEquals(userId1.value(), result.get(0).user().value());
+    assertEquals(userId1, result.get(0).user());
   }
 
   @Test

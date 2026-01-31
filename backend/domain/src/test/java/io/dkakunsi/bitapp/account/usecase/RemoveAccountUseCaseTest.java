@@ -38,8 +38,10 @@ public final class RemoveAccountUseCaseTest {
   private static final String REQUESTER = "user@email.com";
   private static final String OTHER_USER = "other@email.com";
   private static final String ACCOUNT_ID = "account-1";
+  private static final Id ACCOUNT = Id.of(ACCOUNT_ID);
   private static final String OTHER_ACCOUNT_ID = "account-2";
   private static final String LOAN_ID = "loan-1";
+  private static final Id LOAN = Id.of(LOAN_ID);
 
   private RemoveAccount underTest;
 
@@ -60,7 +62,7 @@ public final class RemoveAccountUseCaseTest {
   @Test
   void returnNotFoundWhenAccountDoesNotExist() {
     // Given
-    when(accountRepository.findById(ACCOUNT_ID)).thenReturn(Optional.empty());
+    when(accountRepository.findById(ACCOUNT)).thenReturn(Optional.empty());
 
     // When
     var context = Context.builder().requester(REQUESTER).build();
@@ -77,7 +79,7 @@ public final class RemoveAccountUseCaseTest {
   void returnForbiddenWhenAccountBelongsToAnotherUser() {
     // Given
     var account = createAccount(ACCOUNT_ID, OTHER_USER);
-    when(accountRepository.findById(ACCOUNT_ID)).thenReturn(Optional.of(account));
+    when(accountRepository.findById(ACCOUNT)).thenReturn(Optional.of(account));
 
     // When
     var context = Context.builder().requester(REQUESTER).build();
@@ -87,7 +89,7 @@ public final class RemoveAccountUseCaseTest {
     assertFalse(result.isSuccess());
     assertTrue(result.error().isPresent());
     assertEquals(Code.FORBIDDEN, result.error().get().code());
-    verify(accountRepository, never()).deleteById(ACCOUNT_ID);
+    verify(accountRepository, never()).deleteById(ACCOUNT);
   }
 
   @Test
@@ -101,11 +103,11 @@ public final class RemoveAccountUseCaseTest {
         null);
     var loanTransaction = createTransaction("loan-1", Transaction.Type.CREDIT, null, ACCOUNT_ID, LOAN_ID);
 
-    when(accountRepository.findById(ACCOUNT_ID)).thenReturn(Optional.of(account));
-    when(transactionRepository.findByAccountId(ACCOUNT_ID))
+    when(accountRepository.findById(ACCOUNT)).thenReturn(Optional.of(account));
+    when(transactionRepository.findByAccountId(ACCOUNT))
         .thenReturn(List.of(debit, credit, transferSource, transferDestination, loanTransaction));
-    when(transactionRepository.findByLoanId(LOAN_ID)).thenReturn(List.of(loanTransaction));
-    when(loanRepository.findById(LOAN_ID)).thenReturn(Optional.of(createLoan(LOAN_ID, REQUESTER)));
+    when(transactionRepository.findByLoanId(LOAN)).thenReturn(List.of(loanTransaction));
+    when(loanRepository.findById(LOAN)).thenReturn(Optional.of(createLoan(LOAN_ID, REQUESTER)));
 
     when(sessionManager.executeInSession(any()))
         .thenAnswer(invocation -> {
@@ -122,9 +124,9 @@ public final class RemoveAccountUseCaseTest {
     assertTrue(result.data().isPresent());
     assertEquals(ACCOUNT_ID, result.data().get().id());
 
-    verify(transactionRepository).deleteById("debit-1");
-    verify(transactionRepository).deleteById("credit-1");
-    verify(transactionRepository).deleteById("loan-1");
+    verify(transactionRepository).deleteById(Id.of("debit-1"));
+    verify(transactionRepository).deleteById(Id.of("credit-1"));
+    verify(transactionRepository).deleteById(Id.of("loan-1"));
 
     var updatedCaptor = ArgumentCaptor.forClass(Transaction.class);
     verify(transactionRepository, org.mockito.Mockito.times(3)).update(updatedCaptor.capture());
@@ -150,8 +152,8 @@ public final class RemoveAccountUseCaseTest {
         .orElseThrow();
     assertEquals(null, loanUpdate.loan());
 
-    verify(loanRepository).deleteById(LOAN_ID);
-    verify(accountRepository).deleteById(ACCOUNT_ID);
+    verify(loanRepository).deleteById(LOAN);
+    verify(accountRepository).deleteById(ACCOUNT);
   }
 
   private static Account createAccount(String id, String user) {
@@ -208,8 +210,8 @@ public final class RemoveAccountUseCaseTest {
         .source(source != null ? Id.of(source) : null)
         .destination(destination != null ? Id.of(destination) : null)
         .loan(loanId != null ? Id.of(loanId) : null)
-        .amount(100000L)
-        .currency("IDR")
+        .amount(BigDecimal.valueOf(100000))
+        .currency(Currency.getInstance("IDR"))
         .category(Transaction.Category.OTHER)
         .type(type)
         .status(EntityStatus.ACTIVE)

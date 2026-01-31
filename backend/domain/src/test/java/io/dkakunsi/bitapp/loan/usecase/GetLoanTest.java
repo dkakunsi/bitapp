@@ -40,6 +40,7 @@ public final class GetLoanTest {
   void returnLoanData_whenLoanExists() {
     // Given
     var loanId = "loan-123";
+    var loanIdObj = Id.of(loanId);
     var existingLoan = Loan.builder()
         .id(Id.of(loanId))
         .user(Id.of("user@email.com"))
@@ -54,7 +55,7 @@ public final class GetLoanTest {
         .currency(Currency.getInstance("IDR"))
         .interestRate(5.5)
         .build();
-    when(loanRepository.findById(loanId)).thenReturn(Optional.of(existingLoan));
+    when(loanRepository.findById(loanIdObj)).thenReturn(Optional.of(existingLoan));
 
     // When
     var context = Context.builder().requester(REQUESTER).build();
@@ -76,14 +77,15 @@ public final class GetLoanTest {
     assertEquals(BigDecimal.valueOf(8000), loan.remainingAmount());
     assertEquals("IDR", loan.currency());
     assertEquals(5.5, loan.interestRate());
-    verify(loanRepository).findById(loanId);
+    verify(loanRepository).findById(loanIdObj);
   }
 
   @Test
   void returnError_whenLoanNotExists() {
     // Given
     var loanId = "nonexistent-loan";
-    when(loanRepository.findById(loanId)).thenReturn(Optional.empty());
+    var loanIdObj = Id.of(loanId);
+    when(loanRepository.findById(loanIdObj)).thenReturn(Optional.empty());
 
     // When
     var context = Context.builder().requester(REQUESTER).build();
@@ -96,14 +98,15 @@ public final class GetLoanTest {
     assertEquals(Code.NOT_FOUND, error.code());
     assertEquals("Loan not found", error.message());
 
-    verify(loanRepository).findById(loanId);
+    verify(loanRepository).findById(loanIdObj);
   }
 
   @Test
   void returnServerError_whenRepositoryThrowsException() {
     // Given
     var loanId = "error-loan";
-    when(loanRepository.findById(loanId)).thenThrow(new RuntimeException("Database error"));
+    var loanIdObj = Id.of(loanId);
+    when(loanRepository.findById(loanIdObj)).thenThrow(new RuntimeException("Database error"));
 
     // When
     var context = Context.builder().requester(REQUESTER).build();
@@ -116,6 +119,6 @@ public final class GetLoanTest {
     assertEquals(Code.SERVER_ERROR, error.code());
     assertEquals("Database error", error.message());
 
-    verify(loanRepository).findById(loanId);
+    verify(loanRepository).findById(loanIdObj);
   }
 }

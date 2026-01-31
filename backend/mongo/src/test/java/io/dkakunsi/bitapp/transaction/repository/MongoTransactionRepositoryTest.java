@@ -8,9 +8,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Currency;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -51,8 +53,8 @@ public final class MongoTransactionRepositoryTest {
         .date(LocalDate.of(2026, 1, 22))
         .time(LocalTime.of(10, 30))
         .source(Id.of(ACCOUNT_ID))
-        .amount(50000L)
-        .currency("IDR")
+        .amount(BigDecimal.valueOf(50000))
+        .currency(Currency.getInstance("IDR"))
         .category(Transaction.Category.FOOD)
         .type(Transaction.Type.DEBIT)
         .status(EntityStatus.ACTIVE)
@@ -85,7 +87,7 @@ public final class MongoTransactionRepositoryTest {
     assertEquals(transaction.time(), savedModel.getTime());
     assertEquals(transaction.source().value(), savedModel.getSource());
     assertEquals(transaction.amount(), savedModel.getAmount());
-    assertEquals(transaction.currency(), savedModel.getCurrency());
+    assertEquals(transaction.currency().getCurrencyCode(), savedModel.getCurrency());
     assertEquals(transaction.category().name(), savedModel.getCategory());
     assertEquals(transaction.type().name(), savedModel.getType());
     assertEquals(transaction.status().name(), savedModel.getStatus());
@@ -102,8 +104,8 @@ public final class MongoTransactionRepositoryTest {
         .date(LocalDate.of(2026, 1, 22))
         .time(LocalTime.of(8, 0))
         .destination(Id.of(ACCOUNT_ID))
-        .amount(5000000L)
-        .currency("IDR")
+        .amount(BigDecimal.valueOf(5000000))
+        .currency(Currency.getInstance("IDR"))
         .category(Transaction.Category.INCOME)
         .type(Transaction.Type.CREDIT)
         .status(EntityStatus.ACTIVE)
@@ -145,8 +147,8 @@ public final class MongoTransactionRepositoryTest {
         .time(LocalTime.of(12, 0))
         .source(Id.of(sourceId))
         .destination(Id.of(destId))
-        .amount(100000L)
-        .currency("IDR")
+        .amount(BigDecimal.valueOf(100000))
+        .currency(Currency.getInstance("IDR"))
         .category(Transaction.Category.OTHER)
         .type(Transaction.Type.TRANSFER)
         .status(EntityStatus.ACTIVE)
@@ -186,8 +188,8 @@ public final class MongoTransactionRepositoryTest {
         .time(LocalTime.of(14, 0))
         .source(Id.of(ACCOUNT_ID))
         .loan(Id.of(loanId))
-        .amount(100000L)
-        .currency("IDR")
+        .amount(BigDecimal.valueOf(100000))
+        .currency(Currency.getInstance("IDR"))
         .category(Transaction.Category.LOAN)
         .type(Transaction.Type.DEBIT)
         .status(EntityStatus.ACTIVE)
@@ -222,8 +224,8 @@ public final class MongoTransactionRepositoryTest {
         .date(LocalDate.now())
         .time(LocalTime.now())
         .source(Id.of(ACCOUNT_ID))
-        .amount(10000L)
-        .currency("IDR")
+        .amount(BigDecimal.valueOf(10000))
+        .currency(Currency.getInstance("IDR"))
         .type(Transaction.Type.DEBIT)
         .status(EntityStatus.ACTIVE)
         .createdAt(LocalDateTime.now())
@@ -262,8 +264,8 @@ public final class MongoTransactionRepositoryTest {
         .date(LocalDate.now())
         .time(LocalTime.now())
         .source(Id.of(ACCOUNT_ID))
-        .amount(50000L)
-        .currency("IDR")
+        .amount(BigDecimal.valueOf(50000))
+        .currency(Currency.getInstance("IDR"))
         .category(Transaction.Category.FOOD)
         .type(Transaction.Type.DEBIT)
         .status(EntityStatus.ACTIVE)
@@ -303,7 +305,7 @@ public final class MongoTransactionRepositoryTest {
         .date(LocalDate.of(2026, 1, 22))
         .time(LocalTime.of(10, 30))
         .source(ACCOUNT_ID)
-        .amount(50000L)
+        .amount(BigDecimal.valueOf(50000))
         .currency("IDR")
         .category("FOOD")
         .type("DEBIT")
@@ -322,7 +324,7 @@ public final class MongoTransactionRepositoryTest {
         .date(LocalDate.of(2026, 1, 22))
         .time(LocalTime.of(8, 0))
         .destination(ACCOUNT_ID)
-        .amount(5000000L)
+        .amount(BigDecimal.valueOf(5000000))
         .currency("IDR")
         .category("INCOME")
         .type("CREDIT")
@@ -339,7 +341,7 @@ public final class MongoTransactionRepositoryTest {
     when(query.stream()).thenReturn(Stream.of(transaction1Model, transaction2Model));
 
     // When
-    var transactions = underTest.findByUserId(userId.value());
+    var transactions = underTest.findByUserId(userId);
 
     // Then
     assertNotNull(transactions);
@@ -361,7 +363,7 @@ public final class MongoTransactionRepositoryTest {
   @SuppressWarnings("unchecked")
   void givenUserIdWithNoTransactionsWhenFindByUserIdThenShouldReturnEmptyList() {
     // Given
-    var userId = "user-no-transactions@email.com";
+    var userId = Id.of("user-no-transactions@email.com");
 
     var query = mock(MorphiaQuery.class);
     when(datastore.find(TransactionModel.class)).thenReturn(query);
@@ -389,7 +391,7 @@ public final class MongoTransactionRepositoryTest {
         .date(LocalDate.now())
         .time(LocalTime.now())
         .source(ACCOUNT_ID)
-        .amount(10000L)
+        .amount(BigDecimal.valueOf(10000))
         .currency("IDR")
         .type("DEBIT")
         .status(EntityStatus.ACTIVE.name())
@@ -405,12 +407,12 @@ public final class MongoTransactionRepositoryTest {
     when(query.stream()).thenReturn(Stream.of(user1Transaction));
 
     // When
-    var user1Transactions = underTest.findByUserId(userId1.value());
+    var user1Transactions = underTest.findByUserId(userId1);
 
     // Then
     assertNotNull(user1Transactions);
     assertEquals(1, user1Transactions.size());
-    assertEquals(userId1.value(), user1Transactions.get(0).user().value());
+    assertEquals(userId1, user1Transactions.get(0).user());
     assertEquals("User 1 Transaction", user1Transactions.get(0).title());
   }
 
@@ -418,7 +420,7 @@ public final class MongoTransactionRepositoryTest {
   @SuppressWarnings("unchecked")
   void givenTransactionIdWhenDeletedThenShouldRemoveFromDatastore() {
     // Given
-    var transactionId = "trans-delete";
+    var transactionId = Id.of("trans-delete");
     var query = mock(MorphiaQuery.class);
     when(datastore.find(TransactionModel.class)).thenReturn(query);
     when(query.filter(any(Filter.class))).thenReturn(query);

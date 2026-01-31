@@ -1,8 +1,10 @@
 package io.dkakunsi.bitapp.transaction.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Currency;
 
 import dev.morphia.annotations.Entity;
 import io.dkakunsi.bitapp.domain.entity.EntityStatus;
@@ -30,7 +32,7 @@ public class TransactionModel {
   private String source;
   private String destination;
   private String loan;
-  private Long amount;
+  private BigDecimal amount;
   private String currency;
   private String category;
   private String type;
@@ -56,7 +58,7 @@ public class TransactionModel {
         .destination(this.destination != null ? Id.of(this.destination) : null)
         .loan(this.loan != null ? Id.of(this.loan) : null)
         .amount(this.amount)
-        .currency(this.currency)
+        .currency(Currency.getInstance(this.currency))
         .category(this.category != null ? Transaction.Category.valueOf(this.category) : null)
         .type(Transaction.Type.valueOf(this.type))
         .status(EntityStatus.valueOf(this.status))
@@ -79,7 +81,7 @@ public class TransactionModel {
         transaction.destination() != null ? transaction.destination().value() : null,
         transaction.loan() != null ? transaction.loan().value() : null,
         transaction.amount(),
-        transaction.currency(),
+        transaction.currency().getCurrencyCode(),
         transaction.category() != null ? transaction.category().name() : null,
         transaction.type().name(),
         transaction.status().name(),

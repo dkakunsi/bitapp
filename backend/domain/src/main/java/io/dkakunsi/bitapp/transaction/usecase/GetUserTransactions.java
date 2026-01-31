@@ -3,6 +3,7 @@ package io.dkakunsi.bitapp.transaction.usecase;
 import java.util.List;
 
 import io.dkakunsi.bitapp.common.Context;
+import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.domain.usecase.UseCase;
 import io.dkakunsi.bitapp.transaction.dto.TransactionResult;
@@ -19,7 +20,7 @@ public final class GetUserTransactions implements UseCase<String, List<Transacti
 
   @Override
   public Result<List<TransactionResult>> execute(Context context, String userId) {
-    var transactions = transactionRepository.findByUserId(userId);
+    var transactions = transactionRepository.findByUserId(Id.of(userId));
     var results = transactions.stream()
         .map(Transaction::toResult)
         .toList();

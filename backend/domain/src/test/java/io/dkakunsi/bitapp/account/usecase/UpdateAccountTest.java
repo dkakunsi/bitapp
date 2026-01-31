@@ -25,353 +25,356 @@ import io.dkakunsi.bitapp.domain.entity.Id;
 
 public final class UpdateAccountTest {
 
-    private UpdateAccount underTest;
+  private UpdateAccount underTest;
 
-    private AccountRepository accountRepository;
+  private AccountRepository accountRepository;
 
-    private static final String REQUESTER = "requester@email.com";
-    private static final String ACCOUNT_ID = "account123";
+  private static final String REQUESTER = "requester@email.com";
+  private static final String ACCOUNT_ID = "account123";
+  private static final Id ACCOUNT = Id.of(ACCOUNT_ID);
 
-    @BeforeEach
-    void setUp() {
-        accountRepository = mock(AccountRepository.class);
-        underTest = new UpdateAccount(accountRepository);
-    }
+  @BeforeEach
+  void setUp() {
+    accountRepository = mock(AccountRepository.class);
+    underTest = new UpdateAccount(accountRepository);
+  }
 
-    @Test
-    void givenValidUpdateRequestWhenAllFieldsProvidedThenShouldUpdateSuccessfully() {
-        // Given
-        var input = UpdateAccountInput.builder()
-                .id(ACCOUNT_ID)
-                .name("Updated Savings")
-                .type("CASH")
-                .themeColor("#00FF00")
-                .build();
-        var context = Context.builder().requester(REQUESTER).build();
+  @Test
+  void givenValidUpdateRequestWhenAllFieldsProvidedThenShouldUpdateSuccessfully() {
+    // Given
+    var input = UpdateAccountInput.builder()
+        .id(ACCOUNT_ID)
+        .name("Updated Savings")
+        .type("CASH")
+        .themeColor("#00FF00")
+        .build();
+    var context = Context.builder().requester(REQUESTER).build();
 
-        var existingAccount = Account.builder()
-                .id(Id.of(ACCOUNT_ID))
-                .name("Original Name")
-                .type(Account.Type.BANK)
-                .themeColor("#FF5733")
-                .balance(BigDecimal.valueOf(1000))
-                .user(Id.of(REQUESTER))
-                .createdAt(LocalDateTime.now().minusDays(1))
-                .updatedAt(LocalDateTime.now().minusDays(1))
-                .createdBy("creator@email.com")
-                .updatedBy("creator@email.com")
-                .build();
+    var existingAccount = Account.builder()
+        .id(Id.of(ACCOUNT_ID))
+        .name("Original Name")
+        .type(Account.Type.BANK)
+        .themeColor("#FF5733")
+        .balance(BigDecimal.valueOf(1000))
+        .user(Id.of(REQUESTER))
+        .createdAt(LocalDateTime.now().minusDays(1))
+        .updatedAt(LocalDateTime.now().minusDays(1))
+        .createdBy("creator@email.com")
+        .updatedBy("creator@email.com")
+        .build();
 
-        var updatedAccount = Account.builder()
-                .id(Id.of(ACCOUNT_ID))
-                .name("Updated Savings")
-                .type(Account.Type.CASH)
-                .themeColor("#00FF00")
-                .balance(BigDecimal.valueOf(1000))
-                .user(Id.of(REQUESTER))
-                .createdAt(LocalDateTime.now().minusDays(1))
-                .updatedAt(LocalDateTime.now())
-                .createdBy("creator@email.com")
-                .updatedBy(REQUESTER)
-                .build();
+    var updatedAccount = Account.builder()
+        .id(Id.of(ACCOUNT_ID))
+        .name("Updated Savings")
+        .type(Account.Type.CASH)
+        .themeColor("#00FF00")
+        .balance(BigDecimal.valueOf(1000))
+        .user(Id.of(REQUESTER))
+        .createdAt(LocalDateTime.now().minusDays(1))
+        .updatedAt(LocalDateTime.now())
+        .createdBy("creator@email.com")
+        .updatedBy(REQUESTER)
+        .build();
 
-        when(accountRepository.findById(ACCOUNT_ID)).thenReturn(Optional.of(existingAccount));
-        when(accountRepository.update(any(Account.class))).thenReturn(updatedAccount);
+    when(accountRepository.findById(ACCOUNT)).thenReturn(Optional.of(existingAccount));
+    when(accountRepository.update(any(Account.class))).thenReturn(updatedAccount);
 
-        // When
-        var result = underTest.process(context, input);
+    // When
+    var result = underTest.process(context, input);
 
-        // Then
-        assertTrue(result.isSuccess());
-        assertTrue(result.data().isPresent());
+    // Then
+    assertTrue(result.isSuccess());
+    assertTrue(result.data().isPresent());
 
-        var resultData = result.data().get();
-        assertEquals(ACCOUNT_ID, resultData.id());
-        assertEquals("Updated Savings", resultData.name());
-        assertEquals("CASH", resultData.type());
-        assertEquals("#00FF00", resultData.themeColor());
+    var resultData = result.data().get();
+    assertEquals(ACCOUNT_ID, resultData.id());
+    assertEquals("Updated Savings", resultData.name());
+    assertEquals("CASH", resultData.type());
+    assertEquals("#00FF00", resultData.themeColor());
 
-        verify(accountRepository).findById(ACCOUNT_ID);
-        verify(accountRepository).update(any(Account.class));
-    }
+    verify(accountRepository).findById(ACCOUNT);
+    verify(accountRepository).update(any(Account.class));
+  }
 
-    @Test
-    void givenUpdateRequestWithOnlyNameWhenProcessedThenShouldUpdateOnlyName() {
-        // Given
-        var existingAccount = Account.builder()
-                .id(Id.of(ACCOUNT_ID))
-                .name("Old Name")
-                .type(Account.Type.BANK)
-                .themeColor("#FF5733")
-                .balance(BigDecimal.valueOf(500))
-                .user(Id.of(REQUESTER))
-                .createdAt(LocalDateTime.now().minusDays(1))
-                .updatedAt(LocalDateTime.now().minusDays(1))
-                .createdBy("creator@email.com")
-                .updatedBy("creator@email.com")
-                .build();
+  @Test
+  void givenUpdateRequestWithOnlyNameWhenProcessedThenShouldUpdateOnlyName() {
+    // Given
+    var existingAccount = Account.builder()
+        .id(Id.of(ACCOUNT_ID))
+        .name("Old Name")
+        .type(Account.Type.BANK)
+        .themeColor("#FF5733")
+        .balance(BigDecimal.valueOf(500))
+        .user(Id.of(REQUESTER))
+        .createdAt(LocalDateTime.now().minusDays(1))
+        .updatedAt(LocalDateTime.now().minusDays(1))
+        .createdBy("creator@email.com")
+        .updatedBy("creator@email.com")
+        .build();
 
-        var updatedAccount = Account.builder()
-                .id(Id.of(ACCOUNT_ID))
-                .name("New Name Only")
-                .type(Account.Type.BANK)
-                .themeColor("#FF5733")
-                .balance(BigDecimal.valueOf(500))
-                .user(Id.of(REQUESTER))
-                .createdAt(LocalDateTime.now().minusDays(1))
-                .updatedAt(LocalDateTime.now())
-                .createdBy("creator@email.com")
-                .updatedBy(REQUESTER)
-                .build();
+    var updatedAccount = Account.builder()
+        .id(Id.of(ACCOUNT_ID))
+        .name("New Name Only")
+        .type(Account.Type.BANK)
+        .themeColor("#FF5733")
+        .balance(BigDecimal.valueOf(500))
+        .user(Id.of(REQUESTER))
+        .createdAt(LocalDateTime.now().minusDays(1))
+        .updatedAt(LocalDateTime.now())
+        .createdBy("creator@email.com")
+        .updatedBy(REQUESTER)
+        .build();
 
-        when(accountRepository.findById(ACCOUNT_ID)).thenReturn(Optional.of(existingAccount));
-        when(accountRepository.update(any(Account.class))).thenReturn(updatedAccount);
+    when(accountRepository.findById(ACCOUNT)).thenReturn(Optional.of(existingAccount));
+    when(accountRepository.update(any(Account.class))).thenReturn(updatedAccount);
 
-        var input = UpdateAccountInput.builder()
-                .id(ACCOUNT_ID)
-                .name("New Name Only")
-                .build();
-        var context = Context.builder().requester(REQUESTER).build();
+    var input = UpdateAccountInput.builder()
+        .id(ACCOUNT_ID)
+        .name("New Name Only")
+        .build();
+    var context = Context.builder().requester(REQUESTER).build();
 
-        // When
-        var result = underTest.process(context, input);
+    // When
+    var result = underTest.process(context, input);
 
-        // Then
-        assertTrue(result.isSuccess());
-        assertTrue(result.data().isPresent());
+    // Then
+    assertTrue(result.isSuccess());
+    assertTrue(result.data().isPresent());
 
-        var resultData = result.data().get();
-        assertEquals("New Name Only", resultData.name());
-        assertEquals("BANK", resultData.type());
-        assertEquals("#FF5733", resultData.themeColor());
-    }
+    var resultData = result.data().get();
+    assertEquals("New Name Only", resultData.name());
+    assertEquals("BANK", resultData.type());
+    assertEquals("#FF5733", resultData.themeColor());
+  }
 
-    @Test
-    void givenUpdateRequestWithOnlyTypeWhenProcessedThenShouldUpdateOnlyType() {
-        // Given
-        var input = UpdateAccountInput.builder()
-                .id(ACCOUNT_ID)
-                .type("EWALLET")
-                .build();
-        var context = Context.builder().requester(REQUESTER).build();
+  @Test
+  void givenUpdateRequestWithOnlyTypeWhenProcessedThenShouldUpdateOnlyType() {
+    // Given
+    var input = UpdateAccountInput.builder()
+        .id(ACCOUNT_ID)
+        .type("EWALLET")
+        .build();
+    var context = Context.builder().requester(REQUESTER).build();
 
-        var existingAccount = Account.builder()
-                .id(Id.of(ACCOUNT_ID))
-                .name("My Account")
-                .type(Account.Type.BANK)
-                .themeColor("#FF5733")
-                .balance(BigDecimal.valueOf(500))
-                .user(Id.of(REQUESTER))
-                .createdAt(LocalDateTime.now().minusDays(1))
-                .updatedAt(LocalDateTime.now().minusDays(1))
-                .createdBy("creator@email.com")
-                .updatedBy("creator@email.com")
-                .build();
+    var existingAccount = Account.builder()
+        .id(Id.of(ACCOUNT_ID))
+        .name("My Account")
+        .type(Account.Type.BANK)
+        .themeColor("#FF5733")
+        .balance(BigDecimal.valueOf(500))
+        .user(Id.of(REQUESTER))
+        .createdAt(LocalDateTime.now().minusDays(1))
+        .updatedAt(LocalDateTime.now().minusDays(1))
+        .createdBy("creator@email.com")
+        .updatedBy("creator@email.com")
+        .build();
 
-        var updatedAccount = Account.builder()
-                .id(Id.of(ACCOUNT_ID))
-                .name("My Account")
-                .type(Account.Type.EWALLET)
-                .themeColor("#FF5733")
-                .balance(BigDecimal.valueOf(500))
-                .user(Id.of(REQUESTER))
-                .createdAt(LocalDateTime.now().minusDays(1))
-                .updatedAt(LocalDateTime.now())
-                .createdBy("creator@email.com")
-                .updatedBy(REQUESTER)
-                .build();
+    var updatedAccount = Account.builder()
+        .id(Id.of(ACCOUNT_ID))
+        .name("My Account")
+        .type(Account.Type.EWALLET)
+        .themeColor("#FF5733")
+        .balance(BigDecimal.valueOf(500))
+        .user(Id.of(REQUESTER))
+        .createdAt(LocalDateTime.now().minusDays(1))
+        .updatedAt(LocalDateTime.now())
+        .createdBy("creator@email.com")
+        .updatedBy(REQUESTER)
+        .build();
 
-        when(accountRepository.findById(ACCOUNT_ID)).thenReturn(Optional.of(existingAccount));
-        when(accountRepository.update(any(Account.class))).thenReturn(updatedAccount);
+    when(accountRepository.findById(ACCOUNT)).thenReturn(Optional.of(existingAccount));
+    when(accountRepository.update(any(Account.class))).thenReturn(updatedAccount);
 
-        // When
-        var result = underTest.process(context, input);
+    // When
+    var result = underTest.process(context, input);
 
-        // Then
-        assertTrue(result.isSuccess());
-        assertTrue(result.data().isPresent());
+    // Then
+    assertTrue(result.isSuccess());
+    assertTrue(result.data().isPresent());
 
-        var resultData = result.data().get();
-        assertEquals("EWALLET", resultData.type());
-    }
+    var resultData = result.data().get();
+    assertEquals("EWALLET", resultData.type());
+  }
 
-    @Test
-    void givenUpdateRequestWithOnlyThemeColorWhenProcessedThenShouldUpdateOnlyThemeColor() {
-        // Given
-        var input = UpdateAccountInput.builder()
-                .id(ACCOUNT_ID)
-                .themeColor("#AABBCC")
-                .build();
-        var context = Context.builder().requester(REQUESTER).build();
+  @Test
+  void givenUpdateRequestWithOnlyThemeColorWhenProcessedThenShouldUpdateOnlyThemeColor() {
+    // Given
+    var input = UpdateAccountInput.builder()
+        .id(ACCOUNT_ID)
+        .themeColor("#AABBCC")
+        .build();
+    var context = Context.builder().requester(REQUESTER).build();
 
-        var existingAccount = Account.builder()
-                .id(Id.of(ACCOUNT_ID))
-                .name("My Account")
-                .type(Account.Type.BANK)
-                .themeColor("#FF5733")
-                .balance(BigDecimal.valueOf(500))
-                .user(Id.of(REQUESTER))
-                .createdAt(LocalDateTime.now().minusDays(1))
-                .updatedAt(LocalDateTime.now().minusDays(1))
-                .createdBy("creator@email.com")
-                .updatedBy("creator@email.com")
-                .build();
+    var existingAccount = Account.builder()
+        .id(Id.of(ACCOUNT_ID))
+        .name("My Account")
+        .type(Account.Type.BANK)
+        .themeColor("#FF5733")
+        .balance(BigDecimal.valueOf(500))
+        .user(Id.of(REQUESTER))
+        .createdAt(LocalDateTime.now().minusDays(1))
+        .updatedAt(LocalDateTime.now().minusDays(1))
+        .createdBy("creator@email.com")
+        .updatedBy("creator@email.com")
+        .build();
 
-        var updatedAccount = Account.builder()
-                .id(Id.of(ACCOUNT_ID))
-                .name("My Account")
-                .type(Account.Type.BANK)
-                .themeColor("#AABBCC")
-                .balance(BigDecimal.valueOf(500))
-                .user(Id.of(REQUESTER))
-                .createdAt(LocalDateTime.now().minusDays(1))
-                .updatedAt(LocalDateTime.now())
-                .createdBy("creator@email.com")
-                .updatedBy(REQUESTER)
-                .build();
+    var updatedAccount = Account.builder()
+        .id(Id.of(ACCOUNT_ID))
+        .name("My Account")
+        .type(Account.Type.BANK)
+        .themeColor("#AABBCC")
+        .balance(BigDecimal.valueOf(500))
+        .user(Id.of(REQUESTER))
+        .createdAt(LocalDateTime.now().minusDays(1))
+        .updatedAt(LocalDateTime.now())
+        .createdBy("creator@email.com")
+        .updatedBy(REQUESTER)
+        .build();
 
-        when(accountRepository.findById(ACCOUNT_ID)).thenReturn(Optional.of(existingAccount));
-        when(accountRepository.update(any(Account.class))).thenReturn(updatedAccount);
+    when(accountRepository.findById(ACCOUNT)).thenReturn(Optional.of(existingAccount));
+    when(accountRepository.update(any(Account.class))).thenReturn(updatedAccount);
 
-        // When
-        var result = underTest.process(context, input);
+    // When
+    var result = underTest.process(context, input);
 
-        // Then
-        assertTrue(result.isSuccess());
-        assertTrue(result.data().isPresent());
+    // Then
+    assertTrue(result.isSuccess());
+    assertTrue(result.data().isPresent());
 
-        var resultData = result.data().get();
-        assertEquals("#AABBCC", resultData.themeColor());
-    }
+    var resultData = result.data().get();
+    assertEquals("#AABBCC", resultData.themeColor());
+  }
 
-    @Test
-    void givenUpdateRequestWhenRepositoryThrowsExceptionThenShouldReturnFailure() {
-        // Given
-        var input = UpdateAccountInput.builder()
-                .id(ACCOUNT_ID)
-                .name("Updated Name")
-                .build();
-        var context = Context.builder().requester(REQUESTER).build();
+  @Test
+  void givenUpdateRequestWhenRepositoryThrowsExceptionThenShouldReturnFailure() {
+    // Given
+    var input = UpdateAccountInput.builder()
+        .id(ACCOUNT_ID)
+        .name("Updated Name")
+        .build();
+    var context = Context.builder().requester(REQUESTER).build();
 
-        when(accountRepository.findById(ACCOUNT_ID))
-                .thenThrow(new RuntimeException("Database error"));
+    when(accountRepository.findById(ACCOUNT))
+        .thenThrow(new RuntimeException("Database error"));
 
-        // When
-        var result = underTest.process(context, input);
+    // When
+    var result = underTest.process(context, input);
 
-        // Then
-        assertFalse(result.isSuccess());
-        assertTrue(result.error().isPresent());
-        assertEquals(Code.SERVER_ERROR, result.error().get().code());
-        assertEquals("Database error", result.error().get().message());
-    }
+    // Then
+    assertFalse(result.isSuccess());
+    assertTrue(result.error().isPresent());
+    assertEquals(Code.SERVER_ERROR, result.error().get().code());
+    assertEquals("Database error", result.error().get().message());
+  }
 
-    @Test
-    void givenUpdateRequestWhenAccountNotFoundThenShouldReturnNotFoundError() {
-        // Given
-        var input = UpdateAccountInput.builder()
-                .id("non-existing-account")
-                .name("Updated Name")
-                .build();
-        var context = Context.builder().requester(REQUESTER).build();
+  @Test
+  void givenUpdateRequestWhenAccountNotFoundThenShouldReturnNotFoundError() {
+    // Given
+    var nonExistingAccountId = "non-existing-account";
+    var nonExistingAccount = Id.of(nonExistingAccountId);
+    var input = UpdateAccountInput.builder()
+        .id(nonExistingAccountId)
+        .name("Updated Name")
+        .build();
+    var context = Context.builder().requester(REQUESTER).build();
 
-        when(accountRepository.findById("non-existing-account")).thenReturn(Optional.empty());
+    when(accountRepository.findById(nonExistingAccount)).thenReturn(Optional.empty());
 
-        // When
-        var result = underTest.process(context, input);
+    // When
+    var result = underTest.process(context, input);
 
-        // Then
-        assertFalse(result.isSuccess());
-        assertTrue(result.error().isPresent());
-        assertEquals(Code.NOT_FOUND, result.error().get().code());
-        assertEquals("Account not found", result.error().get().message());
-        verify(accountRepository).findById("non-existing-account");
-        verify(accountRepository, never()).update(any(Account.class));
-    }
+    // Then
+    assertFalse(result.isSuccess());
+    assertTrue(result.error().isPresent());
+    assertEquals(Code.NOT_FOUND, result.error().get().code());
+    assertEquals("Account not found", result.error().get().message());
+    verify(accountRepository).findById(nonExistingAccount);
+    verify(accountRepository, never()).update(any(Account.class));
+  }
 
-    @Test
-    void givenUpdateRequestWhenRequesterIsNotOwnerThenShouldReturnBadRequestError() {
-        // Given
-        var differentUser = "different@email.com";
-        var input = UpdateAccountInput.builder()
-                .id(ACCOUNT_ID)
-                .name("Updated Name")
-                .build();
-        var context = Context.builder().requester(differentUser).build();
+  @Test
+  void givenUpdateRequestWhenRequesterIsNotOwnerThenShouldReturnBadRequestError() {
+    // Given
+    var differentUser = "different@email.com";
+    var input = UpdateAccountInput.builder()
+        .id(ACCOUNT_ID)
+        .name("Updated Name")
+        .build();
+    var context = Context.builder().requester(differentUser).build();
 
-        var existingAccount = Account.builder()
-                .id(Id.of(ACCOUNT_ID))
-                .name("Original Name")
-                .type(Account.Type.BANK)
-                .themeColor("#FF5733")
-                .balance(BigDecimal.valueOf(500))
-                .user(Id.of(REQUESTER))
-                .createdAt(LocalDateTime.now().minusDays(1))
-                .updatedAt(LocalDateTime.now().minusDays(1))
-                .createdBy(REQUESTER)
-                .updatedBy(REQUESTER)
-                .build();
+    var existingAccount = Account.builder()
+        .id(Id.of(ACCOUNT_ID))
+        .name("Original Name")
+        .type(Account.Type.BANK)
+        .themeColor("#FF5733")
+        .balance(BigDecimal.valueOf(500))
+        .user(Id.of(REQUESTER))
+        .createdAt(LocalDateTime.now().minusDays(1))
+        .updatedAt(LocalDateTime.now().minusDays(1))
+        .createdBy(REQUESTER)
+        .updatedBy(REQUESTER)
+        .build();
 
-        when(accountRepository.findById(ACCOUNT_ID)).thenReturn(Optional.of(existingAccount));
+    when(accountRepository.findById(ACCOUNT)).thenReturn(Optional.of(existingAccount));
 
-        // When
-        var result = underTest.process(context, input);
+    // When
+    var result = underTest.process(context, input);
 
-        // Then
-        assertFalse(result.isSuccess());
-        assertTrue(result.error().isPresent());
-        assertEquals(Code.UNAUTHORIZED, result.error().get().code());
-        assertEquals("User can only update their own account", result.error().get().message());
-        verify(accountRepository).findById(ACCOUNT_ID);
-        verify(accountRepository, never()).update(any(Account.class));
-    }
+    // Then
+    assertFalse(result.isSuccess());
+    assertTrue(result.error().isPresent());
+    assertEquals(Code.UNAUTHORIZED, result.error().get().code());
+    assertEquals("User can only update their own account", result.error().get().message());
+    verify(accountRepository).findById(ACCOUNT);
+    verify(accountRepository, never()).update(any(Account.class));
+  }
 
-    @Test
-    void givenUpdateRequestWhenRequesterIsOwnerThenShouldAllowUpdate() {
-        // Given
-        var input = UpdateAccountInput.builder()
-                .id(ACCOUNT_ID)
-                .name("Updated Name")
-                .build();
-        var context = Context.builder().requester(REQUESTER).build();
+  @Test
+  void givenUpdateRequestWhenRequesterIsOwnerThenShouldAllowUpdate() {
+    // Given
+    var input = UpdateAccountInput.builder()
+        .id(ACCOUNT_ID)
+        .name("Updated Name")
+        .build();
+    var context = Context.builder().requester(REQUESTER).build();
 
-        var existingAccount = Account.builder()
-                .id(Id.of(ACCOUNT_ID))
-                .name("Original Name")
-                .type(Account.Type.BANK)
-                .themeColor("#FF5733")
-                .balance(BigDecimal.valueOf(500))
-                .user(Id.of(REQUESTER))
-                .createdAt(LocalDateTime.now().minusDays(1))
-                .updatedAt(LocalDateTime.now().minusDays(1))
-                .createdBy(REQUESTER)
-                .updatedBy(REQUESTER)
-                .build();
+    var existingAccount = Account.builder()
+        .id(Id.of(ACCOUNT_ID))
+        .name("Original Name")
+        .type(Account.Type.BANK)
+        .themeColor("#FF5733")
+        .balance(BigDecimal.valueOf(500))
+        .user(Id.of(REQUESTER))
+        .createdAt(LocalDateTime.now().minusDays(1))
+        .updatedAt(LocalDateTime.now().minusDays(1))
+        .createdBy(REQUESTER)
+        .updatedBy(REQUESTER)
+        .build();
 
-        var updatedAccount = Account.builder()
-                .id(Id.of(ACCOUNT_ID))
-                .name("Updated Name")
-                .type(Account.Type.BANK)
-                .themeColor("#FF5733")
-                .balance(BigDecimal.valueOf(500))
-                .user(Id.of(REQUESTER))
-                .createdAt(LocalDateTime.now().minusDays(1))
-                .updatedAt(LocalDateTime.now())
-                .createdBy(REQUESTER)
-                .updatedBy(REQUESTER)
-                .build();
+    var updatedAccount = Account.builder()
+        .id(Id.of(ACCOUNT_ID))
+        .name("Updated Name")
+        .type(Account.Type.BANK)
+        .themeColor("#FF5733")
+        .balance(BigDecimal.valueOf(500))
+        .user(Id.of(REQUESTER))
+        .createdAt(LocalDateTime.now().minusDays(1))
+        .updatedAt(LocalDateTime.now())
+        .createdBy(REQUESTER)
+        .updatedBy(REQUESTER)
+        .build();
 
-        when(accountRepository.findById(ACCOUNT_ID)).thenReturn(Optional.of(existingAccount));
-        when(accountRepository.update(any(Account.class))).thenReturn(updatedAccount);
+    when(accountRepository.findById(ACCOUNT)).thenReturn(Optional.of(existingAccount));
+    when(accountRepository.update(any(Account.class))).thenReturn(updatedAccount);
 
-        // When
-        var result = underTest.process(context, input);
+    // When
+    var result = underTest.process(context, input);
 
-        // Then
-        assertTrue(result.isSuccess());
-        assertTrue(result.data().isPresent());
-        assertEquals("Updated Name", result.data().get().name());
-        verify(accountRepository).findById(ACCOUNT_ID);
-        verify(accountRepository).update(any(Account.class));
-    }
+    // Then
+    assertTrue(result.isSuccess());
+    assertTrue(result.data().isPresent());
+    assertEquals("Updated Name", result.data().get().name());
+    verify(accountRepository).findById(ACCOUNT);
+    verify(accountRepository).update(any(Account.class));
+  }
 }
