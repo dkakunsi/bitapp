@@ -892,7 +892,7 @@ public class MongoLoanRepositoryIT {
 
     // Verify persistence
     var fetchedLoan = repository.findById(loanId);
-    assertEquals(newAmount, fetchedLoan.get().amount());
+    assertEquals(BigDecimal.valueOf(25000.0), fetchedLoan.get().amount());
   }
 
   @Test
@@ -1065,7 +1065,7 @@ public class MongoLoanRepositoryIT {
     assertEquals(true, fetchedLoan.isPresent());
     assertEquals("Multi Update Title", fetchedLoan.get().title());
     assertEquals("Multi Update Party", fetchedLoan.get().partyName());
-    assertEquals(BigDecimal.valueOf(30000), fetchedLoan.get().amount());
+    assertEquals(BigDecimal.valueOf(30000.0), fetchedLoan.get().amount());
   }
 
   @Test

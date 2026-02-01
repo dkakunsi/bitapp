@@ -25,14 +25,15 @@ public class LoanModel {
   @dev.morphia.annotations.Id
   private String id;
   private String userId;
+  private String accountId;
   private String type;
   private LocalDate date;
   private LocalTime time;
   private String partyName;
   private String title;
   private String description;
-  private BigDecimal amount;
-  private BigDecimal remainingAmount;
+  private Double amount;
+  private Double remainingAmount;
   private String currency;
   private double interestRate;
   private String status;
@@ -45,19 +46,18 @@ public class LoanModel {
    * Converts this entity to a domain Loan model.
    */
   public Loan toLoan() {
-    var userIdObj = Id.of(this.userId);
-
     return Loan.builder()
         .id(Id.of(this.id))
-        .user(userIdObj)
+        .user(Id.of(this.userId))
+        .account(Id.of(accountId))
         .type(Loan.Type.valueOf(this.type))
         .date(this.date)
         .time(this.time)
         .partyName(this.partyName)
         .title(this.title)
         .description(this.description)
-        .amount(this.amount)
-        .remainingAmount(this.remainingAmount)
+        .amount(BigDecimal.valueOf(this.amount))
+        .remainingAmount(BigDecimal.valueOf(this.remainingAmount))
         .currency(Currency.getInstance(this.currency))
         .interestRate(this.interestRate)
         .status(EntityStatus.valueOf(this.status))
@@ -77,14 +77,15 @@ public class LoanModel {
     return new LoanModel(
         loan.id().value(),
         loan.user().value(),
+        loan.account().value(),
         loan.type().name(),
         loan.date(),
         loan.time(),
         loan.partyName(),
         loan.title(),
         loan.description(),
-        loan.amount(),
-        loan.remainingAmount(),
+        loan.amount().doubleValue(),
+        loan.remainingAmount().doubleValue(),
         loan.currency().getCurrencyCode(),
         loan.interestRate(),
         loan.status().name(),

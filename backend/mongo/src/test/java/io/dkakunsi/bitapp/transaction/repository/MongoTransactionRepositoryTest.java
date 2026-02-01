@@ -86,7 +86,7 @@ public final class MongoTransactionRepositoryTest {
     assertEquals(transaction.date(), savedModel.getDate());
     assertEquals(transaction.time(), savedModel.getTime());
     assertEquals(transaction.source().value(), savedModel.getSource());
-    assertEquals(transaction.amount(), savedModel.getAmount());
+    assertEquals(transaction.amount().doubleValue(), savedModel.getAmount());
     assertEquals(transaction.currency().getCurrencyCode(), savedModel.getCurrency());
     assertEquals(transaction.category().name(), savedModel.getCategory());
     assertEquals(transaction.type().name(), savedModel.getType());
@@ -305,7 +305,7 @@ public final class MongoTransactionRepositoryTest {
         .date(LocalDate.of(2026, 1, 22))
         .time(LocalTime.of(10, 30))
         .source(ACCOUNT_ID)
-        .amount(BigDecimal.valueOf(50000))
+        .amount(50000.0)
         .currency("IDR")
         .category("FOOD")
         .type("DEBIT")
@@ -324,7 +324,7 @@ public final class MongoTransactionRepositoryTest {
         .date(LocalDate.of(2026, 1, 22))
         .time(LocalTime.of(8, 0))
         .destination(ACCOUNT_ID)
-        .amount(BigDecimal.valueOf(5000000))
+        .amount(5000000.0)
         .currency("IDR")
         .category("INCOME")
         .type("CREDIT")
@@ -391,7 +391,7 @@ public final class MongoTransactionRepositoryTest {
         .date(LocalDate.now())
         .time(LocalTime.now())
         .source(ACCOUNT_ID)
-        .amount(BigDecimal.valueOf(10000))
+        .amount(10000.0)
         .currency("IDR")
         .type("DEBIT")
         .status(EntityStatus.ACTIVE.name())

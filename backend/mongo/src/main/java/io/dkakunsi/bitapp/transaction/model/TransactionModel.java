@@ -32,7 +32,7 @@ public class TransactionModel {
   private String source;
   private String destination;
   private String loan;
-  private BigDecimal amount;
+  private Double amount;
   private String currency;
   private String category;
   private String type;
@@ -57,7 +57,7 @@ public class TransactionModel {
         .source(this.source != null ? Id.of(this.source) : null)
         .destination(this.destination != null ? Id.of(this.destination) : null)
         .loan(this.loan != null ? Id.of(this.loan) : null)
-        .amount(this.amount)
+        .amount(BigDecimal.valueOf(this.amount))
         .currency(Currency.getInstance(this.currency))
         .category(this.category != null ? Transaction.Category.valueOf(this.category) : null)
         .type(Transaction.Type.valueOf(this.type))
@@ -80,7 +80,7 @@ public class TransactionModel {
         transaction.source() != null ? transaction.source().value() : null,
         transaction.destination() != null ? transaction.destination().value() : null,
         transaction.loan() != null ? transaction.loan().value() : null,
-        transaction.amount(),
+        transaction.amount().doubleValue(),
         transaction.currency().getCurrencyCode(),
         transaction.category() != null ? transaction.category().name() : null,
         transaction.type().name(),

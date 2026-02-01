@@ -17,7 +17,6 @@ import io.dkakunsi.bitapp.test.SecureTestUtil;
 import kong.unirest.Unirest;
 
 public class UpdateLoanIT extends AppTestUtil {
-
   private static final int port = 20009;
 
   private static UpdateLoanIT sut = new UpdateLoanIT();
@@ -26,7 +25,7 @@ public class UpdateLoanIT extends AppTestUtil {
 
   private static String token;
 
-  private static String testLoanId;
+  private String loanId;
 
   @BeforeAll
   static void setup() throws Exception {
@@ -37,9 +36,6 @@ public class UpdateLoanIT extends AppTestUtil {
 
     baseUrl = "http://localhost:" + port;
     token = SecureTestUtil.generateToken(USER_ID);
-
-    // Create a test loan to update
-    testLoanId = createTestLoan();
   }
 
   @AfterAll
@@ -47,14 +43,38 @@ public class UpdateLoanIT extends AppTestUtil {
     sut.destroy();
   }
 
-  /**
-   * Helper method to create a test loan for update operations
-   */
-  private static String createTestLoan() throws Exception {
+  public void setupEach() throws Exception {
+    var testAccountId = createTestAccount();
+    loanId = createTestLoan(testAccountId);
+  }
+
+  private static String createTestAccount() throws Exception {
+    // Create source account for transaction
+    var accountBody = """
+        {
+          "name": "Repayment Account",
+          "type": "BANK",
+          "themeColor": "#0000FF"
+        }
+        """;
+
+    var accountResponse = Unirest.post(baseUrl + "/accounts")
+        .header("Authorization", "Bearer " + token)
+        .body(accountBody)
+        .asString();
+
+    assertEquals(200, accountResponse.getStatus());
+    var accountResponseBody = new JSONObject(accountResponse.getBody());
+    var sourceAccountId = accountResponseBody.getString("id");
+    return sourceAccountId;
+  }
+
+  private static String createTestLoan(String accountId) throws Exception {
     var body = """
         {
           "type": "BORROW",
           "partyName": "John Doe",
+          "account": "%s",
           "date": "2024-06-15",
           "time": "14:30:00",
           "title": "Original Loan",
@@ -63,7 +83,7 @@ public class UpdateLoanIT extends AppTestUtil {
           "currency": "IDR",
           "interestRate": 5.5
         }
-        """;
+        """.formatted(accountId);
 
     var response = Unirest.post(baseUrl + "/loans")
         .header("Authorization", "Bearer " + token)
@@ -89,7 +109,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.put(baseUrl + "/loans/" + testLoanId)
+    var response = Unirest.put(baseUrl + "/loans/" + loanId)
         .body(body)
         .asString();
 
@@ -103,7 +123,6 @@ public class UpdateLoanIT extends AppTestUtil {
    */
   @Test
   public void updateLoanPartyNameShouldBeOk() throws Exception {
-    var loanId = createTestLoan();
     var body = """
         {
           "partyName": "Jane Smith"
@@ -130,7 +149,6 @@ public class UpdateLoanIT extends AppTestUtil {
    */
   @Test
   public void updateLoanTitleShouldBeOk() throws Exception {
-    var loanId = createTestLoan();
     var body = """
         {
           "title": "New Loan Title"
@@ -155,7 +173,6 @@ public class UpdateLoanIT extends AppTestUtil {
    */
   @Test
   public void updateLoanDescriptionShouldBeOk() throws Exception {
-    var loanId = createTestLoan();
     var body = """
         {
           "description": "This is a completely new description"
@@ -180,7 +197,6 @@ public class UpdateLoanIT extends AppTestUtil {
    */
   @Test
   public void updateLoanAmountShouldBeOk() throws Exception {
-    var loanId = createTestLoan();
     var body = """
         {
           "amount": 750000000
@@ -206,7 +222,6 @@ public class UpdateLoanIT extends AppTestUtil {
    */
   @Test
   public void updateLoanInterestRateShouldBeOk() throws Exception {
-    var loanId = createTestLoan();
     var body = """
         {
           "interestRate": 7.5
@@ -231,7 +246,6 @@ public class UpdateLoanIT extends AppTestUtil {
    */
   @Test
   public void updateLoanCurrencyShouldBeOk() throws Exception {
-    var loanId = createTestLoan();
     var body = """
         {
           "currency": "USD"
@@ -256,7 +270,6 @@ public class UpdateLoanIT extends AppTestUtil {
    */
   @Test
   public void updateLoanDateAndTimeShouldBeOk() throws Exception {
-    var loanId = createTestLoan();
     var body = """
         {
           "date": "2025-12-31",
@@ -283,7 +296,6 @@ public class UpdateLoanIT extends AppTestUtil {
    */
   @Test
   public void updateMultipleLoanFieldsShouldBeOk() throws Exception {
-    var loanId = createTestLoan();
     var body = """
         {
           "partyName": "Jane Smith",
@@ -323,7 +335,6 @@ public class UpdateLoanIT extends AppTestUtil {
    */
   @Test
   public void shouldFailOnEmptyTitle() throws Exception {
-    var loanId = createTestLoan();
     var body = """
         {
           "partyName": "John Doe",
@@ -348,7 +359,6 @@ public class UpdateLoanIT extends AppTestUtil {
    */
   @Test
   public void shouldFailOnBlankTitle() throws Exception {
-    var loanId = createTestLoan();
     var body = """
         {
           "partyName": "John Doe",
@@ -374,7 +384,6 @@ public class UpdateLoanIT extends AppTestUtil {
    */
   @Test
   public void shouldSucceedOnMissingTitle() throws Exception {
-    var loanId = createTestLoan();
     var body = """
         {
           "partyName": "John Doe Updated",
@@ -401,7 +410,6 @@ public class UpdateLoanIT extends AppTestUtil {
    */
   @Test
   public void shouldFailOnNegativeAmount() throws Exception {
-    var loanId = createTestLoan();
     var body = """
         {
           "amount": -100000
@@ -424,7 +432,6 @@ public class UpdateLoanIT extends AppTestUtil {
    */
   @Test
   public void shouldFailOnZeroAmount() throws Exception {
-    var loanId = createTestLoan();
     var body = """
         {
           "amount": 0
@@ -447,7 +454,6 @@ public class UpdateLoanIT extends AppTestUtil {
    */
   @Test
   public void shouldFailOnNegativeInterestRate() throws Exception {
-    var loanId = createTestLoan();
     var body = """
         {
           "interestRate": -5.5
@@ -470,7 +476,6 @@ public class UpdateLoanIT extends AppTestUtil {
    */
   @Test
   public void shouldFailOnInvalidDateFormat() throws Exception {
-    var loanId = createTestLoan();
     var body = """
         {
           "date": "2024-13-45"
@@ -493,7 +498,6 @@ public class UpdateLoanIT extends AppTestUtil {
    */
   @Test
   public void shouldFailOnInvalidDateString() throws Exception {
-    var loanId = createTestLoan();
     var body = """
         {
           "date": "invalid-date"
@@ -516,7 +520,6 @@ public class UpdateLoanIT extends AppTestUtil {
    */
   @Test
   public void shouldFailOnInvalidTimeFormat() throws Exception {
-    var loanId = createTestLoan();
     var body = """
         {
           "time": "25:99:99"
@@ -539,7 +542,6 @@ public class UpdateLoanIT extends AppTestUtil {
    */
   @Test
   public void shouldFailOnInvalidTimeString() throws Exception {
-    var loanId = createTestLoan();
     var body = """
         {
           "time": "invalid-time"
@@ -562,7 +564,6 @@ public class UpdateLoanIT extends AppTestUtil {
    */
   @Test
   public void shouldFailOnInvalidDateAndTime() throws Exception {
-    var loanId = createTestLoan();
     var body = """
         {
           "date": "not-a-date",
@@ -610,7 +611,6 @@ public class UpdateLoanIT extends AppTestUtil {
    */
   @Test
   public void shouldFailOnUpdateLoanOwnedByAnotherUser() throws Exception {
-    var loanId = createTestLoan();
     var anotherUserToken = SecureTestUtil.generateToken("another-user@test.com");
 
     var body = """
@@ -638,8 +638,6 @@ public class UpdateLoanIT extends AppTestUtil {
    */
   @Test
   public void updateAmountOnPartiallyRepaidLoanShouldAdjustRemainingAmount() throws Exception {
-    var loanId = createTestLoan();
-
     // Create source account for transaction
     var accountBody = """
         {
@@ -739,8 +737,6 @@ public class UpdateLoanIT extends AppTestUtil {
    */
   @Test
   public void updateAmountBelowRepaidAmountShouldSetNegativeRemainingAmount() throws Exception {
-    var loanId = createTestLoan();
-
     // Create source account for transaction
     var accountBody = """
         {

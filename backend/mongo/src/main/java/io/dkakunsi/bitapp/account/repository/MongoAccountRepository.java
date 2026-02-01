@@ -37,14 +37,14 @@ public class MongoAccountRepository extends MongoRepository implements AccountRe
   public void debitBalance(Id id, BigDecimal amount) {
     pickDatastore().find(AccountModel.class)
         .filter(Filters.eq(MONGO_ID, id.value()))
-        .update(new UpdateOptions(), UpdateOperators.dec("balance", amount));
+        .update(new UpdateOptions(), UpdateOperators.dec("balance", amount.doubleValue()));
   }
 
   @Override
   public void creditBalance(Id id, BigDecimal amount) {
     pickDatastore().find(AccountModel.class)
         .filter(Filters.eq(MONGO_ID, id.value()))
-        .update(new UpdateOptions(), UpdateOperators.inc("balance", amount));
+        .update(new UpdateOptions(), UpdateOperators.inc("balance", amount.doubleValue()));
   }
 
   @Override

@@ -59,8 +59,9 @@ public class MongoLoanRepository extends MongoRepository implements LoanReposito
 
   @Override
   public void decreaseRemainingAmount(Id id, BigDecimal amount) {
+    var operation = UpdateOperators.dec("remainingAmount", amount.doubleValue());
     pickDatastore().find(LoanModel.class)
         .filter(Filters.eq(MONGO_ID, id.value()))
-        .update(new UpdateOptions(), UpdateOperators.dec("remainingAmount", amount));
+        .update(new UpdateOptions(), operation);
   }
 }
