@@ -117,6 +117,7 @@ public final class RemoveLoanUseCaseTest {
     return Loan.builder()
         .id(Id.of(id))
         .user(Id.of(user))
+        .account(Id.of("account-123"))
         .type(Loan.Type.BORROW)
         .date(LocalDate.of(2026, 1, 24))
         .time(LocalTime.of(10, 0))

@@ -38,6 +38,7 @@ public final class UpdateLoanTest {
   private static final String REQUESTER = "testUser@email.com";
   private static final String LOAN_ID = "loan-123";
   private static final Id LOAN = Id.of(LOAN_ID);
+  private static final String ACCOUNT_ID = "account-456";
 
   @BeforeEach
   void setUp() {
@@ -388,6 +389,7 @@ public final class UpdateLoanTest {
     return Loan.builder()
         .id(Id.of(LOAN_ID))
         .user(Id.of(REQUESTER))
+        .account(Id.of(ACCOUNT_ID))
         .type(Loan.Type.BORROW)
         .date(LocalDate.of(2026, 1, 15))
         .time(LocalTime.of(10, 30))

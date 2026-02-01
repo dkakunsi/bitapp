@@ -44,6 +44,7 @@ public final class GetLoanTest {
     var existingLoan = Loan.builder()
         .id(Id.of(loanId))
         .user(Id.of("user@email.com"))
+        .account(Id.of("account-456"))
         .type(Loan.Type.BORROW)
         .date(LocalDate.of(2026, 1, 15))
         .time(LocalTime.of(10, 30))
@@ -67,6 +68,7 @@ public final class GetLoanTest {
     var loan = result.data().get();
     assertEquals(loanId, loan.id());
     assertEquals("user@email.com", loan.user());
+    assertEquals("account-456", loan.account());
     assertEquals("BORROW", loan.type());
     assertEquals("2026-01-15", loan.date());
     assertEquals("10:30", loan.time());
