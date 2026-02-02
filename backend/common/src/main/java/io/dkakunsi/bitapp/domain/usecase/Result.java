@@ -36,7 +36,10 @@ public final record Result<DATA>(
 
   public static <DATA> Result<DATA> failure(Code serverError, String message) {
     final var error = new AppError(serverError, message);
-    return new Result<>(Optional.empty(), Optional.of(error), Optional.empty());
+    return failure(error);
   }
 
+  public static <DATA> Result<DATA> failure(AppError error) {
+    return new Result<>(Optional.empty(), Optional.of(error), Optional.empty());
+  }
 }

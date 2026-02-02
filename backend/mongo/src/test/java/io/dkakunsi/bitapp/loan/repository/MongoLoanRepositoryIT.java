@@ -26,6 +26,10 @@ public class MongoLoanRepositoryIT {
 
   private static MongoConfiguration mongoConfiguration;
   private static Datastore datastore;
+
+  private static Id userId = Id.of("user@email.com");
+  private static Id accountId = Id.of("account-123");
+
   private MongoLoanRepository repository;
 
   @BeforeAll
@@ -57,10 +61,10 @@ public class MongoLoanRepositoryIT {
   public void givenValidBorrowLoanWhenCreateThenShouldPersistLoan() {
     // Given
     var loanId = Id.generate();
-    var userId = Id.of("user@email.com");
     var loan = Loan.builder()
         .id(loanId)
         .user(userId)
+        .account(accountId)
         .type(Loan.Type.BORROW)
         .date(LocalDate.of(2026, 1, 15))
         .time(LocalTime.of(10, 30))
@@ -104,10 +108,10 @@ public class MongoLoanRepositoryIT {
   public void givenValidLendLoanWhenCreateThenShouldPersistLoan() {
     // Given
     var loanId = Id.generate();
-    var userId = Id.of("lender@email.com");
     var loan = Loan.builder()
         .id(loanId)
         .user(userId)
+        .account(accountId)
         .type(Loan.Type.LEND)
         .date(LocalDate.of(2026, 1, 17))
         .time(LocalTime.of(14, 0))
@@ -142,10 +146,10 @@ public class MongoLoanRepositoryIT {
   @Test
   public void givenLoanWithZeroInterestRateWhenCreateThenShouldPersistZeroRate() {
     // Given
-    var userId = Id.of("user@email.com");
     var loan = Loan.builder()
         .id(Id.generate())
         .user(userId)
+        .account(accountId)
         .type(Loan.Type.BORROW)
         .date(LocalDate.now())
         .time(LocalTime.now())
@@ -175,10 +179,10 @@ public class MongoLoanRepositoryIT {
   @Test
   public void givenLoanWithHighInterestRateWhenCreateThenShouldPersistHighRate() {
     // Given
-    var userId = Id.of("borrower@email.com");
     var loan = Loan.builder()
         .id(Id.generate())
         .user(userId)
+        .account(accountId)
         .type(Loan.Type.BORROW)
         .date(LocalDate.now())
         .time(LocalTime.now())
@@ -208,12 +212,12 @@ public class MongoLoanRepositoryIT {
   @Test
   public void givenLoanWithPartialPaymentWhenCreateThenShouldPersistRemainingAmount() {
     // Given
-    var userId = Id.of("user@email.com");
     var totalAmount = BigDecimal.valueOf(10000);
     var remainingAmount = BigDecimal.valueOf(7500);
     var loan = Loan.builder()
         .id(Id.generate())
         .user(userId)
+        .account(accountId)
         .type(Loan.Type.LEND)
         .date(LocalDate.now())
         .time(LocalTime.now())
@@ -243,10 +247,10 @@ public class MongoLoanRepositoryIT {
   @Test
   public void givenLoanWithNullDescriptionWhenCreateThenShouldPersist() {
     // Given
-    var userId = Id.of("user@email.com");
     var loan = Loan.builder()
         .id(Id.generate())
         .user(userId)
+        .account(accountId)
         .type(Loan.Type.BORROW)
         .date(LocalDate.now())
         .time(LocalTime.now())
@@ -276,10 +280,10 @@ public class MongoLoanRepositoryIT {
   @Test
   public void givenMultipleLoanTypesWhenCreateThenShouldPersistAll() {
     // Given
-    var userId = Id.of("user@email.com");
     var borrowLoan = Loan.builder()
         .id(Id.generate())
         .user(userId)
+        .account(accountId)
         .type(Loan.Type.BORROW)
         .date(LocalDate.now())
         .time(LocalTime.now())
@@ -300,6 +304,7 @@ public class MongoLoanRepositoryIT {
     var lendLoan = Loan.builder()
         .id(Id.generate())
         .user(userId)
+        .account(accountId)
         .type(Loan.Type.LEND)
         .date(LocalDate.now())
         .time(LocalTime.now())
@@ -333,10 +338,10 @@ public class MongoLoanRepositoryIT {
   @Test
   public void givenDifferentCurrenciesWhenCreateThenShouldPersistCorrectCurrency() {
     // Given
-    var userId = Id.of("user@email.com");
     var idrLoan = Loan.builder()
         .id(Id.generate())
         .user(userId)
+        .account(accountId)
         .type(Loan.Type.BORROW)
         .date(LocalDate.now())
         .time(LocalTime.now())
@@ -357,6 +362,7 @@ public class MongoLoanRepositoryIT {
     var usdLoan = Loan.builder()
         .id(Id.generate())
         .user(userId)
+        .account(accountId)
         .type(Loan.Type.LEND)
         .date(LocalDate.now())
         .time(LocalTime.now())
@@ -377,6 +383,7 @@ public class MongoLoanRepositoryIT {
     var eurLoan = Loan.builder()
         .id(Id.generate())
         .user(userId)
+        .account(accountId)
         .type(Loan.Type.BORROW)
         .date(LocalDate.now())
         .time(LocalTime.now())
@@ -413,10 +420,10 @@ public class MongoLoanRepositoryIT {
     // Given
     var createdAt = LocalDateTime.of(2026, 1, 1, 10, 0, 0);
     var updatedAt = LocalDateTime.of(2026, 1, 15, 14, 30, 0);
-    var userId = Id.of("user@email.com");
     var loan = Loan.builder()
         .id(Id.generate())
         .user(userId)
+        .account(accountId)
         .type(Loan.Type.BORROW)
         .date(LocalDate.of(2026, 1, 10))
         .time(LocalTime.of(12, 0))
@@ -448,11 +455,11 @@ public class MongoLoanRepositoryIT {
   @Test
   public void givenLoanWithLargeAmountWhenCreateThenShouldPersistLargeAmount() {
     // Given
-    var userId = Id.of("user@email.com");
     var largeAmount = BigDecimal.valueOf(999999999.99);
     var loan = Loan.builder()
         .id(Id.generate())
         .user(userId)
+        .account(accountId)
         .type(Loan.Type.LEND)
         .date(LocalDate.now())
         .time(LocalTime.now())
@@ -482,11 +489,11 @@ public class MongoLoanRepositoryIT {
   @Test
   public void givenLoanWithSmallAmountWhenCreateThenShouldPersistSmallAmount() {
     // Given
-    var userId = Id.of("user@email.com");
     var smallAmount = BigDecimal.valueOf(0.01);
     var loan = Loan.builder()
         .id(Id.generate())
         .user(userId)
+        .account(accountId)
         .type(Loan.Type.BORROW)
         .date(LocalDate.now())
         .time(LocalTime.now())
@@ -515,12 +522,13 @@ public class MongoLoanRepositoryIT {
   @Test
   public void givenMultipleLoansForDifferentUsersWhenCreateThenShouldPersistAll() {
     // Given
-    var user1 = Id.of("user1@email.com");
-    var user2 = Id.of("user2@email.com");
+    var otherUserId = Id.of("user2@email.com");
+    var otherAccountId = Id.of("account-456");
 
     var loan1 = Loan.builder()
         .id(Id.generate())
-        .user(user1)
+        .user(userId)
+        .account(accountId)
         .type(Loan.Type.BORROW)
         .date(LocalDate.now())
         .time(LocalTime.now())
@@ -540,7 +548,8 @@ public class MongoLoanRepositoryIT {
 
     var loan2 = Loan.builder()
         .id(Id.generate())
-        .user(user2)
+        .user(otherUserId)
+        .account(otherAccountId)
         .type(Loan.Type.LEND)
         .date(LocalDate.now())
         .time(LocalTime.now())
@@ -565,8 +574,8 @@ public class MongoLoanRepositoryIT {
     // Then
     assertNotNull(created1);
     assertNotNull(created2);
-    assertEquals(user1.value(), created1.user().value());
-    assertEquals(user2.value(), created2.user().value());
+    assertEquals(userId.value(), created1.user().value());
+    assertEquals(otherUserId.value(), created2.user().value());
     assertEquals("User1 Loan", created1.title());
     assertEquals("User2 Loan", created2.title());
   }
@@ -574,10 +583,10 @@ public class MongoLoanRepositoryIT {
   @Test
   public void givenLoanWithSpecialCharactersInFieldsWhenCreateThenShouldPersist() {
     // Given
-    var userId = Id.of("user@email.com");
     var loan = Loan.builder()
         .id(Id.generate())
         .user(userId)
+        .account(accountId)
         .type(Loan.Type.BORROW)
         .date(LocalDate.now())
         .time(LocalTime.now())
@@ -608,13 +617,13 @@ public class MongoLoanRepositoryIT {
   @Test
   public void givenUserWithMultipleLoansWhenFindByUserIdThenShouldReturnAllUserLoans() {
     // Given
-    var userId = Id.of("user@email.com");
     var requester = "user@email.com";
     var now = LocalDateTime.now();
 
     var loan1 = Loan.builder()
         .id(Id.generate())
         .user(userId)
+        .account(accountId)
         .type(Loan.Type.BORROW)
         .date(LocalDate.of(2024, 6, 15))
         .time(LocalTime.of(14, 30))
@@ -635,6 +644,7 @@ public class MongoLoanRepositoryIT {
     var loan2 = Loan.builder()
         .id(Id.generate())
         .user(userId)
+        .account(accountId)
         .type(Loan.Type.LEND)
         .date(LocalDate.of(2024, 6, 20))
         .time(LocalTime.of(10, 0))
@@ -682,13 +692,14 @@ public class MongoLoanRepositoryIT {
   @Test
   public void givenMultipleUsersWithLoansWhenFindByUserIdThenShouldReturnOnlyUserLoans() {
     // Given
-    var userId1 = Id.of("user1@email.com");
     var userId2 = Id.of("user2@email.com");
+    var accountId2 = Id.of("account-456");
     var now = LocalDateTime.now();
 
     var loan1 = Loan.builder()
         .id(Id.generate())
-        .user(userId1)
+        .user(userId)
+        .account(accountId)
         .type(Loan.Type.BORROW)
         .date(LocalDate.of(2024, 6, 15))
         .time(LocalTime.of(14, 30))
@@ -709,6 +720,7 @@ public class MongoLoanRepositoryIT {
     var loan2 = Loan.builder()
         .id(Id.generate())
         .user(userId2)
+        .account(accountId2)
         .type(Loan.Type.LEND)
         .date(LocalDate.of(2024, 6, 20))
         .time(LocalTime.of(10, 0))
@@ -730,7 +742,7 @@ public class MongoLoanRepositoryIT {
     repository.create(loan2);
 
     // When
-    var user1Loans = repository.findByUserId(userId1);
+    var user1Loans = repository.findByUserId(userId);
     var user2Loans = repository.findByUserId(userId2);
 
     // Then
@@ -738,7 +750,7 @@ public class MongoLoanRepositoryIT {
     assertEquals(1, user2Loans.size());
 
     assertEquals("User 1 Car Loan", user1Loans.get(0).title());
-    assertEquals(userId1.value(), user1Loans.get(0).user().value());
+    assertEquals(userId.value(), user1Loans.get(0).user().value());
 
     assertEquals("User 2 Personal Loan", user2Loans.get(0).title());
     assertEquals(userId2.value(), user2Loans.get(0).user().value());
@@ -747,11 +759,11 @@ public class MongoLoanRepositoryIT {
   @Test
   public void givenExistingLoanWhenUpdateThenShouldPersistChanges() {
     // Given
-    var userId = Id.of("user@email.com");
     var loanId = Id.generate();
     var originalLoan = Loan.builder()
         .id(loanId)
         .user(userId)
+        .account(accountId)
         .type(Loan.Type.BORROW)
         .date(LocalDate.of(2026, 1, 15))
         .time(LocalTime.of(10, 30))
@@ -775,6 +787,7 @@ public class MongoLoanRepositoryIT {
     var updatedLoan = Loan.builder()
         .id(loanId)
         .user(userId)
+        .account(accountId)
         .type(Loan.Type.BORROW)
         .date(LocalDate.of(2026, 2, 20))
         .time(LocalTime.of(14, 45))
@@ -817,14 +830,14 @@ public class MongoLoanRepositoryIT {
   @Test
   public void givenLoanWhenUpdatePartyNameThenShouldPersistNewPartyName() {
     // Given
-    var userId = Id.of("user@email.com");
     var loanId = Id.generate();
-    var originalLoan = createBasicLoan(loanId, userId);
+    var originalLoan = createBasicLoan(loanId, userId, accountId);
     repository.create(originalLoan);
 
     var updatedLoan = Loan.builder()
         .id(loanId)
         .user(userId)
+        .account(accountId)
         .type(originalLoan.type())
         .date(originalLoan.date())
         .time(originalLoan.time())
@@ -857,15 +870,15 @@ public class MongoLoanRepositoryIT {
   @Test
   public void givenLoanWhenUpdateAmountThenShouldPersistNewAmount() {
     // Given
-    var userId = Id.of("user@email.com");
     var loanId = Id.generate();
-    var originalLoan = createBasicLoan(loanId, userId);
+    var originalLoan = createBasicLoan(loanId, userId, accountId);
     repository.create(originalLoan);
 
     var newAmount = BigDecimal.valueOf(25000);
     var updatedLoan = Loan.builder()
         .id(loanId)
         .user(userId)
+        .account(accountId)
         .type(originalLoan.type())
         .date(originalLoan.date())
         .time(originalLoan.time())
@@ -898,14 +911,14 @@ public class MongoLoanRepositoryIT {
   @Test
   public void givenLoanWhenUpdateCurrencyThenShouldPersistNewCurrency() {
     // Given
-    var userId = Id.of("user@email.com");
     var loanId = Id.generate();
-    var originalLoan = createBasicLoan(loanId, userId);
+    var originalLoan = createBasicLoan(loanId, userId, accountId);
     repository.create(originalLoan);
 
     var updatedLoan = Loan.builder()
         .id(loanId)
         .user(userId)
+        .account(accountId)
         .type(originalLoan.type())
         .date(originalLoan.date())
         .time(originalLoan.time())
@@ -938,15 +951,15 @@ public class MongoLoanRepositoryIT {
   @Test
   public void givenLoanWhenUpdateInterestRateThenShouldPersistNewRate() {
     // Given
-    var userId = Id.of("user@email.com");
     var loanId = Id.generate();
-    var originalLoan = createBasicLoan(loanId, userId);
+    var originalLoan = createBasicLoan(loanId, userId, accountId);
     repository.create(originalLoan);
 
     var newInterestRate = 8.75;
     var updatedLoan = Loan.builder()
         .id(loanId)
         .user(userId)
+        .account(accountId)
         .type(originalLoan.type())
         .date(originalLoan.date())
         .time(originalLoan.time())
@@ -979,9 +992,8 @@ public class MongoLoanRepositoryIT {
   @Test
   public void givenLoanWhenUpdateDateAndTimeThenShouldPersistNewDateTime() {
     // Given
-    var userId = Id.of("user@email.com");
     var loanId = Id.generate();
-    var originalLoan = createBasicLoan(loanId, userId);
+    var originalLoan = createBasicLoan(loanId, userId, accountId);
     repository.create(originalLoan);
 
     var newDate = LocalDate.of(2027, 6, 15);
@@ -989,6 +1001,7 @@ public class MongoLoanRepositoryIT {
     var updatedLoan = Loan.builder()
         .id(loanId)
         .user(userId)
+        .account(accountId)
         .type(originalLoan.type())
         .date(newDate)
         .time(newTime)
@@ -1023,14 +1036,14 @@ public class MongoLoanRepositoryIT {
   @Test
   public void givenLoanWhenUpdateMultipleFieldsThenShouldPersistAllChanges() {
     // Given
-    var userId = Id.of("user@email.com");
     var loanId = Id.generate();
-    var originalLoan = createBasicLoan(loanId, userId);
+    var originalLoan = createBasicLoan(loanId, userId, accountId);
     repository.create(originalLoan);
 
     var updatedLoan = Loan.builder()
         .id(loanId)
         .user(userId)
+        .account(accountId)
         .type(originalLoan.type())
         .date(LocalDate.of(2027, 3, 10))
         .time(LocalTime.of(16, 0))
@@ -1071,7 +1084,6 @@ public class MongoLoanRepositoryIT {
   @Test
   public void givenLoanWhenUpdateThenShouldPreserveCreatedFields() {
     // Given
-    var userId = Id.of("user@email.com");
     var loanId = Id.generate();
     // Truncate to millis for MongoDB precision compatibility
     var originalCreatedAt = LocalDateTime.now().minusDays(5).truncatedTo(java.time.temporal.ChronoUnit.MILLIS);
@@ -1080,6 +1092,7 @@ public class MongoLoanRepositoryIT {
     var originalLoan = Loan.builder()
         .id(loanId)
         .user(userId)
+        .account(accountId)
         .type(Loan.Type.BORROW)
         .date(LocalDate.now())
         .time(LocalTime.now())
@@ -1102,6 +1115,7 @@ public class MongoLoanRepositoryIT {
     var updatedLoan = Loan.builder()
         .id(loanId)
         .user(userId)
+        .account(accountId)
         .type(originalLoan.type())
         .date(originalLoan.date())
         .time(originalLoan.time())
@@ -1136,9 +1150,8 @@ public class MongoLoanRepositoryIT {
   @Test
   public void givenLoanWhenUpdateThenShouldUpdateTimestamp() {
     // Given
-    var userId = Id.of("user@email.com");
     var loanId = Id.generate();
-    var originalLoan = createBasicLoan(loanId, userId);
+    var originalLoan = createBasicLoan(loanId, userId, accountId);
     var originalUpdatedAt = originalLoan.updatedAt();
 
     repository.create(originalLoan);
@@ -1153,6 +1166,7 @@ public class MongoLoanRepositoryIT {
     var updatedLoan = Loan.builder()
         .id(loanId)
         .user(userId)
+        .account(accountId)
         .type(originalLoan.type())
         .date(originalLoan.date())
         .time(originalLoan.time())
@@ -1187,8 +1201,7 @@ public class MongoLoanRepositoryIT {
   public void givenExistingLoanWhenDeleteByIdThenShouldRemoveLoan() {
     // Given
     var loanId = Id.generate();
-    var userId = Id.of("delete@email.com");
-    var loan = createBasicLoan(loanId, userId);
+    var loan = createBasicLoan(loanId, userId, accountId);
 
     repository.create(loan);
     assertEquals(true, repository.findById(loanId).isPresent());
@@ -1200,10 +1213,11 @@ public class MongoLoanRepositoryIT {
     assertEquals(false, repository.findById(loanId).isPresent());
   }
 
-  private Loan createBasicLoan(Id loanId, Id userId) {
+  private static Loan createBasicLoan(Id loanId, Id userId, Id accountId) {
     return Loan.builder()
         .id(loanId)
         .user(userId)
+        .account(accountId)
         .type(Loan.Type.BORROW)
         .date(LocalDate.of(2026, 1, 15))
         .time(LocalTime.of(10, 30))

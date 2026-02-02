@@ -19,4 +19,12 @@ public interface LoanRepository {
   Optional<Loan> findById(Id id);
 
   List<Loan> findByUserId(Id userId);
+
+  default boolean isExistingLoan(Id loan) {
+    return findById(loan).isPresent();
+  }
+
+  default boolean isNotExistingLoan(Id loan) {
+    return !isExistingLoan(loan);
+  }
 }

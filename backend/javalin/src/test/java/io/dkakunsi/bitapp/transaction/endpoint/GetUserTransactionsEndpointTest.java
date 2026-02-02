@@ -26,7 +26,7 @@ import kong.unirest.Unirest;
 
 class GetUserTransactionsEndpointTest {
 
-  private static final int PORT = 20012;
+  private static final int PORT = 20014;
 
   private static String baseUrl;
 

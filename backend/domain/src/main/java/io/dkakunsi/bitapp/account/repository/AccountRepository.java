@@ -21,4 +21,12 @@ public interface AccountRepository {
   Optional<Account> findById(Id id);
 
   List<Account> findByUserId(Id userId);
+
+  default boolean isExistingAccount(Id id) {
+    return findById(id).isPresent();
+  }
+
+  default boolean isNotExistingAccount(Id id) {
+    return !isExistingAccount(id);
+  }
 }

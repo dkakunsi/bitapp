@@ -8,6 +8,7 @@ import java.util.Map;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.AppLauncher;
@@ -43,6 +44,7 @@ public class UpdateLoanIT extends AppTestUtil {
     sut.destroy();
   }
 
+  @BeforeEach
   public void setupEach() throws Exception {
     var testAccountId = createTestAccount();
     loanId = createTestLoan(testAccountId);
