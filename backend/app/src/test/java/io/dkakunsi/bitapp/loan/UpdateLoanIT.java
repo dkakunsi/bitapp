@@ -92,6 +92,7 @@ public class UpdateLoanIT extends AppTestUtil {
         .body(body)
         .asString();
 
+    assertEquals(200, response.getStatus());
     var responseBody = new JSONObject(response.getBody());
     return responseBody.getString("id");
   }

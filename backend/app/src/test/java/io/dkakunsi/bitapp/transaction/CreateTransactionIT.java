@@ -29,7 +29,6 @@ public class CreateTransactionIT extends AppTestUtil {
 
   private String sourceAccountId;
   private String destinationAccountId;
-  private String loanId;
 
   @BeforeAll
   static void setup() throws Exception {
@@ -51,7 +50,6 @@ public class CreateTransactionIT extends AppTestUtil {
   void setupTestData() {
     sourceAccountId = createAccount("Source Account", "BANK", 1000000);
     destinationAccountId = createAccount("Destination Account", "BANK", 500000);
-    loanId = createLoan("BORROW", "John Doe", "Personal Loan", 2000000, 5.0);
   }
 
   private String createAccount(String name, String type, long initialBalance) {
@@ -94,7 +92,8 @@ public class CreateTransactionIT extends AppTestUtil {
     return accountId;
   }
 
-  private String createLoan(String type, String partyName, String title, long amount, double interestRate) {
+  private String createLoan(String type, String partyName, String title, long amount, double interestRate,
+      String accountId) {
     var body = String.format("""
         {
           "type": "%s",
@@ -103,9 +102,10 @@ public class CreateTransactionIT extends AppTestUtil {
           "description": "Test loan",
           "amount": %d,
           "currency": "IDR",
-          "interestRate": %.1f
+          "interestRate": %.1f,
+          "account": "%s"
         }
-        """, type, partyName, title, amount, interestRate);
+        """, type, partyName, title, amount, interestRate, accountId);
 
     var response = Unirest.post(baseUrl + "/loans")
         .header("Authorization", "Bearer " + token)
@@ -278,6 +278,8 @@ public class CreateTransactionIT extends AppTestUtil {
    */
   @Test
   public void createTransactionWithLoanShouldBeOk() {
+    var loanId = createLoan("BORROW", "John Doe", "Personal Loan", 2000000, 5.0, sourceAccountId);
+
     var body = String.format("""
         {
           "type": "DEBIT",
@@ -769,7 +771,7 @@ public class CreateTransactionIT extends AppTestUtil {
         .body(body)
         .asString();
 
-    assertEquals(404, response.getStatus());
+    assertEquals(400, response.getStatus());
     assertEquals("source account not found", response.getBody());
   }
 
@@ -798,7 +800,7 @@ public class CreateTransactionIT extends AppTestUtil {
         .body(body)
         .asString();
 
-    assertEquals(404, response.getStatus());
+    assertEquals(400, response.getStatus());
     assertEquals("destination account not found", response.getBody());
   }
 
@@ -828,7 +830,7 @@ public class CreateTransactionIT extends AppTestUtil {
         .body(body)
         .asString();
 
-    assertEquals(404, response.getStatus());
+    assertEquals(400, response.getStatus());
     assertEquals("source account not found", response.getBody());
   }
 
@@ -858,7 +860,7 @@ public class CreateTransactionIT extends AppTestUtil {
         .body(body)
         .asString();
 
-    assertEquals(404, response.getStatus());
+    assertEquals(400, response.getStatus());
     assertEquals("destination account not found", response.getBody());
   }
 
@@ -887,7 +889,7 @@ public class CreateTransactionIT extends AppTestUtil {
         .body(body)
         .asString();
 
-    assertEquals(404, response.getStatus());
+    assertEquals(400, response.getStatus());
     assertEquals("loan not found", response.getBody());
   }
 }
