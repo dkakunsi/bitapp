@@ -52,15 +52,15 @@ public final class CreateTransaction implements UseCase<CreateTransactionInput, 
 
   private Optional<AppError> validateRequest(Transaction transaction) {
     if (transaction.source() != null && accountRepository.isNotExistingAccount(transaction.source())) {
-      return Optional.of(new AppError(Code.NOT_FOUND, "source account not found"));
+      return Optional.of(new AppError(Code.BAD_REQUEST, "source account not found"));
     }
 
     if (transaction.destination() != null && accountRepository.isNotExistingAccount(transaction.destination())) {
-      return Optional.of(new AppError(Code.NOT_FOUND, "destination account not found"));
+      return Optional.of(new AppError(Code.BAD_REQUEST, "destination account not found"));
     }
 
     if (transaction.loan() != null && loanRepository.isNotExistingLoan(transaction.loan())) {
-      return Optional.of(new AppError(Code.NOT_FOUND, "loan not found"));
+      return Optional.of(new AppError(Code.BAD_REQUEST, "loan not found"));
     }
     return Optional.empty();
   }
