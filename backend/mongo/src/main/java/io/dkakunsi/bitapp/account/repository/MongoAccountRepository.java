@@ -56,7 +56,7 @@ public class MongoAccountRepository extends MongoRepository implements AccountRe
 
   @Override
   public Optional<Account> findById(Id id) {
-    var entity = datastore.find(AccountModel.class)
+    var entity = pickDatastore().find(AccountModel.class)
         .filter(Filters.eq(MONGO_ID, id.value()))
         .first();
     return entity != null ? Optional.of(entity.toAccount()) : Optional.empty();
@@ -64,7 +64,7 @@ public class MongoAccountRepository extends MongoRepository implements AccountRe
 
   @Override
   public List<Account> findByUserId(Id userId) {
-    return datastore.find(AccountModel.class)
+    return pickDatastore().find(AccountModel.class)
         .filter(Filters.eq("userId", userId.value()))
         .stream()
         .map(AccountModel::toAccount)

@@ -39,7 +39,7 @@ public class MongoTransactionRepository extends MongoRepository implements Trans
 
   @Override
   public Optional<Transaction> findById(Id id) {
-    var entity = datastore.find(TransactionModel.class)
+    var entity = pickDatastore().find(TransactionModel.class)
         .filter(Filters.eq(MONGO_ID, id.value()))
         .first();
     return Optional.ofNullable(entity).map(TransactionModel::toTransaction);
@@ -47,7 +47,7 @@ public class MongoTransactionRepository extends MongoRepository implements Trans
 
   @Override
   public List<Transaction> findByUserId(Id userId) {
-    return datastore.find(TransactionModel.class)
+    return pickDatastore().find(TransactionModel.class)
         .filter(Filters.eq("userId", userId.value()))
         .stream()
         .map(TransactionModel::toTransaction)
@@ -56,7 +56,7 @@ public class MongoTransactionRepository extends MongoRepository implements Trans
 
   @Override
   public List<Transaction> findByAccountId(Id accountId) {
-    return datastore.find(TransactionModel.class)
+    return pickDatastore().find(TransactionModel.class)
         .filter(Filters.or(
             Filters.eq("source", accountId.value()),
             Filters.eq("destination", accountId.value())))
@@ -67,7 +67,7 @@ public class MongoTransactionRepository extends MongoRepository implements Trans
 
   @Override
   public List<Transaction> findByLoanId(Id loanId) {
-    return datastore.find(TransactionModel.class)
+    return pickDatastore().find(TransactionModel.class)
         .filter(Filters.eq("loan", loanId.value()))
         .stream()
         .map(TransactionModel::toTransaction)

@@ -34,6 +34,14 @@ public class MongoLoanRepository extends MongoRepository implements LoanReposito
   }
 
   @Override
+  public void decreaseRemainingAmount(Id id, BigDecimal amount) {
+    var operation = UpdateOperators.dec("remainingAmount", amount.doubleValue());
+    pickDatastore().find(LoanModel.class)
+        .filter(Filters.eq(MONGO_ID, id.value()))
+        .update(new UpdateOptions(), operation);
+  }
+
+  @Override
   public void deleteById(Id id) {
     pickDatastore().find(LoanModel.class)
         .filter(Filters.eq(MONGO_ID, id.value()))
@@ -42,7 +50,7 @@ public class MongoLoanRepository extends MongoRepository implements LoanReposito
 
   @Override
   public Optional<Loan> findById(Id id) {
-    var entity = datastore.find(LoanModel.class)
+    var entity = pickDatastore().find(LoanModel.class)
         .filter(Filters.eq(MONGO_ID, id.value()))
         .first();
     return Optional.ofNullable(entity).map(LoanModel::toLoan);
@@ -50,18 +58,10 @@ public class MongoLoanRepository extends MongoRepository implements LoanReposito
 
   @Override
   public List<Loan> findByUserId(Id userId) {
-    return datastore.find(LoanModel.class)
+    return pickDatastore().find(LoanModel.class)
         .filter(Filters.eq("userId", userId.value()))
         .stream()
         .map(LoanModel::toLoan)
         .toList();
-  }
-
-  @Override
-  public void decreaseRemainingAmount(Id id, BigDecimal amount) {
-    var operation = UpdateOperators.dec("remainingAmount", amount.doubleValue());
-    pickDatastore().find(LoanModel.class)
-        .filter(Filters.eq(MONGO_ID, id.value()))
-        .update(new UpdateOptions(), operation);
   }
 }
