@@ -51,7 +51,7 @@ public final class UserTransactionProcessor implements TransactionProcessor {
        * There are no chances for it to increase the remaining amount through
        * transaction.
        */
-      loanRepository.decreaseRemainingAmount(createdTransaction.id(), createdTransaction.amount());
+      loanRepository.decreaseRemainingAmount(createdTransaction.loan(), createdTransaction.amount());
     }
 
     return createdTransaction;
