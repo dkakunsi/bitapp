@@ -34,7 +34,7 @@ public interface Logger {
     try {
       var requestId = Context.get().requestId();
       return StringUtils.isBlank(requestId) ? "NOT-SPECIFIED" : requestId;
-    } catch (Exception ex) {
+    } catch (Exception _) {
       return "NOT-SPECIFIED";
     }
   }

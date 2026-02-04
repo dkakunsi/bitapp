@@ -51,7 +51,7 @@ public final record Transaction(
       try {
         valueOf(type);
         return true;
-      } catch (IllegalArgumentException e) {
+      } catch (IllegalArgumentException _) {
         return false;
       }
     }
@@ -78,7 +78,7 @@ public final record Transaction(
       try {
         valueOf(category);
         return true;
-      } catch (IllegalArgumentException e) {
+      } catch (IllegalArgumentException _) {
         return false;
       }
     }

@@ -15,7 +15,7 @@ public abstract class MongoRepository {
 
   protected Datastore pickDatastore() {
     return SessionManager.getCurrentSession()
-        .filter(s -> s instanceof MongoSession)
+        .filter(MongoSession.class::isInstance)
         .map(s -> (Datastore) ((MongoSession) s).getSession())
         .orElse(datastore);
   }

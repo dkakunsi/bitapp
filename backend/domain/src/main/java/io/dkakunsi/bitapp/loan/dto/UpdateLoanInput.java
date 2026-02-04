@@ -49,7 +49,7 @@ public final record UpdateLoanInput(
     if (currency != null && StringUtils.isNotBlank(currency)) {
       try {
         java.util.Currency.getInstance(currency);
-      } catch (IllegalArgumentException e) {
+      } catch (IllegalArgumentException _) {
         errors.add("currency: invalid value");
       }
     }

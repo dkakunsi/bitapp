@@ -20,8 +20,8 @@ public class MongoSessionManager implements SessionManager {
   @Override
   public <T> Result<T> executeInSession(Supplier<Result<T>> function) {
     return SessionManager.getCurrentSession()
-        .filter(s -> s instanceof MongoSession)
-        .map(s -> function.get())
+        .filter(MongoSession.class::isInstance)
+        .map(_ -> function.get())
         .orElseGet(() -> executeNewSession(function));
   }
 

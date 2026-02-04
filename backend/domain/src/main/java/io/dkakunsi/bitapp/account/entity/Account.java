@@ -44,7 +44,7 @@ public final record Account(
       try {
         valueOf(type);
         return true;
-      } catch (IllegalArgumentException e) {
+      } catch (IllegalArgumentException _) {
         return false;
       }
     }

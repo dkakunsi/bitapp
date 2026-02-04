@@ -12,7 +12,7 @@ public interface SessionManager {
   static Optional<Session> getCurrentSession() {
     try {
       return Optional.of(SessionManager.SESSION.get());
-    } catch (NoSuchElementException e) {
+    } catch (NoSuchElementException _) {
       return Optional.empty();
     }
   }

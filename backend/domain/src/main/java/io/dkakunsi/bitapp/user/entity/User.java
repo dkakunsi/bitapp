@@ -37,7 +37,7 @@ public final record User(
       try {
         valueOf(language);
         return true;
-      } catch (IllegalArgumentException ex) {
+      } catch (IllegalArgumentException _) {
         return false;
       }
     }

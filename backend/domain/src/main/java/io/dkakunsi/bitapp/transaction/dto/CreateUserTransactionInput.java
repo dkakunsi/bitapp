@@ -85,7 +85,7 @@ public record CreateUserTransactionInput(
     if (dateStr != null) {
       try {
         parsedDate = LocalDate.parse(dateStr);
-      } catch (DateTimeParseException e) {
+      } catch (DateTimeParseException _) {
         throw new IllegalArgumentException("date: invalid value");
       }
     }
@@ -93,7 +93,7 @@ public record CreateUserTransactionInput(
     if (timeStr != null) {
       try {
         parsedTime = LocalTime.parse(timeStr);
-      } catch (DateTimeParseException e) {
+      } catch (DateTimeParseException _) {
         throw new IllegalArgumentException("time: invalid value");
       }
     }
