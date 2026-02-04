@@ -1,9 +1,11 @@
 package io.dkakunsi.bitapp.transaction.endpoint;
 
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 
 import io.dkakunsi.bitapp.javalin.JavalinEndpoint;
 import io.dkakunsi.bitapp.transaction.dto.CreateTransactionInput;
+import io.dkakunsi.bitapp.transaction.dto.CreateUserTransactionInput;
 import io.dkakunsi.bitapp.transaction.dto.TransactionResult;
 import io.dkakunsi.bitapp.transaction.usecase.CreateTransaction;
 import io.javalin.http.Context;
@@ -49,7 +51,7 @@ public final class CreateTransactionEndpoint extends JavalinEndpoint<CreateTrans
   @Override
   protected CreateTransactionInput buildInput(Context ctx) {
     var body = ctx.bodyAsClass(CreateTransactionRequest.class);
-    return CreateTransactionInput.fromRequest(
+    return CreateUserTransactionInput.fromRequest(
         body.title(),
         body.description(),
         body.date(),
@@ -72,7 +74,7 @@ record CreateTransactionRequest(
     String source,
     String destination,
     String loan,
-    Long amount,
+    BigDecimal amount,
     String currency,
     String category,
     String type) {

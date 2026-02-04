@@ -1,12 +1,11 @@
 package io.dkakunsi.bitapp.transaction.usecase;
 
-import java.math.BigDecimal;
-
 import io.dkakunsi.bitapp.account.repository.AccountRepository;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
-import io.dkakunsi.bitapp.common.usecase.Result;
-import io.dkakunsi.bitapp.common.usecase.UseCase;
+import io.dkakunsi.bitapp.domain.entity.Id;
+import io.dkakunsi.bitapp.domain.usecase.Result;
+import io.dkakunsi.bitapp.domain.usecase.UseCase;
 import io.dkakunsi.bitapp.loan.repository.LoanRepository;
 import io.dkakunsi.bitapp.transaction.dto.TransactionResult;
 import io.dkakunsi.bitapp.transaction.entity.Transaction;
@@ -29,7 +28,7 @@ public final class RemoveTransaction implements UseCase<String, TransactionResul
 
   @Override
   public Result<TransactionResult> execute(Context context, String transactionId) {
-    return transactionRepository.findById(transactionId)
+    return transactionRepository.findById(Id.of(transactionId))
         .filter(transaction -> transaction.user().value().equals(context.requester()))
         .map(transaction -> removeTransaction(transaction))
         .orElse(Result.failure(Code.NOT_FOUND, "Transaction not found"));
@@ -45,7 +44,7 @@ public final class RemoveTransaction implements UseCase<String, TransactionResul
       throw e;
     }
 
-    transactionRepository.deleteById(transaction.id().value());
+    transactionRepository.deleteById(transaction.id());
     return Result.success(transaction.toResult());
   }
 
@@ -68,40 +67,39 @@ public final class RemoveTransaction implements UseCase<String, TransactionResul
   }
 
   private void revertDebit(Transaction transaction) {
-    var sourceAccount = accountRepository.findById(transaction.source().value())
+    var sourceAccount = accountRepository.findById(transaction.source())
         .orElseThrow(() -> new IllegalArgumentException("source account not found"));
 
-    var newBalance = sourceAccount.balance().add(BigDecimal.valueOf(transaction.amount()));
+    var newBalance = sourceAccount.balance().add(transaction.amount());
     accountRepository.update(sourceAccount.updateBalance(newBalance));
   }
 
   private void revertCredit(Transaction transaction) {
-    var destinationAccount = accountRepository.findById(transaction.destination().value())
+    var destinationAccount = accountRepository.findById(transaction.destination())
         .orElseThrow(() -> new IllegalArgumentException("destination account not found"));
 
-    var newBalance = destinationAccount.balance().subtract(BigDecimal.valueOf(transaction.amount()));
+    var newBalance = destinationAccount.balance().subtract(transaction.amount());
     accountRepository.update(destinationAccount.updateBalance(newBalance));
   }
 
   private void revertTransfer(Transaction transaction) {
-    var sourceAccount = accountRepository.findById(transaction.source().value())
+    var sourceAccount = accountRepository.findById(transaction.source())
         .orElseThrow(() -> new IllegalArgumentException("source account not found"));
 
-    var destinationAccount = accountRepository.findById(transaction.destination().value())
+    var destinationAccount = accountRepository.findById(transaction.destination())
         .orElseThrow(() -> new IllegalArgumentException("destination account not found"));
 
-    var sourceNewBalance = sourceAccount.balance().add(BigDecimal.valueOf(transaction.amount()));
-    var destNewBalance = destinationAccount.balance().subtract(BigDecimal.valueOf(transaction.amount()));
-
+    var sourceNewBalance = sourceAccount.balance().add(transaction.amount());
+    var destNewBalance = destinationAccount.balance().subtract(transaction.amount());
     accountRepository.update(sourceAccount.updateBalance(sourceNewBalance));
     accountRepository.update(destinationAccount.updateBalance(destNewBalance));
   }
 
   private void revertLoan(Transaction transaction) {
-    var loan = loanRepository.findById(transaction.loan().value())
+    var loan = loanRepository.findById(transaction.loan())
         .orElseThrow(() -> new IllegalArgumentException("loan not found"));
 
-    var newRemainingAmount = loan.remainingAmount().add(BigDecimal.valueOf(transaction.amount()));
+    var newRemainingAmount = loan.remainingAmount().add(transaction.amount());
     loanRepository.update(loan.updateRemainingAmount(newRemainingAmount));
   }
 }

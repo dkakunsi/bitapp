@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -22,7 +22,7 @@ import io.dkakunsi.bitapp.account.entity.Account;
 import io.dkakunsi.bitapp.account.repository.AccountRepository;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
-import io.dkakunsi.bitapp.common.Id;
+import io.dkakunsi.bitapp.domain.entity.Id;
 
 public final class GetUserAccountsTest {
 
@@ -31,6 +31,7 @@ public final class GetUserAccountsTest {
   private AccountRepository accountRepository;
 
   private static final String USER_ID = "user123";
+  private static final Id USER = Id.of(USER_ID);
   private static final String REQUESTER = "requester@email.com";
 
   @BeforeEach
@@ -45,14 +46,13 @@ public final class GetUserAccountsTest {
     var input = USER_ID;
     var context = Context.builder().requester(REQUESTER).build();
 
-    var user = Id.of(USER_ID);
     var account1 = Account.builder()
         .id(Id.of("account1"))
         .name("Savings Account")
         .type(Account.Type.BANK)
         .themeColor("#FF5733")
         .balance(BigDecimal.valueOf(1000.00))
-        .user(user)
+        .user(USER)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy(REQUESTER)
@@ -65,7 +65,7 @@ public final class GetUserAccountsTest {
         .type(Account.Type.CASH)
         .themeColor("#3357FF")
         .balance(BigDecimal.valueOf(500.00))
-        .user(user)
+        .user(USER)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy(REQUESTER)
@@ -73,7 +73,7 @@ public final class GetUserAccountsTest {
         .build();
 
     var accounts = Arrays.asList(account1, account2);
-    when(accountRepository.findByUserId(USER_ID)).thenReturn(accounts);
+    when(accountRepository.findByUserId(USER)).thenReturn(accounts);
 
     // When
     var result = underTest.process(context, input);
@@ -104,7 +104,7 @@ public final class GetUserAccountsTest {
     assertEquals(BigDecimal.valueOf(500.00), secondAccount.balance());
     assertEquals(USER_ID, secondAccount.user());
 
-    verify(accountRepository).findByUserId(USER_ID);
+    verify(accountRepository).findByUserId(USER);
   }
 
   @Test
@@ -113,7 +113,7 @@ public final class GetUserAccountsTest {
     var input = USER_ID;
     var context = Context.builder().requester(REQUESTER).build();
 
-    when(accountRepository.findByUserId(USER_ID)).thenReturn(Collections.emptyList());
+    when(accountRepository.findByUserId(USER)).thenReturn(Collections.emptyList());
 
     // When
     var result = underTest.process(context, input);
@@ -126,7 +126,7 @@ public final class GetUserAccountsTest {
     assertNotNull(resultData);
     assertEquals(0, resultData.size());
 
-    verify(accountRepository).findByUserId(USER_ID);
+    verify(accountRepository).findByUserId(USER);
   }
 
   @Test
@@ -135,7 +135,7 @@ public final class GetUserAccountsTest {
     var input = USER_ID;
     var context = Context.builder().requester(REQUESTER).build();
 
-    when(accountRepository.findByUserId(anyString()))
+    when(accountRepository.findByUserId(any(Id.class)))
         .thenThrow(new RuntimeException("Database connection error"));
 
     // When
@@ -149,7 +149,7 @@ public final class GetUserAccountsTest {
     assertEquals(Code.SERVER_ERROR, error.code());
     assertEquals("Database connection error", error.message());
 
-    verify(accountRepository).findByUserId(USER_ID);
+    verify(accountRepository).findByUserId(USER);
   }
 
   @Test
@@ -172,7 +172,7 @@ public final class GetUserAccountsTest {
         .updatedBy(REQUESTER)
         .build();
 
-    when(accountRepository.findByUserId(USER_ID)).thenReturn(List.of(account));
+    when(accountRepository.findByUserId(USER)).thenReturn(List.of(account));
 
     // When
     var result = underTest.process(context, input);
@@ -193,25 +193,27 @@ public final class GetUserAccountsTest {
     assertEquals(BigDecimal.valueOf(250.50), accountItem.balance());
     assertEquals(USER_ID, accountItem.user());
 
-    verify(accountRepository).findByUserId(USER_ID);
+    verify(accountRepository).findByUserId(USER);
   }
 
   @Test
   void givenDifferentUserIdsWhenCalledThenShouldUseCorrectUserId() {
     // Given
     var userId1 = "user111";
+    var user1 = Id.of(userId1);
     var userId2 = "user222";
+    var user2 = Id.of(userId2);
     var context = Context.builder().requester(REQUESTER).build();
 
-    when(accountRepository.findByUserId(userId1)).thenReturn(Collections.emptyList());
-    when(accountRepository.findByUserId(userId2)).thenReturn(Collections.emptyList());
+    when(accountRepository.findByUserId(user1)).thenReturn(Collections.emptyList());
+    when(accountRepository.findByUserId(user2)).thenReturn(Collections.emptyList());
 
     // When
     underTest.process(context, userId1);
     underTest.process(context, userId2);
 
     // Then
-    verify(accountRepository).findByUserId(userId1);
-    verify(accountRepository).findByUserId(userId2);
+    verify(accountRepository).findByUserId(user1);
+    verify(accountRepository).findByUserId(user2);
   }
 }

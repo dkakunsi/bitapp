@@ -1,56 +1,66 @@
 package io.dkakunsi.bitapp.loan.repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 import dev.morphia.Datastore;
+import dev.morphia.UpdateOptions;
 import dev.morphia.query.filters.Filters;
+import dev.morphia.query.updates.UpdateOperators;
+import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.loan.entity.Loan;
 import io.dkakunsi.bitapp.loan.model.LoanModel;
+import io.dkakunsi.bitapp.mongo.MongoRepository;
 
-public class MongoLoanRepository implements LoanRepository {
-
-  private final Datastore datastore;
+public class MongoLoanRepository extends MongoRepository implements LoanRepository {
 
   public MongoLoanRepository(Datastore datastore) {
-    this.datastore = datastore;
+    super(datastore);
   }
 
   @Override
   public Loan create(Loan loan) {
     var entity = LoanModel.fromLoan(loan);
-    datastore.save(entity);
+    pickDatastore().save(entity);
     return loan;
-  }
-
-  @Override
-  public Optional<Loan> findById(String id) {
-    var entity = datastore.find(LoanModel.class)
-        .filter(Filters.eq("_id", id))
-        .first();
-    return Optional.ofNullable(entity).map(LoanModel::toLoan);
-  }
-
-  @Override
-  public List<Loan> findByUserId(String userId) {
-    return datastore.find(LoanModel.class)
-        .filter(Filters.eq("userId", userId))
-        .stream()
-        .map(LoanModel::toLoan)
-        .toList();
   }
 
   @Override
   public Loan update(Loan loan) {
     var entity = LoanModel.fromLoan(loan);
-    datastore.save(entity);
+    pickDatastore().save(entity);
     return loan;
   }
 
   @Override
-  public void deleteById(String id) {
-    datastore.find(LoanModel.class)
-        .filter(Filters.eq("_id", id))
+  public void decreaseRemainingAmount(Id id, BigDecimal amount) {
+    pickDatastore().find(LoanModel.class)
+        .filter(Filters.eq(MONGO_ID, id.value()))
+        .update(new UpdateOptions(), UpdateOperators.dec("remainingAmount", amount.doubleValue()));
+  }
+
+  @Override
+  public void deleteById(Id id) {
+    pickDatastore().find(LoanModel.class)
+        .filter(Filters.eq(MONGO_ID, id.value()))
         .delete();
+  }
+
+  @Override
+  public Optional<Loan> findById(Id id) {
+    var entity = pickDatastore().find(LoanModel.class)
+        .filter(Filters.eq(MONGO_ID, id.value()))
+        .first();
+    return Optional.ofNullable(entity).map(LoanModel::toLoan);
+  }
+
+  @Override
+  public List<Loan> findByUserId(Id userId) {
+    return pickDatastore().find(LoanModel.class)
+        .filter(Filters.eq("userId", userId.value()))
+        .stream()
+        .map(LoanModel::toLoan)
+        .toList();
   }
 }

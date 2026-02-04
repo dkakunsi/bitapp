@@ -3,8 +3,8 @@ package io.dkakunsi.bitapp.user.entity;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import io.dkakunsi.bitapp.common.EntityStatus;
-import io.dkakunsi.bitapp.common.Id;
+import io.dkakunsi.bitapp.domain.entity.EntityStatus;
+import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.user.dto.RegisterUserInput;
 import io.dkakunsi.bitapp.user.dto.UserResult;
 import lombok.Builder;

@@ -4,8 +4,9 @@ import io.dkakunsi.bitapp.account.dto.AccountResult;
 import io.dkakunsi.bitapp.account.repository.AccountRepository;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
-import io.dkakunsi.bitapp.common.usecase.Result;
-import io.dkakunsi.bitapp.common.usecase.UseCase;
+import io.dkakunsi.bitapp.domain.entity.Id;
+import io.dkakunsi.bitapp.domain.usecase.Result;
+import io.dkakunsi.bitapp.domain.usecase.UseCase;
 
 public final class GetAccount implements UseCase<String, AccountResult> {
 
@@ -17,7 +18,7 @@ public final class GetAccount implements UseCase<String, AccountResult> {
 
   @Override
   public Result<AccountResult> execute(Context context, String accountId) {
-    return accountRepository.findById(accountId)
+    return accountRepository.findById(Id.of(accountId))
         .map(account -> Result.success(account.toResult()))
         .orElse(Result.failure(Code.NOT_FOUND, "Account not found"));
   }

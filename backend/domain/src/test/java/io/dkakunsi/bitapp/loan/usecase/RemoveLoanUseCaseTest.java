@@ -23,8 +23,8 @@ import org.mockito.ArgumentCaptor;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
-import io.dkakunsi.bitapp.common.EntityStatus;
-import io.dkakunsi.bitapp.common.Id;
+import io.dkakunsi.bitapp.domain.entity.EntityStatus;
+import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.loan.entity.Loan;
 import io.dkakunsi.bitapp.loan.repository.LoanRepository;
 import io.dkakunsi.bitapp.transaction.entity.Transaction;
@@ -35,6 +35,7 @@ public final class RemoveLoanUseCaseTest {
   private static final String REQUESTER = "user@email.com";
   private static final String OTHER_USER = "other@email.com";
   private static final String LOAN_ID = "loan-123";
+  private static final Id LOAN = Id.of(LOAN_ID);
 
   private RemoveLoan underTest;
 
@@ -51,7 +52,7 @@ public final class RemoveLoanUseCaseTest {
   @Test
   void returnNotFoundWhenLoanDoesNotExist() {
     // Given
-    when(loanRepository.findById(LOAN_ID)).thenReturn(Optional.empty());
+    when(loanRepository.findById(LOAN)).thenReturn(Optional.empty());
 
     // When
     var context = Context.builder().requester(REQUESTER).build();
@@ -62,14 +63,14 @@ public final class RemoveLoanUseCaseTest {
     assertTrue(result.error().isPresent());
     assertEquals(Code.NOT_FOUND, result.error().get().code());
     assertEquals("Loan not found", result.error().get().message());
-    verify(loanRepository).findById(LOAN_ID);
+    verify(loanRepository).findById(LOAN);
   }
 
   @Test
   void returnForbiddenWhenLoanBelongsToAnotherUser() {
     // Given
     var loan = createLoan(LOAN_ID, OTHER_USER);
-    when(loanRepository.findById(LOAN_ID)).thenReturn(Optional.of(loan));
+    when(loanRepository.findById(LOAN)).thenReturn(Optional.of(loan));
 
     // When
     var context = Context.builder().requester(REQUESTER).build();
@@ -79,7 +80,7 @@ public final class RemoveLoanUseCaseTest {
     assertFalse(result.isSuccess());
     assertTrue(result.error().isPresent());
     assertEquals(Code.FORBIDDEN, result.error().get().code());
-    verify(loanRepository, never()).deleteById(LOAN_ID);
+    verify(loanRepository, never()).deleteById(LOAN);
   }
 
   @Test
@@ -89,8 +90,8 @@ public final class RemoveLoanUseCaseTest {
     var transaction1 = createTransaction("trans-1", REQUESTER, LOAN_ID);
     var transaction2 = createTransaction("trans-2", REQUESTER, LOAN_ID);
 
-    when(loanRepository.findById(LOAN_ID)).thenReturn(Optional.of(loan));
-    when(transactionRepository.findByLoanId(LOAN_ID)).thenReturn(List.of(transaction1, transaction2));
+    when(loanRepository.findById(LOAN)).thenReturn(Optional.of(loan));
+    when(transactionRepository.findByLoanId(LOAN)).thenReturn(List.of(transaction1, transaction2));
 
     // When
     var context = Context.builder().requester(REQUESTER).build();
@@ -109,13 +110,14 @@ public final class RemoveLoanUseCaseTest {
       assertEquals(REQUESTER, updatedTransaction.updatedBy());
     }
 
-    verify(loanRepository).deleteById(LOAN_ID);
+    verify(loanRepository).deleteById(LOAN);
   }
 
   private static Loan createLoan(String id, String user) {
     return Loan.builder()
         .id(Id.of(id))
         .user(Id.of(user))
+        .account(Id.of("account-123"))
         .type(Loan.Type.BORROW)
         .date(LocalDate.of(2026, 1, 24))
         .time(LocalTime.of(10, 0))
@@ -144,8 +146,8 @@ public final class RemoveLoanUseCaseTest {
         .time(LocalTime.of(11, 0))
         .source(Id.of("account-1"))
         .loan(Id.of(loanId))
-        .amount(100000L)
-        .currency("IDR")
+        .amount(BigDecimal.valueOf(100000))
+        .currency(Currency.getInstance("IDR"))
         .category(Transaction.Category.LOAN)
         .type(Transaction.Type.DEBIT)
         .status(EntityStatus.ACTIVE)

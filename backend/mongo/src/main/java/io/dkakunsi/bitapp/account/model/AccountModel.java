@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 
 import dev.morphia.annotations.Entity;
 import io.dkakunsi.bitapp.account.entity.Account;
-import io.dkakunsi.bitapp.common.EntityStatus;
-import io.dkakunsi.bitapp.common.Id;
+import io.dkakunsi.bitapp.domain.entity.EntityStatus;
+import io.dkakunsi.bitapp.domain.entity.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

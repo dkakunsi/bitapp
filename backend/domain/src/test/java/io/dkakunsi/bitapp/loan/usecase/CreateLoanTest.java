@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -13,19 +14,24 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Currency;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import io.dkakunsi.bitapp.account.entity.Account;
+import io.dkakunsi.bitapp.account.repository.AccountRepository;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
-import io.dkakunsi.bitapp.common.EntityStatus;
-import io.dkakunsi.bitapp.account.repository.AccountRepository;
+import io.dkakunsi.bitapp.database.SessionManager;
+import io.dkakunsi.bitapp.domain.entity.EntityStatus;
+import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.loan.dto.CreateLoanInput;
 import io.dkakunsi.bitapp.loan.entity.Loan;
 import io.dkakunsi.bitapp.loan.repository.LoanRepository;
 import io.dkakunsi.bitapp.transaction.repository.TransactionRepository;
+import io.dkakunsi.bitapp.transaction.usecase.CreateTransaction;
 
 public final class CreateLoanTest {
 
@@ -34,15 +40,25 @@ public final class CreateLoanTest {
   private LoanRepository loanRepository;
   private AccountRepository accountRepository;
   private TransactionRepository transactionRepository;
+  private CreateTransaction createTransaction;
+  private SessionManager sessionManager;
 
   private static final String REQUESTER = "testUser";
+  private static final String ACCOUNT_ID = "account-123";
 
   @BeforeEach
   void setUp() {
     loanRepository = mock(LoanRepository.class);
     accountRepository = mock(AccountRepository.class);
     transactionRepository = mock(TransactionRepository.class);
-    underTest = new CreateLoan(loanRepository, accountRepository, transactionRepository);
+    sessionManager = mock(SessionManager.class);
+    createTransaction = new CreateTransaction(transactionRepository, accountRepository, loanRepository, sessionManager);
+    underTest = new CreateLoan(loanRepository, accountRepository, sessionManager, createTransaction);
+
+    when(sessionManager.executeInSession(any())).thenAnswer(invocation -> {
+      var function = invocation.getArgument(0, java.util.function.Supplier.class);
+      return function.get();
+    });
   }
 
   @Test
@@ -420,5 +436,223 @@ public final class CreateLoanTest {
     var capturedLoan = loanCaptor.getValue();
     assertEquals(amount, capturedLoan.amount());
     assertEquals(amount, capturedLoan.remainingAmount());
+  }
+
+  @Test
+  void givenCreateBorrowLoanWithAccountWhenProcessedThenShouldCreateLoanAndCreditDisbursementTransaction() {
+    // Given
+    final var createRequest = CreateLoanInput.builder()
+        .type("BORROW")
+        .account(ACCOUNT_ID)
+        .partyName("Bank XYZ")
+        .title("Housing Loan")
+        .amount(new BigDecimal("50000.00"))
+        .interestRate(6.5)
+        .build();
+    final var context = Context.builder().requester(REQUESTER).build();
+
+    var account = createAccount(ACCOUNT_ID, REQUESTER, new BigDecimal("10000.00"));
+    when(accountRepository.findById(Id.of(ACCOUNT_ID))).thenReturn(Optional.of(account));
+    when(loanRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
+    when(transactionRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+    // When
+    final var result = underTest.process(context, createRequest);
+
+    // Then
+    assertTrue(result.isSuccess());
+    assertTrue(result.data().isPresent());
+
+    final var resultData = result.data().get();
+    assertEquals("BORROW", resultData.type());
+    assertEquals(ACCOUNT_ID, resultData.account());
+    assertEquals(new BigDecimal("50000.00"), resultData.amount());
+
+    // Verify loan was created
+    verify(loanRepository).create(any(Loan.class));
+
+    // Verify disbursement transaction was created with credit to account
+    verify(transactionRepository).create(any());
+    verify(accountRepository).creditBalance(Id.of(ACCOUNT_ID), new BigDecimal("50000.00"));
+  }
+
+  @Test
+  void givenCreateLendLoanWithAccountWhenProcessedThenShouldCreateLoanAndDebitDisbursementTransaction() {
+    // Given
+    final var createRequest = CreateLoanInput.builder()
+        .type("LEND")
+        .account(ACCOUNT_ID)
+        .partyName("John Borrower")
+        .title("Personal Loan to Friend")
+        .amount(new BigDecimal("5000.00"))
+        .interestRate(3.0)
+        .build();
+    final var context = Context.builder().requester(REQUESTER).build();
+
+    var account = createAccount(ACCOUNT_ID, REQUESTER, new BigDecimal("20000.00"));
+    when(accountRepository.findById(Id.of(ACCOUNT_ID))).thenReturn(Optional.of(account));
+    when(loanRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
+    when(transactionRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+    // When
+    final var result = underTest.process(context, createRequest);
+
+    // Then
+    assertTrue(result.isSuccess());
+    assertTrue(result.data().isPresent());
+
+    final var resultData = result.data().get();
+    assertEquals("LEND", resultData.type());
+    assertEquals(ACCOUNT_ID, resultData.account());
+    assertEquals(new BigDecimal("5000.00"), resultData.amount());
+
+    // Verify loan was created
+    verify(loanRepository).create(any(Loan.class));
+
+    // Verify disbursement transaction was created with debit from account
+    verify(transactionRepository).create(any());
+    verify(accountRepository).debitBalance(Id.of(ACCOUNT_ID), new BigDecimal("5000.00"));
+  }
+
+  @Test
+  void givenCreateLoanWithoutAccountWhenProcessedThenShouldCreateLoanWithoutDisbursementTransaction() {
+    // Given
+    final var createRequest = CreateLoanInput.builder()
+        .type("BORROW")
+        .partyName("Cash Lender")
+        .title("Cash Loan")
+        .amount(new BigDecimal("3000.00"))
+        .interestRate(4.5)
+        .build();
+    final var context = Context.builder().requester(REQUESTER).build();
+
+    when(loanRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+    // When
+    final var result = underTest.process(context, createRequest);
+
+    // Then
+    assertTrue(result.isSuccess());
+    assertTrue(result.data().isPresent());
+
+    final var resultData = result.data().get();
+    assertEquals("BORROW", resultData.type());
+    assertEquals(new BigDecimal("3000.00"), resultData.amount());
+
+    // Verify loan was created
+    verify(loanRepository).create(any(Loan.class));
+
+    // Verify NO disbursement transaction was created
+    verify(transactionRepository, never()).create(any());
+    verify(accountRepository, never()).creditBalance(any(), any());
+    verify(accountRepository, never()).debitBalance(any(), any());
+  }
+
+  @Test
+  void givenCreateLoanWithNonExistentAccountWhenProcessedThenShouldReturnNotFoundError() {
+    // Given
+    final var nonExistentAccountId = "non-existent-account";
+    final var createRequest = CreateLoanInput.builder()
+        .type("BORROW")
+        .account(nonExistentAccountId)
+        .partyName("Bank XYZ")
+        .title("Housing Loan")
+        .amount(new BigDecimal("50000.00"))
+        .interestRate(6.5)
+        .build();
+    final var context = Context.builder().requester(REQUESTER).build();
+
+    when(accountRepository.findById(Id.of(nonExistentAccountId))).thenReturn(Optional.empty());
+
+    // When
+    final var result = underTest.process(context, createRequest);
+
+    // Then
+    assertFalse(result.isSuccess());
+    assertTrue(result.error().isPresent());
+
+    final var error = result.error().get();
+    assertEquals(Code.NOT_FOUND, error.code());
+    assertEquals("Account not found", error.message());
+
+    // Verify loan and transaction were not created
+    verify(loanRepository, never()).create(any());
+    verify(transactionRepository, never()).create(any());
+  }
+
+  @Test
+  void givenCreateLoanWithAccountOwnedByDifferentUserWhenProcessedThenShouldReturnForbiddenError() {
+    // Given
+    final var otherUser = "otherUser@example.com";
+    final var createRequest = CreateLoanInput.builder()
+        .type("BORROW")
+        .account(ACCOUNT_ID)
+        .partyName("Bank XYZ")
+        .title("Housing Loan")
+        .amount(new BigDecimal("50000.00"))
+        .interestRate(6.5)
+        .build();
+    final var context = Context.builder().requester(REQUESTER).build();
+
+    var account = createAccount(ACCOUNT_ID, otherUser, new BigDecimal("10000.00"));
+    when(accountRepository.findById(Id.of(ACCOUNT_ID))).thenReturn(Optional.of(account));
+
+    // When
+    final var result = underTest.process(context, createRequest);
+
+    // Then
+    assertFalse(result.isSuccess());
+    assertTrue(result.error().isPresent());
+
+    final var error = result.error().get();
+    assertEquals(Code.FORBIDDEN, error.code());
+    assertEquals("You are not authorized to use this account", error.message());
+
+    // Verify loan and transaction were not created
+    verify(loanRepository, never()).create(any());
+    verify(transactionRepository, never()).create(any());
+  }
+
+  @Test
+  void givenCreateLoanWithAccountWhenDisbursementTransactionFailsThenShouldReturnError() {
+    // Given
+    final var createRequest = CreateLoanInput.builder()
+        .type("BORROW")
+        .account(ACCOUNT_ID)
+        .partyName("Bank XYZ")
+        .title("Housing Loan")
+        .amount(new BigDecimal("50000.00"))
+        .interestRate(6.5)
+        .build();
+    final var context = Context.builder().requester(REQUESTER).build();
+
+    var account = createAccount(ACCOUNT_ID, REQUESTER, new BigDecimal("10000.00"));
+    when(accountRepository.findById(Id.of(ACCOUNT_ID))).thenReturn(Optional.of(account));
+    when(loanRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
+    when(transactionRepository.create(any())).thenThrow(new RuntimeException("Transaction creation failed"));
+
+    // When
+    final var result = underTest.process(context, createRequest);
+
+    // Then
+    assertFalse(result.isSuccess());
+    assertTrue(result.error().isPresent());
+
+    final var error = result.error().get();
+    assertEquals(Code.SERVER_ERROR, error.code());
+    assertEquals("Transaction creation failed", error.message());
+  }
+
+  private Account createAccount(String id, String owner, BigDecimal balance) {
+    return Account.builder()
+        .id(Id.of(id))
+        .user(Id.of(owner))
+        .name("Test Account")
+        .type(Account.Type.BANK)
+        .balance(balance)
+        .status(EntityStatus.ACTIVE)
+        .createdBy(owner)
+        .updatedBy(owner)
+        .build();
   }
 }

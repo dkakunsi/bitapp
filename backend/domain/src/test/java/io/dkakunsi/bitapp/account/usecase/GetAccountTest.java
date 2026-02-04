@@ -18,7 +18,7 @@ import io.dkakunsi.bitapp.account.entity.Account.Type;
 import io.dkakunsi.bitapp.account.repository.AccountRepository;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
-import io.dkakunsi.bitapp.common.Id;
+import io.dkakunsi.bitapp.domain.entity.Id;
 
 public final class GetAccountTest {
 
@@ -38,15 +38,17 @@ public final class GetAccountTest {
   void returnAccountData_whenAccountExists() {
     // Given
     var accountId = "account-123";
+    var id = Id.of(accountId);
+
     var existingAccount = Account.builder()
-        .id(Id.of(accountId))
+        .id(id)
         .name("My Savings")
         .type(Type.BANK)
         .themeColor("#FF5733")
         .balance(BigDecimal.valueOf(1000))
         .user(Id.of("user@email.com"))
         .build();
-    when(accountRepository.findById(accountId)).thenReturn(Optional.of(existingAccount));
+    when(accountRepository.findById(id)).thenReturn(Optional.of(existingAccount));
 
     // When
     var context = Context.builder().requester(REQUESTER).build();
@@ -62,14 +64,15 @@ public final class GetAccountTest {
     assertEquals("#FF5733", account.themeColor());
     assertEquals(BigDecimal.valueOf(1000), account.balance());
     assertEquals("user@email.com", account.user());
-    verify(accountRepository).findById(accountId);
+    verify(accountRepository).findById(id);
   }
 
   @Test
   void returnError_whenAccountNotExists() {
     // Given
     var accountId = "nonexistent-account";
-    when(accountRepository.findById(accountId)).thenReturn(Optional.empty());
+    var id = Id.of(accountId);
+    when(accountRepository.findById(id)).thenReturn(Optional.empty());
 
     // When
     var context = Context.builder().requester(REQUESTER).build();
@@ -82,14 +85,15 @@ public final class GetAccountTest {
     assertEquals(Code.NOT_FOUND, error.code());
     assertEquals("Account not found", error.message());
 
-    verify(accountRepository).findById(accountId);
+    verify(accountRepository).findById(id);
   }
 
   @Test
   void returnServerError_whenRepositoryThrowsException() {
     // Given
     var accountId = "error-account";
-    when(accountRepository.findById(accountId)).thenThrow(new RuntimeException("Database error"));
+    var id = Id.of(accountId);
+    when(accountRepository.findById(id)).thenThrow(new RuntimeException("Database error"));
 
     // When
     var context = Context.builder().requester(REQUESTER).build();
@@ -102,6 +106,6 @@ public final class GetAccountTest {
     assertEquals(Code.SERVER_ERROR, error.code());
     assertEquals("Database error", error.message());
 
-    verify(accountRepository).findById(accountId);
+    verify(accountRepository).findById(id);
   }
 }

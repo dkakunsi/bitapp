@@ -1,15 +1,19 @@
 package io.dkakunsi.bitapp.transaction.usecase;
 
-import java.math.BigDecimal;
+import java.util.Optional;
 
 import io.dkakunsi.bitapp.account.repository.AccountRepository;
+import io.dkakunsi.bitapp.common.AppError;
+import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
-import io.dkakunsi.bitapp.common.usecase.Result;
-import io.dkakunsi.bitapp.common.usecase.UseCase;
+import io.dkakunsi.bitapp.database.SessionManager;
+import io.dkakunsi.bitapp.domain.usecase.Result;
+import io.dkakunsi.bitapp.domain.usecase.UseCase;
 import io.dkakunsi.bitapp.loan.repository.LoanRepository;
 import io.dkakunsi.bitapp.transaction.dto.CreateTransactionInput;
 import io.dkakunsi.bitapp.transaction.dto.TransactionResult;
 import io.dkakunsi.bitapp.transaction.entity.Transaction;
+import io.dkakunsi.bitapp.transaction.processor.TransactionProcessor;
 import io.dkakunsi.bitapp.transaction.repository.TransactionRepository;
 
 public final class CreateTransaction implements UseCase<CreateTransactionInput, TransactionResult> {
@@ -18,86 +22,46 @@ public final class CreateTransaction implements UseCase<CreateTransactionInput, 
   private final AccountRepository accountRepository;
   private final LoanRepository loanRepository;
 
+  private final SessionManager sessionManager;
+
   public CreateTransaction(
       TransactionRepository transactionRepository,
       AccountRepository accountRepository,
-      LoanRepository loanRepository) {
+      LoanRepository loanRepository,
+      SessionManager sessionManager) {
     this.transactionRepository = transactionRepository;
     this.accountRepository = accountRepository;
     this.loanRepository = loanRepository;
+    this.sessionManager = sessionManager;
   }
 
   @Override
   public Result<TransactionResult> execute(Context context, CreateTransactionInput input) {
-    var transaction = Transaction.from(input, context.requester());
+    var transaction = input.toTransaction(context.requester());
+    return validateRequest(transaction)
+        .map(error -> Result.<TransactionResult>failure(error))
+        .orElseGet(() -> sessionManager.executeInSession(() -> execute(input, transaction)));
+  }
 
-    try {
-      validateAndProcessTransaction(transaction);
-    } catch (IllegalArgumentException e) {
-      // Check if it's a "not found" error
-      if (e.getMessage() != null && e.getMessage().contains("not found")) {
-        return Result.failure(io.dkakunsi.bitapp.common.AppError.Code.NOT_FOUND, e.getMessage());
-      }
-      throw e; // Re-throw other validation errors
+  private Result<TransactionResult> execute(CreateTransactionInput input, Transaction transaction) {
+    var transactionProcessor = TransactionProcessor.getTransactionProcessor(input.getClass(),
+        transactionRepository, accountRepository, loanRepository);
+    var processedTransaction = transactionProcessor.process(transaction);
+    return Result.success(processedTransaction.toResult());
+  }
+
+  private Optional<AppError> validateRequest(Transaction transaction) {
+    if (transaction.source() != null && accountRepository.isNotExistingAccount(transaction.source())) {
+      return Optional.of(new AppError(Code.BAD_REQUEST, "source account not found"));
     }
 
-    var createdTransaction = this.transactionRepository.create(transaction);
-    return Result.success(createdTransaction.toResult());
-  }
-
-  private void validateAndProcessTransaction(Transaction transaction) {
-    switch (transaction.type()) {
-      case DEBIT:
-        processDebit(transaction);
-        break;
-      case CREDIT:
-        processCredit(transaction);
-        break;
-      case TRANSFER:
-        processTransfer(transaction);
-        break;
+    if (transaction.destination() != null && accountRepository.isNotExistingAccount(transaction.destination())) {
+      return Optional.of(new AppError(Code.BAD_REQUEST, "destination account not found"));
     }
 
-    if (transaction.loan() != null) {
-      processLoan(transaction);
+    if (transaction.loan() != null && loanRepository.isNotExistingLoan(transaction.loan())) {
+      return Optional.of(new AppError(Code.BAD_REQUEST, "loan not found"));
     }
-  }
-
-  private void processDebit(Transaction transaction) {
-    var sourceAccount = accountRepository.findById(transaction.source().value())
-        .orElseThrow(() -> new IllegalArgumentException("source account not found"));
-
-    var newBalance = sourceAccount.balance().subtract(BigDecimal.valueOf(transaction.amount()));
-    accountRepository.update(sourceAccount.updateBalance(newBalance));
-  }
-
-  private void processCredit(Transaction transaction) {
-    var destinationAccount = accountRepository.findById(transaction.destination().value())
-        .orElseThrow(() -> new IllegalArgumentException("destination account not found"));
-
-    var newBalance = destinationAccount.balance().add(BigDecimal.valueOf(transaction.amount()));
-    accountRepository.update(destinationAccount.updateBalance(newBalance));
-  }
-
-  private void processTransfer(Transaction transaction) {
-    var sourceAccount = accountRepository.findById(transaction.source().value())
-        .orElseThrow(() -> new IllegalArgumentException("source account not found"));
-
-    var destinationAccount = accountRepository.findById(transaction.destination().value())
-        .orElseThrow(() -> new IllegalArgumentException("destination account not found"));
-
-    var sourceNewBalance = sourceAccount.balance().subtract(BigDecimal.valueOf(transaction.amount()));
-    var destNewBalance = destinationAccount.balance().add(BigDecimal.valueOf(transaction.amount()));
-
-    accountRepository.update(sourceAccount.updateBalance(sourceNewBalance));
-    accountRepository.update(destinationAccount.updateBalance(destNewBalance));
-  }
-
-  private void processLoan(Transaction transaction) {
-    var loan = loanRepository.findById(transaction.loan().value())
-        .orElseThrow(() -> new IllegalArgumentException("loan not found"));
-
-    var newRemainingAmount = loan.remainingAmount().subtract(BigDecimal.valueOf(transaction.amount()));
-    loanRepository.update(loan.updateRemainingAmount(newRemainingAmount));
+    return Optional.empty();
   }
 }

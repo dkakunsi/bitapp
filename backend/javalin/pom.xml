@@ -4,9 +4,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-  <groupId>io.dkakunsi</groupId>
-  <artifactId>bitapp</artifactId>
-  <version>1.0-SNAPSHOT</version>
+    <groupId>io.dkakunsi</groupId>
+    <artifactId>bitapp</artifactId>
+    <version>1.0-SNAPSHOT</version>
   </parent>
 
   <groupId>io.dkakunsi.bitapp</groupId>
@@ -16,58 +16,58 @@
   <name>Dkakunsi :: BitApp :: Javalin Web Library</name>
 
   <properties>
-  <javalin.version>6.7.0</javalin.version>
-  <jackson.version>2.18.2</jackson.version>
+    <javalin.version>6.7.0</javalin.version>
+    <jackson.version>2.18.2</jackson.version>
 
-  <minimum.class.line.coverage>0.81</minimum.class.line.coverage>
+    <minimum.class.line.coverage>0.81</minimum.class.line.coverage>
   </properties>
 
   <dependencies>
-  <dependency>
-    <groupId>io.dkakunsi.bitapp</groupId>
-    <artifactId>common</artifactId>
-    <version>${project.version}</version>
-  </dependency>
-  <dependency>
-    <groupId>io.dkakunsi.bitapp</groupId>
-    <artifactId>domain</artifactId>
-    <version>${project.version}</version>
-  </dependency>
-  <dependency>
-    <groupId>io.javalin</groupId>
-    <artifactId>javalin</artifactId>
-    <version>${javalin.version}</version>
-    <exclusions>
-    <exclusion>
-    <artifactId>slf4j-api</artifactId>
-    <groupId>org.slf4j</groupId>
-    </exclusion>
-    </exclusions>
-  </dependency>
-  <dependency>
-    <groupId>com.fasterxml.jackson.core</groupId>
-    <artifactId>jackson-databind</artifactId>
-    <version>${jackson.version}</version>
-  </dependency>
-  <dependency>
-    <groupId>com.fasterxml.jackson.datatype</groupId>
-    <artifactId>jackson-datatype-jsr310</artifactId>
-    <version>${jackson.version}</version>
-  </dependency>
-  <dependency>
-    <groupId>io.dkakunsi.bitapp</groupId>
-    <artifactId>test</artifactId>
-    <version>${project.version}</version>
-    <scope>test</scope>
-  </dependency>
+    <dependency>
+      <groupId>io.dkakunsi.bitapp</groupId>
+      <artifactId>common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.dkakunsi.bitapp</groupId>
+      <artifactId>domain</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.javalin</groupId>
+      <artifactId>javalin</artifactId>
+      <version>${javalin.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>slf4j-api</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.dkakunsi.bitapp</groupId>
+      <artifactId>test</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
-  <plugins>
-    <plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-surefire-plugin</artifactId>
-    </plugin>
-  </plugins>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+    </plugins>
   </build>
 </project>

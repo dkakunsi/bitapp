@@ -3,8 +3,8 @@ package io.dkakunsi.bitapp.user.model;
 import java.time.LocalDateTime;
 
 import dev.morphia.annotations.Entity;
-import io.dkakunsi.bitapp.common.EntityStatus;
-import io.dkakunsi.bitapp.common.Id;
+import io.dkakunsi.bitapp.domain.entity.EntityStatus;
+import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.user.entity.User;
 import io.dkakunsi.bitapp.user.entity.User.Language;
 import lombok.AllArgsConstructor;

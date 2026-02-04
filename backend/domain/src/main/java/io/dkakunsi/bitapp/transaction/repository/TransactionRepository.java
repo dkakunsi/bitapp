@@ -3,20 +3,21 @@ package io.dkakunsi.bitapp.transaction.repository;
 import java.util.List;
 import java.util.Optional;
 
+import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.transaction.entity.Transaction;
 
 public interface TransactionRepository {
   Transaction create(Transaction transaction);
 
-  Optional<Transaction> findById(String id);
-
-  List<Transaction> findByUserId(String userId);
-
-  List<Transaction> findByAccountId(String accountId);
-
-  List<Transaction> findByLoanId(String loanId);
-
   Transaction update(Transaction transaction);
 
-  void deleteById(String id);
+  void deleteById(Id id);
+
+  Optional<Transaction> findById(Id id);
+
+  List<Transaction> findByUserId(Id userId);
+
+  List<Transaction> findByAccountId(Id accountId);
+
+  List<Transaction> findByLoanId(Id loanId);
 }

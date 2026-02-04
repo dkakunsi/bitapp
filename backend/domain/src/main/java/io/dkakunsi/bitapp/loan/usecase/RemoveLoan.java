@@ -2,8 +2,9 @@ package io.dkakunsi.bitapp.loan.usecase;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
-import io.dkakunsi.bitapp.common.usecase.Result;
-import io.dkakunsi.bitapp.common.usecase.UseCase;
+import io.dkakunsi.bitapp.domain.entity.Id;
+import io.dkakunsi.bitapp.domain.usecase.Result;
+import io.dkakunsi.bitapp.domain.usecase.UseCase;
 import io.dkakunsi.bitapp.loan.dto.LoanResult;
 import io.dkakunsi.bitapp.loan.entity.Loan;
 import io.dkakunsi.bitapp.loan.repository.LoanRepository;
@@ -22,7 +23,7 @@ public final class RemoveLoan implements UseCase<String, LoanResult> {
 
   @Override
   public Result<LoanResult> execute(Context context, String loanId) {
-    return loanRepository.findById(loanId)
+    return loanRepository.findById(Id.of(loanId))
         .map(loan -> onLoan(context, loan))
         .orElse(Result.failure(Code.NOT_FOUND, "Loan not found"));
   }
@@ -32,13 +33,13 @@ public final class RemoveLoan implements UseCase<String, LoanResult> {
       return Result.failure(Code.FORBIDDEN, "You are not authorized to delete this loan");
     }
 
-    var transactions = transactionRepository.findByLoanId(loan.id().value());
+    var transactions = transactionRepository.findByLoanId(loan.id());
     for (var transaction : transactions) {
       var updatedTransaction = TransactionUpdateHelper.removeLoanReference(transaction, context.requester());
       transactionRepository.update(updatedTransaction);
     }
 
-    loanRepository.deleteById(loan.id().value());
+    loanRepository.deleteById(loan.id());
     return Result.success(loan.toResult());
   }
 

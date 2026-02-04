@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -21,8 +21,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.common.Context;
-import io.dkakunsi.bitapp.common.EntityStatus;
-import io.dkakunsi.bitapp.common.Id;
+import io.dkakunsi.bitapp.domain.entity.EntityStatus;
+import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.loan.entity.Loan;
 import io.dkakunsi.bitapp.loan.repository.LoanRepository;
 
@@ -33,6 +33,7 @@ public final class GetUserLoansTest {
   private LoanRepository loanRepository;
 
   private static final String USER_ID = "user123";
+  private static final Id USER = Id.of(USER_ID);
   private static final String REQUESTER = "requester@email.com";
 
   @BeforeEach
@@ -51,6 +52,7 @@ public final class GetUserLoansTest {
     var loan1 = Loan.builder()
         .id(Id.of("loan1"))
         .user(user)
+        .account(Id.of("account-123"))
         .type(Loan.Type.BORROW)
         .date(LocalDate.of(2024, 6, 15))
         .time(LocalTime.of(14, 30))
@@ -71,6 +73,7 @@ public final class GetUserLoansTest {
     var loan2 = Loan.builder()
         .id(Id.of("loan2"))
         .user(user)
+        .account(Id.of("account-456"))
         .type(Loan.Type.LEND)
         .date(LocalDate.of(2024, 6, 20))
         .time(LocalTime.of(10, 0))
@@ -89,7 +92,7 @@ public final class GetUserLoansTest {
         .build();
 
     var loans = Arrays.asList(loan1, loan2);
-    when(loanRepository.findByUserId(USER_ID)).thenReturn(loans);
+    when(loanRepository.findByUserId(USER)).thenReturn(loans);
 
     // When
     var result = underTest.process(context, input);
@@ -122,7 +125,7 @@ public final class GetUserLoansTest {
     assertEquals("John Doe", secondLoan.partyName());
     assertEquals("Personal Loan", secondLoan.title());
 
-    verify(loanRepository).findByUserId(USER_ID);
+    verify(loanRepository).findByUserId(USER);
   }
 
   @Test
@@ -131,7 +134,7 @@ public final class GetUserLoansTest {
     var input = USER_ID;
     var context = Context.builder().requester(REQUESTER).build();
 
-    when(loanRepository.findByUserId(USER_ID)).thenReturn(Collections.emptyList());
+    when(loanRepository.findByUserId(USER)).thenReturn(Collections.emptyList());
 
     // When
     var result = underTest.process(context, input);
@@ -144,7 +147,7 @@ public final class GetUserLoansTest {
     assertNotNull(resultData);
     assertEquals(0, resultData.size());
 
-    verify(loanRepository).findByUserId(USER_ID);
+    verify(loanRepository).findByUserId(USER);
   }
 
   @Test
@@ -153,7 +156,7 @@ public final class GetUserLoansTest {
     var input = USER_ID;
     var context = Context.builder().requester(REQUESTER).build();
 
-    when(loanRepository.findByUserId(anyString())).thenThrow(new RuntimeException("Database error"));
+    when(loanRepository.findByUserId(any(Id.class))).thenThrow(new RuntimeException("Database error"));
 
     // When
     var result = underTest.process(context, input);
@@ -162,7 +165,7 @@ public final class GetUserLoansTest {
     assertFalse(result.isSuccess());
     assertTrue(result.error().isPresent());
 
-    verify(loanRepository).findByUserId(USER_ID);
+    verify(loanRepository).findByUserId(USER);
   }
 
   @Test
@@ -175,6 +178,7 @@ public final class GetUserLoansTest {
     var loan = Loan.builder()
         .id(Id.of("loan1"))
         .user(user)
+        .account(Id.of("account-123"))
         .type(Loan.Type.BORROW)
         .date(LocalDate.of(2024, 6, 15))
         .time(LocalTime.of(14, 30))
@@ -192,7 +196,7 @@ public final class GetUserLoansTest {
         .updatedBy(REQUESTER)
         .build();
 
-    when(loanRepository.findByUserId(USER_ID)).thenReturn(Collections.singletonList(loan));
+    when(loanRepository.findByUserId(USER)).thenReturn(Collections.singletonList(loan));
 
     // When
     var result = underTest.process(context, input);
@@ -210,25 +214,27 @@ public final class GetUserLoansTest {
     assertEquals("Credit Union", firstLoan.partyName());
     assertEquals("Home Renovation", firstLoan.title());
 
-    verify(loanRepository).findByUserId(USER_ID);
+    verify(loanRepository).findByUserId(USER);
   }
 
   @Test
   void givenDifferentUserIdsWhenCalledThenShouldUseCorrectUserId() {
     // Given
     var userId1 = "user111";
+    var user1 = Id.of(userId1);
     var userId2 = "user222";
+    var user2 = Id.of(userId2);
     var context = Context.builder().requester(REQUESTER).build();
 
-    when(loanRepository.findByUserId(userId1)).thenReturn(Collections.emptyList());
-    when(loanRepository.findByUserId(userId2)).thenReturn(Collections.emptyList());
+    when(loanRepository.findByUserId(user1)).thenReturn(Collections.emptyList());
+    when(loanRepository.findByUserId(user2)).thenReturn(Collections.emptyList());
 
     // When
     underTest.process(context, userId1);
     underTest.process(context, userId2);
 
     // Then
-    verify(loanRepository).findByUserId(userId1);
-    verify(loanRepository).findByUserId(userId2);
+    verify(loanRepository).findByUserId(user1);
+    verify(loanRepository).findByUserId(user2);
   }
 }

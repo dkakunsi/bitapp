@@ -8,8 +8,8 @@ import java.util.Currency;
 
 import org.apache.commons.lang3.StringUtils;
 
-import io.dkakunsi.bitapp.common.EntityStatus;
-import io.dkakunsi.bitapp.common.Id;
+import io.dkakunsi.bitapp.domain.entity.EntityStatus;
+import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.loan.dto.CreateLoanInput;
 import io.dkakunsi.bitapp.loan.dto.LoanResult;
 import io.dkakunsi.bitapp.loan.dto.UpdateLoanInput;
@@ -19,6 +19,7 @@ import lombok.Builder;
 public final record Loan(
     Id id,
     Id user,
+    Id account,
 
     Type type,
     LocalDate date,
@@ -76,24 +77,26 @@ public final record Loan(
         ? Currency.getInstance(input.currency())
         : Currency.getInstance(DEFAULT_CURRENCY);
 
-    return new Loan(
-        Id.generate(),
-        userId,
-        Loan.Type.valueOf(input.type()),
-        loanDate,
-        loanTime,
-        input.partyName(),
-        input.title(),
-        input.description(),
-        input.amount(),
-        input.amount(), // remainingAmount equals amount initially
-        curr,
-        input.interestRate(),
-        EntityStatus.ACTIVE,
-        now,
-        now,
-        executor,
-        executor);
+    return Loan.builder()
+        .id(Id.generate())
+        .user(userId)
+        .account(Id.of(input.account()))
+        .type(Loan.Type.valueOf(input.type()))
+        .date(loanDate)
+        .time(loanTime)
+        .partyName(input.partyName())
+        .title(input.title())
+        .description(input.description())
+        .amount(input.amount())
+        .remainingAmount(input.amount()) // remainingAmount equals amount initially
+        .currency(curr)
+        .interestRate(input.interestRate())
+        .status(EntityStatus.ACTIVE)
+        .createdAt(now)
+        .updatedAt(now)
+        .createdBy(executor)
+        .updatedBy(executor)
+        .build();
   }
 
   public Loan update(UpdateLoanInput input, String requester) {
@@ -114,12 +117,12 @@ public final record Loan(
       updatedCurrency = Currency.getInstance(input.currency());
     }
 
-    BigDecimal updatedAmount = this.amount;
-    BigDecimal updatedRemainingAmount = this.remainingAmount;
+    var updatedAmount = this.amount;
+    var updatedRemainingAmount = this.remainingAmount;
     if (input.amount() != null) {
       updatedAmount = input.amount();
       // Calculate repaid amount and adjust remaining amount
-      BigDecimal repaidAmount = this.amount.subtract(this.remainingAmount);
+      var repaidAmount = this.amount.subtract(this.remainingAmount);
       updatedRemainingAmount = updatedAmount.subtract(repaidAmount);
     }
 
@@ -143,45 +146,49 @@ public final record Loan(
       updatedDescription = input.description();
     }
 
-    return new Loan(
-        this.id,
-        this.user,
-        this.type,
-        updatedDate,
-        updatedTime,
-        updatedPartyName,
-        updatedTitle,
-        updatedDescription,
-        updatedAmount,
-        updatedRemainingAmount,
-        updatedCurrency,
-        updatedInterestRate,
-        this.status,
-        this.createdAt,
-        now,
-        this.createdBy,
-        requester);
+    return Loan.builder()
+        .id(this.id)
+        .user(this.user)
+        .account(this.account)
+        .type(this.type)
+        .date(updatedDate)
+        .time(updatedTime)
+        .partyName(updatedPartyName)
+        .title(updatedTitle)
+        .description(updatedDescription)
+        .amount(updatedAmount)
+        .remainingAmount(updatedRemainingAmount)
+        .currency(updatedCurrency)
+        .interestRate(updatedInterestRate)
+        .status(this.status)
+        .createdAt(this.createdAt)
+        .updatedAt(now)
+        .createdBy(this.createdBy)
+        .updatedBy(requester)
+        .build();
   }
 
   public Loan updateRemainingAmount(BigDecimal newRemainingAmount) {
-    return new Loan(
-        this.id,
-        this.user,
-        this.type,
-        this.date,
-        this.time,
-        this.partyName,
-        this.title,
-        this.description,
-        this.amount,
-        newRemainingAmount,
-        this.currency,
-        this.interestRate,
-        this.status,
-        this.createdAt,
-        this.updatedAt,
-        this.createdBy,
-        this.updatedBy);
+    return Loan.builder()
+        .id(this.id)
+        .user(this.user)
+        .account(this.account)
+        .type(this.type)
+        .date(this.date)
+        .time(this.time)
+        .partyName(this.partyName)
+        .title(this.title)
+        .description(this.description)
+        .amount(this.amount)
+        .remainingAmount(newRemainingAmount)
+        .currency(this.currency)
+        .interestRate(this.interestRate)
+        .status(this.status)
+        .createdAt(this.createdAt)
+        .updatedAt(this.updatedAt)
+        .createdBy(this.createdBy)
+        .updatedBy(this.updatedBy)
+        .build();
   }
 
   public LoanResult toResult() {
@@ -193,6 +200,7 @@ public final record Loan(
     return LoanResult.builder()
         .id(this.id().value())
         .user(this.user().value())
+        .account(this.account().value())
         .type(this.type().name())
         .date(this.date().toString())
         .time(timeStr)

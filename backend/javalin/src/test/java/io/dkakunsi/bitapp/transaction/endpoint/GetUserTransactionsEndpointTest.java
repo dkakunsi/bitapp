@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -17,7 +18,7 @@ import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
-import io.dkakunsi.bitapp.common.usecase.Result;
+import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.transaction.dto.TransactionResult;
 import io.dkakunsi.bitapp.transaction.usecase.GetUserTransactions;
@@ -25,7 +26,7 @@ import kong.unirest.Unirest;
 
 class GetUserTransactionsEndpointTest {
 
-  private static final int PORT = 20012;
+  private static final int PORT = 20014;
 
   private static String baseUrl;
 
@@ -70,7 +71,7 @@ class GetUserTransactionsEndpointTest {
         .date("2026-01-23")
         .time("10:30")
         .source("account-1")
-        .amount(50000L)
+        .amount(BigDecimal.valueOf(150000))
         .currency("IDR")
         .category("FOOD")
         .build();
@@ -84,7 +85,7 @@ class GetUserTransactionsEndpointTest {
         .date("2026-01-23")
         .time("08:00")
         .destination("account-2")
-        .amount(5000000L)
+        .amount(BigDecimal.valueOf(5000000))
         .currency("IDR")
         .category("INCOME")
         .build();
@@ -150,7 +151,7 @@ class GetUserTransactionsEndpointTest {
         .time("14:30")
         .source("account-1")
         .destination("account-2")
-        .amount(100000L)
+        .amount(BigDecimal.valueOf(100000))
         .currency("IDR")
         .category("OTHER")
         .build();

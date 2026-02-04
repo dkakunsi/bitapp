@@ -8,6 +8,7 @@ import lombok.Builder;
 public final record LoanResult(
     String id,
     String user,
+    String account,
     String type,
     String date,
     String time,

@@ -1,12 +1,14 @@
 package io.dkakunsi.bitapp.transaction.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Currency;
 
 import dev.morphia.annotations.Entity;
-import io.dkakunsi.bitapp.common.EntityStatus;
-import io.dkakunsi.bitapp.common.Id;
+import io.dkakunsi.bitapp.domain.entity.EntityStatus;
+import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.transaction.entity.Transaction;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,7 +32,7 @@ public class TransactionModel {
   private String source;
   private String destination;
   private String loan;
-  private Long amount;
+  private Double amount;
   private String currency;
   private String category;
   private String type;
@@ -55,8 +57,8 @@ public class TransactionModel {
         .source(this.source != null ? Id.of(this.source) : null)
         .destination(this.destination != null ? Id.of(this.destination) : null)
         .loan(this.loan != null ? Id.of(this.loan) : null)
-        .amount(this.amount)
-        .currency(this.currency)
+        .amount(BigDecimal.valueOf(this.amount))
+        .currency(Currency.getInstance(this.currency))
         .category(this.category != null ? Transaction.Category.valueOf(this.category) : null)
         .type(Transaction.Type.valueOf(this.type))
         .status(EntityStatus.valueOf(this.status))
@@ -78,8 +80,8 @@ public class TransactionModel {
         transaction.source() != null ? transaction.source().value() : null,
         transaction.destination() != null ? transaction.destination().value() : null,
         transaction.loan() != null ? transaction.loan().value() : null,
-        transaction.amount(),
-        transaction.currency(),
+        transaction.amount().doubleValue(),
+        transaction.currency().getCurrencyCode(),
         transaction.category() != null ? transaction.category().name() : null,
         transaction.type().name(),
         transaction.status().name(),

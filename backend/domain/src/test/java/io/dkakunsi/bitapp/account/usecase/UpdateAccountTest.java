@@ -21,7 +21,7 @@ import io.dkakunsi.bitapp.account.entity.Account;
 import io.dkakunsi.bitapp.account.repository.AccountRepository;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
-import io.dkakunsi.bitapp.common.Id;
+import io.dkakunsi.bitapp.domain.entity.Id;
 
 public final class UpdateAccountTest {
 
@@ -31,6 +31,7 @@ public final class UpdateAccountTest {
 
   private static final String REQUESTER = "requester@email.com";
   private static final String ACCOUNT_ID = "account123";
+  private static final Id ACCOUNT = Id.of(ACCOUNT_ID);
 
   @BeforeEach
   void setUp() {
@@ -75,7 +76,7 @@ public final class UpdateAccountTest {
         .updatedBy(REQUESTER)
         .build();
 
-    when(accountRepository.findById(ACCOUNT_ID)).thenReturn(Optional.of(existingAccount));
+    when(accountRepository.findById(ACCOUNT)).thenReturn(Optional.of(existingAccount));
     when(accountRepository.update(any(Account.class))).thenReturn(updatedAccount);
 
     // When
@@ -91,7 +92,7 @@ public final class UpdateAccountTest {
     assertEquals("CASH", resultData.type());
     assertEquals("#00FF00", resultData.themeColor());
 
-    verify(accountRepository).findById(ACCOUNT_ID);
+    verify(accountRepository).findById(ACCOUNT);
     verify(accountRepository).update(any(Account.class));
   }
 
@@ -124,7 +125,7 @@ public final class UpdateAccountTest {
         .updatedBy(REQUESTER)
         .build();
 
-    when(accountRepository.findById(ACCOUNT_ID)).thenReturn(Optional.of(existingAccount));
+    when(accountRepository.findById(ACCOUNT)).thenReturn(Optional.of(existingAccount));
     when(accountRepository.update(any(Account.class))).thenReturn(updatedAccount);
 
     var input = UpdateAccountInput.builder()
@@ -181,7 +182,7 @@ public final class UpdateAccountTest {
         .updatedBy(REQUESTER)
         .build();
 
-    when(accountRepository.findById(ACCOUNT_ID)).thenReturn(Optional.of(existingAccount));
+    when(accountRepository.findById(ACCOUNT)).thenReturn(Optional.of(existingAccount));
     when(accountRepository.update(any(Account.class))).thenReturn(updatedAccount);
 
     // When
@@ -230,7 +231,7 @@ public final class UpdateAccountTest {
         .updatedBy(REQUESTER)
         .build();
 
-    when(accountRepository.findById(ACCOUNT_ID)).thenReturn(Optional.of(existingAccount));
+    when(accountRepository.findById(ACCOUNT)).thenReturn(Optional.of(existingAccount));
     when(accountRepository.update(any(Account.class))).thenReturn(updatedAccount);
 
     // When
@@ -253,7 +254,7 @@ public final class UpdateAccountTest {
         .build();
     var context = Context.builder().requester(REQUESTER).build();
 
-    when(accountRepository.findById(ACCOUNT_ID))
+    when(accountRepository.findById(ACCOUNT))
         .thenThrow(new RuntimeException("Database error"));
 
     // When
@@ -269,13 +270,15 @@ public final class UpdateAccountTest {
   @Test
   void givenUpdateRequestWhenAccountNotFoundThenShouldReturnNotFoundError() {
     // Given
+    var nonExistingAccountId = "non-existing-account";
+    var nonExistingAccount = Id.of(nonExistingAccountId);
     var input = UpdateAccountInput.builder()
-        .id("non-existing-account")
+        .id(nonExistingAccountId)
         .name("Updated Name")
         .build();
     var context = Context.builder().requester(REQUESTER).build();
 
-    when(accountRepository.findById("non-existing-account")).thenReturn(Optional.empty());
+    when(accountRepository.findById(nonExistingAccount)).thenReturn(Optional.empty());
 
     // When
     var result = underTest.process(context, input);
@@ -285,7 +288,7 @@ public final class UpdateAccountTest {
     assertTrue(result.error().isPresent());
     assertEquals(Code.NOT_FOUND, result.error().get().code());
     assertEquals("Account not found", result.error().get().message());
-    verify(accountRepository).findById("non-existing-account");
+    verify(accountRepository).findById(nonExistingAccount);
     verify(accountRepository, never()).update(any(Account.class));
   }
 
@@ -312,7 +315,7 @@ public final class UpdateAccountTest {
         .updatedBy(REQUESTER)
         .build();
 
-    when(accountRepository.findById(ACCOUNT_ID)).thenReturn(Optional.of(existingAccount));
+    when(accountRepository.findById(ACCOUNT)).thenReturn(Optional.of(existingAccount));
 
     // When
     var result = underTest.process(context, input);
@@ -322,7 +325,7 @@ public final class UpdateAccountTest {
     assertTrue(result.error().isPresent());
     assertEquals(Code.UNAUTHORIZED, result.error().get().code());
     assertEquals("User can only update their own account", result.error().get().message());
-    verify(accountRepository).findById(ACCOUNT_ID);
+    verify(accountRepository).findById(ACCOUNT);
     verify(accountRepository, never()).update(any(Account.class));
   }
 
@@ -361,7 +364,7 @@ public final class UpdateAccountTest {
         .updatedBy(REQUESTER)
         .build();
 
-    when(accountRepository.findById(ACCOUNT_ID)).thenReturn(Optional.of(existingAccount));
+    when(accountRepository.findById(ACCOUNT)).thenReturn(Optional.of(existingAccount));
     when(accountRepository.update(any(Account.class))).thenReturn(updatedAccount);
 
     // When
@@ -371,7 +374,7 @@ public final class UpdateAccountTest {
     assertTrue(result.isSuccess());
     assertTrue(result.data().isPresent());
     assertEquals("Updated Name", result.data().get().name());
-    verify(accountRepository).findById(ACCOUNT_ID);
+    verify(accountRepository).findById(ACCOUNT);
     verify(accountRepository).update(any(Account.class));
   }
 }

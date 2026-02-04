@@ -42,31 +42,45 @@ RUN groupadd --gid $USER_GID $USERNAME 2>/dev/null || groupmod -n $USERNAME $(ge
     echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME && \
     chmod 0440 /etc/sudoers.d/$USERNAME
 
-## JAVA AND MAVEN SETUP
-# Install JDK 21 Temurin
-# Set JAVA_HOME dynamically based on architecture
-RUN apt-get install -y apt-transport-https && \
-    wget -O - https://packages.adoptium.net/artifactory/api/gpg/key/public | apt-key add - && \
-    echo "deb https://packages.adoptium.net/artifactory/deb $(awk -F= '/^VERSION_CODENAME/{print$2}' /etc/os-release) main" | tee /etc/apt/sources.list.d/adoptium.list && \
-    apt-get update && \
-    apt-get install -y temurin-21-jdk && \
-    JAVA_DIR=$(ls -d /usr/lib/jvm/temurin-21-jdk-* 2>/dev/null | head -n 1) && \
-    echo "export JAVA_HOME=${JAVA_DIR}" >> /etc/environment && \
-    echo "export PATH=\${JAVA_HOME}/bin:\${PATH}" >> /etc/environment && \
-    ln -s ${JAVA_DIR} /usr/lib/jvm/temurin-21-jdk
+# Switch to vscode user for SDKMAN installation
+USER vscode
 
-ENV JAVA_HOME=/usr/lib/jvm/temurin-21-jdk
+## SDKMAN SETUP
+# Install SDKMAN
+RUN curl -s "https://get.sdkman.io" | bash && \
+    bash -c "source /home/vscode/.sdkman/bin/sdkman-init.sh && sdk version"
+
+ENV SDKMAN_DIR="/home/vscode/.sdkman"
+ENV PATH="${SDKMAN_DIR}/bin:${PATH}"
+
+## JAVA AND MAVEN SETUP
+# Install JDK 25 Temurin
+# Set JAVA_HOME dynamically based on architecture
+RUN bash -c "source ${SDKMAN_DIR}/bin/sdkman-init.sh && \
+    sdk install java 25-tem && \
+    sdk default java 25-tem"
+
+ENV JAVA_HOME="${SDKMAN_DIR}/candidates/java/current"
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
 
 # Install Maven
-ARG MAVEN_VERSION=3.9.9
-RUN wget https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz -O /tmp/maven.tar.gz && \
-    tar -xzf /tmp/maven.tar.gz -C /opt && \
-    ln -s /opt/apache-maven-${MAVEN_VERSION} /opt/maven && \
-    rm /tmp/maven.tar.gz
+RUN bash -c "source ${SDKMAN_DIR}/bin/sdkman-init.sh && \
+    sdk install maven 3.9.12 && \
+    sdk default maven 3.9.12"
 
-ENV MAVEN_HOME=/opt/maven
+ENV MAVEN_HOME="${SDKMAN_DIR}/candidates/maven/current"
 ENV PATH="${MAVEN_HOME}/bin:${PATH}"
+
+# Install Gradle
+RUN bash -c "source ${SDKMAN_DIR}/bin/sdkman-init.sh && \
+    sdk install gradle 8.11.1 && \
+    sdk default gradle 8.11.1"
+
+ENV GRADLE_HOME="${SDKMAN_DIR}/candidates/gradle/current"
+ENV PATH="${GRADLE_HOME}/bin:${PATH}"
+
+# Switch back to root user for cleanup and final steps
+USER root
 
 ## NODE.JS SETUP
 # Install Node.js 22
@@ -79,17 +93,10 @@ RUN mkdir -p /etc/apt/keyrings && \
     npm install -g typescript vite
 
 ## FLUTTER SETUP
-# Install Gradle
+# Install Android SDK
 ARG GRADLE_VERSION=8.11.1
 RUN apt-get install -y \
-    android-sdk && \
-    wget https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -O /tmp/gradle.zip && \
-    unzip /tmp/gradle.zip -d /opt && \
-    ln -s /opt/gradle-${GRADLE_VERSION} /opt/gradle && \
-    rm /tmp/gradle.zip
-
-ENV GRADLE_HOME=/opt/gradle
-ENV PATH="${GRADLE_HOME}/bin:${PATH}"
+    android-sdk
 
 # Set environment variables
 ENV ANDROID_SDK_ROOT=/usr/lib/android-sdk
@@ -146,6 +153,8 @@ USER vscode
 RUN curl -fsSL https://raw.githubusercontent.com/mkasberg/ghostty-ubuntu/HEAD/install.sh && \
     curl -fsSL https://opencode.ai/install | bash && \
     curl -fsSL https://gh.io/copilot-install | bash
+
+# Switch back to root user for cleanup and final steps
 USER root
 
 # Clean everything
