@@ -2,6 +2,7 @@ package io.dkakunsi.bitapp.loan.usecase;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
+import io.dkakunsi.bitapp.database.SessionManager;
 import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.domain.usecase.UseCase;
@@ -15,10 +16,13 @@ public final class RemoveLoan implements UseCase<String, LoanResult> {
 
   private final LoanRepository loanRepository;
   private final TransactionRepository transactionRepository;
+  private final SessionManager sessionManager;
 
-  public RemoveLoan(LoanRepository loanRepository, TransactionRepository transactionRepository) {
+  public RemoveLoan(LoanRepository loanRepository, TransactionRepository transactionRepository,
+      SessionManager sessionManager) {
     this.loanRepository = loanRepository;
     this.transactionRepository = transactionRepository;
+    this.sessionManager = sessionManager;
   }
 
   @Override
@@ -33,14 +37,13 @@ public final class RemoveLoan implements UseCase<String, LoanResult> {
       return Result.failure(Code.FORBIDDEN, "You are not authorized to delete this loan");
     }
 
-    var transactions = transactionRepository.findByLoanId(loan.id());
-    for (var transaction : transactions) {
-      var updatedTransaction = TransactionUpdateHelper.removeLoanReference(transaction, context.requester());
-      transactionRepository.update(updatedTransaction);
-    }
-
-    loanRepository.deleteById(loan.id());
-    return Result.success(loan.toResult());
+    return sessionManager.executeInSession(() -> {
+      transactionRepository.findByLoanId(loan.id()).forEach(t -> {
+        var ut = TransactionUpdateHelper.removeLoanReference(t, context.requester());
+        transactionRepository.update(ut);
+      });
+      loanRepository.deleteById(loan.id());
+      return Result.success(loan.toResult());
+    });
   }
-
 }

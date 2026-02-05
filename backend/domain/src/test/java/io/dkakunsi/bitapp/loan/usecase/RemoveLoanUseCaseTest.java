@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -23,6 +24,7 @@ import org.mockito.ArgumentCaptor;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
+import io.dkakunsi.bitapp.database.SessionManager;
 import io.dkakunsi.bitapp.domain.entity.EntityStatus;
 import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.loan.entity.Loan;
@@ -41,12 +43,19 @@ public final class RemoveLoanUseCaseTest {
 
   private LoanRepository loanRepository;
   private TransactionRepository transactionRepository;
+  private SessionManager sessionManager;
 
   @BeforeEach
   void setUp() {
     loanRepository = mock(LoanRepository.class);
     transactionRepository = mock(TransactionRepository.class);
-    underTest = new RemoveLoan(loanRepository, transactionRepository);
+    sessionManager = mock(SessionManager.class);
+    underTest = new RemoveLoan(loanRepository, transactionRepository, sessionManager);
+
+    when(sessionManager.executeInSession(any())).thenAnswer(invocation -> {
+      var function = invocation.getArgument(0, java.util.function.Supplier.class);
+      return function.get();
+    });
   }
 
   @Test

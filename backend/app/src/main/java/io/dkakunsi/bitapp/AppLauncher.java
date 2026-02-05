@@ -78,7 +78,7 @@ public final class AppLauncher implements Launcher {
     var getLoan = new GetLoan(loanRepository);
     var getUserLoans = new GetUserLoans(loanRepository);
     var updateLoan = new UpdateLoan(loanRepository);
-    var removeLoan = new RemoveLoan(loanRepository, transactionRepository);
+    var removeLoan = new RemoveLoan(loanRepository, transactionRepository, sessionManager);
     var createTransaction = new CreateTransaction(transactionRepository, accountRepository, loanRepository,
         sessionManager);
     var getTransaction = new GetTransaction(transactionRepository);
