@@ -3,6 +3,7 @@ package io.dkakunsi.bitapp.transaction.usecase;
 import io.dkakunsi.bitapp.account.repository.AccountRepository;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
+import io.dkakunsi.bitapp.database.SessionManager;
 import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.domain.usecase.UseCase;
@@ -17,89 +18,41 @@ public final class RemoveTransaction implements UseCase<String, TransactionResul
   private final AccountRepository accountRepository;
   private final LoanRepository loanRepository;
 
+  private final SessionManager sessionManager;
+
   public RemoveTransaction(
       TransactionRepository transactionRepository,
       AccountRepository accountRepository,
-      LoanRepository loanRepository) {
+      LoanRepository loanRepository,
+      SessionManager sessionManager) {
     this.transactionRepository = transactionRepository;
     this.accountRepository = accountRepository;
     this.loanRepository = loanRepository;
+    this.sessionManager = sessionManager;
   }
 
   @Override
   public Result<TransactionResult> execute(Context context, String transactionId) {
     return transactionRepository.findById(Id.of(transactionId))
         .filter(transaction -> transaction.user().value().equals(context.requester()))
-        .map(transaction -> removeTransaction(transaction))
+        .map(transaction -> sessionManager.executeInSession(() -> removeTransaction(transaction)))
         .orElse(Result.failure(Code.NOT_FOUND, "Transaction not found"));
   }
 
   private Result<TransactionResult> removeTransaction(Transaction transaction) {
-    try {
-      revertTransactionImpact(transaction);
-    } catch (IllegalArgumentException e) {
-      if (e.getMessage() != null && e.getMessage().contains("not found")) {
-        return Result.failure(Code.NOT_FOUND, e.getMessage());
-      }
-      throw e;
+    if (transaction.source() != null) {
+      accountRepository.creditBalance(transaction.source(), transaction.amount());
+    }
+
+    if (transaction.destination() != null) {
+      accountRepository.debitBalance(transaction.destination(), transaction.amount());
+    }
+
+    if (transaction.loan() != null) {
+      loanRepository.increaseRemainingAmount(transaction.loan(), transaction.amount());
     }
 
     transactionRepository.deleteById(transaction.id());
     return Result.success(transaction.toResult());
-  }
-
-  private void revertTransactionImpact(Transaction transaction) {
-    switch (transaction.type()) {
-      case DEBIT:
-        revertDebit(transaction);
-        break;
-      case CREDIT:
-        revertCredit(transaction);
-        break;
-      case TRANSFER:
-        revertTransfer(transaction);
-        break;
-    }
-
-    if (transaction.loan() != null) {
-      revertLoan(transaction);
-    }
-  }
-
-  private void revertDebit(Transaction transaction) {
-    var sourceAccount = accountRepository.findById(transaction.source())
-        .orElseThrow(() -> new IllegalArgumentException("source account not found"));
-
-    var newBalance = sourceAccount.balance().add(transaction.amount());
-    accountRepository.update(sourceAccount.updateBalance(newBalance));
-  }
-
-  private void revertCredit(Transaction transaction) {
-    var destinationAccount = accountRepository.findById(transaction.destination())
-        .orElseThrow(() -> new IllegalArgumentException("destination account not found"));
-
-    var newBalance = destinationAccount.balance().subtract(transaction.amount());
-    accountRepository.update(destinationAccount.updateBalance(newBalance));
-  }
-
-  private void revertTransfer(Transaction transaction) {
-    var sourceAccount = accountRepository.findById(transaction.source())
-        .orElseThrow(() -> new IllegalArgumentException("source account not found"));
-
-    var destinationAccount = accountRepository.findById(transaction.destination())
-        .orElseThrow(() -> new IllegalArgumentException("destination account not found"));
-
-    var sourceNewBalance = sourceAccount.balance().add(transaction.amount());
-    var destNewBalance = destinationAccount.balance().subtract(transaction.amount());
-    accountRepository.update(sourceAccount.updateBalance(sourceNewBalance));
-    accountRepository.update(destinationAccount.updateBalance(destNewBalance));
-  }
-
-  private void revertLoan(Transaction transaction) {
-    var loan = loanRepository.findById(transaction.loan())
-        .orElseThrow(() -> new IllegalArgumentException("loan not found"));
-
-    var newRemainingAmount = loan.remainingAmount().add(transaction.amount());
-    loanRepository.update(loan.updateRemainingAmount(newRemainingAmount));
   }
 }

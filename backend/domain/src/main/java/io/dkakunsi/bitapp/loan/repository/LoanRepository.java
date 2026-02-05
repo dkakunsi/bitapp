@@ -12,6 +12,8 @@ public interface LoanRepository {
 
   Loan update(Loan loan);
 
+  void increaseRemainingAmount(Id loan, BigDecimal amount);
+
   void decreaseRemainingAmount(Id id, BigDecimal amount);
 
   void deleteById(Id id);

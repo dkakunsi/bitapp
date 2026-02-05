@@ -3,6 +3,7 @@ package io.dkakunsi.bitapp.transaction.usecase;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -17,12 +18,12 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 
 import io.dkakunsi.bitapp.account.entity.Account;
 import io.dkakunsi.bitapp.account.repository.AccountRepository;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
+import io.dkakunsi.bitapp.database.SessionManager;
 import io.dkakunsi.bitapp.domain.entity.EntityStatus;
 import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.loan.entity.Loan;
@@ -46,13 +47,20 @@ public final class RemoveTransactionUseCaseTest {
   private TransactionRepository transactionRepository;
   private AccountRepository accountRepository;
   private LoanRepository loanRepository;
+  private SessionManager sessionManager;
 
   @BeforeEach
   void setUp() {
     transactionRepository = mock(TransactionRepository.class);
     accountRepository = mock(AccountRepository.class);
     loanRepository = mock(LoanRepository.class);
-    underTest = new RemoveTransaction(transactionRepository, accountRepository, loanRepository);
+    sessionManager = mock(SessionManager.class);
+    underTest = new RemoveTransaction(transactionRepository, accountRepository, loanRepository, sessionManager);
+
+    when(sessionManager.executeInSession(any())).thenAnswer(invocation -> {
+      var function = invocation.getArgument(0, java.util.function.Supplier.class);
+      return function.get();
+    });
   }
 
   @Test
@@ -120,9 +128,7 @@ public final class RemoveTransactionUseCaseTest {
     assertTrue(result.data().isPresent());
     assertEquals(transactionId, result.data().get().id());
 
-    var accountCaptor = ArgumentCaptor.forClass(Account.class);
-    verify(accountRepository).update(accountCaptor.capture());
-    assertEquals(new BigDecimal("1000000"), accountCaptor.getValue().balance());
+    verify(accountRepository).creditBalance(sourceAccount.id(), transaction.amount());
     verify(transactionRepository).deleteById(transactionIdObj);
   }
 
@@ -149,9 +155,7 @@ public final class RemoveTransactionUseCaseTest {
     assertTrue(result.data().isPresent());
     assertEquals(transactionId, result.data().get().id());
 
-    var accountCaptor = ArgumentCaptor.forClass(Account.class);
-    verify(accountRepository).update(accountCaptor.capture());
-    assertEquals(new BigDecimal("500000"), accountCaptor.getValue().balance());
+    verify(accountRepository).debitBalance(destinationAccount.id(), transaction.amount());
     verify(transactionRepository).deleteById(transactionIdObj);
   }
 
@@ -181,11 +185,8 @@ public final class RemoveTransactionUseCaseTest {
     assertTrue(result.data().isPresent());
     assertEquals(transactionId, result.data().get().id());
 
-    var accountCaptor = ArgumentCaptor.forClass(Account.class);
-    verify(accountRepository, org.mockito.Mockito.times(2)).update(accountCaptor.capture());
-    var updatedAccounts = accountCaptor.getAllValues();
-    assertEquals(new BigDecimal("1000000"), updatedAccounts.get(0).balance());
-    assertEquals(new BigDecimal("500000"), updatedAccounts.get(1).balance());
+    verify(accountRepository).creditBalance(sourceAccount.id(), transaction.amount());
+    verify(accountRepository).debitBalance(destinationAccount.id(), transaction.amount());
     verify(transactionRepository).deleteById(transactionIdObj);
   }
 
@@ -215,9 +216,7 @@ public final class RemoveTransactionUseCaseTest {
     assertTrue(result.data().isPresent());
     assertEquals(transactionId, result.data().get().id());
 
-    var loanCaptor = ArgumentCaptor.forClass(Loan.class);
-    verify(loanRepository).update(loanCaptor.capture());
-    assertEquals(new BigDecimal("2000000"), loanCaptor.getValue().remainingAmount());
+    verify(loanRepository).increaseRemainingAmount(loan.id(), transaction.amount());
     verify(transactionRepository).deleteById(transactionIdObj);
   }
 
