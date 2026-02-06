@@ -74,7 +74,6 @@ public final class AppLauncher implements Launcher {
     var getAccount = new GetAccount(accountRepository);
     var getUserAccounts = new GetUserAccounts(accountRepository);
     var updateAccount = new UpdateAccount(accountRepository);
-    var removeAccount = new RemoveAccount(accountRepository, transactionRepository, loanRepository, sessionManager);
     var getLoan = new GetLoan(loanRepository);
     var getUserLoans = new GetUserLoans(loanRepository);
     var updateLoan = new UpdateLoan(loanRepository);
@@ -87,6 +86,8 @@ public final class AppLauncher implements Launcher {
         sessionManager);
 
     var createLoan = new CreateLoan(loanRepository, accountRepository, sessionManager, createTransaction);
+    var removeAccount = new RemoveAccount(accountRepository, transactionRepository, loanRepository, removeLoan,
+        sessionManager);
 
     // endpoints
     var authorizer = JWTAuthorizer.of(configuration);

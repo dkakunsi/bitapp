@@ -70,4 +70,13 @@ public class MongoLoanRepository extends MongoRepository implements LoanReposito
         .map(LoanModel::toLoan)
         .toList();
   }
+
+  @Override
+  public List<Loan> findByAccountId(Id id) {
+    return pickDatastore().find(LoanModel.class)
+        .filter(Filters.eq("accountId", id.value()))
+        .stream()
+        .map(LoanModel::toLoan)
+        .toList();
+  }
 }

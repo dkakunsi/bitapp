@@ -7,6 +7,7 @@ import io.dkakunsi.bitapp.common.AppError;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.database.SessionManager;
+import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.domain.usecase.UseCase;
 import io.dkakunsi.bitapp.loan.repository.LoanRepository;
@@ -51,17 +52,35 @@ public final class CreateTransaction implements UseCase<CreateTransactionInput, 
   }
 
   private Optional<AppError> validateRequest(Transaction transaction) {
-    if (transaction.source() != null && accountRepository.isNotExistingAccount(transaction.source())) {
+    if (isSameSourceAndDestinationAccount(transaction)) {
+      return Optional.of(new AppError(Code.BAD_REQUEST, "source and destination accounts cannot be the same"));
+    }
+
+    if (isAccountNotExists(transaction.source())) {
       return Optional.of(new AppError(Code.BAD_REQUEST, "source account not found"));
     }
 
-    if (transaction.destination() != null && accountRepository.isNotExistingAccount(transaction.destination())) {
+    if (isAccountNotExists(transaction.destination())) {
       return Optional.of(new AppError(Code.BAD_REQUEST, "destination account not found"));
     }
 
-    if (transaction.loan() != null && loanRepository.isNotExistingLoan(transaction.loan())) {
+    if (isLoanNotExists(transaction.loan())) {
       return Optional.of(new AppError(Code.BAD_REQUEST, "loan not found"));
     }
     return Optional.empty();
+  }
+
+  private static boolean isSameSourceAndDestinationAccount(Transaction transaction) {
+    return transaction.source() != null
+        && transaction.destination() != null
+        && transaction.source().equals(transaction.destination());
+  }
+
+  private boolean isAccountNotExists(Id accountId) {
+    return accountId != null && accountRepository.isNotExistingAccount(accountId);
+  }
+
+  private boolean isLoanNotExists(Id loanId) {
+    return loanId != null && loanRepository.isNotExistingLoan(loanId);
   }
 }

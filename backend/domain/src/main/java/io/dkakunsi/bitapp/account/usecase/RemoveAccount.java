@@ -1,39 +1,40 @@
 package io.dkakunsi.bitapp.account.usecase;
 
-import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
-
 import io.dkakunsi.bitapp.account.dto.AccountResult;
 import io.dkakunsi.bitapp.account.entity.Account;
 import io.dkakunsi.bitapp.account.repository.AccountRepository;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
+import io.dkakunsi.bitapp.common.Logger;
+import io.dkakunsi.bitapp.common.SystemLogger;
 import io.dkakunsi.bitapp.database.SessionManager;
 import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.domain.usecase.UseCase;
 import io.dkakunsi.bitapp.loan.repository.LoanRepository;
-import io.dkakunsi.bitapp.transaction.entity.Transaction;
+import io.dkakunsi.bitapp.loan.usecase.RemoveLoan;
 import io.dkakunsi.bitapp.transaction.repository.TransactionRepository;
-import io.dkakunsi.bitapp.transaction.util.TransactionUpdateHelper;
 
 public final class RemoveAccount implements UseCase<String, AccountResult> {
+
+  private static final Logger LOGGER = SystemLogger.getLogger(RemoveAccount.class);
 
   private final AccountRepository accountRepository;
   private final TransactionRepository transactionRepository;
   private final LoanRepository loanRepository;
-
+  private final RemoveLoan removeLoan;
   private final SessionManager sessionManager;
 
   public RemoveAccount(
       AccountRepository accountRepository,
       TransactionRepository transactionRepository,
       LoanRepository loanRepository,
+      RemoveLoan removeLoan,
       SessionManager sessionManager) {
     this.accountRepository = accountRepository;
     this.transactionRepository = transactionRepository;
     this.loanRepository = loanRepository;
+    this.removeLoan = removeLoan;
     this.sessionManager = sessionManager;
   }
 
@@ -50,99 +51,24 @@ public final class RemoveAccount implements UseCase<String, AccountResult> {
     }
 
     return sessionManager.executeInSession(() -> {
-      var transactions = transactionRepository.findByAccountId(account.id());
-      var loanIds = new HashSet<Id>();
-      for (var transaction : transactions) {
-        if (transaction.loan() != null) {
-          loanIds.add(transaction.loan());
+      loanRepository.findByAccountId(account.id()).forEach(loan -> {
+        var result = removeLoan.execute(context, loan.id().value());
+        if (result.isFailed()) {
+          LOGGER.warn("Failed to remove loan with id {}: {}", loan.id(), result.error().get().message());
         }
-      }
+      });
 
-      for (var loanId : loanIds) {
-        clearLoanReferences(loanId, context.requester());
-        loanRepository.findById(loanId)
-            .filter(loan -> loan.isOwner(context.requester()))
-            .ifPresent(loan -> loanRepository.deleteById(loanId));
-      }
-
-      for (var transaction : transactions) {
-        handleTransaction(account.id(), transaction, context.requester(), loanIds);
-      }
+      // this must be done after removing loans to maintain data integrity
+      // as we are updating transactions related to loans
+      transactionRepository.findByAccountId(account.id()).forEach(t -> {
+        switch (t.type()) {
+          case DEBIT, CREDIT -> transactionRepository.deleteById(t.id());
+          case TRANSFER -> transactionRepository.update(t.convertFromTransfer(account.id(), context.requester()));
+        }
+      });
 
       accountRepository.deleteById(account.id());
       return Result.success(account.toResult());
     });
   }
-
-  private void clearLoanReferences(Id loanId, String requester) {
-    var loanTransactions = transactionRepository.findByLoanId(loanId);
-    for (var transaction : loanTransactions) {
-      var updatedTransaction = TransactionUpdateHelper.removeLoanReference(transaction, requester);
-      transactionRepository.update(updatedTransaction);
-    }
-  }
-
-  private void handleTransaction(
-      Id accountId,
-      Transaction transaction,
-      String requester,
-      Set<Id> loanIds) {
-    switch (transaction.type()) {
-      case DEBIT:
-      case CREDIT:
-        transactionRepository.deleteById(transaction.id());
-        break;
-      case TRANSFER:
-        var isSource = transaction.source() != null && transaction.source().equals(accountId);
-        var isDestination = transaction.destination() != null && transaction.destination().equals(accountId);
-        if (isSource && isDestination) {
-          transactionRepository.deleteById(transaction.id());
-          break;
-        }
-
-        var removeLoan = transaction.loan() != null && loanIds.contains(transaction.loan());
-        var updatedTransfer = convertTransfer(accountId, transaction, requester, removeLoan);
-        transactionRepository.update(updatedTransfer);
-        break;
-    }
-  }
-
-  private Transaction convertTransfer(
-      Id accountId,
-      Transaction transaction,
-      String requester,
-      boolean removeLoan) {
-    var isSource = transaction.source() != null && transaction.source().equals(accountId);
-    var isDestination = transaction.destination() != null && transaction.destination().equals(accountId);
-
-    var newType = transaction.type();
-
-    if (isSource) {
-      newType = Transaction.Type.CREDIT;
-    } else if (isDestination) {
-      newType = Transaction.Type.DEBIT;
-    }
-
-    return Transaction.builder()
-        .id(transaction.id())
-        .user(transaction.user())
-        .title(transaction.title())
-        .description(transaction.description())
-        .date(transaction.date())
-        .time(transaction.time())
-        .source(isSource ? null : transaction.source())
-        .destination(isDestination ? null : transaction.destination())
-        .loan(removeLoan ? null : transaction.loan())
-        .amount(transaction.amount())
-        .currency(transaction.currency())
-        .category(transaction.category())
-        .type(newType)
-        .status(transaction.status())
-        .createdAt(transaction.createdAt())
-        .updatedAt(LocalDateTime.now())
-        .createdBy(transaction.createdBy())
-        .updatedBy(requester)
-        .build();
-  }
-
 }

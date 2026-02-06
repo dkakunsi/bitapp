@@ -22,6 +22,8 @@ public interface LoanRepository {
 
   List<Loan> findByUserId(Id userId);
 
+  List<Loan> findByAccountId(Id id);
+
   default boolean isExistingLoan(Id loan) {
     return findById(loan).isPresent();
   }

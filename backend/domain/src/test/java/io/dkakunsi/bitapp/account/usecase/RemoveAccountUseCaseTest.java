@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -28,8 +30,10 @@ import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.database.SessionManager;
 import io.dkakunsi.bitapp.domain.entity.EntityStatus;
 import io.dkakunsi.bitapp.domain.entity.Id;
+import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.loan.entity.Loan;
 import io.dkakunsi.bitapp.loan.repository.LoanRepository;
+import io.dkakunsi.bitapp.loan.usecase.RemoveLoan;
 import io.dkakunsi.bitapp.transaction.entity.Transaction;
 import io.dkakunsi.bitapp.transaction.repository.TransactionRepository;
 
@@ -48,6 +52,7 @@ public final class RemoveAccountUseCaseTest {
   private AccountRepository accountRepository;
   private TransactionRepository transactionRepository;
   private LoanRepository loanRepository;
+  private RemoveLoan removeLoan;
   private SessionManager sessionManager;
 
   @BeforeEach
@@ -55,8 +60,9 @@ public final class RemoveAccountUseCaseTest {
     accountRepository = mock(AccountRepository.class);
     transactionRepository = mock(TransactionRepository.class);
     loanRepository = mock(LoanRepository.class);
+    removeLoan = mock(RemoveLoan.class);
     sessionManager = mock(SessionManager.class);
-    underTest = new RemoveAccount(accountRepository, transactionRepository, loanRepository, sessionManager);
+    underTest = new RemoveAccount(accountRepository, transactionRepository, loanRepository, removeLoan, sessionManager);
   }
 
   @Test
@@ -107,7 +113,9 @@ public final class RemoveAccountUseCaseTest {
     when(transactionRepository.findByAccountId(ACCOUNT))
         .thenReturn(List.of(debit, credit, transferSource, transferDestination, loanTransaction));
     when(transactionRepository.findByLoanId(LOAN)).thenReturn(List.of(loanTransaction));
-    when(loanRepository.findById(LOAN)).thenReturn(Optional.of(createLoan(LOAN_ID, REQUESTER)));
+    when(loanRepository.findByAccountId(ACCOUNT)).thenReturn(List.of(createLoan(LOAN_ID, REQUESTER)));
+
+    when(removeLoan.execute(any(Context.class), anyString())).thenReturn(Result.success("OK"));
 
     when(sessionManager.executeInSession(any()))
         .thenAnswer(invocation -> {
@@ -127,9 +135,10 @@ public final class RemoveAccountUseCaseTest {
     verify(transactionRepository).deleteById(Id.of("debit-1"));
     verify(transactionRepository).deleteById(Id.of("credit-1"));
     verify(transactionRepository).deleteById(Id.of("loan-1"));
+    verify(removeLoan).execute(any(Context.class), eq(LOAN_ID));
 
     var updatedCaptor = ArgumentCaptor.forClass(Transaction.class);
-    verify(transactionRepository, org.mockito.Mockito.times(3)).update(updatedCaptor.capture());
+    verify(transactionRepository, org.mockito.Mockito.times(2)).update(updatedCaptor.capture());
 
     var updates = updatedCaptor.getAllValues();
     var transferSourceUpdate = updates.stream()
@@ -146,13 +155,6 @@ public final class RemoveAccountUseCaseTest {
     assertEquals(Transaction.Type.DEBIT, transferDestinationUpdate.type());
     assertEquals(OTHER_ACCOUNT_ID, transferDestinationUpdate.source().value());
 
-    var loanUpdate = updates.stream()
-        .filter(update -> update.id().value().equals("loan-1") && update.loan() == null)
-        .findFirst()
-        .orElseThrow();
-    assertEquals(null, loanUpdate.loan());
-
-    verify(loanRepository).deleteById(LOAN);
     verify(accountRepository).deleteById(ACCOUNT);
   }
 

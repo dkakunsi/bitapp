@@ -101,4 +101,30 @@ public final record Transaction(
         .type(this.type().name())
         .build();
   }
+
+  public Transaction convertFromTransfer(Id accountId, String requester) {
+    var isSourceAccountRemoved = this.source() != null && this.source().equals(accountId);
+    var newType = isSourceAccountRemoved ? Transaction.Type.CREDIT : Transaction.Type.DEBIT;
+
+    return Transaction.builder()
+        .id(this.id())
+        .user(this.user())
+        .title(this.title())
+        .description(this.description())
+        .date(this.date())
+        .time(this.time())
+        .loan(this.loan())
+        .amount(this.amount())
+        .currency(this.currency())
+        .category(this.category())
+        .status(this.status())
+        .createdAt(this.createdAt())
+        .createdBy(this.createdBy())
+        .updatedAt(LocalDateTime.now())
+        .updatedBy(requester)
+        .source(isSourceAccountRemoved ? null : this.source())
+        .destination(isSourceAccountRemoved ? this.destination() : null)
+        .type(newType)
+        .build();
+  }
 }
