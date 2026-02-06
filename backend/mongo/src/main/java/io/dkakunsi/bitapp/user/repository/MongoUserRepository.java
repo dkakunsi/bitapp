@@ -3,29 +3,29 @@ package io.dkakunsi.bitapp.user.repository;
 import java.util.Optional;
 
 import dev.morphia.Datastore;
-import dev.morphia.query.filters.Filters;
+import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.mongo.MongoRepository;
 import io.dkakunsi.bitapp.user.entity.User;
 import io.dkakunsi.bitapp.user.model.UserModel;
 
-public class MongoUserRepository extends MongoRepository implements UserRepository {
+public class MongoUserRepository extends MongoRepository<UserModel, User> implements UserRepository {
 
   public MongoUserRepository(Datastore datastore) {
     super(datastore);
   }
 
   @Override
-  public User save(User user) {
-    var entity = UserModel.fromUser(user);
-    pickDatastore().save(entity);
-    return user;
+  protected UserModel fromEntity(User entity) {
+    return UserModel.fromUser(entity);
+  }
+
+  @Override
+  protected User toEntity(UserModel model) {
+    return model.toUser();
   }
 
   @Override
   public Optional<User> findByEmail(String email) {
-    var entity = pickDatastore().find(UserModel.class)
-        .filter(Filters.eq(MONGO_ID, email))
-        .first();
-    return Optional.ofNullable(entity).map(UserModel::toUser);
+    return findById(Id.of(email));
   }
 }

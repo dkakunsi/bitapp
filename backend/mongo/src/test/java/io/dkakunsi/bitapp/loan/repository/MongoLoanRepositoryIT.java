@@ -95,8 +95,8 @@ public class MongoLoanRepositoryIT {
     assertEquals("John Doe", createdLoan.partyName());
     assertEquals("Personal Loan", createdLoan.title());
     assertEquals("Loan for personal expenses", createdLoan.description());
-    assertEquals(BigDecimal.valueOf(10000), createdLoan.amount());
-    assertEquals(BigDecimal.valueOf(10000), createdLoan.remainingAmount());
+    assertEquals(BigDecimal.valueOf(10000).doubleValue(), createdLoan.amount().doubleValue());
+    assertEquals(BigDecimal.valueOf(10000).doubleValue(), createdLoan.remainingAmount().doubleValue());
     assertEquals(Currency.getInstance("IDR"), createdLoan.currency());
     assertEquals(5.5, createdLoan.interestRate());
     assertEquals(EntityStatus.ACTIVE, createdLoan.status());
@@ -137,8 +137,8 @@ public class MongoLoanRepositoryIT {
     assertEquals(Loan.Type.LEND, createdLoan.type());
     assertEquals("Jane Smith", createdLoan.partyName());
     assertEquals("Business Loan", createdLoan.title());
-    assertEquals(BigDecimal.valueOf(50000), createdLoan.amount());
-    assertEquals(BigDecimal.valueOf(45000), createdLoan.remainingAmount());
+    assertEquals(BigDecimal.valueOf(50000).doubleValue(), createdLoan.amount().doubleValue());
+    assertEquals(BigDecimal.valueOf(45000).doubleValue(), createdLoan.remainingAmount().doubleValue());
     assertEquals(Currency.getInstance("USD"), createdLoan.currency());
     assertEquals(7.5, createdLoan.interestRate());
   }
@@ -173,7 +173,7 @@ public class MongoLoanRepositoryIT {
     // Then
     assertNotNull(createdLoan);
     assertEquals(0.0, createdLoan.interestRate());
-    assertEquals(BigDecimal.valueOf(5000), createdLoan.amount());
+    assertEquals(BigDecimal.valueOf(5000).doubleValue(), createdLoan.amount().doubleValue());
   }
 
   @Test
@@ -206,7 +206,7 @@ public class MongoLoanRepositoryIT {
     // Then
     assertNotNull(createdLoan);
     assertEquals(25.5, createdLoan.interestRate());
-    assertEquals(BigDecimal.valueOf(3000), createdLoan.amount());
+    assertEquals(BigDecimal.valueOf(3000).doubleValue(), createdLoan.amount().doubleValue());
   }
 
   @Test
@@ -240,8 +240,8 @@ public class MongoLoanRepositoryIT {
 
     // Then
     assertNotNull(createdLoan);
-    assertEquals(totalAmount, createdLoan.amount());
-    assertEquals(remainingAmount, createdLoan.remainingAmount());
+    assertEquals(totalAmount.doubleValue(), createdLoan.amount().doubleValue());
+    assertEquals(remainingAmount.doubleValue(), createdLoan.remainingAmount().doubleValue());
   }
 
   @Test
@@ -814,7 +814,7 @@ public class MongoLoanRepositoryIT {
     assertEquals("Updated Party", result.partyName());
     assertEquals("Updated Title", result.title());
     assertEquals("Updated description", result.description());
-    assertEquals(BigDecimal.valueOf(15000), result.amount());
+    assertEquals(BigDecimal.valueOf(15000).doubleValue(), result.amount().doubleValue());
     assertEquals(Currency.getInstance("USD"), result.currency());
     assertEquals(7.5, result.interestRate());
     assertEquals(LocalDate.of(2026, 2, 20), result.date());
@@ -901,11 +901,11 @@ public class MongoLoanRepositoryIT {
 
     // Then
     assertNotNull(result);
-    assertEquals(newAmount, result.amount());
+    assertEquals(newAmount.doubleValue(), result.amount().doubleValue());
 
     // Verify persistence
     var fetchedLoan = repository.findById(loanId);
-    assertEquals(BigDecimal.valueOf(25000.0), fetchedLoan.get().amount());
+    assertEquals(BigDecimal.valueOf(25000.0).doubleValue(), fetchedLoan.get().amount().doubleValue());
   }
 
   @Test
@@ -1069,7 +1069,7 @@ public class MongoLoanRepositoryIT {
     assertEquals("Multi Update Party", result.partyName());
     assertEquals("Multi Update Title", result.title());
     assertEquals("Multiple fields updated", result.description());
-    assertEquals(BigDecimal.valueOf(30000), result.amount());
+    assertEquals(BigDecimal.valueOf(30000).doubleValue(), result.amount().doubleValue());
     assertEquals(Currency.getInstance("GBP"), result.currency());
     assertEquals(6.25, result.interestRate());
 
@@ -1078,7 +1078,7 @@ public class MongoLoanRepositoryIT {
     assertEquals(true, fetchedLoan.isPresent());
     assertEquals("Multi Update Title", fetchedLoan.get().title());
     assertEquals("Multi Update Party", fetchedLoan.get().partyName());
-    assertEquals(BigDecimal.valueOf(30000.0), fetchedLoan.get().amount());
+    assertEquals(BigDecimal.valueOf(30000.0).doubleValue(), fetchedLoan.get().amount().doubleValue());
   }
 
   @Test

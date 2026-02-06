@@ -64,7 +64,8 @@ public final class MongoTransactionRepositoryTest {
         .updatedBy(REQUESTER)
         .build();
 
-    when(datastore.save(any(TransactionModel.class))).thenReturn(null);
+    when(datastore.save(any(TransactionModel.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
     var result = underTest.create(transaction);
@@ -115,7 +116,8 @@ public final class MongoTransactionRepositoryTest {
         .updatedBy(REQUESTER)
         .build();
 
-    when(datastore.save(any(TransactionModel.class))).thenReturn(null);
+    when(datastore.save(any(TransactionModel.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
     var result = underTest.create(transaction);
@@ -158,7 +160,8 @@ public final class MongoTransactionRepositoryTest {
         .updatedBy(REQUESTER)
         .build();
 
-    when(datastore.save(any(TransactionModel.class))).thenReturn(null);
+    when(datastore.save(any(TransactionModel.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
     var result = underTest.create(transaction);
@@ -199,7 +202,8 @@ public final class MongoTransactionRepositoryTest {
         .updatedBy(REQUESTER)
         .build();
 
-    when(datastore.save(any(TransactionModel.class))).thenReturn(null);
+    when(datastore.save(any(TransactionModel.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
     var result = underTest.create(transaction);
@@ -234,7 +238,8 @@ public final class MongoTransactionRepositoryTest {
         .updatedBy(REQUESTER)
         .build();
 
-    when(datastore.save(any(TransactionModel.class))).thenReturn(null);
+    when(datastore.save(any(TransactionModel.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
     var result = underTest.create(transaction);
@@ -275,7 +280,8 @@ public final class MongoTransactionRepositoryTest {
         .updatedBy(REQUESTER)
         .build();
 
-    when(datastore.save(any(TransactionModel.class))).thenReturn(null);
+    when(datastore.save(any(TransactionModel.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
     underTest.create(transaction);

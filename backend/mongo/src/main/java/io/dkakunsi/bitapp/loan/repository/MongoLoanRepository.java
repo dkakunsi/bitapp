@@ -2,7 +2,6 @@ package io.dkakunsi.bitapp.loan.repository;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 import dev.morphia.Datastore;
 import dev.morphia.UpdateOptions;
@@ -13,24 +12,20 @@ import io.dkakunsi.bitapp.loan.entity.Loan;
 import io.dkakunsi.bitapp.loan.model.LoanModel;
 import io.dkakunsi.bitapp.mongo.MongoRepository;
 
-public class MongoLoanRepository extends MongoRepository implements LoanRepository {
+public class MongoLoanRepository extends MongoRepository<LoanModel, Loan> implements LoanRepository {
 
   public MongoLoanRepository(Datastore datastore) {
     super(datastore);
   }
 
   @Override
-  public Loan create(Loan loan) {
-    var entity = LoanModel.fromLoan(loan);
-    pickDatastore().save(entity);
-    return loan;
+  protected LoanModel fromEntity(Loan loan) {
+    return LoanModel.fromLoan(loan);
   }
 
   @Override
-  public Loan update(Loan loan) {
-    var entity = LoanModel.fromLoan(loan);
-    pickDatastore().save(entity);
-    return loan;
+  protected Loan toEntity(LoanModel model) {
+    return model.toLoan();
   }
 
   @Override
@@ -45,21 +40,6 @@ public class MongoLoanRepository extends MongoRepository implements LoanReposito
     pickDatastore().find(LoanModel.class)
         .filter(Filters.eq(MONGO_ID, id.value()))
         .update(new UpdateOptions(), UpdateOperators.dec("remainingAmount", amount.doubleValue()));
-  }
-
-  @Override
-  public void deleteById(Id id) {
-    pickDatastore().find(LoanModel.class)
-        .filter(Filters.eq(MONGO_ID, id.value()))
-        .delete();
-  }
-
-  @Override
-  public Optional<Loan> findById(Id id) {
-    var entity = pickDatastore().find(LoanModel.class)
-        .filter(Filters.eq(MONGO_ID, id.value()))
-        .first();
-    return Optional.ofNullable(entity).map(LoanModel::toLoan);
   }
 
   @Override

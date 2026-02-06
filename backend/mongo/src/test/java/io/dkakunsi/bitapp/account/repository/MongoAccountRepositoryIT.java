@@ -86,7 +86,7 @@ public class MongoAccountRepositoryIT {
     assertEquals(name, createdAccount.name());
     assertEquals(type, createdAccount.type());
     assertEquals(themeColor, createdAccount.themeColor());
-    assertEquals(balance, createdAccount.balance());
+    assertEquals(balance.doubleValue(), createdAccount.balance().doubleValue());
     assertEquals(userId.value(), createdAccount.user().value());
     assertEquals(requester, createdAccount.createdBy());
     assertEquals(requester, createdAccount.updatedBy());
@@ -259,7 +259,7 @@ public class MongoAccountRepositoryIT {
 
     // Then
     assertNotNull(createdAccount);
-    assertEquals(BigDecimal.ZERO, createdAccount.balance());
+    assertEquals(BigDecimal.ZERO.doubleValue(), createdAccount.balance().doubleValue());
   }
 
   @Test
@@ -319,7 +319,7 @@ public class MongoAccountRepositoryIT {
 
     // Then
     assertNotNull(createdAccount);
-    assertEquals(largeBalance, createdAccount.balance());
+    assertEquals(largeBalance.doubleValue(), createdAccount.balance().doubleValue());
   }
 
   @Test

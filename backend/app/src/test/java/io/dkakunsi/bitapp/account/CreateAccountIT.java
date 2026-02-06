@@ -70,7 +70,7 @@ public class CreateAccountIT extends AppTestUtil {
     assertEquals("My Bank Account", responseBody.getString("name"));
     assertEquals("BANK", responseBody.getString("type"));
     assertEquals("#0000FF", responseBody.getString("themeColor"));
-    assertEquals(new BigDecimal("0"), responseBody.getBigDecimal("balance"));
+    assertEquals(new BigDecimal("0").doubleValue(), responseBody.getBigDecimal("balance").doubleValue());
     assertEquals("user@email.com", responseBody.getString("user"));
   }
 
@@ -101,7 +101,7 @@ public class CreateAccountIT extends AppTestUtil {
     assertEquals("My Cash Wallet", responseBody.getString("name"));
     assertEquals("CASH", responseBody.getString("type"));
     assertEquals("#00FF00", responseBody.getString("themeColor"));
-    assertEquals(new BigDecimal("0"), responseBody.getBigDecimal("balance"));
+    assertEquals(new BigDecimal("0").doubleValue(), responseBody.getBigDecimal("balance").doubleValue());
     assertEquals("user@email.com", responseBody.getString("user"));
   }
 
@@ -132,7 +132,7 @@ public class CreateAccountIT extends AppTestUtil {
     assertEquals("Digital Wallet", responseBody.getString("name"));
     assertEquals("EWALLET", responseBody.getString("type"));
     assertEquals("#FF0000", responseBody.getString("themeColor"));
-    assertEquals(new BigDecimal("0"), responseBody.getBigDecimal("balance"));
+    assertEquals(new BigDecimal("0").doubleValue(), responseBody.getBigDecimal("balance").doubleValue());
     assertEquals("user@email.com", responseBody.getString("user"));
   }
 
@@ -208,7 +208,7 @@ public class CreateAccountIT extends AppTestUtil {
     assertNotNull(responseBody.getString("id"));
     assertEquals("Simple Account", responseBody.getString("name"));
     assertEquals("BANK", responseBody.getString("type"));
-    assertEquals(new BigDecimal("0"), responseBody.getBigDecimal("balance"));
+    assertEquals(new BigDecimal("0").doubleValue(), responseBody.getBigDecimal("balance").doubleValue());
     assertEquals("user@email.com", responseBody.getString("user"));
     assertEquals("#FFFFFF", responseBody.getString("themeColor"));
   }

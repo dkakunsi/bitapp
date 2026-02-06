@@ -1,7 +1,6 @@
 package io.dkakunsi.bitapp.transaction.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import dev.morphia.Datastore;
 import dev.morphia.query.filters.Filters;
@@ -10,39 +9,21 @@ import io.dkakunsi.bitapp.mongo.MongoRepository;
 import io.dkakunsi.bitapp.transaction.entity.Transaction;
 import io.dkakunsi.bitapp.transaction.model.TransactionModel;
 
-public class MongoTransactionRepository extends MongoRepository implements TransactionRepository {
+public class MongoTransactionRepository extends MongoRepository<TransactionModel, Transaction>
+    implements TransactionRepository {
 
   public MongoTransactionRepository(Datastore datastore) {
     super(datastore);
   }
 
   @Override
-  public Transaction create(Transaction transaction) {
-    var entity = TransactionModel.fromTransaction(transaction);
-    pickDatastore().save(entity);
-    return transaction;
+  protected TransactionModel fromEntity(Transaction entity) {
+    return TransactionModel.fromTransaction(entity);
   }
 
   @Override
-  public Transaction update(Transaction transaction) {
-    var entity = TransactionModel.fromTransaction(transaction);
-    pickDatastore().save(entity);
-    return transaction;
-  }
-
-  @Override
-  public void deleteById(Id id) {
-    pickDatastore().find(TransactionModel.class)
-        .filter(Filters.eq(MONGO_ID, id.value()))
-        .delete();
-  }
-
-  @Override
-  public Optional<Transaction> findById(Id id) {
-    var entity = pickDatastore().find(TransactionModel.class)
-        .filter(Filters.eq(MONGO_ID, id.value()))
-        .first();
-    return Optional.ofNullable(entity).map(TransactionModel::toTransaction);
+  protected Transaction toEntity(TransactionModel model) {
+    return model.toTransaction();
   }
 
   @Override

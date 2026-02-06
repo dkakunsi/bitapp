@@ -2,7 +2,6 @@ package io.dkakunsi.bitapp.account.repository;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 import dev.morphia.Datastore;
 import dev.morphia.UpdateOptions;
@@ -13,24 +12,20 @@ import io.dkakunsi.bitapp.account.model.AccountModel;
 import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.mongo.MongoRepository;
 
-public class MongoAccountRepository extends MongoRepository implements AccountRepository {
+public class MongoAccountRepository extends MongoRepository<AccountModel, Account> implements AccountRepository {
 
   public MongoAccountRepository(Datastore datastore) {
     super(datastore);
   }
 
   @Override
-  public Account create(Account account) {
-    var entity = AccountModel.fromAccount(account);
-    pickDatastore().save(entity);
-    return account;
+  protected AccountModel fromEntity(Account entity) {
+    return AccountModel.fromAccount(entity);
   }
 
   @Override
-  public Account update(Account account) {
-    var entity = AccountModel.fromAccount(account);
-    var updatedEntity = pickDatastore().save(entity);
-    return updatedEntity.toAccount();
+  protected Account toEntity(AccountModel model) {
+    return model.toAccount();
   }
 
   @Override
@@ -45,21 +40,6 @@ public class MongoAccountRepository extends MongoRepository implements AccountRe
     pickDatastore().find(AccountModel.class)
         .filter(Filters.eq(MONGO_ID, id.value()))
         .update(new UpdateOptions(), UpdateOperators.inc("balance", amount.doubleValue()));
-  }
-
-  @Override
-  public void deleteById(Id id) {
-    pickDatastore().find(AccountModel.class)
-        .filter(Filters.eq(MONGO_ID, id.value()))
-        .delete();
-  }
-
-  @Override
-  public Optional<Account> findById(Id id) {
-    var entity = pickDatastore().find(AccountModel.class)
-        .filter(Filters.eq(MONGO_ID, id.value()))
-        .first();
-    return entity != null ? Optional.of(entity.toAccount()) : Optional.empty();
   }
 
   @Override
