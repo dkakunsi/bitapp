@@ -34,6 +34,9 @@ import io.dkakunsi.bitapp.transaction.repository.TransactionRepository;
 public final class RemoveTransactionUseCaseTest {
 
   private static final String REQUESTER = "user@email.com";
+
+  private static final Context context = Context.builder().requester(REQUESTER).build();
+
   private static final String OTHER_USER = "other@email.com";
   private static final String ACCOUNT_ID_1 = "account-1";
   private static final Id ACCOUNT_1 = Id.of(ACCOUNT_ID_1);
@@ -71,8 +74,7 @@ public final class RemoveTransactionUseCaseTest {
     when(transactionRepository.findById(transactionIdObj)).thenReturn(Optional.empty());
 
     // When
-    var context = Context.builder().requester(REQUESTER).build();
-    var result = underTest.process(context, transactionId);
+    var result = Context.executeInContext(context, () -> underTest.process(transactionId));
 
     // Then
     assertFalse(result.isSuccess());
@@ -95,8 +97,7 @@ public final class RemoveTransactionUseCaseTest {
     when(transactionRepository.findById(transactionIdObj)).thenReturn(Optional.of(transaction));
 
     // When
-    var context = Context.builder().requester(REQUESTER).build();
-    var result = underTest.process(context, transactionId);
+    var result = Context.executeInContext(context, () -> underTest.process(transactionId));
 
     // Then
     assertFalse(result.isSuccess());
@@ -120,8 +121,7 @@ public final class RemoveTransactionUseCaseTest {
     when(accountRepository.findById(ACCOUNT_1)).thenReturn(Optional.of(sourceAccount));
 
     // When
-    var context = Context.builder().requester(REQUESTER).build();
-    var result = underTest.process(context, transactionId);
+    var result = Context.executeInContext(context, () -> underTest.process(transactionId));
 
     // Then
     assertTrue(result.isSuccess());
@@ -147,8 +147,7 @@ public final class RemoveTransactionUseCaseTest {
     when(accountRepository.findById(ACCOUNT_2)).thenReturn(Optional.of(destinationAccount));
 
     // When
-    var context = Context.builder().requester(REQUESTER).build();
-    var result = underTest.process(context, transactionId);
+    var result = Context.executeInContext(context, () -> underTest.process(transactionId));
 
     // Then
     assertTrue(result.isSuccess());
@@ -177,8 +176,7 @@ public final class RemoveTransactionUseCaseTest {
     when(accountRepository.findById(ACCOUNT_2)).thenReturn(Optional.of(destinationAccount));
 
     // When
-    var context = Context.builder().requester(REQUESTER).build();
-    var result = underTest.process(context, transactionId);
+    var result = Context.executeInContext(context, () -> underTest.process(transactionId));
 
     // Then
     assertTrue(result.isSuccess());
@@ -208,8 +206,7 @@ public final class RemoveTransactionUseCaseTest {
     when(loanRepository.findById(LOAN)).thenReturn(Optional.of(loan));
 
     // When
-    var context = Context.builder().requester(REQUESTER).build();
-    var result = underTest.process(context, transactionId);
+    var result = Context.executeInContext(context, () -> underTest.process(transactionId));
 
     // Then
     assertTrue(result.isSuccess());

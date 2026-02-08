@@ -1,7 +1,6 @@
 package io.dkakunsi.bitapp.user.usecase;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
-import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.domain.usecase.UseCase;
 import io.dkakunsi.bitapp.user.dto.UserResult;
@@ -16,7 +15,7 @@ public final class GetUser implements UseCase<String, UserResult> {
   }
 
   @Override
-  public Result<UserResult> execute(Context context, String email) {
+  public Result<UserResult> execute(String email) {
     return userRepository.findByEmail(email)
         .map(user -> Result.success(user.toResult()))
         .orElse(Result.failure(Code.NOT_FOUND, "User not found"));

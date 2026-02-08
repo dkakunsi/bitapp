@@ -46,6 +46,7 @@ public final class RemoveAccountUseCaseTest {
   private static final String OTHER_ACCOUNT_ID = "account-2";
   private static final String LOAN_ID = "loan-1";
   private static final Id LOAN = Id.of(LOAN_ID);
+  private static final Context context = Context.builder().requester(REQUESTER).build();
 
   private RemoveAccount underTest;
 
@@ -71,8 +72,7 @@ public final class RemoveAccountUseCaseTest {
     when(accountRepository.findById(ACCOUNT)).thenReturn(Optional.empty());
 
     // When
-    var context = Context.builder().requester(REQUESTER).build();
-    var result = underTest.process(context, ACCOUNT_ID);
+    var result = Context.executeInContext(context, () -> underTest.process(ACCOUNT_ID));
 
     // Then
     assertFalse(result.isSuccess());
@@ -88,8 +88,7 @@ public final class RemoveAccountUseCaseTest {
     when(accountRepository.findById(ACCOUNT)).thenReturn(Optional.of(account));
 
     // When
-    var context = Context.builder().requester(REQUESTER).build();
-    var result = underTest.process(context, ACCOUNT_ID);
+    var result = Context.executeInContext(context, () -> underTest.process(ACCOUNT_ID));
 
     // Then
     assertFalse(result.isSuccess());
@@ -115,7 +114,7 @@ public final class RemoveAccountUseCaseTest {
     when(transactionRepository.findByLoanId(LOAN)).thenReturn(List.of(loanTransaction));
     when(loanRepository.findByAccountId(ACCOUNT)).thenReturn(List.of(createLoan(LOAN_ID, REQUESTER)));
 
-    when(removeLoan.execute(any(Context.class), anyString())).thenReturn(Result.success("OK"));
+    when(removeLoan.execute(anyString())).thenReturn(Result.success("OK"));
 
     when(sessionManager.executeInSession(any()))
         .thenAnswer(invocation -> {
@@ -124,8 +123,7 @@ public final class RemoveAccountUseCaseTest {
         });
 
     // When
-    var context = Context.builder().requester(REQUESTER).build();
-    var result = underTest.process(context, ACCOUNT_ID);
+    var result = Context.executeInContext(context, () -> underTest.process(ACCOUNT_ID));
 
     // Then
     assertTrue(result.isSuccess());
@@ -135,7 +133,7 @@ public final class RemoveAccountUseCaseTest {
     verify(transactionRepository).deleteById(Id.of("debit-1"));
     verify(transactionRepository).deleteById(Id.of("credit-1"));
     verify(transactionRepository).deleteById(Id.of("loan-1"));
-    verify(removeLoan).execute(any(Context.class), eq(LOAN_ID));
+    verify(removeLoan).execute(eq(LOAN_ID));
 
     var updatedCaptor = ArgumentCaptor.forClass(Transaction.class);
     verify(transactionRepository, org.mockito.Mockito.times(2)).update(updatedCaptor.capture());

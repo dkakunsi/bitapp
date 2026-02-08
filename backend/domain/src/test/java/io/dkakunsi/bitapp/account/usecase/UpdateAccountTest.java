@@ -25,13 +25,14 @@ import io.dkakunsi.bitapp.domain.entity.Id;
 
 public final class UpdateAccountTest {
 
-  private UpdateAccount underTest;
-
-  private AccountRepository accountRepository;
-
   private static final String REQUESTER = "requester@email.com";
   private static final String ACCOUNT_ID = "account123";
   private static final Id ACCOUNT = Id.of(ACCOUNT_ID);
+  private static final Context context = Context.builder().requester(REQUESTER).build();
+
+  private UpdateAccount underTest;
+
+  private AccountRepository accountRepository;
 
   @BeforeEach
   void setUp() {
@@ -48,7 +49,6 @@ public final class UpdateAccountTest {
         .type("CASH")
         .themeColor("#00FF00")
         .build();
-    var context = Context.builder().requester(REQUESTER).build();
 
     var existingAccount = Account.builder()
         .id(Id.of(ACCOUNT_ID))
@@ -80,7 +80,7 @@ public final class UpdateAccountTest {
     when(accountRepository.update(any(Account.class))).thenReturn(updatedAccount);
 
     // When
-    var result = underTest.process(context, input);
+    var result = Context.executeInContext(context, () -> underTest.process(input));
 
     // Then
     assertTrue(result.isSuccess());
@@ -132,10 +132,9 @@ public final class UpdateAccountTest {
         .id(ACCOUNT_ID)
         .name("New Name Only")
         .build();
-    var context = Context.builder().requester(REQUESTER).build();
 
     // When
-    var result = underTest.process(context, input);
+    var result = Context.executeInContext(context, () -> underTest.process(input));
 
     // Then
     assertTrue(result.isSuccess());
@@ -154,7 +153,6 @@ public final class UpdateAccountTest {
         .id(ACCOUNT_ID)
         .type("EWALLET")
         .build();
-    var context = Context.builder().requester(REQUESTER).build();
 
     var existingAccount = Account.builder()
         .id(Id.of(ACCOUNT_ID))
@@ -186,7 +184,7 @@ public final class UpdateAccountTest {
     when(accountRepository.update(any(Account.class))).thenReturn(updatedAccount);
 
     // When
-    var result = underTest.process(context, input);
+    var result = Context.executeInContext(context, () -> underTest.process(input));
 
     // Then
     assertTrue(result.isSuccess());
@@ -203,7 +201,6 @@ public final class UpdateAccountTest {
         .id(ACCOUNT_ID)
         .themeColor("#AABBCC")
         .build();
-    var context = Context.builder().requester(REQUESTER).build();
 
     var existingAccount = Account.builder()
         .id(Id.of(ACCOUNT_ID))
@@ -235,7 +232,7 @@ public final class UpdateAccountTest {
     when(accountRepository.update(any(Account.class))).thenReturn(updatedAccount);
 
     // When
-    var result = underTest.process(context, input);
+    var result = Context.executeInContext(context, () -> underTest.process(input));
 
     // Then
     assertTrue(result.isSuccess());
@@ -252,13 +249,12 @@ public final class UpdateAccountTest {
         .id(ACCOUNT_ID)
         .name("Updated Name")
         .build();
-    var context = Context.builder().requester(REQUESTER).build();
 
     when(accountRepository.findById(ACCOUNT))
         .thenThrow(new RuntimeException("Database error"));
 
     // When
-    var result = underTest.process(context, input);
+    var result = underTest.process(input);
 
     // Then
     assertFalse(result.isSuccess());
@@ -276,12 +272,11 @@ public final class UpdateAccountTest {
         .id(nonExistingAccountId)
         .name("Updated Name")
         .build();
-    var context = Context.builder().requester(REQUESTER).build();
 
     when(accountRepository.findById(nonExistingAccount)).thenReturn(Optional.empty());
 
     // When
-    var result = underTest.process(context, input);
+    var result = underTest.process(input);
 
     // Then
     assertFalse(result.isSuccess());
@@ -300,7 +295,6 @@ public final class UpdateAccountTest {
         .id(ACCOUNT_ID)
         .name("Updated Name")
         .build();
-    var context = Context.builder().requester(differentUser).build();
 
     var existingAccount = Account.builder()
         .id(Id.of(ACCOUNT_ID))
@@ -318,7 +312,8 @@ public final class UpdateAccountTest {
     when(accountRepository.findById(ACCOUNT)).thenReturn(Optional.of(existingAccount));
 
     // When
-    var result = underTest.process(context, input);
+    var context = Context.builder().requester(differentUser).build();
+    var result = Context.executeInContext(context, () -> underTest.process(input));
 
     // Then
     assertFalse(result.isSuccess());
@@ -336,7 +331,6 @@ public final class UpdateAccountTest {
         .id(ACCOUNT_ID)
         .name("Updated Name")
         .build();
-    var context = Context.builder().requester(REQUESTER).build();
 
     var existingAccount = Account.builder()
         .id(Id.of(ACCOUNT_ID))
@@ -368,7 +362,7 @@ public final class UpdateAccountTest {
     when(accountRepository.update(any(Account.class))).thenReturn(updatedAccount);
 
     // When
-    var result = underTest.process(context, input);
+    var result = Context.executeInContext(context, () -> underTest.process(input));
 
     // Then
     assertTrue(result.isSuccess());

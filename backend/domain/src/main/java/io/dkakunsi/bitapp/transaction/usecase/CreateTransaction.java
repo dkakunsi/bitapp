@@ -5,7 +5,6 @@ import java.util.Optional;
 import io.dkakunsi.bitapp.account.repository.AccountRepository;
 import io.dkakunsi.bitapp.common.AppError;
 import io.dkakunsi.bitapp.common.AppError.Code;
-import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.database.SessionManager;
 import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.domain.usecase.Result;
@@ -37,8 +36,8 @@ public final class CreateTransaction implements UseCase<CreateTransactionInput, 
   }
 
   @Override
-  public Result<TransactionResult> execute(Context context, CreateTransactionInput input) {
-    var transaction = input.toTransaction(context.requester());
+  public Result<TransactionResult> execute(CreateTransactionInput input) {
+    var transaction = input.toTransaction(getRequester());
     return validateRequest(transaction)
         .map(error -> Result.<TransactionResult>failure(error))
         .orElseGet(() -> sessionManager.executeInSession(() -> execute(input, transaction)));

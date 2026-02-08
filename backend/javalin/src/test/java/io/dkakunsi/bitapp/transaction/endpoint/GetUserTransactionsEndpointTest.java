@@ -17,7 +17,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
-import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.transaction.dto.TransactionResult;
@@ -92,7 +91,7 @@ class GetUserTransactionsEndpointTest {
 
     var getResult = List.of(transactionItem1, transactionItem2);
     var result = Result.success(getResult);
-    when(usecase.process(any(Context.class), any(String.class))).thenReturn(result);
+    when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
     var response = Unirest.get(baseUrl + "/users/{userId}/transactions")
@@ -122,7 +121,7 @@ class GetUserTransactionsEndpointTest {
   void givenValidUserIdWithNoTransactions_WhenRequested_ThenShouldReturn200AndEmptyList() {
     // Given
     var result = Result.<List<TransactionResult>>success(List.of());
-    when(usecase.process(any(Context.class), any(String.class))).thenReturn(result);
+    when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
     var response = Unirest.get(baseUrl + "/users/{userId}/transactions")
@@ -156,7 +155,7 @@ class GetUserTransactionsEndpointTest {
         .category("OTHER")
         .build();
     var result = Result.success(List.of(transactionItem));
-    when(usecase.process(any(Context.class), any(String.class))).thenReturn(result);
+    when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
     var response = Unirest.get(baseUrl + "/users/{userId}/transactions")
@@ -183,7 +182,7 @@ class GetUserTransactionsEndpointTest {
   void givenValidRequest_WhenUseCaseReturnsEmpty_ThenShouldReturn200() {
     // Given
     var result = Result.<List<TransactionResult>>success(List.of());
-    when(usecase.process(any(Context.class), any(String.class))).thenReturn(result);
+    when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
     var response = Unirest.get(baseUrl + "/users/{userId}/transactions")
@@ -198,7 +197,7 @@ class GetUserTransactionsEndpointTest {
   void givenValidRequest_WhenUseCaseFails_ThenShouldReturn500() {
     // Given
     var result = Result.<List<TransactionResult>>failure(Code.SERVER_ERROR, "Database error");
-    when(usecase.process(any(Context.class), any(String.class))).thenReturn(result);
+    when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
     var response = Unirest.get(baseUrl + "/users/{userId}/transactions")

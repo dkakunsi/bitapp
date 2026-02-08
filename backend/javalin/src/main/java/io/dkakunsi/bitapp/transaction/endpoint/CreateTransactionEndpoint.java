@@ -3,12 +3,12 @@ package io.dkakunsi.bitapp.transaction.endpoint;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 
+import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.javalin.JavalinEndpoint;
 import io.dkakunsi.bitapp.transaction.dto.CreateTransactionInput;
 import io.dkakunsi.bitapp.transaction.dto.CreateUserTransactionInput;
 import io.dkakunsi.bitapp.transaction.dto.TransactionResult;
 import io.dkakunsi.bitapp.transaction.usecase.CreateTransaction;
-import io.javalin.http.Context;
 import io.javalin.http.Handler;
 
 public final class CreateTransactionEndpoint extends JavalinEndpoint<CreateTransactionInput, TransactionResult> {
@@ -35,11 +35,13 @@ public final class CreateTransactionEndpoint extends JavalinEndpoint<CreateTrans
   @Override
   protected Handler getHandler() {
     return ctx -> {
+      var principal = authorizeRequest(ctx);
+      var context = initiateContext(ctx, principal);
       try {
-        var principal = authorizeRequest(ctx);
-        var context = initiateContext(ctx, principal);
-        var input = buildInput(ctx);
-        var result = usecase.process(context, input);
+        var result = Context.executeInContext(context, () -> {
+          var input = buildInput(ctx);
+          return usecase.process(input);
+        });
         response(ctx, result);
       } catch (IllegalArgumentException e) {
         // Validation errors during input building
@@ -49,7 +51,7 @@ public final class CreateTransactionEndpoint extends JavalinEndpoint<CreateTrans
   }
 
   @Override
-  protected CreateTransactionInput buildInput(Context ctx) {
+  protected CreateTransactionInput buildInput(io.javalin.http.Context ctx) {
     var body = ctx.bodyAsClass(CreateTransactionRequest.class);
     return CreateUserTransactionInput.fromRequest(
         body.title(),

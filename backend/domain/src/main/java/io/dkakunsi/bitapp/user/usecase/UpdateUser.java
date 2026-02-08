@@ -1,7 +1,6 @@
 package io.dkakunsi.bitapp.user.usecase;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
-import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.domain.usecase.UseCase;
 import io.dkakunsi.bitapp.user.dto.UpdateUserInput;
@@ -18,8 +17,8 @@ public final class UpdateUser implements UseCase<UpdateUserInput, UserResult> {
   }
 
   @Override
-  public Result<UserResult> execute(Context context, UpdateUserInput input) {
-    var requester = context.requester();
+  public Result<UserResult> execute(UpdateUserInput input) {
+    var requester = getRequester();
     if (!requester.equals(input.email())) {
       return Result.failure(Code.BAD_REQUEST, "User can only update their own data");
     }

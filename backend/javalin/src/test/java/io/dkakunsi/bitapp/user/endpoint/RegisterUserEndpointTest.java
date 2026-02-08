@@ -13,7 +13,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
-import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.user.dto.RegisterUserInput;
@@ -58,7 +57,7 @@ class RegisterUserEndpointTest {
         .language(Language.EN.name())
         .build();
     var result = Result.success(registerResult);
-    when(usecase.process(any(Context.class), any(RegisterUserInput.class))).thenReturn(result);
+    when(usecase.process(any(RegisterUserInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -89,7 +88,7 @@ class RegisterUserEndpointTest {
   void givenValidRegistrationRequestAndEmptyResult_WhenRequested_ThenShouldOkWithEmptyResponse() {
     // Given
     var result = Result.<UserResult>success();
-    when(usecase.process(any(Context.class), any(RegisterUserInput.class))).thenReturn(result);
+    when(usecase.process(any(RegisterUserInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -114,7 +113,7 @@ class RegisterUserEndpointTest {
   void givenValidRegistrationRequestAndProcessReturnsError_WhenRequested_ThenShouldReturnProperMessage() {
     // Given
     var result = Result.<UserResult>failure(Code.SERVER_ERROR, "Database error");
-    when(usecase.process(any(Context.class), any(RegisterUserInput.class))).thenReturn(result);
+    when(usecase.process(any(RegisterUserInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -139,7 +138,7 @@ class RegisterUserEndpointTest {
   void givenValidRegistrationRequestAndProcessReturnsBadRequest_WhenRequested_ThenShouldReturn400() {
     // Given
     var result = Result.<UserResult>failure(Code.BAD_REQUEST, "email: must be a well-formed email address");
-    when(usecase.process(any(Context.class), any(RegisterUserInput.class))).thenReturn(result);
+    when(usecase.process(any(RegisterUserInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -186,7 +185,7 @@ class RegisterUserEndpointTest {
         .language(Language.EN.name())
         .build();
     var result = Result.success(registerUserResult);
-    when(usecase.process(any(Context.class), any(RegisterUserInput.class))).thenReturn(result);
+    when(usecase.process(any(RegisterUserInput.class))).thenReturn(result);
 
     var requestBody = """
         {

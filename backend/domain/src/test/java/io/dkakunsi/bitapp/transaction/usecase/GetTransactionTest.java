@@ -29,6 +29,8 @@ public final class GetTransactionTest {
   private static final String REQUESTER = "user@email.com";
   private static final String OTHER_USER = "other@email.com";
 
+  private static final Context context = Context.builder().requester(REQUESTER).build();
+
   private GetTransaction underTest;
 
   private TransactionRepository transactionRepository;
@@ -67,8 +69,7 @@ public final class GetTransactionTest {
     when(transactionRepository.findById(transactionIdObj)).thenReturn(Optional.of(existingTransaction));
 
     // When
-    var context = Context.builder().requester(REQUESTER).build();
-    var result = underTest.process(context, transactionId);
+    var result = Context.executeInContext(context, () -> underTest.process(transactionId));
 
     // Then
     assertTrue(result.isSuccess());
@@ -114,8 +115,7 @@ public final class GetTransactionTest {
     when(transactionRepository.findById(transactionIdObj)).thenReturn(Optional.of(existingTransaction));
 
     // When
-    var context = Context.builder().requester(REQUESTER).build();
-    var result = underTest.process(context, transactionId);
+    var result = Context.executeInContext(context, () -> underTest.process(transactionId));
 
     // Then
     assertTrue(result.isSuccess());
@@ -158,8 +158,7 @@ public final class GetTransactionTest {
     when(transactionRepository.findById(transactionIdObj)).thenReturn(Optional.of(existingTransaction));
 
     // When
-    var context = Context.builder().requester(REQUESTER).build();
-    var result = underTest.process(context, transactionId);
+    var result = Context.executeInContext(context, () -> underTest.process(transactionId));
 
     // Then
     assertTrue(result.isSuccess());
@@ -202,8 +201,7 @@ public final class GetTransactionTest {
     when(transactionRepository.findById(transactionIdObj)).thenReturn(Optional.of(existingTransaction));
 
     // When
-    var context = Context.builder().requester(REQUESTER).build();
-    var result = underTest.process(context, transactionId);
+    var result = Context.executeInContext(context, () -> underTest.process(transactionId));
 
     // Then
     assertTrue(result.isSuccess());
@@ -223,8 +221,7 @@ public final class GetTransactionTest {
     when(transactionRepository.findById(transactionIdObj)).thenReturn(Optional.empty());
 
     // When
-    var context = Context.builder().requester(REQUESTER).build();
-    var result = underTest.process(context, transactionId);
+    var result = Context.executeInContext(context, () -> underTest.process(transactionId));
 
     // Then
     assertFalse(result.isSuccess());
@@ -263,8 +260,7 @@ public final class GetTransactionTest {
     when(transactionRepository.findById(transactionIdObj)).thenReturn(Optional.of(otherUserTransaction));
 
     // When
-    var context = Context.builder().requester(REQUESTER).build();
-    var result = underTest.process(context, transactionId);
+    var result = Context.executeInContext(context, () -> underTest.process(transactionId));
 
     // Then
     assertFalse(result.isSuccess());
@@ -283,8 +279,7 @@ public final class GetTransactionTest {
     when(transactionRepository.findById(transactionIdObj)).thenThrow(new RuntimeException("Database error"));
 
     // When
-    var context = Context.builder().requester(REQUESTER).build();
-    var result = underTest.process(context, transactionId);
+    var result = Context.executeInContext(context, () -> underTest.process(transactionId));
 
     // Then
     assertFalse(result.isSuccess());

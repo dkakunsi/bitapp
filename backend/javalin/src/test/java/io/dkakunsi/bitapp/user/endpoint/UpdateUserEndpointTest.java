@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
-import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.user.dto.UpdateUserInput;
@@ -65,7 +64,7 @@ class UpdateUserEndpointTest {
         .language(Language.ID.name())
         .build();
     var result = Result.success(updateResult);
-    when(usecase.process(any(Context.class), any(UpdateUserInput.class))).thenReturn(result);
+    when(usecase.process(any(UpdateUserInput.class))).thenReturn(result);
 
     // When
     var body = new JSONObject().put("language", "ID").toString();
@@ -96,7 +95,7 @@ class UpdateUserEndpointTest {
         .language(Language.EN.name())
         .build();
     var result = Result.success(updateResult);
-    when(usecase.process(any(Context.class), any(UpdateUserInput.class))).thenReturn(result);
+    when(usecase.process(any(UpdateUserInput.class))).thenReturn(result);
 
     // When
     var body = new JSONObject().put("language", "EN").toString();
@@ -125,7 +124,7 @@ class UpdateUserEndpointTest {
         .language(Language.ID.name())
         .build();
     var result = Result.success(updateResult);
-    when(usecase.process(any(Context.class), any(UpdateUserInput.class))).thenReturn(result);
+    when(usecase.process(any(UpdateUserInput.class))).thenReturn(result);
 
     // When
     var body = new JSONObject().put("language", "ID").toString();
@@ -135,7 +134,7 @@ class UpdateUserEndpointTest {
     assertEquals(200, response.getStatus());
 
     ArgumentCaptor<UpdateUserInput> inputCaptor = ArgumentCaptor.forClass(UpdateUserInput.class);
-    verify(usecase, atLeast(0)).process(any(Context.class), inputCaptor.capture());
+    verify(usecase, atLeast(0)).process(inputCaptor.capture());
 
     var capturedInput = inputCaptor.getValue();
     assertEquals(email, capturedInput.email());
@@ -152,7 +151,7 @@ class UpdateUserEndpointTest {
     // Given
     var email = "user@email.com";
     var result = Result.<UserResult>success();
-    when(usecase.process(any(Context.class), any(UpdateUserInput.class))).thenReturn(result);
+    when(usecase.process(any(UpdateUserInput.class))).thenReturn(result);
 
     // When
     var body = new JSONObject().put("language", "ID").toString();
@@ -175,7 +174,7 @@ class UpdateUserEndpointTest {
     // Given
     var email = "nonexistent@email.com";
     var result = Result.<UserResult>failure(Code.NOT_FOUND, "User not found");
-    when(usecase.process(any(Context.class), any(UpdateUserInput.class))).thenReturn(result);
+    when(usecase.process(any(UpdateUserInput.class))).thenReturn(result);
 
     // When
     var body = new JSONObject().put("language", "ID").toString();
@@ -198,7 +197,7 @@ class UpdateUserEndpointTest {
     // Given
     var email = "user@email.com";
     var result = Result.<UserResult>failure(Code.SERVER_ERROR, "Database connection failed");
-    when(usecase.process(any(Context.class), any(UpdateUserInput.class))).thenReturn(result);
+    when(usecase.process(any(UpdateUserInput.class))).thenReturn(result);
 
     // When
     var body = new JSONObject().put("language", "ID").toString();
@@ -266,7 +265,7 @@ class UpdateUserEndpointTest {
         .build();
     var result2 = Result.success(updateResult2);
 
-    when(usecase.process(any(Context.class), any(UpdateUserInput.class)))
+    when(usecase.process(any(UpdateUserInput.class)))
         .thenReturn(result1)
         .thenReturn(result2);
 

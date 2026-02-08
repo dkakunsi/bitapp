@@ -35,6 +35,12 @@ import io.dkakunsi.bitapp.transaction.usecase.CreateTransaction;
 
 public final class CreateLoanTest {
 
+  private static final String REQUESTER = "Requester";
+
+  private static final Context context = Context.builder().requester(REQUESTER).build();
+
+  private static final String ACCOUNT_ID = "account-123";
+
   private CreateLoan underTest;
 
   private LoanRepository loanRepository;
@@ -42,9 +48,6 @@ public final class CreateLoanTest {
   private TransactionRepository transactionRepository;
   private CreateTransaction createTransaction;
   private SessionManager sessionManager;
-
-  private static final String REQUESTER = "testUser";
-  private static final String ACCOUNT_ID = "account-123";
 
   @BeforeEach
   void setUp() {
@@ -75,12 +78,11 @@ public final class CreateLoanTest {
         .currency("USD")
         .interestRate(5.5)
         .build();
-    final var context = Context.builder().requester(REQUESTER).build();
 
     when(loanRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    final var result = underTest.process(context, createRequest);
+    final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertTrue(result.isSuccess());
@@ -134,12 +136,11 @@ public final class CreateLoanTest {
         .amount(new BigDecimal("10000.00"))
         .interestRate(3.0)
         .build();
-    final var context = Context.builder().requester(REQUESTER).build();
 
     when(loanRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    final var result = underTest.process(context, createRequest);
+    final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertTrue(result.isSuccess());
@@ -169,12 +170,11 @@ public final class CreateLoanTest {
         .amount(new BigDecimal("1000.00"))
         .interestRate(2.5)
         .build();
-    final var context = Context.builder().requester(REQUESTER).build();
 
     when(loanRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    final var result = underTest.process(context, createRequest);
+    final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertTrue(result.isSuccess());
@@ -202,12 +202,11 @@ public final class CreateLoanTest {
         .amount(new BigDecimal("2000.00"))
         .interestRate(4.0)
         .build();
-    final var context = Context.builder().requester(REQUESTER).build();
 
     when(loanRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    final var result = underTest.process(context, createRequest);
+    final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertTrue(result.isSuccess());
@@ -233,12 +232,11 @@ public final class CreateLoanTest {
         .amount(new BigDecimal("3000.00"))
         .interestRate(0.0)
         .build();
-    final var context = Context.builder().requester(REQUESTER).build();
 
     when(loanRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    final var result = underTest.process(context, createRequest);
+    final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertTrue(result.isSuccess());
@@ -257,10 +255,9 @@ public final class CreateLoanTest {
         .amount(new BigDecimal("1000.00"))
         .interestRate(5.0)
         .build();
-    final var context = Context.builder().requester(REQUESTER).build();
 
     // When
-    final var result = underTest.process(context, createRequest);
+    final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertFalse(result.isSuccess());
@@ -277,10 +274,9 @@ public final class CreateLoanTest {
         .amount(new BigDecimal("1000.00"))
         .interestRate(5.0)
         .build();
-    final var context = Context.builder().requester(REQUESTER).build();
 
     // When
-    final var result = underTest.process(context, createRequest);
+    final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertFalse(result.isSuccess());
@@ -297,10 +293,9 @@ public final class CreateLoanTest {
         .amount(new BigDecimal("-100.00"))
         .interestRate(5.0)
         .build();
-    final var context = Context.builder().requester(REQUESTER).build();
 
     // When
-    final var result = underTest.process(context, createRequest);
+    final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertFalse(result.isSuccess());
@@ -318,10 +313,9 @@ public final class CreateLoanTest {
         .amount(new BigDecimal("1000.00"))
         .interestRate(5.0)
         .build();
-    final var context = Context.builder().requester(REQUESTER).build();
 
     // When
-    final var result = underTest.process(context, createRequest);
+    final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertFalse(result.isSuccess());
@@ -339,10 +333,9 @@ public final class CreateLoanTest {
         .amount(new BigDecimal("1000.00"))
         .interestRate(5.0)
         .build();
-    final var context = Context.builder().requester(REQUESTER).build();
 
     // When
-    final var result = underTest.process(context, createRequest);
+    final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertFalse(result.isSuccess());
@@ -359,12 +352,11 @@ public final class CreateLoanTest {
         .amount(new BigDecimal("1000.00"))
         .interestRate(5.0)
         .build();
-    final var context = Context.builder().requester(REQUESTER).build();
 
     when(loanRepository.create(any())).thenThrow(new RuntimeException("Database error"));
 
     // When
-    final var result = underTest.process(context, createRequest);
+    final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertFalse(result.isSuccess());
@@ -386,12 +378,11 @@ public final class CreateLoanTest {
         .amount(new BigDecimal("1500.00"))
         .interestRate(3.5)
         .build();
-    final var context = Context.builder().requester(REQUESTER).build();
 
     when(loanRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    final var result = underTest.process(context, createRequest);
+    final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertTrue(result.isSuccess());
@@ -416,12 +407,11 @@ public final class CreateLoanTest {
         .amount(amount)
         .interestRate(4.5)
         .build();
-    final var context = Context.builder().requester(REQUESTER).build();
 
     when(loanRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    final var result = underTest.process(context, createRequest);
+    final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertTrue(result.isSuccess());
@@ -449,7 +439,6 @@ public final class CreateLoanTest {
         .amount(new BigDecimal("50000.00"))
         .interestRate(6.5)
         .build();
-    final var context = Context.builder().requester(REQUESTER).build();
 
     var account = createAccount(ACCOUNT_ID, REQUESTER, new BigDecimal("10000.00"));
     when(accountRepository.findById(Id.of(ACCOUNT_ID))).thenReturn(Optional.of(account));
@@ -457,7 +446,7 @@ public final class CreateLoanTest {
     when(transactionRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    final var result = underTest.process(context, createRequest);
+    final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertTrue(result.isSuccess());
@@ -487,7 +476,6 @@ public final class CreateLoanTest {
         .amount(new BigDecimal("5000.00"))
         .interestRate(3.0)
         .build();
-    final var context = Context.builder().requester(REQUESTER).build();
 
     var account = createAccount(ACCOUNT_ID, REQUESTER, new BigDecimal("20000.00"));
     when(accountRepository.findById(Id.of(ACCOUNT_ID))).thenReturn(Optional.of(account));
@@ -495,7 +483,7 @@ public final class CreateLoanTest {
     when(transactionRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    final var result = underTest.process(context, createRequest);
+    final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertTrue(result.isSuccess());
@@ -524,12 +512,11 @@ public final class CreateLoanTest {
         .amount(new BigDecimal("3000.00"))
         .interestRate(4.5)
         .build();
-    final var context = Context.builder().requester(REQUESTER).build();
 
     when(loanRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    final var result = underTest.process(context, createRequest);
+    final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertTrue(result.isSuccess());
@@ -560,12 +547,11 @@ public final class CreateLoanTest {
         .amount(new BigDecimal("50000.00"))
         .interestRate(6.5)
         .build();
-    final var context = Context.builder().requester(REQUESTER).build();
 
     when(accountRepository.findById(Id.of(nonExistentAccountId))).thenReturn(Optional.empty());
 
     // When
-    final var result = underTest.process(context, createRequest);
+    final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertFalse(result.isSuccess());
@@ -592,13 +578,12 @@ public final class CreateLoanTest {
         .amount(new BigDecimal("50000.00"))
         .interestRate(6.5)
         .build();
-    final var context = Context.builder().requester(REQUESTER).build();
 
     var account = createAccount(ACCOUNT_ID, otherUser, new BigDecimal("10000.00"));
     when(accountRepository.findById(Id.of(ACCOUNT_ID))).thenReturn(Optional.of(account));
 
     // When
-    final var result = underTest.process(context, createRequest);
+    final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertFalse(result.isSuccess());
@@ -624,7 +609,6 @@ public final class CreateLoanTest {
         .amount(new BigDecimal("50000.00"))
         .interestRate(6.5)
         .build();
-    final var context = Context.builder().requester(REQUESTER).build();
 
     var account = createAccount(ACCOUNT_ID, REQUESTER, new BigDecimal("10000.00"));
     when(accountRepository.findById(Id.of(ACCOUNT_ID))).thenReturn(Optional.of(account));
@@ -632,7 +616,7 @@ public final class CreateLoanTest {
     when(transactionRepository.create(any())).thenThrow(new RuntimeException("Transaction creation failed"));
 
     // When
-    final var result = underTest.process(context, createRequest);
+    final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertFalse(result.isSuccess());

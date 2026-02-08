@@ -14,7 +14,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
-import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.loan.dto.LoanResult;
@@ -66,7 +65,7 @@ class UpdateLoanEndpointTest {
         .interestRate(6.0)
         .build();
     var result = Result.success(updateLoanResult);
-    when(usecase.process(any(Context.class), any(UpdateLoanInput.class))).thenReturn(result);
+    when(usecase.process(any(UpdateLoanInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -114,7 +113,7 @@ class UpdateLoanEndpointTest {
         .interestRate(3.5)
         .build();
     var result = Result.success(updateLoanResult);
-    when(usecase.process(any(Context.class), any(UpdateLoanInput.class))).thenReturn(result);
+    when(usecase.process(any(UpdateLoanInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -154,7 +153,7 @@ class UpdateLoanEndpointTest {
         .interestRate(4.2)
         .build();
     var result = Result.success(updateLoanResult);
-    when(usecase.process(any(Context.class), any(UpdateLoanInput.class))).thenReturn(result);
+    when(usecase.process(any(UpdateLoanInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -188,7 +187,7 @@ class UpdateLoanEndpointTest {
     // Given
     var loanId = "loan-empty";
     var result = Result.<LoanResult>success();
-    when(usecase.process(any(Context.class), any(UpdateLoanInput.class))).thenReturn(result);
+    when(usecase.process(any(UpdateLoanInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -211,7 +210,7 @@ class UpdateLoanEndpointTest {
     // Given
     var loanId = "non-existent";
     var result = Result.<LoanResult>failure(Code.NOT_FOUND, "Loan not found");
-    when(usecase.process(any(Context.class), any(UpdateLoanInput.class))).thenReturn(result);
+    when(usecase.process(any(UpdateLoanInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -234,7 +233,7 @@ class UpdateLoanEndpointTest {
     // Given
     var loanId = "loan-forbidden";
     var result = Result.<LoanResult>failure(Code.FORBIDDEN, "You are not authorized to update this loan");
-    when(usecase.process(any(Context.class), any(UpdateLoanInput.class))).thenReturn(result);
+    when(usecase.process(any(UpdateLoanInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -257,7 +256,7 @@ class UpdateLoanEndpointTest {
     // Given
     var loanId = "loan-bad";
     var result = Result.<LoanResult>failure(Code.BAD_REQUEST, "title: invalid value");
-    when(usecase.process(any(Context.class), any(UpdateLoanInput.class))).thenReturn(result);
+    when(usecase.process(any(UpdateLoanInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -280,7 +279,7 @@ class UpdateLoanEndpointTest {
     // Given
     var loanId = "loan-error";
     var result = Result.<LoanResult>failure(Code.SERVER_ERROR, "Internal server error");
-    when(usecase.process(any(Context.class), any(UpdateLoanInput.class))).thenReturn(result);
+    when(usecase.process(any(UpdateLoanInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -317,7 +316,7 @@ class UpdateLoanEndpointTest {
         .interestRate(2.5)
         .build();
     var result = Result.success(updateLoanResult);
-    when(usecase.process(any(Context.class), any(UpdateLoanInput.class))).thenReturn(result);
+    when(usecase.process(any(UpdateLoanInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -356,7 +355,7 @@ class UpdateLoanEndpointTest {
         .interestRate(3.0)
         .build();
     var result = Result.success(updateLoanResult);
-    when(usecase.process(any(Context.class), any(UpdateLoanInput.class))).thenReturn(result);
+    when(usecase.process(any(UpdateLoanInput.class))).thenReturn(result);
 
     var requestBody = """
         {

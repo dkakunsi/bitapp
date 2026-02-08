@@ -4,7 +4,6 @@ import io.dkakunsi.bitapp.account.dto.AccountResult;
 import io.dkakunsi.bitapp.account.dto.CreateAccountInput;
 import io.dkakunsi.bitapp.account.entity.Account;
 import io.dkakunsi.bitapp.account.repository.AccountRepository;
-import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.domain.usecase.UseCase;
 
@@ -17,8 +16,8 @@ public final class CreateAccount implements UseCase<CreateAccountInput, AccountR
   }
 
   @Override
-  public Result<AccountResult> execute(Context context, CreateAccountInput input) {
-    final var account = Account.from(input, context.requester());
+  public Result<AccountResult> execute(CreateAccountInput input) {
+    final var account = Account.from(input, getRequester());
     var createdAccount = this.accountRepository.create(account);
     return Result.success(createdAccount.toResult());
   }

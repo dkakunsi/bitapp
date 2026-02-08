@@ -26,13 +26,14 @@ public final class RemoveLoan implements UseCase<String, LoanResult> {
   }
 
   @Override
-  public Result<LoanResult> execute(Context context, String loanId) {
+  public Result<LoanResult> execute(String loanId) {
     return loanRepository.findById(Id.of(loanId))
-        .map(loan -> onLoan(context, loan))
+        .map(loan -> onLoan(loan))
         .orElse(Result.failure(Code.NOT_FOUND, "Loan not found"));
   }
 
-  private Result<LoanResult> onLoan(Context context, Loan loan) {
+  private Result<LoanResult> onLoan(Loan loan) {
+    var context = Context.current();
     if (!loan.isOwner(context.requester())) {
       return Result.failure(Code.FORBIDDEN, "You are not authorized to delete this loan");
     }

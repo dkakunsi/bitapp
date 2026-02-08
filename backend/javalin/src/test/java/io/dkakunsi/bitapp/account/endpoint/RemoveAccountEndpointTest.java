@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import io.dkakunsi.bitapp.account.dto.AccountResult;
 import io.dkakunsi.bitapp.account.usecase.RemoveAccount;
 import io.dkakunsi.bitapp.common.AppError.Code;
-import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import kong.unirest.Unirest;
@@ -59,7 +58,7 @@ class RemoveAccountEndpointTest {
         .user("user@email.com")
         .build();
     var result = Result.success(accountResult);
-    when(usecase.process(any(Context.class), any(String.class))).thenReturn(result);
+    when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
     var response = Unirest.delete(baseUrl + "/accounts/" + accountId).asString();
@@ -80,7 +79,7 @@ class RemoveAccountEndpointTest {
     // Given
     var accountId = "account-404";
     var result = Result.<AccountResult>failure(Code.NOT_FOUND, "Account not found");
-    when(usecase.process(any(Context.class), any(String.class))).thenReturn(result);
+    when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
     var response = Unirest.delete(baseUrl + "/accounts/" + accountId).asString();

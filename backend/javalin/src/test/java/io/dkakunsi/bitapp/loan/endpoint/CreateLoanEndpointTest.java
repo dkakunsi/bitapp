@@ -16,7 +16,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
-import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.loan.dto.CreateLoanInput;
@@ -67,7 +66,7 @@ class CreateLoanEndpointTest {
         .interestRate(5.5)
         .build();
     var result = Result.success(createLoanResult);
-    when(usecase.process(any(Context.class), any(CreateLoanInput.class))).thenReturn(result);
+    when(usecase.process(any(CreateLoanInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -118,7 +117,7 @@ class CreateLoanEndpointTest {
         .interestRate(3.0)
         .build();
     var result = Result.success(createLoanResult);
-    when(usecase.process(any(Context.class), any(CreateLoanInput.class))).thenReturn(result);
+    when(usecase.process(any(CreateLoanInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -165,7 +164,7 @@ class CreateLoanEndpointTest {
         .interestRate(0.0)
         .build();
     var result = Result.success(createLoanResult);
-    when(usecase.process(any(Context.class), any(CreateLoanInput.class))).thenReturn(result);
+    when(usecase.process(any(CreateLoanInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -189,7 +188,7 @@ class CreateLoanEndpointTest {
   void givenValidRequestWithEmptyOutput_WhenRequested_ThenShouldReturn200() {
     // Given
     var result = Result.<LoanResult>success();
-    when(usecase.process(any(Context.class), any(CreateLoanInput.class))).thenReturn(result);
+    when(usecase.process(any(CreateLoanInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -213,7 +212,7 @@ class CreateLoanEndpointTest {
   void givenServerError_WhenRequested_ThenShouldReturn500() {
     // Given
     var result = Result.<LoanResult>failure(Code.SERVER_ERROR, "Failed to save loan");
-    when(usecase.process(any(Context.class), any(CreateLoanInput.class))).thenReturn(result);
+    when(usecase.process(any(CreateLoanInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -237,7 +236,7 @@ class CreateLoanEndpointTest {
   void givenBadRequest_WhenRequested_ThenShouldReturn400() {
     // Given
     var result = Result.<LoanResult>failure(Code.BAD_REQUEST, "Invalid loan type");
-    when(usecase.process(any(Context.class), any(CreateLoanInput.class))).thenReturn(result);
+    when(usecase.process(any(CreateLoanInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -261,7 +260,7 @@ class CreateLoanEndpointTest {
   void givenNotFoundError_WhenRequested_ThenShouldReturn404() {
     // Given
     var result = Result.<LoanResult>failure(Code.NOT_FOUND, "Party not found");
-    when(usecase.process(any(Context.class), any(CreateLoanInput.class))).thenReturn(result);
+    when(usecase.process(any(CreateLoanInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -285,7 +284,7 @@ class CreateLoanEndpointTest {
   void givenUnauthorizedError_WhenRequested_ThenShouldReturn401() {
     // Given
     var result = Result.<LoanResult>failure(Code.UNAUTHORIZED, "User not authorized");
-    when(usecase.process(any(Context.class), any(CreateLoanInput.class))).thenReturn(result);
+    when(usecase.process(any(CreateLoanInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -322,7 +321,7 @@ class CreateLoanEndpointTest {
         .interestRate(0.0)
         .build();
     var result = Result.success(createLoanResult);
-    when(usecase.process(any(Context.class), any(CreateLoanInput.class))).thenReturn(result);
+    when(usecase.process(any(CreateLoanInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -362,7 +361,7 @@ class CreateLoanEndpointTest {
         .interestRate(4.5)
         .build();
     var result = Result.success(createLoanResult);
-    when(usecase.process(any(Context.class), any(CreateLoanInput.class))).thenReturn(result);
+    when(usecase.process(any(CreateLoanInput.class))).thenReturn(result);
 
     var requestBody = """
         {

@@ -99,7 +99,7 @@ public final class SystemLogger implements Logger {
   }
 
   private String getMessage(String message) {
-    var formatter = MessageFormatter.format("Request_ID: '{}'. {}", getRequestId(), message);
+    var formatter = MessageFormatter.format("Request_ID: '{}'. {}", requestId(), message);
     return formatter.getMessage();
   }
 }

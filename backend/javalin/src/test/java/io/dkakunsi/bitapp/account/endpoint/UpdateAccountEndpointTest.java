@@ -16,7 +16,6 @@ import io.dkakunsi.bitapp.account.dto.AccountResult;
 import io.dkakunsi.bitapp.account.dto.UpdateAccountInput;
 import io.dkakunsi.bitapp.account.usecase.UpdateAccount;
 import io.dkakunsi.bitapp.common.AppError.Code;
-import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import kong.unirest.Unirest;
@@ -63,7 +62,7 @@ class UpdateAccountEndpointTest {
         .themeColor("#00FF00")
         .build();
     var result = Result.success(updateResult);
-    when(usecase.process(any(Context.class), any(UpdateAccountInput.class))).thenReturn(result);
+    when(usecase.process(any(UpdateAccountInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -99,7 +98,7 @@ class UpdateAccountEndpointTest {
         .themeColor("#FF5733")
         .build();
     var result = Result.success(updateResult);
-    when(usecase.process(any(Context.class), any(UpdateAccountInput.class))).thenReturn(result);
+    when(usecase.process(any(UpdateAccountInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -123,7 +122,7 @@ class UpdateAccountEndpointTest {
   void givenUpdateRequestWhenUseCaseReturnsErrorThenShouldReturn500() {
     // Given
     var result = Result.<AccountResult>failure(Code.SERVER_ERROR, "Update failed");
-    when(usecase.process(any(Context.class), any(UpdateAccountInput.class))).thenReturn(result);
+    when(usecase.process(any(UpdateAccountInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -151,7 +150,7 @@ class UpdateAccountEndpointTest {
         .themeColor("#000000")
         .build();
     var result = Result.success(updateResult);
-    when(usecase.process(any(Context.class), any(UpdateAccountInput.class))).thenReturn(result);
+    when(usecase.process(any(UpdateAccountInput.class))).thenReturn(result);
 
     var requestBody = """
         {

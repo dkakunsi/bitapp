@@ -38,6 +38,7 @@ public final class RemoveLoanUseCaseTest {
   private static final String OTHER_USER = "other@email.com";
   private static final String LOAN_ID = "loan-123";
   private static final Id LOAN = Id.of(LOAN_ID);
+  private static final Context context = Context.builder().requester(REQUESTER).build();
 
   private RemoveLoan underTest;
 
@@ -64,8 +65,7 @@ public final class RemoveLoanUseCaseTest {
     when(loanRepository.findById(LOAN)).thenReturn(Optional.empty());
 
     // When
-    var context = Context.builder().requester(REQUESTER).build();
-    var result = underTest.process(context, LOAN_ID);
+    var result = Context.executeInContext(context, () -> underTest.process(LOAN_ID));
 
     // Then
     assertFalse(result.isSuccess());
@@ -82,8 +82,7 @@ public final class RemoveLoanUseCaseTest {
     when(loanRepository.findById(LOAN)).thenReturn(Optional.of(loan));
 
     // When
-    var context = Context.builder().requester(REQUESTER).build();
-    var result = underTest.process(context, LOAN_ID);
+    var result = Context.executeInContext(context, () -> underTest.process(LOAN_ID));
 
     // Then
     assertFalse(result.isSuccess());
@@ -103,8 +102,7 @@ public final class RemoveLoanUseCaseTest {
     when(transactionRepository.findByLoanId(LOAN)).thenReturn(List.of(transaction1, transaction2));
 
     // When
-    var context = Context.builder().requester(REQUESTER).build();
-    var result = underTest.process(context, LOAN_ID);
+    var result = Context.executeInContext(context, () -> underTest.process(LOAN_ID));
 
     // Then
     assertTrue(result.isSuccess());

@@ -14,7 +14,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
-import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.loan.dto.LoanResult;
@@ -65,7 +64,7 @@ class RemoveLoanEndpointTest {
         .interestRate(5.0)
         .build();
     var result = Result.success(loanResult);
-    when(usecase.process(any(Context.class), any(String.class))).thenReturn(result);
+    when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
     var response = Unirest.delete(baseUrl + "/loans/" + loanId).asString();
@@ -87,7 +86,7 @@ class RemoveLoanEndpointTest {
     // Given
     var loanId = "loan-404";
     var result = Result.<LoanResult>failure(Code.NOT_FOUND, "Loan not found");
-    when(usecase.process(any(Context.class), any(String.class))).thenReturn(result);
+    when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
     var response = Unirest.delete(baseUrl + "/loans/" + loanId).asString();

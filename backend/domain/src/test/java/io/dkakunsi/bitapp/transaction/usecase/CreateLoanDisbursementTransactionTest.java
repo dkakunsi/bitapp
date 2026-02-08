@@ -31,17 +31,20 @@ import io.dkakunsi.bitapp.transaction.repository.TransactionRepository;
 
 public class CreateLoanDisbursementTransactionTest {
 
+  private static final String REQUESTER = "test@email.com";
+
+  private static final Context context = Context.builder().requester(REQUESTER).build();
+
+  private static final String ACCOUNT_ID = "account-1";
+  private static final Id ACCOUNT = Id.of(ACCOUNT_ID);
+  private static final String LOAN_ID = "loan-1";
+
   private CreateTransaction underTest;
 
   private TransactionRepository transactionRepository;
   private AccountRepository accountRepository;
   private LoanRepository loanRepository;
   private SessionManager sessionManager;
-
-  private static final String REQUESTER = "test@email.com";
-  private static final String ACCOUNT_ID = "account-1";
-  private static final Id ACCOUNT = Id.of(ACCOUNT_ID);
-  private static final String LOAN_ID = "loan-1";
 
   @BeforeEach
   void setUp() {
@@ -64,12 +67,11 @@ public class CreateLoanDisbursementTransactionTest {
     var createRequest = CreateLoanDisbursementTransactionInput.builder()
         .loan(loan)
         .build();
-    var context = Context.builder().requester(REQUESTER).build();
 
     when(transactionRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var result = underTest.process(context, createRequest);
+    var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertTrue(result.isSuccess());
@@ -92,12 +94,11 @@ public class CreateLoanDisbursementTransactionTest {
     var createRequest = CreateLoanDisbursementTransactionInput.builder()
         .loan(loan)
         .build();
-    var context = Context.builder().requester(REQUESTER).build();
 
     when(transactionRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var result = underTest.process(context, createRequest);
+    var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertTrue(result.isSuccess());
@@ -120,14 +121,13 @@ public class CreateLoanDisbursementTransactionTest {
     var createRequest = CreateLoanDisbursementTransactionInput.builder()
         .loan(loan)
         .build();
-    var context = Context.builder().requester(REQUESTER).build();
 
     when(transactionRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
     doThrow(new IllegalArgumentException("account not found"))
         .when(accountRepository).creditBalance(any(), any());
 
     // When
-    var result = underTest.process(context, createRequest);
+    var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertFalse(result.isSuccess());
@@ -144,14 +144,13 @@ public class CreateLoanDisbursementTransactionTest {
     var createRequest = CreateLoanDisbursementTransactionInput.builder()
         .loan(loan)
         .build();
-    var context = Context.builder().requester(REQUESTER).build();
 
     when(transactionRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
     doThrow(new IllegalArgumentException("account not found"))
         .when(accountRepository).debitBalance(any(), any());
 
     // When
-    var result = underTest.process(context, createRequest);
+    var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertFalse(result.isSuccess());
@@ -168,12 +167,11 @@ public class CreateLoanDisbursementTransactionTest {
     var createRequest = CreateLoanDisbursementTransactionInput.builder()
         .loan(loan)
         .build();
-    var context = Context.builder().requester(REQUESTER).build();
 
     when(transactionRepository.create(any())).thenThrow(new RuntimeException("Database error"));
 
     // When
-    var result = underTest.process(context, createRequest);
+    var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertFalse(result.isSuccess());

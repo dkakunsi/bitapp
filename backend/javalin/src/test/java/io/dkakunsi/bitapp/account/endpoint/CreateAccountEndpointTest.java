@@ -18,7 +18,6 @@ import io.dkakunsi.bitapp.account.dto.CreateAccountInput;
 import io.dkakunsi.bitapp.account.entity.Account;
 import io.dkakunsi.bitapp.account.usecase.CreateAccount;
 import io.dkakunsi.bitapp.common.AppError.Code;
-import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import kong.unirest.Unirest;
@@ -60,7 +59,7 @@ class CreateAccountEndpointTest {
         .user("user@email.com")
         .build();
     var result = Result.success(createAccountResult);
-    when(usecase.process(any(Context.class), any(CreateAccountInput.class))).thenReturn(result);
+    when(usecase.process(any(CreateAccountInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -89,7 +88,7 @@ class CreateAccountEndpointTest {
   void givenValidRequestWithEmptyOutput_WhenRequested_ThenShouldReturn200() {
     // Given
     var result = Result.<AccountResult>success();
-    when(usecase.process(any(Context.class), any(CreateAccountInput.class))).thenReturn(result);
+    when(usecase.process(any(CreateAccountInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -111,7 +110,7 @@ class CreateAccountEndpointTest {
   void givenServerError_WhenRequested_ThenShouldReturn500() {
     // Given
     var result = Result.<AccountResult>failure(Code.SERVER_ERROR, "Failed to save account");
-    when(usecase.process(any(Context.class), any(CreateAccountInput.class))).thenReturn(result);
+    when(usecase.process(any(CreateAccountInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -133,7 +132,7 @@ class CreateAccountEndpointTest {
   void givenDuplicateAccount_WhenRequested_ThenShouldReturn400() {
     // Given
     var result = Result.<AccountResult>failure(Code.BAD_REQUEST, "Account with this name already exists");
-    when(usecase.process(any(Context.class), any(CreateAccountInput.class))).thenReturn(result);
+    when(usecase.process(any(CreateAccountInput.class))).thenReturn(result);
 
     var requestBody = """
         {

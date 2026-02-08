@@ -14,7 +14,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
-import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.transaction.dto.CreateTransactionInput;
@@ -64,7 +63,7 @@ class CreateTransactionEndpointTest {
         .type("DEBIT")
         .build();
     var result = Result.success(transactionResult);
-    when(usecase.process(any(Context.class), any(CreateTransactionInput.class))).thenReturn(result);
+    when(usecase.process(any(CreateTransactionInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -111,7 +110,7 @@ class CreateTransactionEndpointTest {
         .type("CREDIT")
         .build();
     var result = Result.success(transactionResult);
-    when(usecase.process(any(Context.class), any(CreateTransactionInput.class))).thenReturn(result);
+    when(usecase.process(any(CreateTransactionInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -159,7 +158,7 @@ class CreateTransactionEndpointTest {
         .type("TRANSFER")
         .build();
     var result = Result.success(transactionResult);
-    when(usecase.process(any(Context.class), any(CreateTransactionInput.class))).thenReturn(result);
+    when(usecase.process(any(CreateTransactionInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -205,7 +204,7 @@ class CreateTransactionEndpointTest {
         .type("DEBIT")
         .build();
     var result = Result.success(transactionResult);
-    when(usecase.process(any(Context.class), any(CreateTransactionInput.class))).thenReturn(result);
+    when(usecase.process(any(CreateTransactionInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -234,7 +233,7 @@ class CreateTransactionEndpointTest {
   void givenValidRequestWithEmptyOutput_WhenRequested_ThenShouldReturn200() {
     // Given
     var result = Result.<TransactionResult>success();
-    when(usecase.process(any(Context.class), any(CreateTransactionInput.class))).thenReturn(result);
+    when(usecase.process(any(CreateTransactionInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -258,7 +257,7 @@ class CreateTransactionEndpointTest {
   void givenServerError_WhenRequested_ThenShouldReturn500() {
     // Given
     var result = Result.<TransactionResult>failure(Code.SERVER_ERROR, "Failed to save transaction");
-    when(usecase.process(any(Context.class), any(CreateTransactionInput.class))).thenReturn(result);
+    when(usecase.process(any(CreateTransactionInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -282,7 +281,7 @@ class CreateTransactionEndpointTest {
   void givenNotFoundError_WhenRequested_ThenShouldReturn404() {
     // Given
     var result = Result.<TransactionResult>failure(Code.NOT_FOUND, "source account not found");
-    when(usecase.process(any(Context.class), any(CreateTransactionInput.class))).thenReturn(result);
+    when(usecase.process(any(CreateTransactionInput.class))).thenReturn(result);
 
     var requestBody = """
         {
@@ -306,7 +305,7 @@ class CreateTransactionEndpointTest {
   void givenBadRequest_WhenRequested_ThenShouldReturn400() {
     // Given
     var result = Result.<TransactionResult>failure(Code.BAD_REQUEST, "Invalid transaction type");
-    when(usecase.process(any(Context.class), any(CreateTransactionInput.class))).thenReturn(result);
+    when(usecase.process(any(CreateTransactionInput.class))).thenReturn(result);
 
     var requestBody = """
         {

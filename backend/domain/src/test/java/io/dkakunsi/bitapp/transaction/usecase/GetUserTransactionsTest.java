@@ -25,16 +25,19 @@ import io.dkakunsi.bitapp.transaction.repository.TransactionRepository;
 
 public final class GetUserTransactionsTest {
 
-  private GetUserTransactions underTest;
+  private static final String REQUESTER = "test@email.com";
 
-  private TransactionRepository transactionRepository;
+  private static final Context context = Context.builder().requester(REQUESTER).build();
 
   private static final String USER_ID = "user@email.com";
   private static final Id USER = Id.of(USER_ID);
-  private static final String REQUESTER = "test@email.com";
   private static final String ACCOUNT_ID_1 = "account-1";
   private static final String ACCOUNT_ID_2 = "account-2";
   private static final String LOAN_ID = "loan-1";
+
+  private GetUserTransactions underTest;
+
+  private TransactionRepository transactionRepository;
 
   @BeforeEach
   void setUp() {
@@ -46,7 +49,6 @@ public final class GetUserTransactionsTest {
   void givenValidUserIdWhenTransactionsExistThenShouldReturnTransactionsList() {
     // Given
     var input = USER_ID;
-    var context = Context.builder().requester(REQUESTER).build();
 
     var transaction1 = createTransaction("trans1", "DEBIT", "Grocery Shopping", ACCOUNT_ID_1, null, null);
     var transaction2 = createTransaction("trans2", "CREDIT", "Salary", null, ACCOUNT_ID_2, null);
@@ -57,7 +59,7 @@ public final class GetUserTransactionsTest {
     when(transactionRepository.findByUserId(USER)).thenReturn(transactions);
 
     // When
-    var result = underTest.process(context, input);
+    var result = Context.executeInContext(context, () -> underTest.process(input));
 
     // Then
     assertTrue(result.isSuccess());
@@ -95,12 +97,11 @@ public final class GetUserTransactionsTest {
   void givenValidUserIdWhenNoTransactionsThenShouldReturnEmptyList() {
     // Given
     var input = USER_ID;
-    var context = Context.builder().requester(REQUESTER).build();
 
     when(transactionRepository.findByUserId(USER)).thenReturn(List.of());
 
     // When
-    var result = underTest.process(context, input);
+    var result = Context.executeInContext(context, () -> underTest.process(input));
 
     // Then
     assertTrue(result.isSuccess());
@@ -115,13 +116,12 @@ public final class GetUserTransactionsTest {
   void givenValidUserIdWhenSingleTransactionThenShouldReturnSingletonList() {
     // Given
     var input = USER_ID;
-    var context = Context.builder().requester(REQUESTER).build();
 
     var transaction = createTransaction("trans1", "DEBIT", "Shopping", ACCOUNT_ID_1, null, null);
     when(transactionRepository.findByUserId(USER)).thenReturn(List.of(transaction));
 
     // When
-    var result = underTest.process(context, input);
+    var result = Context.executeInContext(context, () -> underTest.process(input));
 
     // Then
     assertTrue(result.isSuccess());
@@ -140,13 +140,12 @@ public final class GetUserTransactionsTest {
   void givenValidUserIdWhenTransactionWithLoanThenShouldIncludeLoanId() {
     // Given
     var input = USER_ID;
-    var context = Context.builder().requester(REQUESTER).build();
 
     var transaction = createTransaction("trans1", "CREDIT", "Loan Disbursement", null, ACCOUNT_ID_2, LOAN_ID);
     when(transactionRepository.findByUserId(USER)).thenReturn(List.of(transaction));
 
     // When
-    var result = underTest.process(context, input);
+    var result = Context.executeInContext(context, () -> underTest.process(input));
 
     // Then
     assertTrue(result.isSuccess());

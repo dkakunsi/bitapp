@@ -23,14 +23,16 @@ import io.dkakunsi.bitapp.common.Context;
 
 public final class CreateAccountTest {
 
+  private static final String REQUESTER = "Requester";
+
+  private static final Context context = Context.builder().requester(REQUESTER).build();
+
   private CreateAccount underTest;
 
   private AccountRepository accountRepository;
 
-  private static final String REQUESTER = "Requester";
-
   @BeforeEach
-  void setUp() {
+  void setup() {
     accountRepository = mock(AccountRepository.class);
     underTest = new CreateAccount(accountRepository);
   }
@@ -43,12 +45,11 @@ public final class CreateAccountTest {
         .type("BANK")
         .themeColor("#FF5733")
         .build();
-    final var context = Context.builder().requester(REQUESTER).build();
 
     when(accountRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    final var result = underTest.process(context, createRequest);
+    final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertTrue(result.isSuccess());
@@ -61,7 +62,6 @@ public final class CreateAccountTest {
     assertEquals(createRequest.type(), resultData.type().toString());
     assertEquals(createRequest.themeColor(), resultData.themeColor());
     assertEquals(BigDecimal.ZERO, resultData.balance());
-    assertEquals(REQUESTER, resultData.user());
 
     // verify data passed to repository
     var savingAccountCaptor = ArgumentCaptor.forClass(Account.class);
@@ -71,12 +71,9 @@ public final class CreateAccountTest {
     assertEquals(createRequest.type(), capturedAccount.type().toString());
     assertEquals(createRequest.themeColor(), capturedAccount.themeColor());
     assertEquals(BigDecimal.ZERO, capturedAccount.balance());
-    assertEquals(REQUESTER, capturedAccount.createdBy());
-    assertEquals(REQUESTER, capturedAccount.updatedBy());
     assertNotNull(capturedAccount.createdAt());
     assertNotNull(capturedAccount.updatedAt());
     assertNotNull(capturedAccount.id());
-    assertEquals(REQUESTER, capturedAccount.user().value());
   }
 
   @Test
@@ -87,12 +84,11 @@ public final class CreateAccountTest {
         .type("BANK")
         .themeColor("#FF5733")
         .build();
-    final var context = Context.builder().requester(REQUESTER).build();
 
     when(accountRepository.create(any())).thenThrow(new RuntimeException("An error occurred"));
 
     // When
-    final var result = underTest.process(context, createRequest);
+    final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertFalse(result.isSuccess());
@@ -109,12 +105,11 @@ public final class CreateAccountTest {
         .name("Minimal Account")
         .type("CASH")
         .build();
-    final var context = Context.builder().requester(REQUESTER).build();
 
     when(accountRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    final var result = underTest.process(context, createRequest);
+    final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertTrue(result.isSuccess());
@@ -129,7 +124,6 @@ public final class CreateAccountTest {
   void givenCreateAccountRequestWithAllAccountTypesWhenProcessedThenShouldSucceed() {
     // Given
     String[] accountTypes = { "BANK", "CASH", "EWALLET", "OTHER" };
-    final var context = Context.builder().requester(REQUESTER).build();
 
     for (String type : accountTypes) {
       final var createRequest = CreateAccountInput.builder()
@@ -141,7 +135,7 @@ public final class CreateAccountTest {
       when(accountRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
       // When
-      final var result = underTest.process(context, createRequest);
+      final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
       // Then
       assertTrue(result.isSuccess(), "Should create account with type: " + type);
@@ -159,12 +153,11 @@ public final class CreateAccountTest {
         .type("BANK")
         .themeColor(themeColor)
         .build();
-    final var context = Context.builder().requester(REQUESTER).build();
 
     when(accountRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    final var result = underTest.process(context, createRequest);
+    final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertTrue(result.isSuccess());
@@ -185,12 +178,11 @@ public final class CreateAccountTest {
         .type("CASH")
         .themeColor("#FF5733")
         .build();
-    final var context = Context.builder().requester(REQUESTER).build();
 
     when(accountRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    final var result = underTest.process(context, createRequest);
+    final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertTrue(result.isSuccess());

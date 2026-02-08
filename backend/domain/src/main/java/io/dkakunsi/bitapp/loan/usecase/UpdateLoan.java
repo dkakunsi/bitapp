@@ -1,7 +1,6 @@
 package io.dkakunsi.bitapp.loan.usecase;
 
 import io.dkakunsi.bitapp.common.AppError;
-import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.domain.usecase.UseCase;
@@ -19,13 +18,14 @@ public final class UpdateLoan implements UseCase<UpdateLoanInput, LoanResult> {
   }
 
   @Override
-  public Result<LoanResult> execute(Context context, UpdateLoanInput input) {
+  public Result<LoanResult> execute(UpdateLoanInput input) {
     return loanRepository.findById(Id.of(input.id()))
-        .map(loan -> onLoan(loan, input, context.requester()))
+        .map(loan -> onLoan(loan, input))
         .orElse(Result.failure(AppError.Code.NOT_FOUND, "Loan not found"));
   }
 
-  private Result<LoanResult> onLoan(Loan loan, UpdateLoanInput input, String requester) {
+  private Result<LoanResult> onLoan(Loan loan, UpdateLoanInput input) {
+    var requester = getRequester();
     if (!loan.isOwner(requester)) {
       return Result.failure(AppError.Code.FORBIDDEN, "You are not authorized to update this loan");
     }

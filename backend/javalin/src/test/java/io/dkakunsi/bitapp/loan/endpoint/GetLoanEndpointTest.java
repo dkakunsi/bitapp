@@ -14,7 +14,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
-import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.loan.dto.LoanResult;
@@ -65,7 +64,7 @@ class GetLoanEndpointTest {
         .interestRate(5.5)
         .build();
     var result = Result.success(getResult);
-    when(usecase.process(any(Context.class), any(String.class))).thenReturn(result);
+    when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
     var response = Unirest.get(baseUrl + "/loans/" + loanId).asString();
@@ -95,7 +94,7 @@ class GetLoanEndpointTest {
     // Given
     var loanId = "nonexistent-loan";
     var result = Result.<LoanResult>failure(Code.NOT_FOUND, "Loan not found");
-    when(usecase.process(any(Context.class), any(String.class))).thenReturn(result);
+    when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
     var response = Unirest.get(baseUrl + "/loans/" + loanId).asString();
@@ -110,7 +109,7 @@ class GetLoanEndpointTest {
     // Given
     var loanId = "loan-123";
     var result = Result.<LoanResult>failure(Code.SERVER_ERROR, "Database connection failed");
-    when(usecase.process(any(Context.class), any(String.class))).thenReturn(result);
+    when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
     var response = Unirest.get(baseUrl + "/loans/" + loanId).asString();

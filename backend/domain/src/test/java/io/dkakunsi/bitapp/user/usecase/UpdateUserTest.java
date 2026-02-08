@@ -24,6 +24,10 @@ import io.dkakunsi.bitapp.user.repository.UserRepository;
 
 public final class UpdateUserTest {
 
+  private static final String REQUESTER = "user@email.com";
+
+  private static final Context context = Context.builder().requester(REQUESTER).build();
+
   private UpdateUser underTest;
 
   private UserRepository userRepository;
@@ -43,8 +47,6 @@ public final class UpdateUserTest {
         .language("ID")
         .build();
 
-    var context = Context.builder().requester(email).build();
-
     var existingUser = User.builder()
         .id(Id.of(email))
         .name("User Name")
@@ -57,7 +59,7 @@ public final class UpdateUserTest {
     when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var result = underTest.process(context, updateInput);
+    var result = Context.executeInContext(context, () -> underTest.process(updateInput));
 
     // Then
     assertTrue(result.isSuccess());
@@ -87,10 +89,9 @@ public final class UpdateUserTest {
         .language("ID")
         .build();
 
-    var context = Context.builder().requester(differentEmail).build();
-
     // When
-    var result = underTest.process(context, updateInput);
+    var context = Context.builder().requester(differentEmail).build();
+    var result = Context.executeInContext(context, () -> underTest.process(updateInput));
 
     // Then
     assertFalse(result.isSuccess());
@@ -101,18 +102,16 @@ public final class UpdateUserTest {
   @Test
   public void givenValidUpdateLanguageRequestWhenUserDoesNotExistThenShouldReturnEmpty() {
     // Given
-    var email = "nonexistent@email.com";
+    var email = REQUESTER;
     var updateInput = UpdateUserInput.builder()
         .email(email)
         .language("ID")
         .build();
 
-    var context = Context.builder().requester(email).build();
-
     when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
 
     // When
-    var result = underTest.process(context, updateInput);
+    var result = Context.executeInContext(context, () -> underTest.process(updateInput));
 
     // Then
     assertTrue(result.isFailed());
@@ -129,12 +128,10 @@ public final class UpdateUserTest {
         .language("ID")
         .build();
 
-    var context = Context.builder().requester(email).build();
-
     when(userRepository.findByEmail(email)).thenThrow(new RuntimeException("Database error"));
 
     // When
-    var result = underTest.process(context, updateInput);
+    var result = Context.executeInContext(context, () -> underTest.process(updateInput));
 
     // Then
     assertFalse(result.isSuccess());
@@ -151,12 +148,10 @@ public final class UpdateUserTest {
         .language("EN")
         .build();
 
-    var context = Context.builder().requester(email).build();
-
     when(userRepository.findByEmail(email)).thenThrow(new IllegalArgumentException("Invalid email format"));
 
     // When
-    var result = underTest.process(context, updateInput);
+    var result = Context.executeInContext(context, () -> underTest.process(updateInput));
 
     // Then
     assertFalse(result.isSuccess());
@@ -173,8 +168,6 @@ public final class UpdateUserTest {
         .language("ID")
         .build();
 
-    var context = Context.builder().requester(email).build();
-
     var existingUser = User.builder()
         .id(Id.of(email))
         .name("User Name")
@@ -185,7 +178,7 @@ public final class UpdateUserTest {
     when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var result = underTest.process(context, updateInput);
+    var result = Context.executeInContext(context, () -> underTest.process(updateInput));
 
     // Then
     assertTrue(result.isSuccess());
@@ -201,8 +194,6 @@ public final class UpdateUserTest {
         .language("EN")
         .build();
 
-    var context = Context.builder().requester(email).build();
-
     var existingUser = User.builder()
         .id(Id.of(email))
         .name("User Name")
@@ -213,7 +204,7 @@ public final class UpdateUserTest {
     when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var result = underTest.process(context, updateInput);
+    var result = Context.executeInContext(context, () -> underTest.process(updateInput));
 
     // Then
     assertTrue(result.isSuccess());
@@ -229,8 +220,6 @@ public final class UpdateUserTest {
         .language("INVALID")
         .build();
 
-    var context = Context.builder().requester(email).build();
-
     var existingUser = User.builder()
         .id(Id.of(email))
         .name("User Name")
@@ -240,7 +229,7 @@ public final class UpdateUserTest {
     when(userRepository.findByEmail(email)).thenReturn(Optional.of(existingUser));
 
     // When
-    var result = underTest.process(context, updateInput);
+    var result = Context.executeInContext(context, () -> underTest.process(updateInput));
 
     // Then
     assertFalse(result.isSuccess());
@@ -256,8 +245,6 @@ public final class UpdateUserTest {
         .language("EN")
         .build();
 
-    var context = Context.builder().requester(email).build();
-
     var existingUser = User.builder()
         .id(Id.of(email))
         .name("User Name")
@@ -268,7 +255,7 @@ public final class UpdateUserTest {
     when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var result = underTest.process(context, updateInput);
+    var result = Context.executeInContext(context, () -> underTest.process(updateInput));
 
     // Then
     assertTrue(result.isSuccess());
@@ -289,8 +276,6 @@ public final class UpdateUserTest {
         .language("ID")
         .build();
 
-    var context = Context.builder().requester(email).build();
-
     var existingUser = User.builder()
         .id(Id.of(email))
         .name("Complete User")
@@ -303,7 +288,7 @@ public final class UpdateUserTest {
     when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var result = underTest.process(context, updateInput);
+    var result = Context.executeInContext(context, () -> underTest.process(updateInput));
 
     // Then
     assertTrue(result.isSuccess());

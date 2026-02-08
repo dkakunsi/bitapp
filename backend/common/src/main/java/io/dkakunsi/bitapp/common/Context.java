@@ -1,6 +1,7 @@
 package io.dkakunsi.bitapp.common;
 
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -9,14 +10,14 @@ import lombok.Builder;
 @Builder
 public record Context(String requester, String requestId, String authorizationToken) {
 
-  private static ThreadLocal<Context> context = new InheritableThreadLocal<>();
+  public static final ScopedValue<Context> CONTEXT = ScopedValue.newInstance();
 
-  public static Context get() {
-    return context.get();
+  public static Context current() {
+    return CONTEXT.get();
   }
 
-  public static void set(Context ctx) {
-    context.set(ctx);
+  public static <T> T executeInContext(Context context, Supplier<T> runnable) {
+    return ScopedValue.where(CONTEXT, context).call(() -> runnable.get());
   }
 
   public String requester() {

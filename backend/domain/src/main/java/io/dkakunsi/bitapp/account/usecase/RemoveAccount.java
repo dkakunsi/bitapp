@@ -4,7 +4,6 @@ import io.dkakunsi.bitapp.account.dto.AccountResult;
 import io.dkakunsi.bitapp.account.entity.Account;
 import io.dkakunsi.bitapp.account.repository.AccountRepository;
 import io.dkakunsi.bitapp.common.AppError.Code;
-import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.Logger;
 import io.dkakunsi.bitapp.common.SystemLogger;
 import io.dkakunsi.bitapp.database.SessionManager;
@@ -39,20 +38,21 @@ public final class RemoveAccount implements UseCase<String, AccountResult> {
   }
 
   @Override
-  public Result<AccountResult> execute(Context context, String accountId) {
+  public Result<AccountResult> execute(String accountId) {
     return accountRepository.findById(Id.of(accountId))
-        .map(account -> onAccount(context, account))
+        .map(account -> onAccount(account))
         .orElse(Result.failure(Code.NOT_FOUND, "Account not found"));
   }
 
-  private Result<AccountResult> onAccount(Context context, Account account) {
-    if (!account.isOwner(context.requester())) {
+  private Result<AccountResult> onAccount(Account account) {
+    var requester = getRequester();
+    if (!account.isOwner(requester)) {
       return Result.failure(Code.FORBIDDEN, "You are not authorized to delete this account");
     }
 
     return sessionManager.executeInSession(() -> {
       loanRepository.findByAccountId(account.id()).forEach(loan -> {
-        var result = removeLoan.execute(context, loan.id().value());
+        var result = removeLoan.execute(loan.id().value());
         if (result.isFailed()) {
           LOGGER.warn("Failed to remove loan with id {}: {}", loan.id(), result.error().get().message());
         }
@@ -63,7 +63,7 @@ public final class RemoveAccount implements UseCase<String, AccountResult> {
       transactionRepository.findByAccountId(account.id()).forEach(t -> {
         switch (t.type()) {
           case DEBIT, CREDIT -> transactionRepository.deleteById(t.id());
-          case TRANSFER -> transactionRepository.update(t.convertFromTransfer(account.id(), context.requester()));
+          case TRANSFER -> transactionRepository.update(t.convertFromTransfer(account.id(), requester));
         }
       });
 

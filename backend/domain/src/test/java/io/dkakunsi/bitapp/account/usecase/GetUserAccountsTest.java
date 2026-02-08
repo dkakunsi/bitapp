@@ -26,13 +26,17 @@ import io.dkakunsi.bitapp.domain.entity.Id;
 
 public final class GetUserAccountsTest {
 
+  private static final String REQUESTER = "Requester";
+
+  private static final Context context = Context.builder().requester(REQUESTER).build();
+
+  private static final String USER_ID = "user123";
+
+  private static final Id USER = Id.of(USER_ID);
+
   private GetUserAccounts underTest;
 
   private AccountRepository accountRepository;
-
-  private static final String USER_ID = "user123";
-  private static final Id USER = Id.of(USER_ID);
-  private static final String REQUESTER = "requester@email.com";
 
   @BeforeEach
   void setUp() {
@@ -44,7 +48,6 @@ public final class GetUserAccountsTest {
   void givenValidUserIdWhenAccountsExistThenShouldReturnAccountsList() {
     // Given
     var input = USER_ID;
-    var context = Context.builder().requester(REQUESTER).build();
 
     var account1 = Account.builder()
         .id(Id.of("account1"))
@@ -76,7 +79,7 @@ public final class GetUserAccountsTest {
     when(accountRepository.findByUserId(USER)).thenReturn(accounts);
 
     // When
-    var result = underTest.process(context, input);
+    var result = Context.executeInContext(context, () -> underTest.process(input));
 
     // Then
     assertTrue(result.isSuccess());
@@ -111,12 +114,11 @@ public final class GetUserAccountsTest {
   void givenValidUserIdWhenNoAccountsExistThenShouldReturnEmptyList() {
     // Given
     var input = USER_ID;
-    var context = Context.builder().requester(REQUESTER).build();
 
     when(accountRepository.findByUserId(USER)).thenReturn(Collections.emptyList());
 
     // When
-    var result = underTest.process(context, input);
+    var result = Context.executeInContext(context, () -> underTest.process(input));
 
     // Then
     assertTrue(result.isSuccess());
@@ -133,13 +135,12 @@ public final class GetUserAccountsTest {
   void givenValidUserIdWhenRepositoryThrowsExceptionThenShouldReturnFailure() {
     // Given
     var input = USER_ID;
-    var context = Context.builder().requester(REQUESTER).build();
 
     when(accountRepository.findByUserId(any(Id.class)))
         .thenThrow(new RuntimeException("Database connection error"));
 
     // When
-    var result = underTest.process(context, input);
+    var result = Context.executeInContext(context, () -> underTest.process(input));
 
     // Then
     assertFalse(result.isSuccess());
@@ -156,7 +157,6 @@ public final class GetUserAccountsTest {
   void givenUserIdWhenSingleAccountExistsThenShouldReturnSingleAccountList() {
     // Given
     var input = USER_ID;
-    var context = Context.builder().requester(REQUESTER).build();
 
     var user = Id.of(USER_ID);
     var account = Account.builder()
@@ -175,7 +175,7 @@ public final class GetUserAccountsTest {
     when(accountRepository.findByUserId(USER)).thenReturn(List.of(account));
 
     // When
-    var result = underTest.process(context, input);
+    var result = Context.executeInContext(context, () -> underTest.process(input));
 
     // Then
     assertTrue(result.isSuccess());
@@ -203,14 +203,13 @@ public final class GetUserAccountsTest {
     var user1 = Id.of(userId1);
     var userId2 = "user222";
     var user2 = Id.of(userId2);
-    var context = Context.builder().requester(REQUESTER).build();
 
     when(accountRepository.findByUserId(user1)).thenReturn(Collections.emptyList());
     when(accountRepository.findByUserId(user2)).thenReturn(Collections.emptyList());
 
     // When
-    underTest.process(context, userId1);
-    underTest.process(context, userId2);
+    Context.executeInContext(context, () -> underTest.process(userId1));
+    Context.executeInContext(context, () -> underTest.process(userId2));
 
     // Then
     verify(accountRepository).findByUserId(user1);

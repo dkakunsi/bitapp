@@ -1,6 +1,5 @@
 package io.dkakunsi.bitapp.user.usecase;
 
-import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.domain.usecase.UseCase;
 import io.dkakunsi.bitapp.user.dto.RegisterUserInput;
@@ -17,7 +16,7 @@ public final class RegisterUser implements UseCase<RegisterUserInput, UserResult
   }
 
   @Override
-  public Result<UserResult> execute(Context context, RegisterUserInput input) {
+  public Result<UserResult> execute(RegisterUserInput input) {
     User user = userRepository.findByEmail(input.email())
         .map(existing -> update(existing, input))
         .orElseGet(() -> create(input));

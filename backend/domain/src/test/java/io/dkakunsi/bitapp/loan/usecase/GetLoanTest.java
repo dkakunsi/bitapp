@@ -26,6 +26,8 @@ public final class GetLoanTest {
 
   private static final String REQUESTER = "Requester";
 
+  private static final Context context = Context.builder().requester(REQUESTER).build();
+
   private GetLoan underTest;
 
   private LoanRepository loanRepository;
@@ -59,8 +61,7 @@ public final class GetLoanTest {
     when(loanRepository.findById(loanIdObj)).thenReturn(Optional.of(existingLoan));
 
     // When
-    var context = Context.builder().requester(REQUESTER).build();
-    var result = underTest.process(context, loanId);
+    var result = Context.executeInContext(context, () -> underTest.process(loanId));
 
     // Then
     assertTrue(result.isSuccess());
@@ -90,8 +91,7 @@ public final class GetLoanTest {
     when(loanRepository.findById(loanIdObj)).thenReturn(Optional.empty());
 
     // When
-    var context = Context.builder().requester(REQUESTER).build();
-    var result = underTest.process(context, loanId);
+    var result = Context.executeInContext(context, () -> underTest.process(loanId));
 
     // Then
     assertFalse(result.isSuccess());
@@ -111,8 +111,7 @@ public final class GetLoanTest {
     when(loanRepository.findById(loanIdObj)).thenThrow(new RuntimeException("Database error"));
 
     // When
-    var context = Context.builder().requester(REQUESTER).build();
-    var result = underTest.process(context, loanId);
+    var result = Context.executeInContext(context, () -> underTest.process(loanId));
 
     // Then
     assertFalse(result.isSuccess());

@@ -24,6 +24,8 @@ public final class GetAccountTest {
 
   private static final String REQUESTER = "Requester";
 
+  private static final Context context = Context.builder().requester(REQUESTER).build();
+
   private GetAccount underTest;
 
   private AccountRepository accountRepository;
@@ -51,8 +53,7 @@ public final class GetAccountTest {
     when(accountRepository.findById(id)).thenReturn(Optional.of(existingAccount));
 
     // When
-    var context = Context.builder().requester(REQUESTER).build();
-    var result = underTest.process(context, accountId);
+    var result = Context.executeInContext(context, () -> underTest.process(accountId));
 
     // Then
     assertTrue(result.isSuccess());
@@ -75,8 +76,7 @@ public final class GetAccountTest {
     when(accountRepository.findById(id)).thenReturn(Optional.empty());
 
     // When
-    var context = Context.builder().requester(REQUESTER).build();
-    var result = underTest.process(context, accountId);
+    var result = Context.executeInContext(context, () -> underTest.process(accountId));
 
     // Then
     assertFalse(result.isSuccess());
@@ -96,8 +96,7 @@ public final class GetAccountTest {
     when(accountRepository.findById(id)).thenThrow(new RuntimeException("Database error"));
 
     // When
-    var context = Context.builder().requester(REQUESTER).build();
-    var result = underTest.process(context, accountId);
+    var result = Context.executeInContext(context, () -> underTest.process(accountId));
 
     // Then
     assertFalse(result.isSuccess());

@@ -31,14 +31,17 @@ import io.dkakunsi.bitapp.loan.repository.LoanRepository;
 
 public final class UpdateLoanTest {
 
-  private UpdateLoan underTest;
-
-  private LoanRepository loanRepository;
-
   private static final String REQUESTER = "testUser@email.com";
+
+  private static final Context context = Context.builder().requester(REQUESTER).build();
+
   private static final String LOAN_ID = "loan-123";
   private static final Id LOAN = Id.of(LOAN_ID);
   private static final String ACCOUNT_ID = "account-456";
+
+  private UpdateLoan underTest;
+
+  private LoanRepository loanRepository;
 
   @BeforeEach
   void setUp() {
@@ -56,13 +59,12 @@ public final class UpdateLoanTest {
         .title("Updated Loan Title")
         .description("Updated description")
         .build();
-    var context = Context.builder().requester(REQUESTER).build();
 
     when(loanRepository.findById(LOAN)).thenReturn(Optional.of(existingLoan));
     when(loanRepository.update(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var result = underTest.process(context, updateRequest);
+    var result = Context.executeInContext(context, () -> underTest.process(updateRequest));
 
     // Then
     assertTrue(result.isSuccess());
@@ -96,13 +98,12 @@ public final class UpdateLoanTest {
         .description("Test loan")
         .amount(new BigDecimal("15000.00"))
         .build();
-    var context = Context.builder().requester(REQUESTER).build();
 
     when(loanRepository.findById(LOAN)).thenReturn(Optional.of(existingLoan));
     when(loanRepository.update(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var result = underTest.process(context, updateRequest);
+    var result = Context.executeInContext(context, () -> underTest.process(updateRequest));
 
     // Then
     assertTrue(result.isSuccess());
@@ -129,13 +130,12 @@ public final class UpdateLoanTest {
         .description("Test loan")
         .currency("EUR")
         .build();
-    var context = Context.builder().requester(REQUESTER).build();
 
     when(loanRepository.findById(LOAN)).thenReturn(Optional.of(existingLoan));
     when(loanRepository.update(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var result = underTest.process(context, updateRequest);
+    var result = Context.executeInContext(context, () -> underTest.process(updateRequest));
 
     // Then
     assertTrue(result.isSuccess());
@@ -162,13 +162,12 @@ public final class UpdateLoanTest {
         .description("Test loan")
         .interestRate(7.5)
         .build();
-    var context = Context.builder().requester(REQUESTER).build();
 
     when(loanRepository.findById(LOAN)).thenReturn(Optional.of(existingLoan));
     when(loanRepository.update(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var result = underTest.process(context, updateRequest);
+    var result = Context.executeInContext(context, () -> underTest.process(updateRequest));
 
     // Then
     assertTrue(result.isSuccess());
@@ -196,13 +195,12 @@ public final class UpdateLoanTest {
         .date("2026-12-31")
         .time("23:59:59")
         .build();
-    var context = Context.builder().requester(REQUESTER).build();
 
     when(loanRepository.findById(LOAN)).thenReturn(Optional.of(existingLoan));
     when(loanRepository.update(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var result = underTest.process(context, updateRequest);
+    var result = Context.executeInContext(context, () -> underTest.process(updateRequest));
 
     // Then
     assertTrue(result.isSuccess());
@@ -235,13 +233,12 @@ public final class UpdateLoanTest {
         .date("2027-06-15")
         .time("12:00:00")
         .build();
-    var context = Context.builder().requester(REQUESTER).build();
 
     when(loanRepository.findById(LOAN)).thenReturn(Optional.of(existingLoan));
     when(loanRepository.update(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var result = underTest.process(context, updateRequest);
+    var result = Context.executeInContext(context, () -> underTest.process(updateRequest));
 
     // Then
     assertTrue(result.isSuccess());
@@ -269,12 +266,11 @@ public final class UpdateLoanTest {
         .title("Personal Loan")
         .description("Test loan")
         .build();
-    var context = Context.builder().requester(REQUESTER).build();
 
     when(loanRepository.findById(nonExistingLoan)).thenReturn(Optional.empty());
 
     // When
-    var result = underTest.process(context, updateRequest);
+    var result = Context.executeInContext(context, () -> underTest.process(updateRequest));
 
     // Then
     assertFalse(result.isSuccess());
@@ -297,12 +293,12 @@ public final class UpdateLoanTest {
         .title("Personal Loan")
         .description("Test loan")
         .build();
-    var context = Context.builder().requester("differentUser@email.com").build();
 
     when(loanRepository.findById(LOAN)).thenReturn(Optional.of(existingLoan));
 
     // When
-    var result = underTest.process(context, updateRequest);
+    var context = Context.builder().requester("differentUser@email.com").build();
+    var result = Context.executeInContext(context, () -> underTest.process(updateRequest));
 
     // Then
     assertFalse(result.isSuccess());
@@ -330,13 +326,12 @@ public final class UpdateLoanTest {
         .title("Updated Title")
         .description("Updated description")
         .build();
-    var context = Context.builder().requester(REQUESTER).build();
 
     when(loanRepository.findById(LOAN)).thenReturn(Optional.of(existingLoan));
     when(loanRepository.update(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var result = underTest.process(context, updateRequest);
+    var result = Context.executeInContext(context, () -> underTest.process(updateRequest));
 
     // Then
     assertTrue(result.isSuccess());
@@ -365,13 +360,12 @@ public final class UpdateLoanTest {
         .title("Updated Title")
         .description("Test loan")
         .build();
-    var context = Context.builder().requester(REQUESTER).build();
 
     when(loanRepository.findById(LOAN)).thenReturn(Optional.of(existingLoan));
     when(loanRepository.update(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var result = underTest.process(context, updateRequest);
+    var result = Context.executeInContext(context, () -> underTest.process(updateRequest));
 
     // Then
     assertTrue(result.isSuccess());

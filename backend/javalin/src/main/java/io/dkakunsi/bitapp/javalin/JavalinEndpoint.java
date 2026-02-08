@@ -38,8 +38,10 @@ public abstract class JavalinEndpoint<S, T> extends Endpoint<S, T> {
     return ctx -> {
       var principal = authorizeRequest(ctx);
       var context = initiateContext(ctx, principal);
-      var input = buildInput(ctx);
-      var result = usecase.process(context, input);
+      var result = Context.executeInContext(context, () -> {
+        var input = buildInput(ctx);
+        return usecase.process(input);
+      });
       response(ctx, result);
     };
   }
@@ -62,9 +64,7 @@ public abstract class JavalinEndpoint<S, T> extends Endpoint<S, T> {
         .context(ctx)
         .requester(principal)
         .build();
-    var context = contextBuilder.build();
-    Context.set(context);
-    return context;
+    return contextBuilder.build();
   }
 
   protected abstract S buildInput(io.javalin.http.Context ctx);

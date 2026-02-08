@@ -29,6 +29,10 @@ import io.dkakunsi.bitapp.transaction.repository.TransactionRepository;
 
 public final class CreateUserTransactionTest {
 
+  private static final String REQUESTER = "test@email.com";
+
+  private static final Context context = Context.builder().requester(REQUESTER).build();
+
   private CreateTransaction underTest;
 
   private TransactionRepository transactionRepository;
@@ -36,7 +40,6 @@ public final class CreateUserTransactionTest {
   private LoanRepository loanRepository;
   private SessionManager sessionManager;
 
-  private static final String REQUESTER = "test@email.com";
   private static final String ACCOUNT_ID_1 = "account-1";
   private static final Id ACCOUNT_1 = Id.of(ACCOUNT_ID_1);
   private static final String ACCOUNT_ID_2 = "account-2";
@@ -71,12 +74,11 @@ public final class CreateUserTransactionTest {
         .category("FOOD")
         .type("DEBIT")
         .build();
-    var context = Context.builder().requester(REQUESTER).build();
 
     when(transactionRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var result = underTest.process(context, createRequest);
+    var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertTrue(result.isSuccess());
@@ -105,12 +107,11 @@ public final class CreateUserTransactionTest {
         .category("INCOME")
         .type("CREDIT")
         .build();
-    var context = Context.builder().requester(REQUESTER).build();
 
     when(transactionRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var result = underTest.process(context, createRequest);
+    var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertTrue(result.isSuccess());
@@ -138,12 +139,11 @@ public final class CreateUserTransactionTest {
         .category("OTHER")
         .type("TRANSFER")
         .build();
-    var context = Context.builder().requester(REQUESTER).build();
 
     when(transactionRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var result = underTest.process(context, createRequest);
+    var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertTrue(result.isSuccess());
@@ -172,12 +172,11 @@ public final class CreateUserTransactionTest {
         .category("LOAN")
         .type("DEBIT")
         .build();
-    var context = Context.builder().requester(REQUESTER).build();
 
     when(transactionRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var result = underTest.execute(context, createRequest);
+    var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertTrue(result.isSuccess());
@@ -198,14 +197,13 @@ public final class CreateUserTransactionTest {
         .category("FOOD")
         .type("DEBIT")
         .build();
-    var context = Context.builder().requester(REQUESTER).build();
 
     when(transactionRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
     doThrow(new IllegalArgumentException("source account not found"))
         .when(accountRepository).debitBalance(any(), any());
 
     // When
-    var result = underTest.process(context, createRequest);
+    var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertFalse(result.isSuccess());
@@ -226,14 +224,13 @@ public final class CreateUserTransactionTest {
         .category("INCOME")
         .type("CREDIT")
         .build();
-    var context = Context.builder().requester(REQUESTER).build();
 
     when(transactionRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
     doThrow(new IllegalArgumentException("destination account not found"))
         .when(accountRepository).creditBalance(any(), any());
 
     // When
-    var result = underTest.process(context, createRequest);
+    var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertFalse(result.isSuccess());
@@ -255,14 +252,13 @@ public final class CreateUserTransactionTest {
         .category("LOAN")
         .type("DEBIT")
         .build();
-    var context = Context.builder().requester(REQUESTER).build();
 
     when(transactionRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
     doThrow(new IllegalArgumentException("loan not found"))
         .when(loanRepository).decreaseRemainingAmount(any(), any());
 
     // When
-    var result = underTest.process(context, createRequest);
+    var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertFalse(result.isSuccess());
@@ -282,12 +278,11 @@ public final class CreateUserTransactionTest {
         .category("FOOD")
         .type("DEBIT")
         .build();
-    var context = Context.builder().requester(REQUESTER).build();
 
     when(transactionRepository.create(any())).thenThrow(new RuntimeException("Database error"));
 
     // When
-    var result = underTest.process(context, createRequest);
+    var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertFalse(result.isSuccess());

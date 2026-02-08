@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
-import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.user.dto.RegisterUserInput;
 import io.dkakunsi.bitapp.user.entity.User;
@@ -29,8 +28,6 @@ public final class RegisterUserTest {
   private RegisterUser underTest;
 
   private UserRepository userRepository;
-
-  private static final String REQUESTER = "Requester";
 
   @BeforeEach
   void setUp() {
@@ -52,13 +49,11 @@ public final class RegisterUserTest {
         .photoUrl(photoUrl)
         .build();
 
-    var context = Context.builder().requester(REQUESTER).build();
-
     when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
     when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var result = underTest.process(context, registerInput);
+    var result = underTest.process(registerInput);
 
     // Then
     assertTrue(result.isSuccess());
@@ -96,8 +91,6 @@ public final class RegisterUserTest {
         .photoUrl(photoUrl)
         .build();
 
-    var context = Context.builder().requester(REQUESTER).build();
-
     var existingUser = User.builder()
         .id(Id.of(email))
         .name(existingUsername)
@@ -110,7 +103,7 @@ public final class RegisterUserTest {
     when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var result = underTest.process(context, registerInput);
+    var result = underTest.process(registerInput);
 
     // Then
     assertTrue(result.isSuccess());
@@ -147,8 +140,6 @@ public final class RegisterUserTest {
         .photoUrl(photoUrl)
         .build();
 
-    var context = Context.builder().requester(REQUESTER).build();
-
     var existingUser = User.builder()
         .id(Id.of(email))
         .name(username)
@@ -161,7 +152,7 @@ public final class RegisterUserTest {
     when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
-    var result = underTest.process(context, registerInput);
+    var result = underTest.process(registerInput);
 
     // Then
     assertTrue(result.isSuccess());
@@ -185,10 +176,9 @@ public final class RegisterUserTest {
         .email("user@email.com")
         .name("User Name")
         .build();
-    var context = Context.builder().requester(REQUESTER).build();
 
     // When
-    var result = underTest.process(context, registerInput);
+    var result = underTest.process(registerInput);
 
     // Then
     assertFalse(result.isSuccess());
@@ -205,12 +195,10 @@ public final class RegisterUserTest {
         .name("User Name")
         .build();
 
-    var context = Context.builder().requester(REQUESTER).build();
-
     when(userRepository.findByEmail(email)).thenThrow(new IllegalArgumentException("Invalid email format"));
 
     // When
-    var result = underTest.process(context, registerInput);
+    var result = underTest.process(registerInput);
 
     // Then
     assertFalse(result.isSuccess());

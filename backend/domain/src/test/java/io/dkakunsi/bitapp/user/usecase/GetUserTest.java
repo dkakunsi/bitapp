@@ -21,7 +21,9 @@ import io.dkakunsi.bitapp.user.repository.UserRepository;
 
 public final class GetUserTest {
 
-  private static final String REQUESTER = "Requester";
+  private static final String REQUESTER = "user@email.com";
+
+  private static final Context context = Context.builder().requester(REQUESTER).build();
 
   private GetUser underTest;
 
@@ -48,8 +50,7 @@ public final class GetUserTest {
 
     // When
     var inputData = email;
-    var context = Context.builder().requester(REQUESTER).build();
-    var result = underTest.process(context, inputData);
+    var result = Context.executeInContext(context, () -> underTest.process(inputData));
 
     // Then
     assertTrue(result.isSuccess());
@@ -71,8 +72,7 @@ public final class GetUserTest {
 
     // When
     var inputData = email;
-    var context = Context.builder().requester(REQUESTER).build();
-    var result = underTest.process(context, inputData);
+    var result = Context.executeInContext(context, () -> underTest.process(inputData));
 
     // Then
     assertTrue(result.isFailed());
@@ -90,8 +90,7 @@ public final class GetUserTest {
 
     // When
     var inputData = email;
-    var context = Context.builder().requester(REQUESTER).build();
-    var result = underTest.process(context, inputData);
+    var result = Context.executeInContext(context, () -> underTest.process(inputData));
 
     // Then
     assertFalse(result.isSuccess());

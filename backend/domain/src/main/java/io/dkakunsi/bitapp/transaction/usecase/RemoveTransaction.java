@@ -2,7 +2,6 @@ package io.dkakunsi.bitapp.transaction.usecase;
 
 import io.dkakunsi.bitapp.account.repository.AccountRepository;
 import io.dkakunsi.bitapp.common.AppError.Code;
-import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.database.SessionManager;
 import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.domain.usecase.Result;
@@ -32,9 +31,9 @@ public final class RemoveTransaction implements UseCase<String, TransactionResul
   }
 
   @Override
-  public Result<TransactionResult> execute(Context context, String transactionId) {
+  public Result<TransactionResult> execute(String transactionId) {
     return transactionRepository.findById(Id.of(transactionId))
-        .filter(transaction -> transaction.user().value().equals(context.requester()))
+        .filter(transaction -> transaction.user().value().equals(getRequester()))
         .map(transaction -> sessionManager.executeInSession(() -> removeTransaction(transaction)))
         .orElse(Result.failure(Code.NOT_FOUND, "Transaction not found"));
   }

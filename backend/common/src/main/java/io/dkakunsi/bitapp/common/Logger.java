@@ -1,5 +1,7 @@
 package io.dkakunsi.bitapp.common;
 
+import java.util.NoSuchElementException;
+
 import org.apache.commons.lang3.StringUtils;
 
 public interface Logger {
@@ -30,11 +32,11 @@ public interface Logger {
 
   void warn(String format, Object... args);
 
-  default String getRequestId() {
+  default String requestId() {
     try {
-      var requestId = Context.get().requestId();
+      var requestId = Context.current().requestId();
       return StringUtils.isBlank(requestId) ? "NOT-SPECIFIED" : requestId;
-    } catch (Exception _) {
+    } catch (NoSuchElementException _) {
       return "NOT-SPECIFIED";
     }
   }
