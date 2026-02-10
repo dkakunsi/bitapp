@@ -15,22 +15,26 @@ class AppLocalizationsId extends AppLocalizations {
   String get accountAdded => 'Rekening berhasil ditambahkan';
 
   @override
-  String get accountAdditionError => 'Terjadi kesalahan saat menambahkan rekening';
+  String get accountAdditionError =>
+      'Terjadi kesalahan saat menambahkan rekening';
 
   @override
   String get accountDeleted => 'Rekening berhasil dihapus';
 
   @override
-  String get accountDeletionError => 'Terjadi kesalahan saat menghapus rekening';
+  String get accountDeletionError =>
+      'Terjadi kesalahan saat menghapus rekening';
 
   @override
-  String get accountFetchingError => 'Terjadi kesalahan saat memuat daftar rekening';
+  String get accountFetchingError =>
+      'Terjadi kesalahan saat memuat daftar rekening';
 
   @override
   String get accountName => 'Nama rekening';
 
   @override
-  String get accountRetrievalError => 'Terjadi kesalahan saat memuat daftar rekening';
+  String get accountRetrievalError =>
+      'Terjadi kesalahan saat memuat daftar rekening';
 
   @override
   String get accountType => 'Tipe rekening';
@@ -39,13 +43,15 @@ class AppLocalizationsId extends AppLocalizations {
   String get accountUpdated => 'Rekening berhasil diperbarui';
 
   @override
-  String get accountUpdatingError => 'Terjadi kesalahan saat memperbarui rekening';
+  String get accountUpdatingError =>
+      'Terjadi kesalahan saat memperbarui rekening';
 
   @override
   String get accountsNotProvided => 'Tidak dapat menyimpan rekening';
 
   @override
-  String get accountsShouldBeDifferent => 'Rekening sumber dan tujuan harus berbeda';
+  String get accountsShouldBeDifferent =>
+      'Rekening sumber dan tujuan harus berbeda';
 
   @override
   String get accumulation => 'Akumulasi';
@@ -78,7 +84,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get addTransfer => 'Tambah Transfer';
 
   @override
-  String get amountShouldNotBeZeroOrEmpty => 'Jumlah tidak boleh kosong atau nol';
+  String get amountShouldNotBeZeroOrEmpty =>
+      'Jumlah tidak boleh kosong atau nol';
 
   @override
   String get analytics => 'Analisis';
@@ -129,7 +136,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get credit => 'Kredit';
 
   @override
-  String get creditShouldRelateToReceivableLoan => 'Hanya dapat menghubungkan piutang dengan transaksi debit';
+  String get creditShouldRelateToReceivableLoan =>
+      'Hanya dapat menghubungkan piutang dengan transaksi debit';
 
   @override
   String get dataSynchronizationFailure => 'Kegagalan sinkronisasi data';
@@ -138,7 +146,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get debit => 'Debit';
 
   @override
-  String get debitShouldRelateToDebtLoan => 'Transaksi debit harus berhubungan dengan pinjaman hutang';
+  String get debitShouldRelateToDebtLoan =>
+      'Transaksi debit harus berhubungan dengan pinjaman hutang';
 
   @override
   String get debt => 'Hutang';
@@ -240,13 +249,15 @@ class AppLocalizationsId extends AppLocalizations {
   String get loanDeletionError => 'Terjadi kesalahan saat menghapus pinjaman';
 
   @override
-  String get loanFetchingError => 'Terjadi kesalahan saat memuat daftar pinjaman';
+  String get loanFetchingError =>
+      'Terjadi kesalahan saat memuat daftar pinjaman';
 
   @override
   String get loanPayment => 'Pembayaran Pinjaman';
 
   @override
-  String get loanRetrievalError => 'Terjadi kesalahan saat memuat daftar pinjaman';
+  String get loanRetrievalError =>
+      'Terjadi kesalahan saat memuat daftar pinjaman';
 
   @override
   String get loanUpdated => 'Pinjaman berhasil diperbarui';
@@ -333,7 +344,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get subscription => 'Langganan';
 
   @override
-  String get summaryCalculationError => 'Terjadi kesalahan saat memuat ringkasan aset';
+  String get summaryCalculationError =>
+      'Terjadi kesalahan saat memuat ringkasan aset';
 
   @override
   String get synchronize => 'Sinkronkan';
@@ -360,7 +372,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get transactionAdded => 'Transaksi berhasil ditambahkan';
 
   @override
-  String get transactionAdditionError => 'Terjadi kesalahan saat menambahkan transaksi';
+  String get transactionAdditionError =>
+      'Terjadi kesalahan saat menambahkan transaksi';
 
   @override
   String get transactionCategory => 'Kategori transaksi';
@@ -369,13 +382,16 @@ class AppLocalizationsId extends AppLocalizations {
   String get transactionDeleted => 'Transaksi berhasil dihapus';
 
   @override
-  String get transactionDeletionError => 'Terjadi kesalahan saat menghapus transaksi';
+  String get transactionDeletionError =>
+      'Terjadi kesalahan saat menghapus transaksi';
 
   @override
-  String get transactionFetchingError => 'Terjadi kesalahan saat memuat daftar transaksi';
+  String get transactionFetchingError =>
+      'Terjadi kesalahan saat memuat daftar transaksi';
 
   @override
-  String get transactionRetrievalError => 'Terjadi kesalahan saat memuat daftar transaksi';
+  String get transactionRetrievalError =>
+      'Terjadi kesalahan saat memuat daftar transaksi';
 
   @override
   String get transactionSaved => 'Transaksi berhasil disimpan';

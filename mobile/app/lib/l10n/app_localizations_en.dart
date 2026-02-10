@@ -45,7 +45,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountsNotProvided => 'Cannot save account';
 
   @override
-  String get accountsShouldBeDifferent => 'Source and destination accounts should be different';
+  String get accountsShouldBeDifferent =>
+      'Source and destination accounts should be different';
 
   @override
   String get accumulation => 'Accumulation';
@@ -78,7 +79,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addTransfer => 'Add Transfer';
 
   @override
-  String get amountShouldNotBeZeroOrEmpty => 'Amount should not be zero or empty';
+  String get amountShouldNotBeZeroOrEmpty =>
+      'Amount should not be zero or empty';
 
   @override
   String get analytics => 'Analytics';
@@ -129,7 +131,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get credit => 'Credit';
 
   @override
-  String get creditShouldRelateToReceivableLoan => 'Can only relate receivable to debit transaction';
+  String get creditShouldRelateToReceivableLoan =>
+      'Can only relate receivable to debit transaction';
 
   @override
   String get dataSynchronizationFailure => 'Data synchronization failure';
@@ -138,7 +141,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get debit => 'Debit';
 
   @override
-  String get debitShouldRelateToDebtLoan => 'Can only relate debt to credit transaction';
+  String get debitShouldRelateToDebtLoan =>
+      'Can only relate debt to credit transaction';
 
   @override
   String get debt => 'Debt';
@@ -153,7 +157,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get detailsAreNotFilled => 'Details are not filled';
 
   @override
-  String get destinationAccountNotProvided => 'Destination account is not provided';
+  String get destinationAccountNotProvided =>
+      'Destination account is not provided';
 
   @override
   String get developedBy => 'Developed by';

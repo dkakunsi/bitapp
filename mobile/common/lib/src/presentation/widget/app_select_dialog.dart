@@ -32,10 +32,9 @@ class AppSelectDialogState<
     return BlocBuilder<BLOC, STATE>(
       builder: (context, state) {
         if (state is LOADED_STATE) {
-          final items =
-              (state as LOADED_STATE).items
-                  .where(widget.filter ?? _defaultFilter)
-                  .toList();
+          final items = (state).items
+              .where(widget.filter ?? _defaultFilter)
+              .toList();
           return buildView(items, (item) {
             Navigator.of(context, rootNavigator: true).pop(item);
           });
@@ -59,17 +58,16 @@ class AppSelectDialogState<
         children: [
           SingleChildScrollView(
             child: Column(
-              children:
-                  items
-                      .map(
-                        (i) => ListTile(
-                          title: Text(i.title),
-                          onTap: () {
-                            onSelect(i);
-                          },
-                        ),
-                      )
-                      .toList(),
+              children: items
+                  .map(
+                    (i) => ListTile(
+                      title: Text(i.title),
+                      onTap: () {
+                        onSelect(i);
+                      },
+                    ),
+                  )
+                  .toList(),
             ),
           ),
         ],
