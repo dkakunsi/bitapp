@@ -1,0 +1,30 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "bitapp-cortech",
+          "appId": "1:925204357438:android:f3170815418400537c4c6f",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "bitapp-cortech",
+          "appId": "1:925204357438:ios:701109659f72b2a47c4c6f",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "bitapp-cortech",
+          "configurations": {
+            "android": "1:925204357438:android:f3170815418400537c4c6f",
+            "ios": "1:925204357438:ios:701109659f72b2a47c4c6f"
+          }
+        }
+      }
+    }
+  }
+}

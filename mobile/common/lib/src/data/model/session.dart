@@ -1,0 +1,19 @@
+class Session {
+  final String token;
+
+  /// Firebase User Unieuq ID
+  final String userUID;
+  final String name;
+  final String email;
+  final String? phone;
+  final String? photoUrl;
+
+  Session({
+    required this.token,
+    required this.userUID,
+    required this.name,
+    required this.email,
+    this.phone,
+    this.photoUrl,
+  });
+}

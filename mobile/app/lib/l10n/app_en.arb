@@ -1,0 +1,543 @@
+{
+  "@@locale": "en",
+  "@account": {
+    "description": "Label for account"
+  },
+  "account": "Account",
+  "@accountAdded": {
+    "description": "Message when an account is successfully added"
+  },
+  "accountAdded": "Account is added",
+  "@accountAdditionError": {
+    "description": "Error message when creating an account fails"
+  },
+  "accountAdditionError": "Error creating account",
+  "@accountDeleted": {
+    "description": "Message when an account is successfully deleted"
+  },
+  "accountDeleted": "Account is deleted",
+  "@accountDeletionError": {
+    "description": "Error message when deleting an account fails"
+  },
+  "accountDeletionError": "Error deleting account",
+  "@accountFetchingError": {
+    "description": "Error message when fetching accounts fails"
+  },
+  "accountFetchingError": "Error fetching accounts",
+  "@accountName": {
+    "description": "Label for account name"
+  },
+  "accountName": "Account name",
+  "@accountRetrievalError": {
+    "description": "Error message when loading accounts fails"
+  },
+  "accountRetrievalError": "Error loading accounts",
+  "@accountType": {
+    "description": "Label for account type"
+  },
+  "accountType": "Account type",
+  "@accountUpdated": {
+    "description": "Message when an account is successfully updated"
+  },
+  "accountUpdated": "Account is updated",
+  "@accountUpdatingError": {
+    "description": "Error message when updating an account fails"
+  },
+  "accountUpdatingError": "Error updating account",
+  "@accountsNotProvided": {
+    "description": "Error message when account details are not provided"
+  },
+  "accountsNotProvided": "Cannot save account",
+  "@accountsShouldBeDifferent": {
+    "description": "Error message when source and destination accounts are the same"
+  },
+  "accountsShouldBeDifferent": "Source and destination accounts should be different",
+  "@add": {
+    "description": "Add button label"
+  },
+  "accumulation": "Accumulation",
+  "@accumulation": {
+    "description": "Label for accumulation"
+  },
+  "add": "Add",
+  "@addCredit": {
+    "description": "Label for adding income"
+  },
+  "addCredit": "Add Income",
+  "@addCreditTransfer": {
+    "description": "Label for adding incoming transfer"
+  },
+  "addCreditTransfer": "Add Incoming Transfer",
+  "@addDebit": {
+    "description": "Label for adding expense"
+  },
+  "addDebit": "Add Expense",
+  "@addDebitTransfer": {
+    "description": "Label for adding outgoing transfer"
+  },
+  "addDebitTransfer": "Add Outgoing Transfer",
+  "@addDebt": {
+    "description": "Label for adding debt"
+  },
+  "addDebt": "Add Debt",
+  "@addReceivable": {
+    "description": "Label for adding receivable"
+  },
+  "addReceivable": "Add Receivable",
+  "@addTransaction": {
+    "description": "Label for adding transaction"
+  },
+  "addTransaction": "Add Transaction",
+  "@addTransfer": {
+    "description": "Label for adding transfer"
+  },
+  "addTransfer": "Add Transfer",
+  "@amountShouldNotBeZeroOrEmpty": {
+    "description": "Error message when the amount is zero or empty"
+  },
+  "amountShouldNotBeZeroOrEmpty": "Amount should not be zero or empty",
+  "@appInfo": {
+    "description": "Label for app information"
+  },
+  "analytics": "Analytics",
+  "@analytics": {
+    "description": "Label for analytics"
+  },
+  "appInfo": "App Information",
+  "@appMotto": {
+    "description": "App motto for English locale"
+  },
+  "appMotto": "Convenient in every bit",
+  "@appName": {
+    "description": "App name for English locale"
+  },
+  "appName": "BitApp",
+  "@appVersion": {
+    "description": "Label for app version"
+  },
+  "appVersion": "Version",
+  "@authenticationError": {
+    "description": "Error message when authentication fails"
+  },
+  "authenticationError": "Error on authentication",
+  "@bill": {
+    "description": "Label for bill"
+  },
+  "bill": "Bill",
+  "@bills": {
+    "description": "Label for bills"
+  },
+  "bills": "Bills",
+  "@bonus": {
+    "description": "Label for bonus"
+  },
+  "bonus": "Bonus",
+  "@cancel": {
+    "description": "Cancel button label"
+  },
+  "cancel": "Cancel",
+  "@charity": {
+    "description": "Label for charity"
+  },
+  "charity": "Charity",
+  "@configurationAccessError": {
+    "description": "Error message when there is an issue accessing the configuration"
+  },
+  "configurationAccessError": "Configuration access error",
+  "@configurationUpdateError": {
+    "description": "Error message when configuration update fails"
+  },
+  "configurationUpdateError": "Configuration update error",
+  "@configuarationUpdateError": {
+    "description": "Error message when configuration update fails"
+  },
+  "configuarationUpdateError": "Configuration update error",
+  "@contactUs": {
+    "description": "Label for contact us"
+  },
+  "contactUs": "Contact us",
+  "@credit": {
+    "description": "Label for credit"
+  },
+  "credit": "Credit",
+  "@creditShouldRelateToReceivableLoan": {
+    "description": "Error message when trying to relate receivable to a non-debit transaction"
+  },
+  "creditShouldRelateToReceivableLoan": "Can only relate receivable to debit transaction",
+  "@dataSynchronizationFailure": {
+    "description": "Error message when data synchronization fails"
+  },
+  "dataSynchronizationFailure": "Data synchronization failure",
+  "@debit": {
+    "description": "Label for debit"
+  },
+  "debit": "Debit",
+  "@debitShouldRelateToDebtLoan": {
+    "description": "Error message when trying to relate debt to a non-credit transaction"
+  },
+  "debitShouldRelateToDebtLoan": "Can only relate debt to credit transaction",
+  "@debt": {
+    "description": "Label for debt"
+  },
+  "debt": "Debt",
+  "@delete": {
+    "description": "Delete button label"
+  },
+  "delete": "Delete",
+  "@detail": {
+    "description": "Detail button label"
+  },
+  "detail": "Detail",
+  "@detailsAreNotFilled": {
+    "description": "Error message when required details are not filled"
+  },
+  "detailsAreNotFilled": "Details are not filled",
+  "@destinationAccountNotProvided": {
+    "description": "Error message when the destination account is not provided"
+  },
+  "destinationAccountNotProvided": "Destination account is not provided",
+  "@developedBy": {
+    "description": "Label for developer information"
+  },
+  "developedBy": "Developed by",
+  "@education": {
+    "description": "Label for education"
+  },
+  "education": "Education",
+  "@english": {
+    "description": "English language label"
+  },
+  "english": "English",
+  "@entertainment": {
+    "description": "Label for entertainment"
+  },
+  "entertainment": "Entertainment",
+  "@export": {
+    "description": "Export button label"
+  },
+  "expense": "Expense",
+  "@expense": {
+    "description": "Label for expense"
+  },
+  "export": "Export",
+  "@exportNotAvailable": {
+    "description": "Message when export functionality is not available"
+  },
+  "exportNotAvailable": "Export is not available yet",
+  "@food": {
+    "description": "Label for food"
+  },
+  "food": "Food",
+  "@gift": {
+    "description": "Label for gift"
+  },
+  "gift": "Gift",
+  "@hasBeenUsedThisMonth": {
+    "description": "Label for usage this month"
+  },
+  "hasBeenUsedThisMonth": "Has been used this month",
+  "@health": {
+    "description": "Label for health"
+  },
+  "health": "Health",
+  "@idr": {
+    "description": "Label for Indonesian Rupiah currency"
+  },
+  "idr": "IDR",
+  "@income": {
+    "description": "Label for income"
+  },
+  "income": "Income",
+  "@indonesian": {
+    "description": "Indonesian language label"
+  },
+  "indonesian": "Indonesian",
+  "@inputAmount": {
+    "description": "Label for inputting amount"
+  },
+  "inputAmount": "Input amount",
+  "@inputBorrower": {
+    "description": "Label for inputting borrower"
+  },
+  "inputBorrower": "Input borrower",
+  "@inputDescription": {
+    "description": "Label for inputting description"
+  },
+  "inputDescription": "Input description",
+  "@inputLender": {
+    "description": "Label for inputting lender"
+  },
+  "inputLender": "Input lender",
+  "@inputTitle": {
+    "description": "Label for inputting title"
+  },
+  "inputTitle": "Input title",
+  "@interest": {
+    "description": "Label for interest"
+  },
+  "interest": "Interest",
+  "@investment": {
+    "description": "Label for investment"
+  },
+  "investment": "Investment",
+  "@invalidAuthentication": {
+    "description": "Error message when user provides wrong credentials"
+  },
+  "invalidAuthentication": "Wrong credentials. Please try again!",
+  "@language": {
+    "description": "Language label"
+  },
+  "language": "Language",
+  "@loan": {
+    "description": "Label for loan"
+  },
+  "loan": "Loan",
+  "@loanAdded": {
+    "description": "Message when a loan is successfully added"
+  },
+  "loanAdded": "Loan is added",
+  "@loanAdditionError": {
+    "description": "Error message when creating a loan fails"
+  },
+  "loanAdditionError": "Error creating loan",
+  "@loanDeleted": {
+    "description": "Message when a loan is successfully deleted"
+  },
+  "loanDeleted": "Loan is deleted",
+  "@loanDeletionError": {
+    "description": "Error message when deleting a loan fails"
+  },
+  "loanDeletionError": "Error deleting loan",
+  "@loanFetchingError": {
+    "description": "Error message when fetching loans fails"
+  },
+  "loanFetchingError": "Error fetching loans",
+  "@loanPayment": {
+    "description": "Label for loan payment"
+  },
+  "loanPayment": "Loan Payment",
+  "@loanRetrievalError": {
+    "description": "Error message when loading loans fails"
+  },
+  "loanRetrievalError": "Error loading loans",
+  "@loanUpdated": {
+    "description": "Message when a loan is successfully updated"
+  },
+  "loanUpdated": "Loan is updated",
+  "@loanUpdatingError": {
+    "description": "Error message when updating a loan fails"
+  },
+  "loanUpdatingError": "Error updating loan",
+  "@logout": {
+    "description": "Logout button label"
+  },
+  "logout": "Logout",
+  "@logoutError": {
+    "description": "Error message when logout fails"
+  },
+  "logoutError": "Error on logout",
+  "@money": {
+    "description": "Label for money"
+  },
+  "money": "Money",
+  "@moneyManagement": {
+    "description": "Label for money management"
+  },
+  "moneyManagement": "Money management",
+  "@ofLabel": {
+    "description": "Label for the word 'of'"
+  },
+  "ofLabel": "of",
+  "@other": {
+    "description": "Label for other"
+  },
+  "other": "Other",
+  "@paid": {
+    "description": "Label for paid status"
+  },
+  "paid": "Paid",
+  "@pay": {
+    "description": "Label for pay button"
+  },
+  "pay": "Pay",
+  "@profile": {
+    "description": "Profile label"
+  },
+  "profile": "Profile",
+  "@receivable": {
+    "description": "Label for receivable"
+  },
+  "receivable": "Receivable",
+  "@rent": {
+    "description": "Label for rent"
+  },
+  "rent": "Rent",
+  "@salary": {
+    "description": "Label for salary"
+  },
+  "salary": "Salary",
+  "@save": {
+    "description": "Save button label"
+  },
+  "save": "Save",
+  "@savings": {
+    "description": "Label for savings"
+  },
+  "savings": "Savings",
+  "@selectColor": {
+    "description": "Label for selecting color"
+  },
+  "selectColor": "Select color",
+  "@selectDate": {
+    "description": "Label for selecting date"
+  },
+  "selectDate": "Select date",
+  "@selectDebt": {
+    "description": "Label for selecting debt (optional)"
+  },
+  "selectDebt": "Select debt (Optional)",
+  "@selectDestinationAccount": {
+    "description": "Label for selecting destination account"
+  },
+  "selectDestinationAccount": "Select destination account",
+  "@selectReceivable": {
+    "description": "Label for selecting receivable (optional)"
+  },
+  "selectReceivable": "Select receivable (Optional)",
+  "@selectSourceAccount": {
+    "description": "Label for selecting source account"
+  },
+  "selectSourceAccount": "Select source account",
+  "@selectTime": {
+    "description": "Label for selecting time"
+  },
+  "selectTime": "Select time",
+  "@sessionIsEmpty": {
+    "description": "Error message when the session is empty"
+  },
+  "sessionIsEmpty": "Session is empty",
+  "@shopping": {
+    "description": "Label for shopping"
+  },
+  "shopping": "Shopping",
+  "@signInWithGoogle": {
+    "description": "Sign in with Google button label"
+  },
+  "signInWithGoogle": "Sign in with Google",
+  "@sourceAccountNotProvided": {
+    "description": "Error message when the source account is not provided"
+  },
+  "sourceAccountNotProvided": "Source account is not provided",
+  "@subscription": {
+    "description": "Label for subscription"
+  },
+  "subscription": "Subscription",
+  "@summaryCalculationError": {
+    "description": "Error message when calculating the asset summary fails"
+  },
+  "summaryCalculationError": "Error loading your asset summary",
+  "@tax": {
+    "description": "Label for tax"
+  },
+  "synchronize": "Synchronize",
+  "@synchronize": {
+    "description": "Label for synchronizing data"
+  },
+  "tax": "Tax",
+  "@thisIsYourAccounts": {
+    "description": "Label for user's accounts list"
+  },
+  "thisIsYourAccounts": "This is your accounts",
+  "@thisIsYourLoans": {
+    "description": "Label for user's loans list"
+  },
+  "thisIsYourLoans": "This is your loans",
+  "@thisIsYourTransactions": {
+    "description": "Label for user's transactions list"
+  },
+  "thisIsYourTransactions": "This is your transactions",
+  "@tokenIsEmpty": {
+    "description": "Error message when the token is empty"
+  },
+  "tokenIsEmpty": "Token is empty",
+  "@transaction": {
+    "description": "Label for transaction"
+  },
+  "transaction": "Transaction",
+  "@transactionAdded": {
+    "description": "Message when a transaction is successfully added"
+  },
+  "transactionAdded": "Transaction is added",
+  "@transactionAdditionError": {
+    "description": "Error message when saving a transaction fails"
+  },
+  "transactionAdditionError": "Error adding transaction",
+  "@transactionCategory": {
+    "description": "Label for transaction category"
+  },
+  "transactionCategory": "Transaction category",
+  "@transactionDeleted": {
+    "description": "Message when a transaction is successfully removed"
+  },
+  "transactionDeleted": "Transaction is removed",
+  "@transactionDeletionError": {
+    "description": "Error message when deleting a transaction fails"
+  },
+  "transactionDeletionError": "Error removing transaction",
+  "@transactionFetchingError": {
+    "description": "Error message when fetching transactions fails"
+  },
+  "transactionFetchingError": "Error fetching transactions",
+  "@transactionRetrievalError": {
+    "description": "Error message when loading transactions fails"
+  },
+  "transactionRetrievalError": "Error loading transactions",
+  "@transactionSaved": {
+    "description": "Message when a transaction is successfully saved"
+  },
+  "transactionSaved": "Transaction is saved",
+  "@transfer": {
+    "description": "Label for transfer"
+  },
+  "transfer": "Transfer",
+  "@transport": {
+    "description": "Label for transport"
+  },
+  "transport": "Transport",
+  "@travel": {
+    "description": "Label for travel"
+  },
+  "travel": "Travel",
+  "@unknownError": {
+    "description": "Error message when an unknown error occurs"
+  },
+  "unknownError": "Unknown error",
+  "@userCreationError": {
+    "description": "Error message when user creation fails"
+  },
+  "userCreationError": "Error on creating user",
+  "@userFetchError": {
+    "description": "Error message when fetching user fails"
+  },
+  "userFetchError": "Error on fetching user",
+  "@userIdIsNotSet": {
+    "description": "Error message when the user ID is not set"
+  },
+  "userIdIsNotSet": "User ID is not set",
+  "@userUpdateError": {
+    "description": "Error message when user update fails"
+  },
+  "userUpdateError": "Error on updating user",
+  "@utilities": {
+    "description": "Label for utilities"
+  },
+  "utilities": "Utilities",
+  "@yourApps": {
+    "description": "Your Apps label"
+  },
+  "yourApps": "Your Apps",
+  "@yourSettings": {
+    "description": "Your Settings label"
+  },
+  "yourSettings": "Your Settings"
+}
