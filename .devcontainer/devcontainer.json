@@ -17,7 +17,7 @@
     8081,
     5037
   ],
-  "remoteUser": "vscode",
+  "remoteUser": "root",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -39,7 +39,7 @@
         "mhutchie.git-graph"
       ],
       "settings": {
-        "java.jdt.ls.java.home": "/home/vscode/.sdkman/candidates/java/current"
+        "java.jdt.ls.java.home": "/opt/.sdkman/candidates/java/current"
       }
     }
   },

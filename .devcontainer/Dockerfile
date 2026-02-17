@@ -34,30 +34,34 @@ ENV LANGUAGE=en_US:en
 ENV LC_ALL=en_US.UTF-8
 
 # Create a non-root user
-ARG USERNAME=vscode
-ARG USER_UID=1000
-ARG USER_GID=$USER_UID
-RUN groupadd --gid $USER_GID $USERNAME 2>/dev/null || groupmod -n $USERNAME $(getent group $USER_GID | cut -d: -f1) && \
-    useradd --uid $USER_UID --gid $USER_GID -m $USERNAME 2>/dev/null || usermod -l $USERNAME -d /home/$USERNAME -m $(getent passwd $USER_UID | cut -d: -f1) && \
-    echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME && \
-    chmod 0440 /etc/sudoers.d/$USERNAME
+# ARG USERNAME=vscode
+# ARG USER_UID=1000
+# ARG USER_GID=$USER_UID
+# RUN groupadd --gid $USER_GID $USERNAME 2>/dev/null || groupmod -n $USERNAME $(getent group $USER_GID | cut -d: -f1) && \
+#     useradd --uid $USER_UID --gid $USER_GID -m $USERNAME 2>/dev/null || usermod -l $USERNAME -d /home/$USERNAME -m $(getent passwd $USER_UID | cut -d: -f1) && \
+#     echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME && \
+#     chmod 0440 /etc/sudoers.d/$USERNAME
 
 # Switch to vscode user for SDKMAN installation
-USER vscode
+ENV HOME="/opt"
+WORKDIR ${HOME}
 
 ## SDKMAN SETUP
 # Install SDKMAN
 RUN curl -s "https://get.sdkman.io" | bash && \
-    bash -c "source /home/vscode/.sdkman/bin/sdkman-init.sh && sdk version"
+    bash -c "source ${HOME}/.sdkman/bin/sdkman-init.sh && sdk version"
 
-ENV SDKMAN_DIR="/home/vscode/.sdkman"
+ENV SDKMAN_DIR="${HOME}/.sdkman"
 ENV PATH="${SDKMAN_DIR}/bin:${PATH}"
+RUN mkdir -p "${SDKMAN_DIR}"
 
 ## JAVA AND MAVEN SETUP
-# Install JDK 25 Temurin
+# Install JDK 25 Temurin for Java backend
+# Install JDK 25 Temurin for Flutter
 # Set JAVA_HOME dynamically based on architecture
 RUN bash -c "source ${SDKMAN_DIR}/bin/sdkman-init.sh && \
     sdk install java 25-tem && \
+    sdk install java 21-tem && \
     sdk default java 25-tem"
 
 ENV JAVA_HOME="${SDKMAN_DIR}/candidates/java/current"
@@ -79,29 +83,14 @@ RUN bash -c "source ${SDKMAN_DIR}/bin/sdkman-init.sh && \
 ENV GRADLE_HOME="${SDKMAN_DIR}/candidates/gradle/current"
 ENV PATH="${GRADLE_HOME}/bin:${PATH}"
 
-# Switch back to root user for cleanup and final steps
-USER root
-
-## NODE.JS SETUP
-# Install Node.js 22
-# Install TypeScript and Vite globally
-RUN mkdir -p /etc/apt/keyrings && \
-    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg && \
-    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list && \
-    apt-get update && \
-    apt-get install -y nodejs && \
-    npm install -g typescript vite
-
 ## FLUTTER SETUP
-# Install Android SDK
-ARG GRADLE_VERSION=8.11.1
-RUN apt-get install -y \
-    android-sdk
-
 # Set environment variables
-ENV ANDROID_SDK_ROOT=/usr/lib/android-sdk
-ENV FLUTTER_SDK_ROOT=/usr/lib/flutter
+ENV ANDROID_SDK_ROOT="${HOME}/android-sdk"
+ENV FLUTTER_SDK_ROOT="${HOME}/flutter"
 ENV FLUTTER_SDK_VERSION=3.27.1-stable
+
+RUN mkdir -p ${ANDROID_SDK_ROOT} && \
+    mkdir -p ${FLUTTER_SDK_ROOT}
 
 # Include flutter and android tools in path
 ENV PATH="${PATH}:${FLUTTER_SDK_ROOT}/bin:${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin:${ANDROID_SDK_ROOT}/platform-tools"
@@ -112,13 +101,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Add flutter to safe directory in git
 # Configure git user name and email
 # Set git config for the vscode user as well
-RUN git config --global --add safe.directory /usr/lib/flutter && \
+RUN git config --global --add safe.directory ${FLUTTER_SDK_ROOT} && \
     git config --global user.name "Deddy Kakunsi" && \
-    git config --global user.email "deddy.kakunsi@gmail.com" && \
-    mkdir -p /home/vscode/.gitconfig.d && \
-    git config --file /home/vscode/.gitconfig user.name "Deddy Kakunsi" && \
-    git config --file /home/vscode/.gitconfig user.email "deddy.kakunsi@gmail.com" && \
-    chown -R vscode:vscode /home/vscode/.gitconfig /home/vscode/.gitconfig.d
+    git config --global user.email "deddy.kakunsi@gmail.com"
 
 # Download and install Android Command Line Tools
 # Accept Android SDK licenses and install necessary components
@@ -130,9 +115,19 @@ RUN mkdir -p ${ANDROID_SDK_ROOT}/cmdline-tools && \
     mv ${ANDROID_SDK_ROOT}/cmdline-tools/cmdline-tools ${ANDROID_SDK_ROOT}/cmdline-tools/latest && \
     rm commandlinetools.zip && \
     yes | ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --licenses && \
-    ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0" && \
+    ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0" "ndk;27.0.12077973" && \
     git clone https://github.com/flutter/flutter.git -b stable ${FLUTTER_SDK_ROOT} && \
     flutter --disable-analytics
+
+## NODE.JS SETUP
+# Install Node.js 22
+# Install TypeScript and Vite globally
+# RUN mkdir -p /etc/apt/keyrings && \
+#     curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg && \
+#     echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list && \
+#     apt-get update && \
+#     apt-get install -y nodejs && \
+#     npm install -g typescript vite
 
 ## DOCKER SETUP
 # Install Docker inside docker
@@ -142,29 +137,23 @@ RUN install -m 0755 -d /etc/apt/keyrings && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
     $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
     apt-get update && \
-    apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin && \
-    usermod -aG docker ${USERNAME}
+    apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 ## AI Agents SETUP
 # Install Ghostty terminal emulator
 # Install OpenCode Agent
 # Install Copilot CLI
-USER vscode
-RUN curl -fsSL https://raw.githubusercontent.com/mkasberg/ghostty-ubuntu/HEAD/install.sh && \
+RUN curl -fsSL https://raw.githubusercontent.com/mkasberg/ghostty-ubuntu/HEAD/install.sh | bash && \
     curl -fsSL https://opencode.ai/install | bash && \
     curl -fsSL https://gh.io/copilot-install | bash
-
-# Switch back to root user for cleanup and final steps
-USER root
 
 # Clean everything
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy private key for cloning from git repositories
-COPY .ssh/* /home/vscode/.ssh/
-RUN chmod 600 /home/vscode/.ssh/id_rsa && \
-    chown vscode:vscode /home/vscode/.ssh/*
+COPY .ssh/* "${HOME}/.ssh/"
+RUN chmod 600 "${HOME}/.ssh/id_rsa"
 
 # Default shell to bash
 SHELL ["/bin/bash", "-c"]
