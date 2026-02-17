@@ -54,7 +54,7 @@ class AccountFormState extends AppFormState<AccountForm, AccountViewModel> {
               enabledBorder: borderSettings,
               border: borderSettings,
             ),
-            value: viewModel?.type.value,
+            initialValue: viewModel?.type.value,
             items:
                 AccountType.types().map((String type) {
                   return DropdownMenuItem<String>(

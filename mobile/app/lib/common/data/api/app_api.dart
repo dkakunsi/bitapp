@@ -1,4 +1,6 @@
-import 'package:app_common/app_common.dart';
+import 'package:bitapp/common/data/model/api_data.dart';
+import 'package:bitapp/common/data/model/configuration.dart';
+import 'package:bitapp/common/data/store/configuration_store.dart';
 import 'package:http/http.dart' as http;
 
 abstract class AppApi<T extends ApiData> {

@@ -258,7 +258,7 @@ class TransactionFormState
               enabledBorder: borderSettings,
               border: borderSettings,
             ),
-            value: _category,
+            initialValue: _category,
             items:
                 _availableCategories
                     .where((entry) => entry.name.canShow(_transactionType))

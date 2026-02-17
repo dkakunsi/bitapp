@@ -1,4 +1,5 @@
-import 'package:app_common/app_common.dart';
+import 'package:bitapp/common/data/model/configuration.dart';
+import 'package:bitapp/common/data/store/app_store.dart';
 import 'package:sembast/sembast_io.dart';
 
 class ConfigurationStore extends AppStore<Configuration> {

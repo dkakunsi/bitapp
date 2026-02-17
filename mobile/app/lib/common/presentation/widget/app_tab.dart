@@ -25,7 +25,7 @@ class AppTab<
         if (state is! AppTabSelected) {
           return Container();
         }
-        final selectedState = state as AppTabSelected;
+        final selectedState = state;
         return Column(
           children: [
             Row(
