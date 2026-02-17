@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:app_common/app_common.dart';
+import 'package:bitapp/common/common.dart';
 import 'package:bitapp/money/data/model/transaction_analytics.dart';
 import 'package:bitapp/money/presentation/viewmodel/transaction_analytics_viewmodel.dart';
 import 'package:bitapp/money/usecase/transaction_analytic_usecase.dart';

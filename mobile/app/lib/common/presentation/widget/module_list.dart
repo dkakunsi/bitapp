@@ -1,10 +1,10 @@
-import 'package:app_common/app_common.dart';
+import 'package:bitapp/common/common.dart';
 import 'package:flutter/material.dart';
 
 class ModuleList extends StatelessWidget {
   final List<ModuleConfig> modules;
 
-  ModuleList({super.key, required this.modules});
+  const ModuleList({super.key, required this.modules});
 
   @override
   Widget build(BuildContext context) {

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:app_common/app_common.dart';
+import 'package:bitapp/common/common.dart';
 import 'package:bitapp/money/bloc/account/account_bloc.dart';
 import 'package:bitapp/money/bloc/loan/loan_bloc.dart';
 import 'package:bitapp/money/data/model/transaction.dart';

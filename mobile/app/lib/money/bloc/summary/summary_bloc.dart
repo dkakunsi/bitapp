@@ -1,4 +1,4 @@
-import 'package:app_common/app_common.dart';
+import 'package:bitapp/common/common.dart';
 import 'package:bitapp/money/data/model/summary.dart';
 import 'package:bitapp/money/presentation/viewmodel/summary_viewmodel.dart';
 import 'package:bitapp/money/usecase/summary_usecase.dart';

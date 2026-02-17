@@ -1,4 +1,4 @@
-import 'package:app_common/app_common.dart';
+import 'package:bitapp/common/common.dart';
 import 'package:flutter/material.dart';
 
 class AppButton extends StatelessWidget {
@@ -19,7 +19,7 @@ class AppButton extends StatelessWidget {
 
   final void Function(BuildContext context) onTap;
 
-  AppButton({
+  const AppButton({
     super.key,
     required this.label,
     required this.onTap,

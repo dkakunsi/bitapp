@@ -1,6 +1,4 @@
-import 'package:app_common/app_common.dart';
-import 'package:app_common/src/data/api/log_api.dart';
-import 'package:app_common/src/data/model/log.dart';
+import 'package:bitapp/common/common.dart';
 import 'package:logging/logging.dart';
 
 abstract class LogConfig {

@@ -1,4 +1,4 @@
-import 'package:app_common/app_common.dart';
+import 'package:bitapp/common/common.dart';
 
 class UserViewModel extends ViewModel {
   final User _user;

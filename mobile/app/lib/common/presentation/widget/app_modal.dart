@@ -1,4 +1,4 @@
-import 'package:app_common/app_common.dart';
+import 'package:bitapp/common/common.dart';
 import 'package:flutter/material.dart';
 
 class AppModal<AF extends AppForm<VM>, VM extends ViewModel>
@@ -9,7 +9,7 @@ class AppModal<AF extends AppForm<VM>, VM extends ViewModel>
   final String saveLabel;
   final String? routeOnDelete;
 
-  AppModal({
+  const AppModal({
     super.key,
     required this.modalContent,
     required this.modalKey,
@@ -156,7 +156,7 @@ class AppOptionModal<
   final String saveLabel;
   final String deleteLabel;
 
-  AppOptionModal({
+  const AppOptionModal({
     super.key,
     required this.options,
     required this.saveLabel,

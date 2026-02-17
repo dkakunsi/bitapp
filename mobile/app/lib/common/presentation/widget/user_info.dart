@@ -1,11 +1,11 @@
-import 'package:app_common/app_common.dart';
+import 'package:bitapp/common/common.dart';
 import 'package:flutter/material.dart';
 
 class UserInfo extends StatelessWidget {
   final UserViewModel user;
   final String logoutLabel;
 
-  UserInfo({super.key, required this.user, required this.logoutLabel});
+  const UserInfo({super.key, required this.user, required this.logoutLabel});
 
   @override
   Widget build(BuildContext context) {

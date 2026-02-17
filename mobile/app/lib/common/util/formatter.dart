@@ -1,4 +1,4 @@
-import 'package:app_common/app_common.dart';
+import 'package:bitapp/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -58,7 +58,8 @@ extension TimeFormatter on TimeOfDay {
 
   int toInt() => hour * 60 + minute;
 
-  static fromInt(int value) => TimeOfDay(hour: value ~/ 60, minute: value % 60);
+  static TimeOfDay fromInt(int value) =>
+      TimeOfDay(hour: value ~/ 60, minute: value % 60);
 }
 
 @Deprecated('Convert to int instead')

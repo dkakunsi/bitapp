@@ -1,4 +1,4 @@
-import 'package:app_common/app_common.dart';
+import 'package:bitapp/common/common.dart';
 import 'package:bitapp/money/data/model/transaction.dart';
 import 'package:bitapp/money/data/model/transaction_analytics.dart';
 import 'package:bitapp/money/presentation/viewmodel/transaction_viewmodel.dart';

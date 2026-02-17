@@ -1,4 +1,4 @@
-import 'package:app_common/app_common.dart';
+import 'package:bitapp/common/common.dart';
 import 'package:flutter/material.dart';
 
 class Settings extends StatelessWidget {
@@ -13,7 +13,7 @@ class Settings extends StatelessWidget {
   final void Function(BuildContext)? onSynchronize;
   final Map<Language, String> availableLanguages;
 
-  Settings({
+  const Settings({
     super.key,
     this.user,
     required this.appInfoLabel,

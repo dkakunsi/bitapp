@@ -1,4 +1,4 @@
-import 'package:app_common/app_common.dart';
+import 'package:bitapp/common/common.dart';
 import 'package:bitapp/firebase_options.dart';
 import 'package:bitapp/l10n/app_localizations.dart';
 import 'package:bitapp/l10n/localization_extension.dart';

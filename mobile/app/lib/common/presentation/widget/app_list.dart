@@ -1,4 +1,4 @@
-import 'package:app_common/app_common.dart';
+import 'package:bitapp/common/common.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
@@ -92,7 +92,7 @@ class AppListObjectView extends AppListView {
   final bool isGrouped;
   final List<Widget> Function(ListViewModel)? hightlight;
 
-  AppListObjectView({
+  const AppListObjectView({
     super.key,
     super.onItemTap,
     super.getIcon,

@@ -1,4 +1,4 @@
-import 'package:app_common/app_common.dart';
+import 'package:bitapp/common/common.dart';
 import 'package:bitapp/l10n/localization_extension.dart';
 import 'package:bitapp/money/bloc/transaction_analytics/transaction_analytics_bloc.dart';
 import 'package:bitapp/money/extension/transaction_category_extension.dart';

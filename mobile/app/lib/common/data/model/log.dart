@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:app_common/src/data/model/api_data.dart';
+import 'package:bitapp/common/data/model/api_data.dart';
 import 'package:logging/logging.dart';
 
 class Log implements ApiData {

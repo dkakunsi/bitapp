@@ -1,4 +1,4 @@
-import 'package:app_common/app_common.dart';
+import 'package:bitapp/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -9,7 +9,7 @@ class AuthenticationScreen extends AppScreen {
   final String signInWithGoogleLabel;
   final String authenticationFailedMessage;
 
-  AuthenticationScreen({
+  const AuthenticationScreen({
     super.key,
     required this.appRouteName,
     required this.signInWithGoogleLabel,
@@ -35,7 +35,7 @@ class AuthenticationScreenContent extends AppScreenContent {
   final String signInWithGoogleLabel;
   final String authenticationFailedMessage;
 
-  AuthenticationScreenContent({
+  const AuthenticationScreenContent({
     super.key,
     required this.appRouteName,
     required this.signInWithGoogleLabel,

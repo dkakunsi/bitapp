@@ -1,4 +1,4 @@
-import 'package:app_common/app_common.dart';
+import 'package:bitapp/common/common.dart';
 import 'package:http/http.dart' as http;
 
 class UserApi extends AppApi<User> {

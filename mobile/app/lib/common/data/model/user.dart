@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:app_common/app_common.dart';
+import 'package:bitapp/common/common.dart';
 
 class User implements ApiData, StoreData {
   @override

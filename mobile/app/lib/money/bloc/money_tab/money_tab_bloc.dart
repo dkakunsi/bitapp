@@ -1,4 +1,4 @@
-import 'package:app_common/app_common.dart';
+import 'package:bitapp/common/common.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'money_tab_event.dart';

@@ -1,4 +1,4 @@
-import 'package:app_common/app_common.dart';
+import 'package:bitapp/common/common.dart';
 import 'package:bitapp/money/data/model/account.dart';
 import 'package:sembast/sembast_io.dart';
 

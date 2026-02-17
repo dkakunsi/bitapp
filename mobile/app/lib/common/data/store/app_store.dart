@@ -1,4 +1,4 @@
-import 'package:app_common/app_common.dart';
+import 'package:bitapp/common/common.dart';
 import 'package:sembast/sembast_io.dart';
 import 'package:sembast/utils/database_utils.dart';
 import 'package:uuid/uuid.dart';
@@ -17,7 +17,7 @@ abstract class AppStore<T extends StoreData> {
     await store.record(t.id ?? Uuid().v4()).put(database, t.toStoreJson());
   }
 
-  addAll(List<T> listOfT) async {
+  Future<void> addAll(List<T> listOfT) async {
     for (var t in listOfT) {
       await save(t);
     }

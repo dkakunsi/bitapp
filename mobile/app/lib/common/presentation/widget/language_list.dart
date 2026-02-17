@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import 'package:app_common/app_common.dart';
+import 'package:bitapp/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LanguageList extends StatelessWidget {
   final Map<Language, String> availableLanguages;
 
-  LanguageList({super.key, required this.availableLanguages});
+  const LanguageList({super.key, required this.availableLanguages});
 
   @override
   Widget build(BuildContext context) {

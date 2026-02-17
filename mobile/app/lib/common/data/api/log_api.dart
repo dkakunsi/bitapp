@@ -1,5 +1,4 @@
-import 'package:app_common/app_common.dart';
-import 'package:app_common/src/data/model/log.dart';
+import 'package:bitapp/common/common.dart';
 import 'package:http/http.dart' as http;
 
 class LogApi extends AppApi<Log> {

@@ -10,6 +10,5 @@ abstract class AppTabBloc<EVENT extends AppTabEvent, STATE extends AppTabState>
   @override
   void onTransition(Transition<EVENT, STATE> transition) {
     super.onTransition(transition);
-    print(transition);
   }
 }

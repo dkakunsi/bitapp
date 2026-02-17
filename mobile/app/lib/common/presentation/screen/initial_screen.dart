@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:app_common/app_common.dart';
+import 'package:bitapp/common/common.dart';
 import 'package:flutter/material.dart';
 
 class InitialScreen extends AppScreen {
@@ -8,7 +8,11 @@ class InitialScreen extends AppScreen {
   final String mainRoute;
   final String authRoute;
 
-  InitialScreen({super.key, required this.mainRoute, required this.authRoute});
+  const InitialScreen({
+    super.key,
+    required this.mainRoute,
+    required this.authRoute,
+  });
 
   @override
   void onConfigurationChange(BuildContext context, ConfigurationState state) {
@@ -31,7 +35,7 @@ class InitialScreen extends AppScreen {
 }
 
 class InitialScreenContent extends AppScreenContent {
-  InitialScreenContent({super.key});
+  const InitialScreenContent({super.key});
 
   @override
   Widget build(BuildContext context) {

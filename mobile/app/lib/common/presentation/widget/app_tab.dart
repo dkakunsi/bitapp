@@ -1,4 +1,4 @@
-import 'package:app_common/app_common.dart';
+import 'package:bitapp/common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -57,7 +57,7 @@ class AppTab<
 class _SelectButton extends AppButton {
   final String selected;
 
-  _SelectButton({
+  const _SelectButton({
     required super.label,
     required super.onTap,
     required this.selected,
@@ -81,7 +81,7 @@ class AppTabPageHeader extends StatelessWidget {
   final String? analyticLabel;
   final String? analyticRoute;
 
-  AppTabPageHeader({
+  const AppTabPageHeader({
     super.key,
     required this.headerLabel,
     this.analyticLabel,

@@ -1,4 +1,4 @@
-import 'package:app_common/app_common.dart';
+import 'package:bitapp/common/common.dart';
 import 'package:flutter/material.dart';
 
 class UserScreen extends AppScreen {
@@ -17,7 +17,7 @@ class UserScreen extends AppScreen {
   final void Function(BuildContext)? onSynchronize;
   final Map<Language, String> availableLanguages;
 
-  UserScreen({
+  const UserScreen({
     super.key,
     required this.modules,
     required this.moduleLabel,
