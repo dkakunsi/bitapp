@@ -56,10 +56,6 @@ android {
             }
         }
     }
-    
-    defaultConfig {
-      minSdk = flutter.minSdkVersion
-    }
 }
 
 flutter {

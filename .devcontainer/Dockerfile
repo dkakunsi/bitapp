@@ -67,8 +67,8 @@ ENV PATH="${MAVEN_HOME}/bin:${PATH}"
 
 # Install Gradle
 RUN bash -c "source ${SDKMAN_DIR}/bin/sdkman-init.sh && \
-    sdk install gradle 8.11.1 && \
-    sdk default gradle 8.11.1"
+    sdk install gradle 9.1.0 && \
+    sdk default gradle 9.1.0"
 
 ENV GRADLE_HOME="${SDKMAN_DIR}/candidates/gradle/current"
 ENV PATH="${GRADLE_HOME}/bin:${PATH}"
