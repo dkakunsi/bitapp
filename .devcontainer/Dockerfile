@@ -33,25 +33,15 @@ ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US:en
 ENV LC_ALL=en_US.UTF-8
 
-# Create a non-root user
-# ARG USERNAME=vscode
-# ARG USER_UID=1000
-# ARG USER_GID=$USER_UID
-# RUN groupadd --gid $USER_GID $USERNAME 2>/dev/null || groupmod -n $USERNAME $(getent group $USER_GID | cut -d: -f1) && \
-#     useradd --uid $USER_UID --gid $USER_GID -m $USERNAME 2>/dev/null || usermod -l $USERNAME -d /home/$USERNAME -m $(getent passwd $USER_UID | cut -d: -f1) && \
-#     echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME && \
-#     chmod 0440 /etc/sudoers.d/$USERNAME
-
-# Switch to vscode user for SDKMAN installation
-ENV HOME="/opt"
-WORKDIR ${HOME}
+ENV INSTALLATION_DIR="/opt"
+WORKDIR ${INSTALLATION_DIR}
 
 ## SDKMAN SETUP
 # Install SDKMAN
+ENV SDKMAN_DIR="${INSTALLATION_DIR}/.sdkman"
 RUN curl -s "https://get.sdkman.io" | bash && \
-    bash -c "source ${HOME}/.sdkman/bin/sdkman-init.sh && sdk version"
+    bash -c "source ${SDKMAN_DIR}/bin/sdkman-init.sh && sdk version"
 
-ENV SDKMAN_DIR="${HOME}/.sdkman"
 ENV PATH="${SDKMAN_DIR}/bin:${PATH}"
 RUN mkdir -p "${SDKMAN_DIR}"
 
@@ -85,8 +75,8 @@ ENV PATH="${GRADLE_HOME}/bin:${PATH}"
 
 ## FLUTTER SETUP
 # Set environment variables
-ENV ANDROID_SDK_ROOT="${HOME}/android-sdk"
-ENV FLUTTER_SDK_ROOT="${HOME}/flutter"
+ENV ANDROID_SDK_ROOT="${INSTALLATION_DIR}/android-sdk"
+ENV FLUTTER_SDK_ROOT="${INSTALLATION_DIR}/flutter"
 ENV FLUTTER_SDK_VERSION=3.27.1-stable
 
 RUN mkdir -p ${ANDROID_SDK_ROOT} && \
@@ -142,18 +132,18 @@ RUN install -m 0755 -d /etc/apt/keyrings && \
 ## AI Agents SETUP
 # Install Ghostty terminal emulator
 # Install OpenCode Agent
+# RUN curl -fsSL https://raw.githubusercontent.com/mkasberg/ghostty-ubuntu/HEAD/install.sh | bash && \
+#     curl -fsSL https://opencode.ai/install | bash && \
 # Install Copilot CLI
-RUN curl -fsSL https://raw.githubusercontent.com/mkasberg/ghostty-ubuntu/HEAD/install.sh | bash && \
-    curl -fsSL https://opencode.ai/install | bash && \
-    curl -fsSL https://gh.io/copilot-install | bash
+RUN curl -fsSL https://gh.io/copilot-install | bash
 
 # Clean everything
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy private key for cloning from git repositories
-COPY .ssh/* "${HOME}/.ssh/"
-RUN chmod 600 "${HOME}/.ssh/id_rsa"
+COPY .ssh/* "/root/.ssh/"
+RUN chmod 600 "/root/.ssh/id_rsa"
 
 # Default shell to bash
 SHELL ["/bin/bash", "-c"]

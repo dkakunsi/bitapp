@@ -42,4 +42,5 @@ replay_pid*
 **/.cxx/**/*.*
 
 .devcontainer/.m2/**
+.devcontainer/.pub-cache/**
 .devcontainer/.ssh/**

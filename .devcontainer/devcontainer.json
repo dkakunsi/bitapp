@@ -11,8 +11,8 @@
     "/dev/bus/usb:/dev/bus/usb"
   ],
   "mounts": [
-    "source=./.devcontainer/.m2,target=/home/vscode/.m2,type=bind",
-    "source=./.devcontainer/.pub-cache,target=/home/vscode/.pub-cache,type=bind"
+    "source=./.devcontainer/.m2,target=/root/.m2,type=bind",
+    "source=./.devcontainer/.pub-cache,target=/root/.pub-cache,type=bind"
   ],
   "forwardPorts": [
     8081,
