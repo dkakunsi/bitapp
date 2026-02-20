@@ -1,7 +1,7 @@
 # Default Maven goal
 GOAL=install
 
-.PHONY: build report test
+.PHONY: backend backend-test backend-version help
 
 # Target for building the build
 backend:
