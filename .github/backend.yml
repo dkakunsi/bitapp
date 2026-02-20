@@ -38,6 +38,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build
-        run: make build-backend GOAL=deploy
+        run: |
+          REVISION=$(make backend-version)
+          BUILD_DATE=$(date -u +"%Y%m%d%H%M")
+          VERSION="${REVISION}.${BUILD_DATE}"
+          echo "Building backend version: ${VERSION}"
+          make backend GOAL=deploy VERSION="${VERSION}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

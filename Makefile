@@ -4,7 +4,7 @@ GOAL=install
 .PHONY: build report test
 
 # Target for building the build
-build-backend:
+backend:
 	@if [ -z "$(VERSION)" ]; then \
 		mvn --file ./backend/pom.xml clean $(GOAL); \
 	else \
@@ -12,13 +12,17 @@ build-backend:
 	fi
 
 # Target for testing the build
-test-backend: GOAL=verify
-test-backend: build-backend
+backend-test: GOAL=verify
+backend-test: backend
+
+backend-version:
+	@echo "$$(mvn --file ./backend/pom.xml help:evaluate -Dexpression=project.version -q -DforceStdout)"
 
 # Usage instructions
 help:
 	@echo "Usage:"
-	@echo "  make build-backend [GOAL=<goal>] [VERSION=<version>]	# Build the backend (default goal: verify)"
+	@echo "  make backend [GOAL=<goal>] [VERSION=<version>]				# Build the backend (default goal: verify)"
 	@echo "  make report [TOKEN=<token>]        									# Build the report (optional: pass TOKEN for Sonar)"
-	@echo "  make test-backend                          					# Run tests for the backend"
+	@echo "  make backend-test                          					# Run tests for the backend"
+	@echo "  make backend-version                          					# Show the current backend version"
 	@echo "  make help                          									# Show this help message"
