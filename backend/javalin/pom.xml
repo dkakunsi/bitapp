@@ -6,12 +6,12 @@
   <parent>
     <groupId>io.dkakunsi</groupId>
     <artifactId>bitapp</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>${revision}</version>
   </parent>
 
   <groupId>io.dkakunsi.bitapp</groupId>
   <artifactId>javalin</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>${revision}</version>
   <packaging>jar</packaging>
   <name>Dkakunsi :: BitApp :: Javalin Web Library</name>
 

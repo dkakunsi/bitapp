@@ -4,12 +4,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.dkakunsi</groupId>
   <artifactId>bitapp</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>${revision}</version>
   <packaging>pom</packaging>
 
   <name>Dkakunsi BitApp Backend Project</name>
 
   <properties>
+    <revision>1.0</revision>
     <skipTestCondition>false</skipTestCondition>
 
     <!-- Unify encoding for all the modules -->
