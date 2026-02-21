@@ -39,7 +39,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build
         run: |
-          VERSION=$(date -u +"%Y%m%d%H%M")
+          VERSION=$(date -u +"%Y%m%d%H%M").${GITHUB_SHA::7}
           echo "Building backend version: ${VERSION}"
           echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
           make backend GOAL=deploy VERSION="${VERSION}"
