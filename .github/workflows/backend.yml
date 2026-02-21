@@ -39,10 +39,11 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build
         run: |
-          REVISION=$(make backend-version)
-          BUILD_DATE=$(date -u +"%Y%m%d%H%M")
-          VERSION="${REVISION}.${BUILD_DATE}"
+          VERSION=$(date -u +"%Y%m%d%H%M")
           echo "Building backend version: ${VERSION}"
+          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
           make backend GOAL=deploy VERSION="${VERSION}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release Helm Chart
+        run: make backend-chart TOKEN="${{ secrets.GITHUB_TOKEN }}" VERSION="${VERSION}"
