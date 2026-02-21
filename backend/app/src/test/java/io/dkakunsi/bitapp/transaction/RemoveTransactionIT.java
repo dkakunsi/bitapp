@@ -20,7 +20,7 @@ import kong.unirest.Unirest;
 
 public class RemoveTransactionIT extends AppTestUtil {
 
-    private static final int port = 7;
+    private static final int port = 20017;
 
     private static RemoveTransactionIT sut = new RemoveTransactionIT();
 
