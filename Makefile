@@ -44,4 +44,4 @@ backend-version:
 	else \
 		SHORT_SHA="$$(git rev-parse --short=7 HEAD)"; \
 	fi; \
-	echo "$$REVISION+$$SHORT_SHA.$$BUILD_DATE"
+	echo "$$REVISION-$$SHORT_SHA.$$BUILD_DATE"
