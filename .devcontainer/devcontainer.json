@@ -37,7 +37,8 @@
         "ms-vscode-remote.remote-containers",
         "sst-dev.opencode",
         "dotjoshjohnson.xml",
-        "mhutchie.git-graph"
+        "mhutchie.git-graph",
+        "mongodb.mongodb-vscode"
       ],
       "settings": {
         "java.jdt.ls.java.home": "/opt/.sdkman/candidates/java/current"
