@@ -47,4 +47,10 @@ public class SecureTestUtil {
     var keyFactory = KeyFactory.getInstance(RSA);
     return (RSAPrivateKey) keyFactory.generatePrivate(keySpec);
   }
+
+  public static void main(String[] args) {
+    var userId = AppTestUtil.USER_ID;
+    var token = generateToken(userId);
+    System.out.println(token);
+  }
 }
