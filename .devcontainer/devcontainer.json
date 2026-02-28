@@ -38,7 +38,8 @@
         "sst-dev.opencode",
         "dotjoshjohnson.xml",
         "mhutchie.git-graph",
-        "mongodb.mongodb-vscode"
+        "mongodb.mongodb-vscode",
+        "postman.postman-for-vscode"
       ],
       "settings": {
         "java.jdt.ls.java.home": "/opt/.sdkman/candidates/java/current"
