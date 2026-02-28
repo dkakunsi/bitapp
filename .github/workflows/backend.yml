@@ -93,9 +93,10 @@ jobs:
           env_vars: |
             app.port=${{ vars.APP_PORT }}
             JWT_PUBLIC_KEY=${{ vars.JWT_PUBLIC_KEY }}
-            MONGO_CONNECTION_STRING=${{ secrets.MONGO_CONNECTION_STRING_DEV }}
             MONGO_DATABASE=${{ vars.MONGO_DATABASE_NAME }}
             MONGO_SECURE=${{ vars.MONGO_SECURE }}
+          secrets: |
+            MONGO_CONNECTION_STRING=${{ secrets.MONGO_CONNECTION_STRING_DEV }}
             MONGO_USERNAME=${{ secrets.MONGO_USERNAME_DEV }}
             MONGO_PASSWORD=${{ secrets.MONGO_PASSWORD_DEV }}
           min_instances: 0
