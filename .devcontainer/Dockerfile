@@ -1,4 +1,4 @@
-FROM ghcr.io/dkakunsi/lab/aio:1.0
+FROM ghcr.io/dkakunsi/lab/dev-aio:1.0
 
 # Copy private key for cloning from git repositories
 COPY .ssh/* "/root/.ssh/"
