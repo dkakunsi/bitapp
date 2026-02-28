@@ -13,6 +13,8 @@ jobs:
 
   build:
     runs-on: ubuntu-22.04
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     permissions:
       contents: read
       packages: write
@@ -22,6 +24,11 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.ref_name }}
+      - name: Compute version
+        id: version
+        run: |
+          VERSION=$(make backend-version)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -38,29 +45,58 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build
-        run: |
-          VERSION=$(make backend-version)
-          echo "Building backend version: ${VERSION}"
-          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
-
-          make backend GOAL=deploy VERSION="${VERSION}"
+        run: make backend GOAL=deploy VERSION="${{ steps.version.outputs.version }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Release Helm Chart
-        run: make backend-chart TOKEN="${{ secrets.HELM_CHARTS_TOKEN }}" VERSION="${VERSION}"
-      - name: Copy artifacts to dockerhub directory
+        run: make backend-chart TOKEN="${{ secrets.HELM_CHARTS_TOKEN }}" VERSION="${{ steps.version.outputs.version }}"
+      
+      ## Since GCP Cloud Run doesn't support private registries, we need to push the image to Docker Hub as well
+      - name: Docker Hub - Prepare artifacts
         run: |
           mkdir -p ./dockerhub/maven
           cp ./backend/app/target/app.jar ./dockerhub/maven/
           cp ./backend/app/target/Dockerfile ./dockerhub/
-      - name: Login to Docker Hub
+      - name: Docker Hub - Login
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Build and push Docker image
+      - name: Docker Hub - Build and Push
         uses: docker/build-push-action@v5
         with:
           context: ./dockerhub
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/bitapp:${{ env.VERSION }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/bitapp:${{ steps.version.outputs.version }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v1
+        with: 
+          service: bitapp
+          image: docker.io/dkakunsi/bitapp:${{ needs.build.outputs.version }}
+          region: asia-southeast2
+          allow_unauthenticated: true
+          port: 8080
+          service_account: cloud-run-sa@bitapp-442618.iam.gserviceaccount.com
+          env_vars: |
+            app.port=${{ vars.APP_PORT }}
+            JWT_PUBLIC_KEY=${{ vars.JWT_PUBLIC_KEY }}
+            MONGO_CONNECTION_STRING=${{ secrets.MONGO_CONNECTION_STRING_DEV }}
+            MONGO_DATABASE=${{ vars.MONGO_DATABASE_NAME }}
+            MONGO_SECURE=${{ vars.MONGO_SECURE }}
+            MONGO_USERNAME=${{ secrets.MONGO_USERNAME_DEV }}
+            MONGO_PASSWORD=${{ secrets.MONGO_PASSWORD_DEV }}
+          min_instances: 0
+          max_instances: 5
