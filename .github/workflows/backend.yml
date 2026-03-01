@@ -8,10 +8,21 @@ on:
       - "backend/**"
       - "!backend/**/*.MD"
   workflow_dispatch:
+    inputs:
+      deploy_only:
+        description: 'Skip build and deploy only'
+        required: false
+        type: boolean
+        default: false
+      version:
+        description: 'App version to deploy'
+        required: false
+        type: string
 
 jobs:
 
   build:
+    if: ${{ !github.event.inputs.deploy_only }}
     runs-on: ubuntu-22.04
     outputs:
       version: ${{ steps.version.outputs.version }}
@@ -72,6 +83,9 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-22.04
+    if: ${{ always() && (needs.build.result == 'success' || github.event.inputs.deploy_only == 'true') }}
+    env:
+      VERSION: ${{ github.event.inputs.deploy_only == 'true' && github.event.inputs.version || needs.build.outputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -85,7 +99,7 @@ jobs:
         uses: google-github-actions/deploy-cloudrun@v1
         with: 
           service: bitapp
-          image: docker.io/dkakunsi/bitapp:${{ needs.build.outputs.version }}
+          image: docker.io/dkakunsi/bitapp:${{ env.VERSION }}
           region: asia-southeast2
           allow_unauthenticated: true
           port: 8080
@@ -95,9 +109,11 @@ jobs:
             JWT_PUBLIC_KEY=${{ vars.JWT_PUBLIC_KEY }}
             MONGO_DATABASE=${{ vars.MONGO_DATABASE_NAME }}
             MONGO_SECURE=${{ vars.MONGO_SECURE }}
+          env_vars_update_strategy: overwrite
           secrets: |
             MONGO_CONNECTION_STRING=${{ secrets.MONGO_CONNECTION_STRING_DEV }}
             MONGO_USERNAME=${{ secrets.MONGO_USERNAME_DEV }}
             MONGO_PASSWORD=${{ secrets.MONGO_PASSWORD_DEV }}
+          secrets_update_strategy: overwrite
           min_instances: 0
           max_instances: 5
