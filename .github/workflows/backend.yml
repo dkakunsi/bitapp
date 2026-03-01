@@ -10,12 +10,12 @@ on:
   workflow_dispatch:
     inputs:
       deploy_only:
-        description: 'Skip build and deploy only'
+        description: 'Just Deploy'
         required: false
         type: boolean
         default: false
       version:
-        description: 'App version to deploy'
+        description: 'Version to deploy'
         required: false
         type: string
 
@@ -103,17 +103,15 @@ jobs:
           region: asia-southeast2
           allow_unauthenticated: true
           port: 8080
-          service_account: cloud-run-sa@bitapp-442618.iam.gserviceaccount.com
+          service_account: ${{ vars.GCP_SA }}
           env_vars: |-
-            app.port="${{ vars.APP_PORT }}"
-            JWT_PUBLIC_KEY="${{ vars.JWT_PUBLIC_KEY }}"
-            MONGO_DATABASE="${{ vars.MONGO_DATABASE_NAME }}"
-            MONGO_SECURE="${{ vars.MONGO_SECURE }}"
+            app.port=${{ vars.APP_PORT }}
+            JWT_PUBLIC_KEY=${{ vars.JWT_PUBLIC_KEY }}
+            MONGO_DATABASE=${{ vars.MONGO_DATABASE_NAME }}
+            MONGO_SECURE=${{ vars.MONGO_SECURE }}
+            MONGO_CONNECTION_STRING=${{ secrets.MONGO_CONNECTION_STRING_DEV }}
+            MONGO_USERNAME=${{ secrets.MONGO_USERNAME_DEV }}
+            MONGO_PASSWORD=${{ secrets.MONGO_PASSWORD_DEV }}
           env_vars_update_strategy: overwrite
-          secrets: |-
-            MONGO_CONNECTION_STRING="${{ secrets.MONGO_CONNECTION_STRING_DEV }}"
-            MONGO_USERNAME="${{ secrets.MONGO_USERNAME_DEV }}"
-            MONGO_PASSWORD="${{ secrets.MONGO_PASSWORD_DEV }}"
-          secrets_update_strategy: overwrite
           min_instances: 0
           max_instances: 5
