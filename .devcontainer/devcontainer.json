@@ -12,7 +12,8 @@
   ],
   "mounts": [
     "source=./.devcontainer/.m2,target=/root/.m2,type=bind",
-    "source=./.devcontainer/.pub-cache,target=/root/.pub-cache,type=bind"
+    "source=./.devcontainer/.pub-cache,target=/root/.pub-cache,type=bind",
+    "source=./.devcontainer/.docker,target=/var/lib/docker,type=bind"
   ],
   "forwardPorts": [
     8081,
@@ -39,7 +40,8 @@
         "dotjoshjohnson.xml",
         "mhutchie.git-graph",
         "mongodb.mongodb-vscode",
-        "postman.postman-for-vscode"
+        "postman.postman-for-vscode",
+        "ms-azuretools.vscode-docker"
       ],
       "settings": {
         "java.jdt.ls.java.home": "/opt/.sdkman/candidates/java/current"

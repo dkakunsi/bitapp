@@ -41,6 +41,7 @@ replay_pid*
 **/.flattened-*
 **/.cxx/**/*.*
 
+.devcontainer/.docker/**
 .devcontainer/.m2/**
 .devcontainer/.pub-cache/**
 .devcontainer/.ssh/**
