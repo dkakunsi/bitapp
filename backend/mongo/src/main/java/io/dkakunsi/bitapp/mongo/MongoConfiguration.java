@@ -21,6 +21,7 @@ public final class MongoConfiguration {
   private static final String ENV_MONGO_HOST = "MONGO_HOST";
   private static final String ENV_MONGO_PORT = "MONGO_PORT";
   private static final String ENV_MONGO_DATABASE = "MONGO_DATABASE";
+  private static final String ENV_MONGO_AUTH_SOURCE = "MONGO_AUTH_SOURCE";
   private static final String ENV_MONGO_SECURE = "MONGO_SECURE";
   private static final String ENV_MONGO_USERNAME = "MONGO_USERNAME";
   private static final String ENV_MONGO_PASSWORD = "MONGO_PASSWORD";
@@ -42,7 +43,7 @@ public final class MongoConfiguration {
     var settingsBuilder = MongoClientSettings.builder()
         .applyConnectionString(new ConnectionString(connectionString));
     if (isSecure()) {
-      var credential = getCredential();
+      var credential = getCredential(connectionString);
       settingsBuilder.credential(credential);
     }
     var settings = settingsBuilder.build();
@@ -68,15 +69,28 @@ public final class MongoConfiguration {
     return secure.equalsIgnoreCase("true");
   }
 
-  private MongoCredential getCredential() {
+  private MongoCredential getCredential(String connectionString) {
     var username = configuration.get(ENV_MONGO_USERNAME).orElseThrow();
     var password = configuration.get(ENV_MONGO_PASSWORD).orElseThrow();
-    var databaseName = configuration.get(ENV_MONGO_DATABASE).orElseThrow();
+    var databaseName = getAuthenticationDatabase(connectionString);
     var credential = com.mongodb.MongoCredential.createCredential(
         username,
         databaseName,
         password.toCharArray());
     return credential;
+  }
+
+  String getAuthenticationDatabase(String connectionString) {
+    var authSource = configuration.get(ENV_MONGO_AUTH_SOURCE).orElse(null);
+    if (StringUtils.isNotBlank(authSource)) {
+      return authSource;
+    }
+
+    if (connectionString.startsWith("mongodb+srv://")) {
+      return "admin";
+    }
+
+    return configuration.get(ENV_MONGO_DATABASE).orElseThrow();
   }
 
   public MongoDatabase getDatabase() {

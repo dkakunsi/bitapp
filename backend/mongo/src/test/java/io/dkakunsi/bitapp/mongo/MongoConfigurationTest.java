@@ -1,7 +1,10 @@
 package io.dkakunsi.bitapp.mongo;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Map;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -68,5 +71,36 @@ public class MongoConfigurationTest {
 
     // Then - should not throw exception
     assertTrue(true);
+  }
+
+  @Test
+  public void givenSrvConnectionWhenAuthSourceNotSetThenShouldUseAdminSource() {
+    // Given
+    var testConfig = EnvironmentConfiguration.of(key -> Map.of(
+        "MONGO_CONNECTION_STRING", "mongodb+srv://cluster0.example.mongodb.net/",
+        "MONGO_DATABASE", "dev").get(key));
+    var underTest = new MongoConfiguration(testConfig);
+
+    // When
+    var authSource = underTest.getAuthenticationDatabase("mongodb+srv://cluster0.example.mongodb.net/");
+
+    // Then
+    assertEquals("admin", authSource);
+  }
+
+  @Test
+  public void givenAuthSourceWhenSetThenShouldUseConfiguredSource() {
+    // Given
+    var testConfig = EnvironmentConfiguration.of(key -> Map.of(
+        "MONGO_CONNECTION_STRING", "mongodb+srv://cluster0.example.mongodb.net/",
+        "MONGO_DATABASE", "dev",
+        "MONGO_AUTH_SOURCE", "customAuth").get(key));
+    var underTest = new MongoConfiguration(testConfig);
+
+    // When
+    var authSource = underTest.getAuthenticationDatabase("mongodb+srv://cluster0.example.mongodb.net/");
+
+    // Then
+    assertEquals("customAuth", authSource);
   }
 }
