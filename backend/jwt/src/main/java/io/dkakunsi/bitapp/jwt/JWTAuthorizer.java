@@ -18,14 +18,10 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import io.dkakunsi.bitapp.common.AuthorizedPrincipal;
 import io.dkakunsi.bitapp.common.Authorizer;
 import io.dkakunsi.bitapp.common.Configuration;
-import io.dkakunsi.bitapp.common.Logger;
-import io.dkakunsi.bitapp.common.SystemLogger;
 
 public class JWTAuthorizer implements Authorizer {
 
   public static final String JWT_PUBLIC_KEY = "JWT_PUBLIC_KEY";
-
-  private static final Logger LOG = SystemLogger.getLogger(JWTAuthorizer.class);
 
   private static final String EMAIL_CLAIM = "email";
 
@@ -52,7 +48,6 @@ public class JWTAuthorizer implements Authorizer {
       var keyFactory = KeyFactory.getInstance("RSA");
       return (RSAPublicKey) keyFactory.generatePublic(keySpec);
     } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
-      LOG.error("Failed to create RSA public key");
       throw new RuntimeException("Cannot create RSA key for authentication", ex);
     }
   }
@@ -60,11 +55,9 @@ public class JWTAuthorizer implements Authorizer {
   @Override
   public AuthorizedPrincipal verify(String key) {
     if (StringUtils.isBlank(key)) {
-      LOG.debug("Session key is not provided");
       throw new IllegalArgumentException("Token is not valid");
     }
 
-    LOG.debug("Verifying session with token '{}'", key);
     var token = key.replace("Bearer ", "");
     var algorithm = Algorithm.RSA256(publicKey, null);
     var verifier = JWT.require(algorithm).build();
@@ -73,7 +66,6 @@ public class JWTAuthorizer implements Authorizer {
       var email = jwt.getClaim(EMAIL_CLAIM).asString();
       return new AuthorizedPrincipal(email);
     } catch (JWTVerificationException ex) {
-      LOG.info("Token is not valid: '{}'", token);
       throw new IllegalArgumentException("Token is not valid", ex);
     }
   }
