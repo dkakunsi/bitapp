@@ -45,3 +45,8 @@ replay_pid*
 .devcontainer/.m2/**
 .devcontainer/.pub-cache/**
 .devcontainer/.ssh/**
+
+**/.devcontainer/.docker/**
+**/.devcontainer/.m2/**
+**/.devcontainer/.pub-cache/**
+**/.devcontainer/.ssh/**
