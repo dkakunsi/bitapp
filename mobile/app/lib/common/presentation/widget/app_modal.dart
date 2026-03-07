@@ -1,5 +1,9 @@
-import 'package:bitapp/common/common.dart';
+import 'package:bitapp/common/presentation/viewmodel/viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:bitapp/common/presentation/app_style.dart';
+import 'package:bitapp/common/presentation/widget/app_form.dart';
+import 'package:bitapp/common/presentation/widget/app_button.dart';
+import 'package:bitapp/features/app/extension/navigation_extension.dart';
 
 class AppModal<AF extends AppForm<VM>, VM extends ViewModel>
     extends StatelessWidget {

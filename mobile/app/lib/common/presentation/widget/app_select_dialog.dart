@@ -1,4 +1,6 @@
-import 'package:bitapp/common/common.dart';
+import 'package:bitapp/common/presentation/bloc/state.dart';
+import 'package:bitapp/common/presentation/viewmodel/viewmodel.dart';
+import 'package:bitapp/common/presentation/widget/loading_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -32,9 +34,8 @@ class AppSelectDialogState<
     return BlocBuilder<BLOC, STATE>(
       builder: (context, state) {
         if (state is LOADED_STATE) {
-          final items = (state).items
-              .where(widget.filter ?? _defaultFilter)
-              .toList();
+          final items =
+              (state).items.where(widget.filter ?? _defaultFilter).toList();
           return buildView(items, (item) {
             Navigator.of(context, rootNavigator: true).pop(item);
           });
@@ -58,16 +59,17 @@ class AppSelectDialogState<
         children: [
           SingleChildScrollView(
             child: Column(
-              children: items
-                  .map(
-                    (i) => ListTile(
-                      title: Text(i.title),
-                      onTap: () {
-                        onSelect(i);
-                      },
-                    ),
-                  )
-                  .toList(),
+              children:
+                  items
+                      .map(
+                        (i) => ListTile(
+                          title: Text(i.title),
+                          onTap: () {
+                            onSelect(i);
+                          },
+                        ),
+                      )
+                      .toList(),
             ),
           ),
         ],

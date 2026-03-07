@@ -1,4 +1,4 @@
-import 'package:bitapp/common/common.dart';
+import 'package:bitapp/common/presentation/app_style.dart';
 import 'package:flutter/material.dart';
 
 class BoxContainer extends Container {
