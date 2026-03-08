@@ -1,4 +1,4 @@
-package io.dkakunsi.bitapp.security.jwt;
+package io.dkakunsi.bitapp.jwt;
 
 import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Test;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 
 import io.dkakunsi.bitapp.common.Configuration;
-import io.dkakunsi.bitapp.jwt.JWTAuthorizer;
 import io.dkakunsi.bitapp.test.SecureTestUtil;
 
 class JWTAuthorizerTest {
