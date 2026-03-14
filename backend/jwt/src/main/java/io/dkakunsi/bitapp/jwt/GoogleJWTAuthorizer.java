@@ -1,7 +1,8 @@
 package io.dkakunsi.bitapp.jwt;
 
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.interfaces.RSAPublicKey;
 import java.util.concurrent.TimeUnit;
 
@@ -34,12 +35,12 @@ public class GoogleJWTAuthorizer implements Authorizer {
   public static GoogleJWTAuthorizer of(Configuration configuration) {
     var jwksUrl = configuration.get(GOOGLE_JWKS_URL).orElse(DEFAULT_GOOGLE_JWKS_URL);
     try {
-      var provider = new JwkProviderBuilder(new URL(jwksUrl))
+      var provider = new JwkProviderBuilder(new URI(jwksUrl).toURL())
           .cached(10, 24, TimeUnit.HOURS)
           .rateLimited(10, 1, TimeUnit.MINUTES)
           .build();
       return new GoogleJWTAuthorizer(provider);
-    } catch (MalformedURLException ex) {
+    } catch (MalformedURLException | URISyntaxException ex) {
       throw new RuntimeException("GOOGLE_JWKS_URL is not configured correctly", ex);
     }
   }
