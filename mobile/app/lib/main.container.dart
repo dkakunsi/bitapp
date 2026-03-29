@@ -8,7 +8,10 @@ Future<void> registerIocContainer() async {
   final transactionStore = TransactionStore(database);
   final userStore = UserStore(database);
 
-  final googleAuthApi = GoogleAuthenticationApi();
+  final googleAuthApi = GoogleAuthenticationApi(
+    serverClientId: DefaultFirebaseOptions.androidServerClientId,
+  );
+  await googleAuthApi.initialize();
   final userApi = UserApi(configurationStore: configurationStore);
   final accountApi = AccountApi(configurationStore: configurationStore);
   final loanApi = LoanApi(configurationStore: configurationStore);

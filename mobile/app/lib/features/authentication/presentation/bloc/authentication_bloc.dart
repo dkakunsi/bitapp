@@ -57,7 +57,8 @@ class AuthenticationBloc
   ) async {
     final result = await _authenticationUseCase.silentLogin();
     if (result.isFailure) {
-      emit(AuthenticationFailed());
+      _configurationBloc.add(DeleteSession());
+      emit(Deauthenticated());
       return;
     }
 

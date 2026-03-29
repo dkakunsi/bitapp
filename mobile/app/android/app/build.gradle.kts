@@ -19,7 +19,7 @@ if (hasKeystoreProperties) {
 }
 
 android {
-    namespace = "com.cortech.bitapp"
+    namespace = "io.dkakunsi.bitapp"
     compileSdk = flutter.compileSdkVersion
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
@@ -31,7 +31,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.cortech.bitapp"
+        applicationId = "io.dkakunsi.bitapp"
         minSdk = flutter.minSdkVersion
         targetSdk = 34
         versionCode = flutter.versionCode

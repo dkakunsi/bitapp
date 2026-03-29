@@ -1,49 +1,42 @@
 {
   "project_info": {
-    "project_number": "925204357438",
-    "project_id": "bitapp-cortech",
-    "storage_bucket": "bitapp-cortech.firebasestorage.app"
+    "project_number": "159272058870",
+    "project_id": "bitapp-442618",
+    "storage_bucket": "bitapp-442618.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:925204357438:android:f3170815418400537c4c6f",
+        "mobilesdk_app_id": "1:159272058870:android:4ebc3f9702d7d5eed711d7",
         "android_client_info": {
-          "package_name": "com.cortech.bitapp"
+          "package_name": "io.dkakunsi.bitapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "925204357438-69tkqb13fijrqv1tp99pq5o8uksg1vgo.apps.googleusercontent.com",
+          "client_id": "159272058870-dke7rnku6elfl87uje3aj35bb3sf75cq.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.cortech.bitapp",
-            "certificate_hash": "f3acd8721342332eb68e67d46fbec84560bf6ea4"
+            "package_name": "io.dkakunsi.bitapp",
+            "certificate_hash": "c43c00422d0252d99dc09c92be8adadc48529903"
           }
         },
         {
-          "client_id": "925204357438-ldjboa5giq7lil4b5kvealuqudjksps9.apps.googleusercontent.com",
+          "client_id": "159272058870-i83mdabckc9nb1mlh2mk9ac3ub03ej83.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAx8H5WtFZ1ROUIeXxsxugZkd1oD0M0yHQ"
+          "current_key": "AIzaSyCpG-Kl72JOZRl7cDFbHwtm0dMpy5_PAOo"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "925204357438-ldjboa5giq7lil4b5kvealuqudjksps9.apps.googleusercontent.com",
+              "client_id": "159272058870-i83mdabckc9nb1mlh2mk9ac3ub03ej83.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "925204357438-govdutr7dt4gnavu120aui4233eln39u.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.cortech.bitapp"
-              }
             }
           ]
         }

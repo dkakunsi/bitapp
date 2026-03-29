@@ -15,6 +15,9 @@ import 'package:flutter/foundation.dart'
 /// );
 /// ```
 class DefaultFirebaseOptions {
+  static const String androidServerClientId =
+      '159272058870-i83mdabckc9nb1mlh2mk9ac3ub03ej83.apps.googleusercontent.com';
+
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
       throw UnsupportedError(
@@ -50,11 +53,11 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAx8H5WtFZ1ROUIeXxsxugZkd1oD0M0yHQ',
-    appId: '1:925204357438:android:f3170815418400537c4c6f',
-    messagingSenderId: '925204357438',
-    projectId: 'bitapp-cortech',
-    storageBucket: 'bitapp-cortech.firebasestorage.app',
+    apiKey: 'AIzaSyCpG-Kl72JOZRl7cDFbHwtm0dMpy5_PAOo',
+    appId: '1:159272058870:android:4ebc3f9702d7d5eed711d7',
+    messagingSenderId: '159272058870',
+    projectId: 'bitapp-442618',
+    storageBucket: 'bitapp-442618.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
@@ -63,9 +66,10 @@ class DefaultFirebaseOptions {
     messagingSenderId: '925204357438',
     projectId: 'bitapp-cortech',
     storageBucket: 'bitapp-cortech.firebasestorage.app',
-    androidClientId: '925204357438-087d8qc9dcf6i3t3ci1i2u2tcb5tot47.apps.googleusercontent.com',
-    iosClientId: '925204357438-n42h400avbdv3bcoi3qgrd2mbl6t2hud.apps.googleusercontent.com',
-    iosBundleId: 'com.cortech.bitapp',
+    androidClientId:
+        '925204357438-087d8qc9dcf6i3t3ci1i2u2tcb5tot47.apps.googleusercontent.com',
+    iosClientId:
+        '925204357438-n42h400avbdv3bcoi3qgrd2mbl6t2hud.apps.googleusercontent.com',
+    iosBundleId: 'io.dkakunsi.bitapp',
   );
-
 }

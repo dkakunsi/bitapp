@@ -30,10 +30,10 @@ class InitialScreen extends AppScreen {
       } else {
         context.silentLogin();
         context.registerSilentLoginPeriodicAction();
-        Timer(const Duration(seconds: 3), () => context.nextRoute(mainRoute));
       }
     } else if (state is ConfigurationProcessed) {
-      Timer(const Duration(seconds: 1), () => context.nextRoute(mainRoute));
+      final nextRoute = context.isLoggedIn ? mainRoute : authRoute;
+      Timer(const Duration(seconds: 1), () => context.nextRoute(nextRoute));
     }
   }
 

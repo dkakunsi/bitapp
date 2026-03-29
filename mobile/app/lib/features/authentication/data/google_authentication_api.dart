@@ -1,18 +1,39 @@
 import 'package:bitapp/features/authentication/data/session.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class GoogleAuthenticationApi {
   final FirebaseAuth _firebaseAuth;
   final GoogleSignIn _googleSignIn;
+  final String? _serverClientId;
+  bool _initialized;
 
   GoogleAuthenticationApi({
     FirebaseAuth? firebaseAuth,
     GoogleSignIn? googleSignIn,
+    String? serverClientId,
   }) : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
-       _googleSignIn = googleSignIn ?? GoogleSignIn.instance;
+       _googleSignIn = googleSignIn ?? GoogleSignIn.instance,
+       _serverClientId = serverClientId,
+       _initialized = false;
+
+  Future<void> initialize() async {
+    if (_initialized) {
+      return;
+    }
+
+    await _googleSignIn.initialize(
+      serverClientId:
+          defaultTargetPlatform == TargetPlatform.android
+              ? _serverClientId
+              : null,
+    );
+    _initialized = true;
+  }
 
   Future<Session> login() async {
+    await initialize();
     final googleAccount = await _googleSignIn.authenticate();
     final user = await _loginToFirebase(googleAccount);
     final idToken = googleAccount.authentication.idToken;
@@ -20,6 +41,7 @@ class GoogleAuthenticationApi {
   }
 
   Future<Session> silentLogin() async {
+    await initialize();
     final googleAccountFuture =
         _googleSignIn.attemptLightweightAuthentication();
     if (googleAccountFuture == null) {
@@ -67,6 +89,7 @@ class GoogleAuthenticationApi {
   }
 
   Future<void> logout() async {
+    await initialize();
     await _firebaseAuth.signOut();
     await _googleSignIn.signOut();
   }

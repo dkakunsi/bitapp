@@ -1,4 +1,4 @@
-package com.cortech.bitapp
+package io.dkakunsi.bitapp
 
 import io.flutter.embedding.android.FlutterActivity
 
