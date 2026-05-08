@@ -11,8 +11,10 @@
     "/dev/bus/usb:/dev/bus/usb"
   ],
   "mounts": [
-    "source=./.devcontainer/.pub-cache,target=/root/.pub-cache,type=bind",
-    "source=./.devcontainer/.docker,target=/var/lib/docker,type=bind"
+    "source=./.devcontainer/.pub-cache,target=/root/.pub-cache,type=volume",
+    "source=./.devcontainer/.docker,target=/var/lib/docker,type=volume",
+    "source=./.devcontainer/.android-sdk,target=/opt/android-sdk,type=volume",
+    "source=./.devcontainer/.gradle-cache,target=/home/vscode/.gradle,type=volume"
   ],
   "forwardPorts": [
     8081,
