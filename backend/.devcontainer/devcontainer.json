@@ -11,8 +11,8 @@
     "/dev/bus/usb:/dev/bus/usb"
   ],
   "mounts": [
-    "source=./.devcontainer/.m2,target=/root/.m2,type=bind",
-    "source=./.devcontainer/.docker,target=/var/lib/docker,type=bind"
+    "source=./.devcontainer/.m2,target=/root/.m2,type=volume",
+    "source=./.devcontainer/.docker,target=/var/lib/docker,type=volume"
   ],
   "forwardPorts": [
     8081,
