@@ -22,7 +22,7 @@ public final class GetUserTransactionsEndpoint
 
   @Override
   public String getPath() {
-    return "/users/{userId}/transactions";
+    return "/v1/users/{userId}/transactions";
   }
 
   @Override

@@ -20,7 +20,7 @@ public final class GetLoanEndpoint extends JavalinEndpoint<String, LoanResult> {
 
   @Override
   public String getPath() {
-    return "/loans/{id}";
+    return "/v1/loans/{id}";
   }
 
   @Override

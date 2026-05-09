@@ -22,7 +22,7 @@ public final class GetUserAccountsEndpoint
 
   @Override
   public String getPath() {
-    return "/users/{userId}/accounts";
+    return "/v1/users/{userId}/accounts";
   }
 
   @Override

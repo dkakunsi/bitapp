@@ -61,7 +61,7 @@ public class CreateTransactionIT extends AppTestUtil {
         }
         """, name, type);
 
-    var response = Unirest.post(baseUrl + "/accounts")
+    var response = Unirest.post(baseUrl + "/v1/accounts")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -81,7 +81,7 @@ public class CreateTransactionIT extends AppTestUtil {
           }
           """, accountId, initialBalance);
 
-      var depositResponse = Unirest.post(baseUrl + "/transactions")
+      var depositResponse = Unirest.post(baseUrl + "/v1/transactions")
           .header("Authorization", "Bearer " + token)
           .body(depositBody)
           .asString();
@@ -107,7 +107,7 @@ public class CreateTransactionIT extends AppTestUtil {
         }
         """, type, partyName, title, amount, interestRate, accountId);
 
-    var response = Unirest.post(baseUrl + "/loans")
+    var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -138,7 +138,7 @@ public class CreateTransactionIT extends AppTestUtil {
         }
         """, sourceAccountId);
 
-    var response = Unirest.post(baseUrl + "/transactions")
+    var response = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -157,7 +157,7 @@ public class CreateTransactionIT extends AppTestUtil {
     assertEquals("FOOD", responseBody.getString("category"));
     assertEquals(USER_ID, responseBody.getString("user"));
 
-    var accountResponse = Unirest.get(baseUrl + "/accounts/" + sourceAccountId)
+    var accountResponse = Unirest.get(baseUrl + "/v1/accounts/" + sourceAccountId)
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, accountResponse.getStatus());
@@ -187,7 +187,7 @@ public class CreateTransactionIT extends AppTestUtil {
         }
         """, destinationAccountId);
 
-    var response = Unirest.post(baseUrl + "/transactions")
+    var response = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -206,7 +206,7 @@ public class CreateTransactionIT extends AppTestUtil {
     assertEquals("INCOME", responseBody.getString("category"));
     assertEquals(USER_ID, responseBody.getString("user"));
 
-    var accountResponse = Unirest.get(baseUrl + "/accounts/" + destinationAccountId)
+    var accountResponse = Unirest.get(baseUrl + "/v1/accounts/" + destinationAccountId)
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, accountResponse.getStatus());
@@ -236,7 +236,7 @@ public class CreateTransactionIT extends AppTestUtil {
         }
         """, sourceAccountId, destinationAccountId);
 
-    var response = Unirest.post(baseUrl + "/transactions")
+    var response = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -255,14 +255,14 @@ public class CreateTransactionIT extends AppTestUtil {
     assertEquals("IDR", responseBody.getString("currency"));
     assertEquals(USER_ID, responseBody.getString("user"));
 
-    var sourceResponse = Unirest.get(baseUrl + "/accounts/" + sourceAccountId)
+    var sourceResponse = Unirest.get(baseUrl + "/v1/accounts/" + sourceAccountId)
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, sourceResponse.getStatus());
     var sourceAccount = new JSONObject(sourceResponse.getBody());
     assertEquals(900000.0, sourceAccount.getBigDecimal("balance").doubleValue(), 0.01);
 
-    var destResponse = Unirest.get(baseUrl + "/accounts/" + destinationAccountId)
+    var destResponse = Unirest.get(baseUrl + "/v1/accounts/" + destinationAccountId)
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, destResponse.getStatus());
@@ -295,7 +295,7 @@ public class CreateTransactionIT extends AppTestUtil {
         }
         """, sourceAccountId, loanId);
 
-    var response = Unirest.post(baseUrl + "/transactions")
+    var response = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -310,7 +310,7 @@ public class CreateTransactionIT extends AppTestUtil {
     assertEquals(500000, responseBody.getLong("amount"));
     assertEquals(USER_ID, responseBody.getString("user"));
 
-    var loanResponse = Unirest.get(baseUrl + "/loans/" + loanId)
+    var loanResponse = Unirest.get(baseUrl + "/v1/loans/" + loanId)
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, loanResponse.getStatus());
@@ -336,7 +336,7 @@ public class CreateTransactionIT extends AppTestUtil {
         }
         """, sourceAccountId);
 
-    var response = Unirest.post(baseUrl + "/transactions")
+    var response = Unirest.post(baseUrl + "/v1/transactions")
         .body(body)
         .asString();
 
@@ -361,7 +361,7 @@ public class CreateTransactionIT extends AppTestUtil {
         }
         """, sourceAccountId);
 
-    var response = Unirest.post(baseUrl + "/transactions")
+    var response = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer invalid_token")
         .body(body)
         .asString();
@@ -387,7 +387,7 @@ public class CreateTransactionIT extends AppTestUtil {
         }
         """, sourceAccountId);
 
-    var response = Unirest.post(baseUrl + "/transactions")
+    var response = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -413,7 +413,7 @@ public class CreateTransactionIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/transactions")
+    var response = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -439,7 +439,7 @@ public class CreateTransactionIT extends AppTestUtil {
         }
         """, sourceAccountId);
 
-    var response = Unirest.post(baseUrl + "/transactions")
+    var response = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -466,7 +466,7 @@ public class CreateTransactionIT extends AppTestUtil {
         }
         """, sourceAccountId);
 
-    var response = Unirest.post(baseUrl + "/transactions")
+    var response = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -493,7 +493,7 @@ public class CreateTransactionIT extends AppTestUtil {
         }
         """, sourceAccountId);
 
-    var response = Unirest.post(baseUrl + "/transactions")
+    var response = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -520,7 +520,7 @@ public class CreateTransactionIT extends AppTestUtil {
         }
         """, sourceAccountId);
 
-    var response = Unirest.post(baseUrl + "/transactions")
+    var response = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -546,7 +546,7 @@ public class CreateTransactionIT extends AppTestUtil {
         }
         """, sourceAccountId);
 
-    var response = Unirest.post(baseUrl + "/transactions")
+    var response = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -572,7 +572,7 @@ public class CreateTransactionIT extends AppTestUtil {
         }
         """, sourceAccountId);
 
-    var response = Unirest.post(baseUrl + "/transactions")
+    var response = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -600,7 +600,7 @@ public class CreateTransactionIT extends AppTestUtil {
         }
         """, sourceAccountId);
 
-    var response = Unirest.post(baseUrl + "/transactions")
+    var response = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -628,7 +628,7 @@ public class CreateTransactionIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/transactions")
+    var response = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -655,7 +655,7 @@ public class CreateTransactionIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/transactions")
+    var response = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -682,7 +682,7 @@ public class CreateTransactionIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/transactions")
+    var response = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -709,7 +709,7 @@ public class CreateTransactionIT extends AppTestUtil {
         }
         """, sourceAccountId);
 
-    var response = Unirest.post(baseUrl + "/transactions")
+    var response = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -737,7 +737,7 @@ public class CreateTransactionIT extends AppTestUtil {
         }
         """, sourceAccountId);
 
-    var response = Unirest.post(baseUrl + "/transactions")
+    var response = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -766,7 +766,7 @@ public class CreateTransactionIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/transactions")
+    var response = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -795,7 +795,7 @@ public class CreateTransactionIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/transactions")
+    var response = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -825,7 +825,7 @@ public class CreateTransactionIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/transactions")
+    var response = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -855,7 +855,7 @@ public class CreateTransactionIT extends AppTestUtil {
         }
         """, sourceAccountId);
 
-    var response = Unirest.post(baseUrl + "/transactions")
+    var response = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -884,7 +884,7 @@ public class CreateTransactionIT extends AppTestUtil {
         }
         """, sourceAccountId);
 
-    var response = Unirest.post(baseUrl + "/transactions")
+    var response = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();

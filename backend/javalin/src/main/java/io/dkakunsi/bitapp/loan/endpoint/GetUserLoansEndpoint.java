@@ -22,7 +22,7 @@ public final class GetUserLoansEndpoint
 
   @Override
   public String getPath() {
-    return "/users/{userId}/loans";
+    return "/v1/users/{userId}/loans";
   }
 
   @Override

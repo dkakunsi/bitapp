@@ -81,7 +81,7 @@ public class GetUserLoansIT extends AppTestUtil {
         }
         """, type, partyName, title, description, amount, currency, interestRate);
 
-    Unirest.post(baseUrl + "/loans")
+    Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -99,7 +99,7 @@ public class GetUserLoansIT extends AppTestUtil {
   public void getExistingUserLoansShouldBeOk() {
     // Given
     // When
-    var response = Unirest.get(baseUrl + "/users/{userId}/loans")
+    var response = Unirest.get(baseUrl + "/v1/users/{userId}/loans")
         .routeParam("userId", USER_ID)
         .header("Authorization", "Bearer " + token)
         .asString();
@@ -141,7 +141,7 @@ public class GetUserLoansIT extends AppTestUtil {
   public void getUserSpecificLoansShouldNotIncludeOtherUsersLoans() {
     // Given
     // When
-    var response = Unirest.get(baseUrl + "/users/{userId}/loans")
+    var response = Unirest.get(baseUrl + "/v1/users/{userId}/loans")
         .routeParam("userId", USER_ID)
         .header("Authorization", "Bearer " + token)
         .asString();
@@ -172,7 +172,7 @@ public class GetUserLoansIT extends AppTestUtil {
   public void getLoansWithCorrectDetailsShouldBeOk() {
     // Given
     // When
-    var response = Unirest.get(baseUrl + "/users/{userId}/loans")
+    var response = Unirest.get(baseUrl + "/v1/users/{userId}/loans")
         .routeParam("userId", USER_ID)
         .header("Authorization", "Bearer " + token)
         .asString();
@@ -228,7 +228,7 @@ public class GetUserLoansIT extends AppTestUtil {
     var token = SecureTestUtil.generateToken(newUserId);
 
     // When
-    var response = Unirest.get(baseUrl + "/users/{userId}/loans")
+    var response = Unirest.get(baseUrl + "/v1/users/{userId}/loans")
         .routeParam("userId", newUserId)
         .header("Authorization", "Bearer " + token)
         .asString();
@@ -252,7 +252,7 @@ public class GetUserLoansIT extends AppTestUtil {
   public void getCorrectLoansForDifferentUsers() {
     // Given
     // When - Get loans for first user
-    var response1 = Unirest.get(baseUrl + "/users/{userId}/loans")
+    var response1 = Unirest.get(baseUrl + "/v1/users/{userId}/loans")
         .routeParam("userId", USER_ID)
         .header("Authorization", "Bearer " + token)
         .asString();
@@ -268,7 +268,7 @@ public class GetUserLoansIT extends AppTestUtil {
     }
 
     // When - Get loans for second user
-    var response2 = Unirest.get(baseUrl + "/users/{userId}/loans")
+    var response2 = Unirest.get(baseUrl + "/v1/users/{userId}/loans")
         .routeParam("userId", OTHER_USER_ID)
         .header("Authorization", "Bearer " + otherUserToken)
         .asString();
@@ -291,7 +291,7 @@ public class GetUserLoansIT extends AppTestUtil {
   @Test
   public void getUserLoansWithoutAuthorizationHeaderShouldReturn401() {
     // When
-    var response = Unirest.get(baseUrl + "/users/{userId}/loans")
+    var response = Unirest.get(baseUrl + "/v1/users/{userId}/loans")
         .routeParam("userId", USER_ID)
         .asString();
 
@@ -307,7 +307,7 @@ public class GetUserLoansIT extends AppTestUtil {
   @Test
   public void getUserLoansWithInvalidTokenShouldReturn401() {
     // When
-    var response = Unirest.get(baseUrl + "/users/{userId}/loans")
+    var response = Unirest.get(baseUrl + "/v1/users/{userId}/loans")
         .routeParam("userId", USER_ID)
         .header("Authorization", "Bearer invalid.token.here")
         .asString();
@@ -327,13 +327,13 @@ public class GetUserLoansIT extends AppTestUtil {
   public void getUserLoansMultipleTimesShouldReturnConsistentResults() {
     // Given
     // When - First call
-    var response1 = Unirest.get(baseUrl + "/users/{userId}/loans")
+    var response1 = Unirest.get(baseUrl + "/v1/users/{userId}/loans")
         .routeParam("userId", USER_ID)
         .header("Authorization", "Bearer " + token)
         .asString();
 
     // When - Second call
-    var response2 = Unirest.get(baseUrl + "/users/{userId}/loans")
+    var response2 = Unirest.get(baseUrl + "/v1/users/{userId}/loans")
         .routeParam("userId", USER_ID)
         .header("Authorization", "Bearer " + token)
         .asString();

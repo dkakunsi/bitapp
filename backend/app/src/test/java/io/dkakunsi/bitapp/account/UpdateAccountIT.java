@@ -56,7 +56,7 @@ public class UpdateAccountIT extends AppTestUtil {
                                 .put("type", "BANK")
                                 .put("themeColor", "#FF0000");
 
-                var createResponse = Unirest.post(baseUrl + "/accounts")
+                var createResponse = Unirest.post(baseUrl + "/v1/accounts")
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(createRequest.toString())
@@ -72,7 +72,7 @@ public class UpdateAccountIT extends AppTestUtil {
                                 .put("type", "CASH")
                                 .put("themeColor", "#00FF00");
 
-                var updateResponse = Unirest.put(baseUrl + "/accounts/" + accountId)
+                var updateResponse = Unirest.put(baseUrl + "/v1/accounts/" + accountId)
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(updateRequest.toString())
@@ -102,7 +102,7 @@ public class UpdateAccountIT extends AppTestUtil {
                                 .put("type", "EWALLET")
                                 .put("themeColor", "#0000FF");
 
-                var createResponse = Unirest.post(baseUrl + "/accounts")
+                var createResponse = Unirest.post(baseUrl + "/v1/accounts")
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(createRequest.toString())
@@ -114,7 +114,7 @@ public class UpdateAccountIT extends AppTestUtil {
                 var updateRequest = new JSONObject()
                                 .put("name", "Name Changed");
 
-                var updateResponse = Unirest.put(baseUrl + "/accounts/" + accountId)
+                var updateResponse = Unirest.put(baseUrl + "/v1/accounts/" + accountId)
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(updateRequest.toString())
@@ -141,7 +141,7 @@ public class UpdateAccountIT extends AppTestUtil {
                                 .put("type", "BANK")
                                 .put("themeColor", "#FF0000");
 
-                var createResponse = Unirest.post(baseUrl + "/accounts")
+                var createResponse = Unirest.post(baseUrl + "/v1/accounts")
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(createRequest.toString())
@@ -155,7 +155,7 @@ public class UpdateAccountIT extends AppTestUtil {
                                 .put("name", JSONObject.NULL)
                                 .put("themeColor", "#FF0000");
 
-                var response = Unirest.put(baseUrl + "/accounts/" + accountId)
+                var response = Unirest.put(baseUrl + "/v1/accounts/" + accountId)
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(updateRequest.toString())
@@ -178,7 +178,7 @@ public class UpdateAccountIT extends AppTestUtil {
                                 .put("type", "BANK")
                                 .put("themeColor", "#FF0000");
 
-                var createResponse = Unirest.post(baseUrl + "/accounts")
+                var createResponse = Unirest.post(baseUrl + "/v1/accounts")
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(createRequest.toString())
@@ -191,7 +191,7 @@ public class UpdateAccountIT extends AppTestUtil {
                 var updateRequest = new JSONObject()
                                 .put("name", "");
 
-                var response = Unirest.put(baseUrl + "/accounts/" + accountId)
+                var response = Unirest.put(baseUrl + "/v1/accounts/" + accountId)
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(updateRequest.toString())
@@ -215,7 +215,7 @@ public class UpdateAccountIT extends AppTestUtil {
                                 .put("type", "BANK")
                                 .put("themeColor", "#FF0000");
 
-                var createResponse = Unirest.post(baseUrl + "/accounts")
+                var createResponse = Unirest.post(baseUrl + "/v1/accounts")
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(createRequest.toString())
@@ -228,7 +228,7 @@ public class UpdateAccountIT extends AppTestUtil {
                 var updateRequest = new JSONObject()
                                 .put("name", "   ");
 
-                var response = Unirest.put(baseUrl + "/accounts/" + accountId)
+                var response = Unirest.put(baseUrl + "/v1/accounts/" + accountId)
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(updateRequest.toString())
@@ -254,7 +254,7 @@ public class UpdateAccountIT extends AppTestUtil {
                                 .put("type", "BANK")
                                 .put("themeColor", "#AABBCC");
 
-                var createResponse = Unirest.post(baseUrl + "/accounts")
+                var createResponse = Unirest.post(baseUrl + "/v1/accounts")
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(createRequest.toString())
@@ -266,7 +266,7 @@ public class UpdateAccountIT extends AppTestUtil {
                 var updateRequest = new JSONObject()
                                 .put("type", "OTHER");
 
-                var updateResponse = Unirest.put(baseUrl + "/accounts/" + accountId)
+                var updateResponse = Unirest.put(baseUrl + "/v1/accounts/" + accountId)
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(updateRequest.toString())
@@ -293,7 +293,7 @@ public class UpdateAccountIT extends AppTestUtil {
                                 .put("type", "BANK")
                                 .put("themeColor", "#FF0000");
 
-                var createResponse = Unirest.post(baseUrl + "/accounts")
+                var createResponse = Unirest.post(baseUrl + "/v1/accounts")
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(createRequest.toString())
@@ -307,7 +307,7 @@ public class UpdateAccountIT extends AppTestUtil {
                                 .put("name", "Valid Account")
                                 .put("type", JSONObject.NULL);
 
-                var response = Unirest.put(baseUrl + "/accounts/" + accountId)
+                var response = Unirest.put(baseUrl + "/v1/accounts/" + accountId)
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(updateRequest.toString())
@@ -330,7 +330,7 @@ public class UpdateAccountIT extends AppTestUtil {
                                 .put("type", "BANK")
                                 .put("themeColor", "#FF0000");
 
-                var createResponse = Unirest.post(baseUrl + "/accounts")
+                var createResponse = Unirest.post(baseUrl + "/v1/accounts")
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(createRequest.toString())
@@ -343,7 +343,7 @@ public class UpdateAccountIT extends AppTestUtil {
                 var updateRequest = new JSONObject()
                                 .put("type", "   ");
 
-                var response = Unirest.put(baseUrl + "/accounts/" + accountId)
+                var response = Unirest.put(baseUrl + "/v1/accounts/" + accountId)
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(updateRequest.toString())
@@ -367,7 +367,7 @@ public class UpdateAccountIT extends AppTestUtil {
                                 .put("type", "BANK")
                                 .put("themeColor", "#FF0000");
 
-                var createResponse = Unirest.post(baseUrl + "/accounts")
+                var createResponse = Unirest.post(baseUrl + "/v1/accounts")
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(createRequest.toString())
@@ -380,7 +380,7 @@ public class UpdateAccountIT extends AppTestUtil {
                 var updateRequest = new JSONObject()
                                 .put("type", "");
 
-                var response = Unirest.put(baseUrl + "/accounts/" + accountId)
+                var response = Unirest.put(baseUrl + "/v1/accounts/" + accountId)
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(updateRequest.toString())
@@ -404,7 +404,7 @@ public class UpdateAccountIT extends AppTestUtil {
                                 .put("type", "BANK")
                                 .put("themeColor", "#FF0000");
 
-                var createResponse = Unirest.post(baseUrl + "/accounts")
+                var createResponse = Unirest.post(baseUrl + "/v1/accounts")
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(createRequest.toString())
@@ -417,7 +417,7 @@ public class UpdateAccountIT extends AppTestUtil {
                 var updateRequest = new JSONObject()
                                 .put("type", "INVALID_TYPE");
 
-                var response = Unirest.put(baseUrl + "/accounts/" + accountId)
+                var response = Unirest.put(baseUrl + "/v1/accounts/" + accountId)
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(updateRequest.toString())
@@ -441,7 +441,7 @@ public class UpdateAccountIT extends AppTestUtil {
                                 .put("type", "BANK")
                                 .put("themeColor", "#FF0000");
 
-                var createResponse = Unirest.post(baseUrl + "/accounts")
+                var createResponse = Unirest.post(baseUrl + "/v1/accounts")
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(createRequest.toString())
@@ -455,7 +455,7 @@ public class UpdateAccountIT extends AppTestUtil {
                                 .put("name", "Test Account")
                                 .put("type", "");
 
-                var response = Unirest.put(baseUrl + "/accounts/" + accountId)
+                var response = Unirest.put(baseUrl + "/v1/accounts/" + accountId)
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(updateRequest.toString())
@@ -481,7 +481,7 @@ public class UpdateAccountIT extends AppTestUtil {
                                 .put("type", "CASH")
                                 .put("themeColor", "#111111");
 
-                var createResponse = Unirest.post(baseUrl + "/accounts")
+                var createResponse = Unirest.post(baseUrl + "/v1/accounts")
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(createRequest.toString())
@@ -493,7 +493,7 @@ public class UpdateAccountIT extends AppTestUtil {
                 var updateRequest = new JSONObject()
                                 .put("themeColor", "#FFFFFF");
 
-                var updateResponse = Unirest.put(baseUrl + "/accounts/" + accountId)
+                var updateResponse = Unirest.put(baseUrl + "/v1/accounts/" + accountId)
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(updateRequest.toString())
@@ -522,7 +522,7 @@ public class UpdateAccountIT extends AppTestUtil {
                                 .put("type", "CASH")
                                 .put("themeColor", "#111111");
 
-                var createResponse = Unirest.post(baseUrl + "/accounts")
+                var createResponse = Unirest.post(baseUrl + "/v1/accounts")
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(createRequest.toString())
@@ -535,7 +535,7 @@ public class UpdateAccountIT extends AppTestUtil {
                                 .put("name", "Color Test Account")
                                 .put("themeColor", JSONObject.NULL);
 
-                var updateResponse = Unirest.put(baseUrl + "/accounts/" + accountId)
+                var updateResponse = Unirest.put(baseUrl + "/v1/accounts/" + accountId)
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(updateRequest.toString())
@@ -562,7 +562,7 @@ public class UpdateAccountIT extends AppTestUtil {
                                 .put("type", "BANK")
                                 .put("themeColor", "#FF0000");
 
-                var createResponse = Unirest.post(baseUrl + "/accounts")
+                var createResponse = Unirest.post(baseUrl + "/v1/accounts")
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(createRequest.toString())
@@ -575,7 +575,7 @@ public class UpdateAccountIT extends AppTestUtil {
                 var updateRequest = new JSONObject()
                                 .put("themeColor", "   ");
 
-                var response = Unirest.put(baseUrl + "/accounts/" + accountId)
+                var response = Unirest.put(baseUrl + "/v1/accounts/" + accountId)
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(updateRequest.toString())
@@ -599,7 +599,7 @@ public class UpdateAccountIT extends AppTestUtil {
                                 .put("type", "BANK")
                                 .put("themeColor", "#FF0000");
 
-                var createResponse = Unirest.post(baseUrl + "/accounts")
+                var createResponse = Unirest.post(baseUrl + "/v1/accounts")
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(createRequest.toString())
@@ -612,7 +612,7 @@ public class UpdateAccountIT extends AppTestUtil {
                 var updateRequest = new JSONObject()
                                 .put("themeColor", "");
 
-                var response = Unirest.put(baseUrl + "/accounts/" + accountId)
+                var response = Unirest.put(baseUrl + "/v1/accounts/" + accountId)
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(updateRequest.toString())
@@ -636,7 +636,7 @@ public class UpdateAccountIT extends AppTestUtil {
                                 .put("type", "BANK")
                                 .put("themeColor", "#FF0000");
 
-                var createResponse = Unirest.post(baseUrl + "/accounts")
+                var createResponse = Unirest.post(baseUrl + "/v1/accounts")
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(createRequest.toString())
@@ -645,7 +645,7 @@ public class UpdateAccountIT extends AppTestUtil {
                 var accountId = createResponse.getBody().getObject().getString("id");
 
                 // When
-                var response = Unirest.put(baseUrl + "/accounts/" + accountId)
+                var response = Unirest.put(baseUrl + "/v1/accounts/" + accountId)
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(new JSONObject().toString())
@@ -669,7 +669,7 @@ public class UpdateAccountIT extends AppTestUtil {
                                 .put("type", "BANK")
                                 .put("themeColor", "#FF0000");
 
-                var createResponse = Unirest.post(baseUrl + "/accounts")
+                var createResponse = Unirest.post(baseUrl + "/v1/accounts")
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(createRequest.toString())
@@ -678,7 +678,7 @@ public class UpdateAccountIT extends AppTestUtil {
                 var accountId = createResponse.getBody().getObject().getString("id");
 
                 // When
-                var response = Unirest.put(baseUrl + "/accounts/" + accountId)
+                var response = Unirest.put(baseUrl + "/v1/accounts/" + accountId)
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body("{invalid json")
@@ -700,7 +700,7 @@ public class UpdateAccountIT extends AppTestUtil {
                 var updateRequest = new JSONObject()
                                 .put("name", "Unauthorized Update");
 
-                var response = Unirest.put(baseUrl + "/accounts/some-id")
+                var response = Unirest.put(baseUrl + "/v1/accounts/some-id")
                                 .header("Content-Type", "application/json")
                                 .body(updateRequest.toString())
                                 .asString();
@@ -720,7 +720,7 @@ public class UpdateAccountIT extends AppTestUtil {
                 var updateRequest = new JSONObject()
                                 .put("name", "Invalid Token Update");
 
-                var response = Unirest.put(baseUrl + "/accounts/some-id")
+                var response = Unirest.put(baseUrl + "/v1/accounts/some-id")
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer invalid.token.here")
                                 .body(updateRequest.toString())
@@ -744,7 +744,7 @@ public class UpdateAccountIT extends AppTestUtil {
                                 .put("name", "Non-existent Account");
 
                 // When
-                var response = Unirest.put(baseUrl + "/accounts/nonexistent-id")
+                var response = Unirest.put(baseUrl + "/v1/accounts/nonexistent-id")
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(updateRequest.toString())
@@ -768,7 +768,7 @@ public class UpdateAccountIT extends AppTestUtil {
                                 .put("type", "BANK")
                                 .put("themeColor", "#FF0000");
 
-                var createResponse = Unirest.post(baseUrl + "/accounts")
+                var createResponse = Unirest.post(baseUrl + "/v1/accounts")
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(createRequest.toString())
@@ -784,7 +784,7 @@ public class UpdateAccountIT extends AppTestUtil {
                 var updateRequest = new JSONObject()
                                 .put("name", "Unauthorized Update");
 
-                var response = Unirest.put(baseUrl + "/accounts/" + accountId)
+                var response = Unirest.put(baseUrl + "/v1/accounts/" + accountId)
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + user2Token)
                                 .body(updateRequest.toString())
@@ -809,7 +809,7 @@ public class UpdateAccountIT extends AppTestUtil {
                                 .put("type", "BANK")
                                 .put("themeColor", "#123456");
 
-                var createResponse = Unirest.post(baseUrl + "/accounts")
+                var createResponse = Unirest.post(baseUrl + "/v1/accounts")
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(createRequest.toString())
@@ -821,7 +821,7 @@ public class UpdateAccountIT extends AppTestUtil {
                 var updateRequest = new JSONObject()
                                 .put("name", "Updated by Owner");
 
-                var response = Unirest.put(baseUrl + "/accounts/" + accountId)
+                var response = Unirest.put(baseUrl + "/v1/accounts/" + accountId)
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(updateRequest.toString())
@@ -849,7 +849,7 @@ public class UpdateAccountIT extends AppTestUtil {
                                 .put("type", "BANK")
                                 .put("themeColor", "#000000");
 
-                var createResponse = Unirest.post(baseUrl + "/accounts")
+                var createResponse = Unirest.post(baseUrl + "/v1/accounts")
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(createRequest.toString())
@@ -859,7 +859,7 @@ public class UpdateAccountIT extends AppTestUtil {
 
                 // When - First update: change name
                 var update1 = new JSONObject().put("name", "Step 1");
-                var response1 = Unirest.put(baseUrl + "/accounts/" + accountId)
+                var response1 = Unirest.put(baseUrl + "/v1/accounts/" + accountId)
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(update1.toString())
@@ -872,7 +872,7 @@ public class UpdateAccountIT extends AppTestUtil {
                 var update2 = new JSONObject()
                                 .put("name", "Step 1")
                                 .put("type", "CASH");
-                var response2 = Unirest.put(baseUrl + "/accounts/" + accountId)
+                var response2 = Unirest.put(baseUrl + "/v1/accounts/" + accountId)
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(update2.toString())
@@ -885,7 +885,7 @@ public class UpdateAccountIT extends AppTestUtil {
                 var update3 = new JSONObject()
                                 .put("name", "Step 1")
                                 .put("themeColor", "#ABCDEF");
-                var response3 = Unirest.put(baseUrl + "/accounts/" + accountId)
+                var response3 = Unirest.put(baseUrl + "/v1/accounts/" + accountId)
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "Bearer " + token)
                                 .body(update3.toString())

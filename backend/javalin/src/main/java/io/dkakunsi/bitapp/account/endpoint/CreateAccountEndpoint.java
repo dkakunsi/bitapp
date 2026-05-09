@@ -21,7 +21,7 @@ public final class CreateAccountEndpoint extends JavalinEndpoint<CreateAccountIn
 
   @Override
   public String getPath() {
-    return "/accounts";
+    return "/v1/accounts";
   }
 
   @Override

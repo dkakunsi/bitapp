@@ -58,7 +58,7 @@ public class RegisterUserIT extends AppTestUtil {
         }
         """;
 
-    var postResponse = Unirest.post(baseUrl + "/users").body(body).asString();
+    var postResponse = Unirest.post(baseUrl + "/v1/users").body(body).asString();
     assertEquals(200, postResponse.getStatus());
     var postResponseBody = new JSONObject(postResponse.getBody());
     assertEquals("John Doe", postResponseBody.getString("name"));
@@ -67,7 +67,7 @@ public class RegisterUserIT extends AppTestUtil {
     assertEquals("http://example.com/photo.jpg", postResponseBody.getString("photoUrl"));
     assertEquals("EN", postResponseBody.getString("language"));
 
-    var getResponse = Unirest.get(baseUrl + "/users/john.doe@example.com")
+    var getResponse = Unirest.get(baseUrl + "/v1/users/john.doe@example.com")
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, getResponse.getStatus());
@@ -95,7 +95,7 @@ public class RegisterUserIT extends AppTestUtil {
         }
         """;
 
-    var postResponse = Unirest.post(baseUrl + "/users").body(body).asString();
+    var postResponse = Unirest.post(baseUrl + "/v1/users").body(body).asString();
     assertEquals(200, postResponse.getStatus());
     var postResponseBody = new JSONObject(postResponse.getBody());
     assertEquals("Jane Doe", postResponseBody.getString("name"));
@@ -104,7 +104,7 @@ public class RegisterUserIT extends AppTestUtil {
     assertTrue(postResponseBody.isNull("photoUrl"));
     assertEquals("EN", postResponseBody.getString("language"));
 
-    var getResponse = Unirest.get(baseUrl + "/users/jane.doe@example.com")
+    var getResponse = Unirest.get(baseUrl + "/v1/users/jane.doe@example.com")
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, getResponse.getStatus());
@@ -132,7 +132,7 @@ public class RegisterUserIT extends AppTestUtil {
           "photoUrl": "http://example.com/photo.jpg"
         }
         """;
-    var response = Unirest.post(baseUrl + "/users").body(body).asString();
+    var response = Unirest.post(baseUrl + "/v1/users").body(body).asString();
 
     assertEquals(400, response.getStatus());
     assertEquals("email: invalid value", response.getBody());
@@ -154,7 +154,7 @@ public class RegisterUserIT extends AppTestUtil {
           "photoUrl": "http://example.com/photo.jpg"
         }
         """;
-    var response = Unirest.post(baseUrl + "/users").body(body).asString();
+    var response = Unirest.post(baseUrl + "/v1/users").body(body).asString();
 
     assertEquals(400, response.getStatus());
     assertEquals("email: invalid value", response.getBody());
@@ -176,7 +176,7 @@ public class RegisterUserIT extends AppTestUtil {
           "photoUrl": "http://example.com/photo.jpg"
         }
         """;
-    var response = Unirest.post(baseUrl + "/users").body(body).asString();
+    var response = Unirest.post(baseUrl + "/v1/users").body(body).asString();
 
     assertEquals(400, response.getStatus());
     assertTrue(response.getBody().contains("email: invalid value"));
@@ -199,7 +199,7 @@ public class RegisterUserIT extends AppTestUtil {
           "photoUrl": "http://example.com/photo.jpg"
         }
         """;
-    var response = Unirest.post(baseUrl + "/users").body(body).asString();
+    var response = Unirest.post(baseUrl + "/v1/users").body(body).asString();
 
     assertEquals(400, response.getStatus());
     assertEquals("email: invalid value", response.getBody());
@@ -222,7 +222,7 @@ public class RegisterUserIT extends AppTestUtil {
           "photoUrl": "http://example.com/photo.jpg"
         }
         """;
-    var response = Unirest.post(baseUrl + "/users").body(body).asString();
+    var response = Unirest.post(baseUrl + "/v1/users").body(body).asString();
 
     assertEquals(400, response.getStatus());
     assertEquals("name: invalid value", response.getBody());
@@ -245,7 +245,7 @@ public class RegisterUserIT extends AppTestUtil {
           "photoUrl": "http://example.com/photo.jpg"
         }
         """;
-    var response = Unirest.post(baseUrl + "/users").body(body).asString();
+    var response = Unirest.post(baseUrl + "/v1/users").body(body).asString();
 
     assertEquals(400, response.getStatus());
     assertEquals("name: invalid value", response.getBody());
@@ -268,7 +268,7 @@ public class RegisterUserIT extends AppTestUtil {
           "photoUrl": "http://example.com/photo.jpg"
         }
         """;
-    var response = Unirest.post(baseUrl + "/users").body(body).asString();
+    var response = Unirest.post(baseUrl + "/v1/users").body(body).asString();
 
     assertEquals(400, response.getStatus());
     assertEquals("name: invalid value", response.getBody());

@@ -64,7 +64,7 @@ public class RemoveLoanIT extends AppTestUtil {
                                 }
                                 """, name, type);
 
-                var response = Unirest.post(baseUrl + "/accounts")
+                var response = Unirest.post(baseUrl + "/v1/accounts")
                                 .header("Authorization", "Bearer " + token)
                                 .body(body)
                                 .asString();
@@ -84,7 +84,7 @@ public class RemoveLoanIT extends AppTestUtil {
                                         }
                                         """, accountId, initialBalance);
 
-                        var depositResponse = Unirest.post(baseUrl + "/transactions")
+                        var depositResponse = Unirest.post(baseUrl + "/v1/transactions")
                                         .header("Authorization", "Bearer " + token)
                                         .body(depositBody)
                                         .asString();
@@ -108,7 +108,7 @@ public class RemoveLoanIT extends AppTestUtil {
                                 }
                                 """, type, partyName, title, amount, interestRate);
 
-                var response = Unirest.post(baseUrl + "/loans")
+                var response = Unirest.post(baseUrl + "/v1/loans")
                                 .header("Authorization", "Bearer " + token)
                                 .body(body)
                                 .asString();
@@ -137,7 +137,7 @@ public class RemoveLoanIT extends AppTestUtil {
                 bodyBuilder.append("\"category\":\"LOAN\"");
                 bodyBuilder.append("}");
 
-                var response = Unirest.post(baseUrl + "/transactions")
+                var response = Unirest.post(baseUrl + "/v1/transactions")
                                 .header("Authorization", "Bearer " + token)
                                 .body(bodyBuilder.toString())
                                 .asString();
@@ -156,19 +156,19 @@ public class RemoveLoanIT extends AppTestUtil {
                 var loanId = createLoan("BORROW", "John Doe", "Simple Loan", 1000000, 5.0);
 
                 // Verify loan exists
-                var getResponse = Unirest.get(baseUrl + "/loans/" + loanId)
+                var getResponse = Unirest.get(baseUrl + "/v1/loans/" + loanId)
                                 .header("Authorization", "Bearer " + token)
                                 .asString();
                 assertEquals(200, getResponse.getStatus());
 
                 // Remove the loan
-                var deleteResponse = Unirest.delete(baseUrl + "/loans/" + loanId)
+                var deleteResponse = Unirest.delete(baseUrl + "/v1/loans/" + loanId)
                                 .header("Authorization", "Bearer " + token)
                                 .asString();
                 assertEquals(200, deleteResponse.getStatus());
 
                 // Verify loan is deleted from database
-                var getAfterDelete = Unirest.get(baseUrl + "/loans/" + loanId)
+                var getAfterDelete = Unirest.get(baseUrl + "/v1/loans/" + loanId)
                                 .header("Authorization", "Bearer " + token)
                                 .asString();
                 assertEquals(404, getAfterDelete.getStatus());
@@ -189,7 +189,7 @@ public class RemoveLoanIT extends AppTestUtil {
                                 100000);
 
                 // Verify transaction has loan reference
-                var getTransactionBefore = Unirest.get(baseUrl + "/transactions/" + transactionId)
+                var getTransactionBefore = Unirest.get(baseUrl + "/v1/transactions/" + transactionId)
                                 .header("Authorization", "Bearer " + token)
                                 .asString();
                 assertEquals(200, getTransactionBefore.getStatus());
@@ -197,17 +197,17 @@ public class RemoveLoanIT extends AppTestUtil {
                 assertEquals(loanId, transactionBefore.getString("loan"));
 
                 // Remove the loan
-                var deleteResponse = Unirest.delete(baseUrl + "/loans/" + loanId)
+                var deleteResponse = Unirest.delete(baseUrl + "/v1/loans/" + loanId)
                                 .header("Authorization", "Bearer " + token)
                                 .asString();
                 assertEquals(200, deleteResponse.getStatus());
 
                 // Verify loan is deleted
-                assertEquals(404, Unirest.get(baseUrl + "/loans/" + loanId)
+                assertEquals(404, Unirest.get(baseUrl + "/v1/loans/" + loanId)
                                 .header("Authorization", "Bearer " + token).asString().getStatus());
 
                 // Verify transaction still exists but loan reference is removed
-                var getTransactionAfter = Unirest.get(baseUrl + "/transactions/" + transactionId)
+                var getTransactionAfter = Unirest.get(baseUrl + "/v1/transactions/" + transactionId)
                                 .header("Authorization", "Bearer " + token)
                                 .asString();
                 assertEquals(200, getTransactionAfter.getStatus());
@@ -236,13 +236,13 @@ public class RemoveLoanIT extends AppTestUtil {
                                 200000);
 
                 // Remove the loan
-                var deleteResponse = Unirest.delete(baseUrl + "/loans/" + loanId)
+                var deleteResponse = Unirest.delete(baseUrl + "/v1/loans/" + loanId)
                                 .header("Authorization", "Bearer " + token)
                                 .asString();
                 assertEquals(200, deleteResponse.getStatus());
 
                 // Verify loan is deleted
-                assertEquals(404, Unirest.get(baseUrl + "/loans/" + loanId)
+                assertEquals(404, Unirest.get(baseUrl + "/v1/loans/" + loanId)
                                 .header("Authorization", "Bearer " + token).asString().getStatus());
 
                 // Verify all transactions still exist but loan references are removed
@@ -252,7 +252,7 @@ public class RemoveLoanIT extends AppTestUtil {
         }
 
         private void checkTransactionLoanReferenceRemoved(String transactionId) {
-                var getResponse = Unirest.get(baseUrl + "/transactions/" + transactionId)
+                var getResponse = Unirest.get(baseUrl + "/v1/transactions/" + transactionId)
                                 .header("Authorization", "Bearer " + token)
                                 .asString();
                 assertEquals(200, getResponse.getStatus());
@@ -277,13 +277,13 @@ public class RemoveLoanIT extends AppTestUtil {
                                 loanId, 500000);
 
                 // Remove the loan
-                var deleteResponse = Unirest.delete(baseUrl + "/loans/" + loanId)
+                var deleteResponse = Unirest.delete(baseUrl + "/v1/loans/" + loanId)
                                 .header("Authorization", "Bearer " + token)
                                 .asString();
                 assertEquals(200, deleteResponse.getStatus());
 
                 // Verify loan is deleted
-                assertEquals(404, Unirest.get(baseUrl + "/loans/" + loanId)
+                assertEquals(404, Unirest.get(baseUrl + "/v1/loans/" + loanId)
                                 .header("Authorization", "Bearer " + token).asString().getStatus());
 
                 // Verify transaction still exists but loan reference is removed
@@ -299,7 +299,7 @@ public class RemoveLoanIT extends AppTestUtil {
         public void removeNonExistentLoanShouldFail() {
                 var nonExistentId = "non-existent-loan-id";
 
-                var response = Unirest.delete(baseUrl + "/loans/" + nonExistentId)
+                var response = Unirest.delete(baseUrl + "/v1/loans/" + nonExistentId)
                                 .header("Authorization", "Bearer " + token)
                                 .asString();
 
@@ -315,13 +315,13 @@ public class RemoveLoanIT extends AppTestUtil {
         public void removeLoanWithoutAuthorizationShouldFail() {
                 var loanId = createLoan("BORROW", "Test User", "Test Loan", 1000000, 5.0);
 
-                var response = Unirest.delete(baseUrl + "/loans/" + loanId)
+                var response = Unirest.delete(baseUrl + "/v1/loans/" + loanId)
                                 .asString();
 
                 assertEquals(401, response.getStatus());
 
                 // Verify the loan still exists
-                var getResponse = Unirest.get(baseUrl + "/loans/" + loanId)
+                var getResponse = Unirest.get(baseUrl + "/v1/loans/" + loanId)
                                 .header("Authorization", "Bearer " + token)
                                 .asString();
                 assertEquals(200, getResponse.getStatus());
@@ -336,14 +336,14 @@ public class RemoveLoanIT extends AppTestUtil {
         public void removeLoanWithInvalidTokenShouldFail() {
                 var loanId = createLoan("BORROW", "Test User", "Test Loan", 1000000, 5.0);
 
-                var response = Unirest.delete(baseUrl + "/loans/" + loanId)
+                var response = Unirest.delete(baseUrl + "/v1/loans/" + loanId)
                                 .header("Authorization", "Bearer invalid-token")
                                 .asString();
 
                 assertEquals(401, response.getStatus());
 
                 // Verify the loan still exists
-                var getResponse = Unirest.get(baseUrl + "/loans/" + loanId)
+                var getResponse = Unirest.get(baseUrl + "/v1/loans/" + loanId)
                                 .header("Authorization", "Bearer " + token)
                                 .asString();
                 assertEquals(200, getResponse.getStatus());
@@ -361,7 +361,7 @@ public class RemoveLoanIT extends AppTestUtil {
                 // Try to delete with a different user's token
                 var otherUserToken = SecureTestUtil.generateToken("otheruser@email.com");
 
-                var response = Unirest.delete(baseUrl + "/loans/" + loanId)
+                var response = Unirest.delete(baseUrl + "/v1/loans/" + loanId)
                                 .header("Authorization", "Bearer " + otherUserToken)
                                 .asString();
 
@@ -369,7 +369,7 @@ public class RemoveLoanIT extends AppTestUtil {
                 assertTrue(response.getStatus() == 403 || response.getStatus() == 404);
 
                 // Verify the loan still exists for the original user
-                var getResponse = Unirest.get(baseUrl + "/loans/" + loanId)
+                var getResponse = Unirest.get(baseUrl + "/v1/loans/" + loanId)
                                 .header("Authorization", "Bearer " + token)
                                 .asString();
                 assertEquals(200, getResponse.getStatus());
@@ -385,13 +385,13 @@ public class RemoveLoanIT extends AppTestUtil {
                 var loanId = createLoan("BORROW", "Test User", "Test Loan", 1000000, 5.0);
 
                 // Remove the loan
-                var deleteResponse = Unirest.delete(baseUrl + "/loans/" + loanId)
+                var deleteResponse = Unirest.delete(baseUrl + "/v1/loans/" + loanId)
                                 .header("Authorization", "Bearer " + token)
                                 .asString();
                 assertEquals(200, deleteResponse.getStatus());
 
                 // Try to retrieve the removed loan - should return 404 (not found in database)
-                var getResponse = Unirest.get(baseUrl + "/loans/" + loanId)
+                var getResponse = Unirest.get(baseUrl + "/v1/loans/" + loanId)
                                 .header("Authorization", "Bearer " + token)
                                 .asString();
                 assertEquals(404, getResponse.getStatus());
@@ -410,13 +410,13 @@ public class RemoveLoanIT extends AppTestUtil {
                 var loan3Id = createLoan("LEND", "Friend", "Personal Lend", 500000, 0.0);
 
                 // Remove the second loan
-                var deleteResponse = Unirest.delete(baseUrl + "/loans/" + loan2Id)
+                var deleteResponse = Unirest.delete(baseUrl + "/v1/loans/" + loan2Id)
                                 .header("Authorization", "Bearer " + token)
                                 .asString();
                 assertEquals(200, deleteResponse.getStatus());
 
                 // Get user's loans list
-                var listResponse = Unirest.get(baseUrl + "/users/" + USER_ID + "/loans")
+                var listResponse = Unirest.get(baseUrl + "/v1/users/" + USER_ID + "/loans")
                                 .header("Authorization", "Bearer " + token)
                                 .asString();
                 assertEquals(200, listResponse.getStatus());
@@ -458,25 +458,25 @@ public class RemoveLoanIT extends AppTestUtil {
                 var loanId = createLoan("BORROW", "Test Bank", "Test Loan", 1000000, 5.0);
 
                 // Verify loan exists before deletion
-                var getBeforeDelete = Unirest.get(baseUrl + "/loans/" + loanId)
+                var getBeforeDelete = Unirest.get(baseUrl + "/v1/loans/" + loanId)
                                 .header("Authorization", "Bearer " + token)
                                 .asString();
                 assertEquals(200, getBeforeDelete.getStatus());
 
                 // Remove the loan
-                var deleteResponse = Unirest.delete(baseUrl + "/loans/" + loanId)
+                var deleteResponse = Unirest.delete(baseUrl + "/v1/loans/" + loanId)
                                 .header("Authorization", "Bearer " + token)
                                 .asString();
                 assertEquals(200, deleteResponse.getStatus());
 
                 // Verify loan no longer exists - should return 404 (hard delete)
-                var getAfterDelete = Unirest.get(baseUrl + "/loans/" + loanId)
+                var getAfterDelete = Unirest.get(baseUrl + "/v1/loans/" + loanId)
                                 .header("Authorization", "Bearer " + token)
                                 .asString();
                 assertEquals(404, getAfterDelete.getStatus());
 
                 // Verify it's not in the user's loan list either
-                var listResponse = Unirest.get(baseUrl + "/users/" + USER_ID + "/loans")
+                var listResponse = Unirest.get(baseUrl + "/v1/users/" + USER_ID + "/loans")
                                 .header("Authorization", "Bearer " + token)
                                 .asString();
                 assertEquals(200, listResponse.getStatus());
@@ -505,27 +505,27 @@ public class RemoveLoanIT extends AppTestUtil {
                 var keepLoanId = createLoan("BORROW", "Bank Keep", "Keep This", 3000000, 6.0);
 
                 // Remove three loans
-                assertEquals(200, Unirest.delete(baseUrl + "/loans/" + loan1Id)
+                assertEquals(200, Unirest.delete(baseUrl + "/v1/loans/" + loan1Id)
                                 .header("Authorization", "Bearer " + token).asString().getStatus());
-                assertEquals(200, Unirest.delete(baseUrl + "/loans/" + loan2Id)
+                assertEquals(200, Unirest.delete(baseUrl + "/v1/loans/" + loan2Id)
                                 .header("Authorization", "Bearer " + token).asString().getStatus());
-                assertEquals(200, Unirest.delete(baseUrl + "/loans/" + loan3Id)
+                assertEquals(200, Unirest.delete(baseUrl + "/v1/loans/" + loan3Id)
                                 .header("Authorization", "Bearer " + token).asString().getStatus());
 
                 // Verify none of the deleted loans can be retrieved
-                assertEquals(404, Unirest.get(baseUrl + "/loans/" + loan1Id)
+                assertEquals(404, Unirest.get(baseUrl + "/v1/loans/" + loan1Id)
                                 .header("Authorization", "Bearer " + token).asString().getStatus());
-                assertEquals(404, Unirest.get(baseUrl + "/loans/" + loan2Id)
+                assertEquals(404, Unirest.get(baseUrl + "/v1/loans/" + loan2Id)
                                 .header("Authorization", "Bearer " + token).asString().getStatus());
-                assertEquals(404, Unirest.get(baseUrl + "/loans/" + loan3Id)
+                assertEquals(404, Unirest.get(baseUrl + "/v1/loans/" + loan3Id)
                                 .header("Authorization", "Bearer " + token).asString().getStatus());
 
                 // Verify the kept loan still exists
-                assertEquals(200, Unirest.get(baseUrl + "/loans/" + keepLoanId)
+                assertEquals(200, Unirest.get(baseUrl + "/v1/loans/" + keepLoanId)
                                 .header("Authorization", "Bearer " + token).asString().getStatus());
 
                 // Verify none of the deleted loans appear in the user's list
-                var listResponse = Unirest.get(baseUrl + "/users/" + USER_ID + "/loans")
+                var listResponse = Unirest.get(baseUrl + "/v1/users/" + USER_ID + "/loans")
                                 .header("Authorization", "Bearer " + token)
                                 .asString();
                 assertEquals(200, listResponse.getStatus());
@@ -548,7 +548,7 @@ public class RemoveLoanIT extends AppTestUtil {
         public void removeLoanShouldReturnLoanDetails() {
                 var loanId = createLoan("BORROW", "Test Bank", "Test Loan", 1000000, 5.5);
 
-                var response = Unirest.delete(baseUrl + "/loans/" + loanId)
+                var response = Unirest.delete(baseUrl + "/v1/loans/" + loanId)
                                 .header("Authorization", "Bearer " + token)
                                 .asString();
 
@@ -584,13 +584,13 @@ public class RemoveLoanIT extends AppTestUtil {
                                 250000);
 
                 // Remove the loan
-                var deleteResponse = Unirest.delete(baseUrl + "/loans/" + loanId)
+                var deleteResponse = Unirest.delete(baseUrl + "/v1/loans/" + loanId)
                                 .header("Authorization", "Bearer " + token)
                                 .asString();
                 assertEquals(200, deleteResponse.getStatus());
 
                 // Verify loan is deleted
-                assertEquals(404, Unirest.get(baseUrl + "/loans/" + loanId)
+                assertEquals(404, Unirest.get(baseUrl + "/v1/loans/" + loanId)
                                 .header("Authorization", "Bearer " + token).asString().getStatus());
 
                 // Verify all transactions still exist but loan references are removed
@@ -613,19 +613,19 @@ public class RemoveLoanIT extends AppTestUtil {
                                 500000);
 
                 // Verify loan is fully repaid
-                var getLoan = Unirest.get(baseUrl + "/loans/" + loanId)
+                var getLoan = Unirest.get(baseUrl + "/v1/loans/" + loanId)
                                 .header("Authorization", "Bearer " + token)
                                 .asString();
                 assertEquals(200, getLoan.getStatus());
 
                 // Remove the loan
-                var deleteResponse = Unirest.delete(baseUrl + "/loans/" + loanId)
+                var deleteResponse = Unirest.delete(baseUrl + "/v1/loans/" + loanId)
                                 .header("Authorization", "Bearer " + token)
                                 .asString();
                 assertEquals(200, deleteResponse.getStatus());
 
                 // Verify loan is deleted
-                assertEquals(404, Unirest.get(baseUrl + "/loans/" + loanId)
+                assertEquals(404, Unirest.get(baseUrl + "/v1/loans/" + loanId)
                                 .header("Authorization", "Bearer " + token).asString().getStatus());
 
                 // Verify transaction still exists but loan reference is removed
@@ -651,13 +651,13 @@ public class RemoveLoanIT extends AppTestUtil {
                                 150000);
 
                 // Remove the loan
-                var deleteResponse = Unirest.delete(baseUrl + "/loans/" + loanId)
+                var deleteResponse = Unirest.delete(baseUrl + "/v1/loans/" + loanId)
                                 .header("Authorization", "Bearer " + token)
                                 .asString();
                 assertEquals(200, deleteResponse.getStatus());
 
                 // Verify loan is deleted
-                assertEquals(404, Unirest.get(baseUrl + "/loans/" + loanId)
+                assertEquals(404, Unirest.get(baseUrl + "/v1/loans/" + loanId)
                                 .header("Authorization", "Bearer " + token).asString().getStatus());
 
                 // Verify both transactions still exist but loan references are removed

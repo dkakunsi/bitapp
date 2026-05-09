@@ -63,7 +63,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/loans")
+    var response = Unirest.post(baseUrl + "/v1/loans")
         .body(body)
         .asString();
 
@@ -91,7 +91,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/loans")
+    var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -134,7 +134,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/loans")
+    var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -175,7 +175,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/loans")
+    var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -229,7 +229,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/loans")
+    var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -269,7 +269,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/loans")
+    var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -298,7 +298,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/loans")
+    var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -328,7 +328,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/loans")
+    var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -358,7 +358,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/loans")
+    var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -388,7 +388,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/loans")
+    var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -417,7 +417,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/loans")
+    var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -447,7 +447,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/loans")
+    var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -477,7 +477,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/loans")
+    var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -507,7 +507,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/loans")
+    var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -537,7 +537,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/loans")
+    var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -567,7 +567,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/loans")
+    var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -596,7 +596,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/loans")
+    var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -626,7 +626,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/loans")
+    var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -656,7 +656,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/loans")
+    var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -686,7 +686,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/loans")
+    var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -716,7 +716,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/loans")
+    var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -746,7 +746,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/loans")
+    var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -776,7 +776,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/loans")
+    var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -806,7 +806,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/loans")
+    var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -836,7 +836,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/loans")
+    var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -852,7 +852,7 @@ public class CreateLoanIT extends AppTestUtil {
    */
   @Test
   public void createLoanWithNonExistentAccountShouldFail() throws Exception {
-    var beforeLoansResponse = Unirest.get(baseUrl + "/users/" + USER_ID + "/loans")
+    var beforeLoansResponse = Unirest.get(baseUrl + "/v1/users/" + USER_ID + "/loans")
         .header("Authorization", "Bearer " + token)
         .asString();
 
@@ -872,7 +872,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/loans")
+    var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -880,7 +880,7 @@ public class CreateLoanIT extends AppTestUtil {
     assertEquals(404, response.getStatus());
     assertEquals("Account not found", response.getBody());
 
-    var afterLoansResponse = Unirest.get(baseUrl + "/users/" + USER_ID + "/loans")
+    var afterLoansResponse = Unirest.get(baseUrl + "/v1/users/" + USER_ID + "/loans")
         .header("Authorization", "Bearer " + token)
         .asString();
 
@@ -905,7 +905,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """;
 
-    var accountResponse = Unirest.post(baseUrl + "/accounts")
+    var accountResponse = Unirest.post(baseUrl + "/v1/accounts")
         .header("Authorization", "Bearer " + token)
         .body(accountBody)
         .asString();
@@ -927,7 +927,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """, accountId);
 
-    var loanResponse = Unirest.post(baseUrl + "/loans")
+    var loanResponse = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(loanBody)
         .asString();
@@ -938,7 +938,7 @@ public class CreateLoanIT extends AppTestUtil {
     assertNotNull(loanId);
 
     // Verify the account balance increased (disbursement happened)
-    var accountCheckResponse = Unirest.get(baseUrl + "/accounts/" + accountId)
+    var accountCheckResponse = Unirest.get(baseUrl + "/v1/accounts/" + accountId)
         .header("Authorization", "Bearer " + token)
         .asString();
 
@@ -947,7 +947,7 @@ public class CreateLoanIT extends AppTestUtil {
     assertEquals(0, accountData.getBigDecimal("balance").compareTo(new java.math.BigDecimal("50000000")));
 
     // Verify a CREDIT transaction was created for disbursement
-    var transactionsResponse = Unirest.get(baseUrl + "/users/" + USER_ID + "/transactions")
+    var transactionsResponse = Unirest.get(baseUrl + "/v1/users/" + USER_ID + "/transactions")
         .header("Authorization", "Bearer " + token)
         .asString();
 
@@ -987,7 +987,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """;
 
-    var accountResponse = Unirest.post(baseUrl + "/accounts")
+    var accountResponse = Unirest.post(baseUrl + "/v1/accounts")
         .header("Authorization", "Bearer " + token)
         .body(accountBody)
         .asString();
@@ -1007,7 +1007,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """, accountId);
 
-    var depositResponse = Unirest.post(baseUrl + "/transactions")
+    var depositResponse = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(depositBody)
         .asString();
@@ -1028,7 +1028,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """, accountId);
 
-    var loanResponse = Unirest.post(baseUrl + "/loans")
+    var loanResponse = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(loanBody)
         .asString();
@@ -1039,7 +1039,7 @@ public class CreateLoanIT extends AppTestUtil {
     assertNotNull(loanId);
 
     // Verify the account balance decreased (disbursement happened)
-    var accountCheckResponse = Unirest.get(baseUrl + "/accounts/" + accountId)
+    var accountCheckResponse = Unirest.get(baseUrl + "/v1/accounts/" + accountId)
         .header("Authorization", "Bearer " + token)
         .asString();
 
@@ -1049,7 +1049,7 @@ public class CreateLoanIT extends AppTestUtil {
     assertEquals(0, accountData.getBigDecimal("balance").compareTo(new java.math.BigDecimal("80000000")));
 
     // Verify a DEBIT transaction was created for disbursement
-    var transactionsResponse = Unirest.get(baseUrl + "/users/" + USER_ID + "/transactions")
+    var transactionsResponse = Unirest.get(baseUrl + "/v1/users/" + USER_ID + "/transactions")
         .header("Authorization", "Bearer " + token)
         .asString();
 
@@ -1091,7 +1091,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """;
 
-    var accountResponse = Unirest.post(baseUrl + "/accounts")
+    var accountResponse = Unirest.post(baseUrl + "/v1/accounts")
         .header("Authorization", "Bearer " + otherUserToken)
         .body(accountBody)
         .asString();
@@ -1113,7 +1113,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """, accountId);
 
-    var loanResponse = Unirest.post(baseUrl + "/loans")
+    var loanResponse = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(loanBody)
         .asString();
@@ -1138,7 +1138,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """;
 
-    var accountResponse = Unirest.post(baseUrl + "/accounts")
+    var accountResponse = Unirest.post(baseUrl + "/v1/accounts")
         .header("Authorization", "Bearer " + token)
         .body(accountBody)
         .asString();
@@ -1160,7 +1160,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """, accountId);
 
-    var loan1Response = Unirest.post(baseUrl + "/loans")
+    var loan1Response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(loan1Body)
         .asString();
@@ -1181,7 +1181,7 @@ public class CreateLoanIT extends AppTestUtil {
         }
         """, accountId);
 
-    var loan2Response = Unirest.post(baseUrl + "/loans")
+    var loan2Response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(loan2Body)
         .asString();
@@ -1189,7 +1189,7 @@ public class CreateLoanIT extends AppTestUtil {
     assertEquals(200, loan2Response.getStatus());
 
     // Verify the account balance reflects both disbursements
-    var accountCheckResponse = Unirest.get(baseUrl + "/accounts/" + accountId)
+    var accountCheckResponse = Unirest.get(baseUrl + "/v1/accounts/" + accountId)
         .header("Authorization", "Bearer " + token)
         .asString();
 

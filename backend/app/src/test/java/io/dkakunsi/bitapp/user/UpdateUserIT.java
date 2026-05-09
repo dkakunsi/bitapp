@@ -56,7 +56,7 @@ public class UpdateUserIT extends AppTestUtil {
         }
         """;
 
-    var registerResponse = Unirest.post(baseUrl + "/users").body(registerBody).asString();
+    var registerResponse = Unirest.post(baseUrl + "/v1/users").body(registerBody).asString();
     assertEquals(200, registerResponse.getStatus());
     var registerResponseBody = new JSONObject(registerResponse.getBody());
     assertEquals("EN", registerResponseBody.getString("language"));
@@ -68,7 +68,7 @@ public class UpdateUserIT extends AppTestUtil {
         }
         """;
     var janeToken = SecureTestUtil.generateToken("jane.doe@example.com");
-    var updateResponse = Unirest.put(baseUrl + "/users/jane.doe@example.com")
+    var updateResponse = Unirest.put(baseUrl + "/v1/users/jane.doe@example.com")
         .header("Authorization", "Bearer " + janeToken)
         .body(updateBody)
         .asString();
@@ -78,7 +78,7 @@ public class UpdateUserIT extends AppTestUtil {
     assertEquals("ID", updateResponseBody.getString("language"));
 
     // Verify the language was updated by getting the user
-    var getResponse = Unirest.get(baseUrl + "/users/jane.doe@example.com")
+    var getResponse = Unirest.get(baseUrl + "/v1/users/jane.doe@example.com")
         .header("Authorization", "Bearer " + janeToken)
         .asString();
     assertEquals(200, getResponse.getStatus());
@@ -107,7 +107,7 @@ public class UpdateUserIT extends AppTestUtil {
         }
         """;
 
-    var registerResponse = Unirest.post(baseUrl + "/users").body(registerBody).asString();
+    var registerResponse = Unirest.post(baseUrl + "/v1/users").body(registerBody).asString();
     assertEquals(200, registerResponse.getStatus());
 
     // Update to ID first
@@ -117,7 +117,7 @@ public class UpdateUserIT extends AppTestUtil {
         }
         """;
     var bobToken = SecureTestUtil.generateToken("bob.smith@example.com");
-    var updateToIdResponse = Unirest.put(baseUrl + "/users/bob.smith@example.com")
+    var updateToIdResponse = Unirest.put(baseUrl + "/v1/users/bob.smith@example.com")
         .header("Authorization", "Bearer " + bobToken)
         .body(updateBodyId)
         .asString();
@@ -131,7 +131,7 @@ public class UpdateUserIT extends AppTestUtil {
           "language": "EN"
         }
         """;
-    var updateToEnResponse = Unirest.put(baseUrl + "/users/bob.smith@example.com")
+    var updateToEnResponse = Unirest.put(baseUrl + "/v1/users/bob.smith@example.com")
         .header("Authorization", "Bearer " + bobToken)
         .body(updateBodyEn)
         .asString();
@@ -141,7 +141,7 @@ public class UpdateUserIT extends AppTestUtil {
     assertEquals("EN", updateToEnResponseBody.getString("language"));
 
     // Verify the final state
-    var getResponse = Unirest.get(baseUrl + "/users/bob.smith@example.com")
+    var getResponse = Unirest.get(baseUrl + "/v1/users/bob.smith@example.com")
         .header("Authorization", "Bearer " + bobToken)
         .asString();
     assertEquals(200, getResponse.getStatus());
@@ -163,7 +163,7 @@ public class UpdateUserIT extends AppTestUtil {
         }
         """;
     var nonExistentUserToken = SecureTestUtil.generateToken("nonexistent@example.com");
-    var updateResponse = Unirest.put(baseUrl + "/users/nonexistent@example.com")
+    var updateResponse = Unirest.put(baseUrl + "/v1/users/nonexistent@example.com")
         .header("Authorization", "Bearer " + nonExistentUserToken)
         .body(updateBody)
         .asString();
@@ -189,7 +189,7 @@ public class UpdateUserIT extends AppTestUtil {
         }
         """;
 
-    var registerResponse = Unirest.post(baseUrl + "/users").body(registerBody).asString();
+    var registerResponse = Unirest.post(baseUrl + "/v1/users").body(registerBody).asString();
     assertEquals(200, registerResponse.getStatus());
 
     // Try to update to an unsupported language
@@ -199,7 +199,7 @@ public class UpdateUserIT extends AppTestUtil {
         }
         """;
     var aliceToken = SecureTestUtil.generateToken("alice.johnson@example.com");
-    var updateResponse = Unirest.put(baseUrl + "/users/alice.johnson@example.com")
+    var updateResponse = Unirest.put(baseUrl + "/v1/users/alice.johnson@example.com")
         .header("Authorization", "Bearer " + aliceToken)
         .body(updateBodyUnsupported)
         .asString();
@@ -225,7 +225,7 @@ public class UpdateUserIT extends AppTestUtil {
         }
         """;
 
-    var registerResponse = Unirest.post(baseUrl + "/users").body(registerBody).asString();
+    var registerResponse = Unirest.post(baseUrl + "/v1/users").body(registerBody).asString();
     assertEquals(200, registerResponse.getStatus());
 
     // Try to update language without authorization header
@@ -234,7 +234,7 @@ public class UpdateUserIT extends AppTestUtil {
           "language": "ID"
         }
         """;
-    var updateResponse = Unirest.put(baseUrl + "/users/charlie.brown@example.com")
+    var updateResponse = Unirest.put(baseUrl + "/v1/users/charlie.brown@example.com")
         .body(updateBodyId)
         .asString();
     assertEquals(401, updateResponse.getStatus());
@@ -258,7 +258,7 @@ public class UpdateUserIT extends AppTestUtil {
         }
         """;
 
-    var registerResponse = Unirest.post(baseUrl + "/users").body(registerBody).asString();
+    var registerResponse = Unirest.post(baseUrl + "/v1/users").body(registerBody).asString();
     assertEquals(200, registerResponse.getStatus());
 
     // Try to update language with invalid token
@@ -267,7 +267,7 @@ public class UpdateUserIT extends AppTestUtil {
           "language": "ID"
         }
         """;
-    var updateResponse = Unirest.put(baseUrl + "/users/diana.prince@example.com")
+    var updateResponse = Unirest.put(baseUrl + "/v1/users/diana.prince@example.com")
         .header("Authorization", "Bearer invalid-token")
         .body(updateBodyId)
         .asString();

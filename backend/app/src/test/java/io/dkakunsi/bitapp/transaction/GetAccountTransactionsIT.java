@@ -19,16 +19,17 @@ import io.dkakunsi.bitapp.test.AppTestUtil;
 import io.dkakunsi.bitapp.test.SecureTestUtil;
 import kong.unirest.Unirest;
 
-public class GetUserTransactionsIT extends AppTestUtil {
+public class GetAccountTransactionsIT extends AppTestUtil {
 
-  private static final int port = 20011;
+  private static final int port = 20012;
 
-  private static GetUserTransactionsIT sut = new GetUserTransactionsIT();
+  private static GetAccountTransactionsIT sut = new GetAccountTransactionsIT();
 
   private static String baseUrl;
 
   private static String token;
 
+  private String accountId;
   private String sourceAccountId;
   private String destinationAccountId;
   private String loanId;
@@ -51,6 +52,7 @@ public class GetUserTransactionsIT extends AppTestUtil {
 
   @BeforeEach
   void setupTestData() {
+    accountId = createAccount("Main Account", "BANK", 1000000);
     sourceAccountId = createAccount("Source Account", "BANK", 1000000);
     destinationAccountId = createAccount("Destination Account", "BANK", 500000);
     loanId = createLoan("BORROW", "John Doe", "Personal Loan", 2000000, 5.0);
@@ -71,7 +73,7 @@ public class GetUserTransactionsIT extends AppTestUtil {
         .asString();
 
     assertEquals(200, response.getStatus());
-    var accountId = new JSONObject(response.getBody()).getString("id");
+    var newAccountId = new JSONObject(response.getBody()).getString("id");
 
     if (initialBalance > 0) {
       var depositBody = String.format("""
@@ -83,7 +85,7 @@ public class GetUserTransactionsIT extends AppTestUtil {
             "amount": %d,
             "currency": "IDR"
           }
-          """, accountId, initialBalance);
+          """, newAccountId, initialBalance);
 
       var depositResponse = Unirest.post(baseUrl + "/v1/transactions")
           .header("Authorization", "Bearer " + token)
@@ -93,7 +95,7 @@ public class GetUserTransactionsIT extends AppTestUtil {
       assertEquals(200, depositResponse.getStatus());
     }
 
-    return accountId;
+    return newAccountId;
   }
 
   private String createLoan(String type, String partyName, String title, long amount, double interestRate) {
@@ -154,27 +156,27 @@ public class GetUserTransactionsIT extends AppTestUtil {
   }
 
   /**
-   * <b>Given</b> a user with multiple transactions<br>
-   * <b>When</b> the GET /users/{userId}/transactions endpoint is called<br>
-   * <b>Then</b> all user's transactions should be returned with status 200
+   * <b>Given</b> an account with multiple transactions<br>
+   * <b>When</b> the GET /accounts/{accountId}/transactions endpoint is called<br>
+   * <b>Then</b> all account's transactions should be returned with status 200
    */
   @Test
-  public void getUserTransactionsShouldReturnAllTransactions() {
-    // Create several transactions
-    createTransaction("DEBIT", "Grocery Shopping", "Weekly groceries", sourceAccountId, null, null, 50000, "FOOD");
-    createTransaction("CREDIT", "Salary", "Monthly salary", null, destinationAccountId, null, 5000000, "INCOME");
-    createTransaction("TRANSFER", "Transfer to Savings", "Monthly savings", sourceAccountId, destinationAccountId,
+  public void getAccountTransactionsShouldReturnAllTransactions() {
+    // Create several transactions for the account
+    createTransaction("DEBIT", "Grocery Shopping", "Weekly groceries", accountId, null, null, 50000, "FOOD");
+    createTransaction("CREDIT", "Salary Deposit", "Monthly salary", null, accountId, null, 5000000, "INCOME");
+    createTransaction("TRANSFER", "Transfer to Savings", "Monthly savings", accountId, destinationAccountId,
         null, 100000, "OTHER");
 
-    var response = Unirest.get(baseUrl + "/v1/users/" + USER_ID + "/transactions")
+    var response = Unirest.get(baseUrl + "/v1/accounts/" + accountId + "/transactions")
         .header("Authorization", "Bearer " + token)
         .asString();
 
     assertEquals(200, response.getStatus());
     var transactions = new JSONArray(response.getBody());
 
-    // Should have 3 transactions plus 2 initial balance transactions = 5 total
-    assertTrue(transactions.length() >= 5, "Expected at least 5 transactions");
+    // Should have 3 transactions plus 1 initial balance transaction = 4 total
+    assertTrue(transactions.length() >= 4, "Expected at least 4 transactions");
 
     // Verify transactions have required fields
     for (int i = 0; i < transactions.length(); i++) {
@@ -182,23 +184,20 @@ public class GetUserTransactionsIT extends AppTestUtil {
       assertNotNull(transaction.getString("id"));
       assertNotNull(transaction.getString("type"));
       assertNotNull(transaction.getString("title"));
-      assertEquals(USER_ID, transaction.getString("user"));
     }
   }
 
   /**
-   * <b>Given</b> a user with no transactions<br>
-   * <b>When</b> the GET /users/{userId}/transactions endpoint is called<br>
+   * <b>Given</b> an account with no transactions<br>
+   * <b>When</b> the GET /accounts/{accountId}/transactions endpoint is called<br>
    * <b>Then</b> an empty list should be returned with status 200
    */
   @Test
-  public void getUserTransactionsShouldReturnEmptyListWhenNoTransactions() {
-    // Create a new user token
-    var newUserEmail = "newuser@email.com";
-    var newUserToken = SecureTestUtil.generateToken(newUserEmail);
+  public void getAccountTransactionsShouldReturnEmptyListWhenNoTransactions() {
+    var emptyAccountId = createAccount("Empty Account", "BANK", 0);
 
-    var response = Unirest.get(baseUrl + "/v1/users/" + newUserEmail + "/transactions")
-        .header("Authorization", "Bearer " + newUserToken)
+    var response = Unirest.get(baseUrl + "/v1/accounts/" + emptyAccountId + "/transactions")
+        .header("Authorization", "Bearer " + token)
         .asString();
 
     assertEquals(200, response.getStatus());
@@ -207,20 +206,20 @@ public class GetUserTransactionsIT extends AppTestUtil {
   }
 
   /**
-   * <b>Given</b> a user with various transaction types<br>
-   * <b>When</b> the GET /users/{userId}/transactions endpoint is called<br>
+   * <b>Given</b> an account with various transaction types<br>
+   * <b>When</b> the GET /accounts/{accountId}/transactions endpoint is called<br>
    * <b>Then</b> all transaction types should be returned correctly
    */
   @Test
-  public void getUserTransactionsShouldReturnAllTransactionTypes() {
-    var debitId = createTransaction("DEBIT", "Shopping", "Grocery shopping", sourceAccountId, null, null, 50000,
+  public void getAccountTransactionsShouldReturnAllTransactionTypes() {
+    var debitId = createTransaction("DEBIT", "Shopping", "Grocery shopping", accountId, null, null, 50000,
         "FOOD");
-    var creditId = createTransaction("CREDIT", "Income", "Freelance payment", null, destinationAccountId, null,
+    var creditId = createTransaction("CREDIT", "Income", "Freelance payment", null, accountId, null,
         1000000, "INCOME");
-    var transferId = createTransaction("TRANSFER", "Transfer", "Move money", sourceAccountId, destinationAccountId,
+    var transferId = createTransaction("TRANSFER", "Transfer", "Move money", accountId, destinationAccountId,
         null, 200000, "OTHER");
 
-    var response = Unirest.get(baseUrl + "/v1/users/" + USER_ID + "/transactions")
+    var response = Unirest.get(baseUrl + "/v1/accounts/" + accountId + "/transactions")
         .header("Authorization", "Bearer " + token)
         .asString();
 
@@ -238,15 +237,15 @@ public class GetUserTransactionsIT extends AppTestUtil {
       if (id.equals(debitId)) {
         foundDebit = true;
         assertEquals("DEBIT", transaction.getString("type"));
-        assertEquals(sourceAccountId, transaction.getString("source"));
+        assertEquals(accountId, transaction.getString("source"));
       } else if (id.equals(creditId)) {
         foundCredit = true;
         assertEquals("CREDIT", transaction.getString("type"));
-        assertEquals(destinationAccountId, transaction.getString("destination"));
+        assertEquals(accountId, transaction.getString("destination"));
       } else if (id.equals(transferId)) {
         foundTransfer = true;
         assertEquals("TRANSFER", transaction.getString("type"));
-        assertEquals(sourceAccountId, transaction.getString("source"));
+        assertEquals(accountId, transaction.getString("source"));
         assertEquals(destinationAccountId, transaction.getString("destination"));
       }
     }
@@ -257,16 +256,16 @@ public class GetUserTransactionsIT extends AppTestUtil {
   }
 
   /**
-   * <b>Given</b> a transaction with loan reference<br>
-   * <b>When</b> the GET /users/{userId}/transactions endpoint is called<br>
+   * <b>Given</b> a transaction with loan reference for an account<br>
+   * <b>When</b> the GET /accounts/{accountId}/transactions endpoint is called<br>
    * <b>Then</b> the loan reference should be included in the response
    */
   @Test
-  public void getUserTransactionsShouldIncludeLoanReference() {
+  public void getAccountTransactionsShouldIncludeLoanReference() {
     var transactionId = createTransaction("CREDIT", "Loan Disbursement", "Personal loan received", null,
-        destinationAccountId, loanId, 2000000, "OTHER");
+        accountId, loanId, 2000000, "OTHER");
 
-    var response = Unirest.get(baseUrl + "/v1/users/" + USER_ID + "/transactions")
+    var response = Unirest.get(baseUrl + "/v1/accounts/" + accountId + "/transactions")
         .header("Authorization", "Bearer " + token)
         .asString();
 
@@ -289,12 +288,12 @@ public class GetUserTransactionsIT extends AppTestUtil {
 
   /**
    * <b>Given</b> a request without authorization header<br>
-   * <b>When</b> the GET /users/{userId}/transactions endpoint is called<br>
+   * <b>When</b> the GET /accounts/{accountId}/transactions endpoint is called<br>
    * <b>Then</b> the request should fail with status 401
    */
   @Test
-  public void getUserTransactionsWithoutAuthorizationShouldFail() {
-    var response = Unirest.get(baseUrl + "/v1/users/" + USER_ID + "/transactions")
+  public void getAccountTransactionsWithoutAuthorizationShouldFail() {
+    var response = Unirest.get(baseUrl + "/v1/accounts/" + accountId + "/transactions")
         .asString();
 
     assertEquals(401, response.getStatus());
@@ -302,12 +301,12 @@ public class GetUserTransactionsIT extends AppTestUtil {
 
   /**
    * <b>Given</b> a request with invalid token<br>
-   * <b>When</b> the GET /users/{userId}/transactions endpoint is called<br>
+   * <b>When</b> the GET /accounts/{accountId}/transactions endpoint is called<br>
    * <b>Then</b> the request should fail with status 401
    */
   @Test
-  public void getUserTransactionsWithInvalidTokenShouldFail() {
-    var response = Unirest.get(baseUrl + "/v1/users/" + USER_ID + "/transactions")
+  public void getAccountTransactionsWithInvalidTokenShouldFail() {
+    var response = Unirest.get(baseUrl + "/v1/accounts/" + accountId + "/transactions")
         .header("Authorization", "Bearer invalid-token")
         .asString();
 
@@ -315,45 +314,17 @@ public class GetUserTransactionsIT extends AppTestUtil {
   }
 
   /**
-   * <b>Given</b> a user requesting another user's transactions<br>
-   * <b>When</b> the GET /users/{userId}/transactions endpoint is called<br>
-   * <b>Then</b> the request should return only the authenticated user's
-   * transactions
-   */
-  @Test
-  public void getUserTransactionsShouldReturnOnlyOwnTransactions() {
-    // Create transactions for the authenticated user
-    createTransaction("DEBIT", "My Shopping", "My groceries", sourceAccountId, null, null, 50000, "FOOD");
-
-    // Try to get transactions for another user
-    var otherUserId = "otheruser@email.com";
-    var response = Unirest.get(baseUrl + "/v1/users/" + otherUserId + "/transactions")
-        .header("Authorization", "Bearer " + token)
-        .asString();
-
-    // Should return empty list or only authenticated user's transactions
-    assertEquals(200, response.getStatus());
-    var transactions = new JSONArray(response.getBody());
-
-    // All returned transactions should belong to the authenticated user
-    for (int i = 0; i < transactions.length(); i++) {
-      var transaction = transactions.getJSONObject(i);
-      assertEquals(USER_ID, transaction.getString("user"));
-    }
-  }
-
-  /**
-   * <b>Given</b> transactions with different categories<br>
-   * <b>When</b> the GET /users/{userId}/transactions endpoint is called<br>
+   * <b>Given</b> transactions with different categories for an account<br>
+   * <b>When</b> the GET /accounts/{accountId}/transactions endpoint is called<br>
    * <b>Then</b> all categories should be represented correctly
    */
   @Test
-  public void getUserTransactionsShouldReturnCorrectCategories() {
-    createTransaction("DEBIT", "Groceries", "Food shopping", sourceAccountId, null, null, 50000, "FOOD");
-    createTransaction("DEBIT", "Transport", "Bus fare", sourceAccountId, null, null, 10000, "TRANSPORTATION");
-    createTransaction("CREDIT", "Salary", "Monthly income", null, destinationAccountId, null, 5000000, "INCOME");
+  public void getAccountTransactionsShouldReturnCorrectCategories() {
+    createTransaction("DEBIT", "Groceries", "Food shopping", accountId, null, null, 50000, "FOOD");
+    createTransaction("DEBIT", "Transport", "Bus fare", accountId, null, null, 10000, "TRANSPORTATION");
+    createTransaction("CREDIT", "Salary", "Monthly income", null, accountId, null, 5000000, "INCOME");
 
-    var response = Unirest.get(baseUrl + "/v1/users/" + USER_ID + "/transactions")
+    var response = Unirest.get(baseUrl + "/v1/accounts/" + accountId + "/transactions")
         .header("Authorization", "Bearer " + token)
         .asString();
 
@@ -384,15 +355,15 @@ public class GetUserTransactionsIT extends AppTestUtil {
   }
 
   /**
-   * <b>Given</b> transactions with dates and times<br>
-   * <b>When</b> the GET /users/{userId}/transactions endpoint is called<br>
+   * <b>Given</b> transactions with dates and times for an account<br>
+   * <b>When</b> the GET /accounts/{accountId}/transactions endpoint is called<br>
    * <b>Then</b> date and time information should be included
    */
   @Test
-  public void getUserTransactionsShouldIncludeDateAndTime() {
-    createTransaction("DEBIT", "Shopping", "Daily shopping", sourceAccountId, null, null, 50000, "FOOD");
+  public void getAccountTransactionsShouldIncludeDateAndTime() {
+    createTransaction("DEBIT", "Shopping", "Daily shopping", accountId, null, null, 50000, "FOOD");
 
-    var response = Unirest.get(baseUrl + "/v1/users/" + USER_ID + "/transactions")
+    var response = Unirest.get(baseUrl + "/v1/accounts/" + accountId + "/transactions")
         .header("Authorization", "Bearer " + token)
         .asString();
 
@@ -401,7 +372,7 @@ public class GetUserTransactionsIT extends AppTestUtil {
 
     assertTrue(transactions.length() > 0, "Should have at least one transaction");
 
-    // Verify the first transaction has date/time fields
+    // Verify transactions have date/time fields
     for (int i = 0; i < transactions.length(); i++) {
       var transaction = transactions.getJSONObject(i);
       // Date and time might be optional in some cases, but check they exist
@@ -415,24 +386,24 @@ public class GetUserTransactionsIT extends AppTestUtil {
   }
 
   /**
-   * <b>Given</b> multiple transactions with amounts<br>
-   * <b>When</b> the GET /users/{userId}/transactions endpoint is called<br>
+   * <b>Given</b> multiple transactions with amounts for an account<br>
+   * <b>When</b> the GET /accounts/{accountId}/transactions endpoint is called<br>
    * <b>Then</b> all amounts should be correct and in the proper currency
    */
   @Test
-  public void getUserTransactionsShouldReturnCorrectAmounts() {
+  public void getAccountTransactionsShouldReturnCorrectAmounts() {
     var smallAmount = 1000L;
     var mediumAmount = 50000L;
     var largeAmount = 5000000L;
 
-    var smallId = createTransaction("DEBIT", "Coffee", "Morning coffee", sourceAccountId, null, null, smallAmount,
+    var smallId = createTransaction("DEBIT", "Coffee", "Morning coffee", accountId, null, null, smallAmount,
         "FOOD");
-    var mediumId = createTransaction("DEBIT", "Groceries", "Weekly groceries", sourceAccountId, null, null,
+    var mediumId = createTransaction("DEBIT", "Groceries", "Weekly groceries", accountId, null, null,
         mediumAmount, "FOOD");
-    var largeId = createTransaction("CREDIT", "Salary", "Monthly salary", null, destinationAccountId, null,
+    var largeId = createTransaction("CREDIT", "Salary", "Monthly salary", null, accountId, null,
         largeAmount, "INCOME");
 
-    var response = Unirest.get(baseUrl + "/v1/users/" + USER_ID + "/transactions")
+    var response = Unirest.get(baseUrl + "/v1/accounts/" + accountId + "/transactions")
         .header("Authorization", "Bearer " + token)
         .asString();
 

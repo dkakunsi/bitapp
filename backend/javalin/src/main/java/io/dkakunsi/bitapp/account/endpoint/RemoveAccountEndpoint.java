@@ -20,7 +20,7 @@ public final class RemoveAccountEndpoint extends JavalinEndpoint<String, Account
 
   @Override
   public String getPath() {
-    return "/accounts/{id}";
+    return "/v1/accounts/{id}";
   }
 
   @Override

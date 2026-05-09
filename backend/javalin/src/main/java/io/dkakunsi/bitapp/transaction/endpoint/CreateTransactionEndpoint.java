@@ -24,7 +24,7 @@ public final class CreateTransactionEndpoint extends JavalinEndpoint<CreateTrans
 
   @Override
   public String getPath() {
-    return "/transactions";
+    return "/v1/transactions";
   }
 
   @Override

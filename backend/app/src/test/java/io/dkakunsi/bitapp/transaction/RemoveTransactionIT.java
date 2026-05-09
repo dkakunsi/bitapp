@@ -64,7 +64,7 @@ public class RemoveTransactionIT extends AppTestUtil {
                 }
                 """, name, type);
 
-        var response = Unirest.post(baseUrl + "/accounts")
+        var response = Unirest.post(baseUrl + "/v1/accounts")
                 .header("Authorization", "Bearer " + token)
                 .body(body)
                 .asString();
@@ -84,7 +84,7 @@ public class RemoveTransactionIT extends AppTestUtil {
                     }
                     """, accountId, initialBalance);
 
-            var depositResponse = Unirest.post(baseUrl + "/transactions")
+            var depositResponse = Unirest.post(baseUrl + "/v1/transactions")
                     .header("Authorization", "Bearer " + token)
                     .body(depositBody)
                     .asString();
@@ -108,7 +108,7 @@ public class RemoveTransactionIT extends AppTestUtil {
                 }
                 """, type, partyName, title, amount, interestRate);
 
-        var response = Unirest.post(baseUrl + "/loans")
+        var response = Unirest.post(baseUrl + "/v1/loans")
                 .header("Authorization", "Bearer " + token)
                 .body(body)
                 .asString();
@@ -143,7 +143,7 @@ public class RemoveTransactionIT extends AppTestUtil {
 
         bodyBuilder.append("}");
 
-        var response = Unirest.post(baseUrl + "/transactions")
+        var response = Unirest.post(baseUrl + "/v1/transactions")
                 .header("Authorization", "Bearer " + token)
                 .body(bodyBuilder.toString())
                 .asString();
@@ -153,7 +153,7 @@ public class RemoveTransactionIT extends AppTestUtil {
     }
 
     private BigDecimal getAccountBalance(String accountId) {
-        var response = Unirest.get(baseUrl + "/accounts/" + accountId)
+        var response = Unirest.get(baseUrl + "/v1/accounts/" + accountId)
                 .header("Authorization", "Bearer " + token)
                 .asString();
 
@@ -162,7 +162,7 @@ public class RemoveTransactionIT extends AppTestUtil {
     }
 
     private BigDecimal getLoanRemainingAmount(String loanId) {
-        var response = Unirest.get(baseUrl + "/loans/" + loanId)
+        var response = Unirest.get(baseUrl + "/v1/loans/" + loanId)
                 .header("Authorization", "Bearer " + token)
                 .asString();
 
@@ -187,7 +187,7 @@ public class RemoveTransactionIT extends AppTestUtil {
         assertEquals(0, new BigDecimal("950000").compareTo(balanceAfterDebit));
 
         // Remove the transaction
-        var response = Unirest.delete(baseUrl + "/transactions/" + transactionId)
+        var response = Unirest.delete(baseUrl + "/v1/transactions/" + transactionId)
                 .header("Authorization", "Bearer " + token)
                 .asString();
 
@@ -215,7 +215,7 @@ public class RemoveTransactionIT extends AppTestUtil {
         assertEquals(0, new BigDecimal("600000").compareTo(balanceAfterCredit));
 
         // Remove the transaction
-        var response = Unirest.delete(baseUrl + "/transactions/" + transactionId)
+        var response = Unirest.delete(baseUrl + "/v1/transactions/" + transactionId)
                 .header("Authorization", "Bearer " + token)
                 .asString();
 
@@ -245,7 +245,7 @@ public class RemoveTransactionIT extends AppTestUtil {
         assertEquals(0, new BigDecimal("700000").compareTo(destBalanceAfterTransfer));
 
         // Remove the transaction
-        var response = Unirest.delete(baseUrl + "/transactions/" + transactionId)
+        var response = Unirest.delete(baseUrl + "/v1/transactions/" + transactionId)
                 .header("Authorization", "Bearer " + token)
                 .asString();
 
@@ -279,7 +279,7 @@ public class RemoveTransactionIT extends AppTestUtil {
         assertEquals(0, new BigDecimal("900000").compareTo(accountBalanceAfterPayment));
 
         // Remove the transaction
-        var response = Unirest.delete(baseUrl + "/transactions/" + transactionId)
+        var response = Unirest.delete(baseUrl + "/v1/transactions/" + transactionId)
                 .header("Authorization", "Bearer " + token)
                 .asString();
 
@@ -313,7 +313,7 @@ public class RemoveTransactionIT extends AppTestUtil {
         assertEquals(0, new BigDecimal("1500000").compareTo(loanRemainingAfterDisbursement));
 
         // Remove the transaction
-        var response = Unirest.delete(baseUrl + "/transactions/" + transactionId)
+        var response = Unirest.delete(baseUrl + "/v1/transactions/" + transactionId)
                 .header("Authorization", "Bearer " + token)
                 .asString();
 
@@ -335,7 +335,7 @@ public class RemoveTransactionIT extends AppTestUtil {
     public void removeNonExistentTransactionShouldFail() {
         var nonExistentId = "non-existent-id";
 
-        var response = Unirest.delete(baseUrl + "/transactions/" + nonExistentId)
+        var response = Unirest.delete(baseUrl + "/v1/transactions/" + nonExistentId)
                 .header("Authorization", "Bearer " + token)
                 .asString();
 
@@ -352,7 +352,7 @@ public class RemoveTransactionIT extends AppTestUtil {
         var transactionId = createTransaction("DEBIT", "Shopping", "Grocery", sourceAccountId, null, null, 50000,
                 "FOOD");
 
-        var response = Unirest.delete(baseUrl + "/transactions/" + transactionId)
+        var response = Unirest.delete(baseUrl + "/v1/transactions/" + transactionId)
                 .asString();
 
         assertEquals(401, response.getStatus());
@@ -372,7 +372,7 @@ public class RemoveTransactionIT extends AppTestUtil {
         var transactionId = createTransaction("DEBIT", "Shopping", "Grocery", sourceAccountId, null, null, 50000,
                 "FOOD");
 
-        var response = Unirest.delete(baseUrl + "/transactions/" + transactionId)
+        var response = Unirest.delete(baseUrl + "/v1/transactions/" + transactionId)
                 .header("Authorization", "Bearer invalid-token")
                 .asString();
 
@@ -397,7 +397,7 @@ public class RemoveTransactionIT extends AppTestUtil {
         // Try to delete with a different user's token
         var otherUserToken = SecureTestUtil.generateToken("otheruser@email.com");
 
-        var response = Unirest.delete(baseUrl + "/transactions/" + transactionId)
+        var response = Unirest.delete(baseUrl + "/v1/transactions/" + transactionId)
                 .header("Authorization", "Bearer " + otherUserToken)
                 .asString();
 
@@ -429,7 +429,7 @@ public class RemoveTransactionIT extends AppTestUtil {
         assertEquals(0, new BigDecimal("900000").compareTo(balanceAfterTransactions));
 
         // Remove only the second transaction
-        var response = Unirest.delete(baseUrl + "/transactions/" + transaction2Id)
+        var response = Unirest.delete(baseUrl + "/v1/transactions/" + transaction2Id)
                 .header("Authorization", "Bearer " + token)
                 .asString();
 
@@ -459,7 +459,7 @@ public class RemoveTransactionIT extends AppTestUtil {
         assertEquals(0, new BigDecimal("50000000").compareTo(balanceAfterTransaction));
 
         // Remove the transaction
-        var response = Unirest.delete(baseUrl + "/transactions/" + transactionId)
+        var response = Unirest.delete(baseUrl + "/v1/transactions/" + transactionId)
                 .header("Authorization", "Bearer " + token)
                 .asString();
 
@@ -481,7 +481,7 @@ public class RemoveTransactionIT extends AppTestUtil {
                 "FOOD");
 
         // Remove the transaction
-        var deleteResponse = Unirest.delete(baseUrl + "/transactions/" + transactionId)
+        var deleteResponse = Unirest.delete(baseUrl + "/v1/transactions/" + transactionId)
                 .header("Authorization", "Bearer " + token)
                 .asString();
 
@@ -489,7 +489,7 @@ public class RemoveTransactionIT extends AppTestUtil {
 
         // Try to retrieve the removed transaction - should return 404 (not found in
         // database)
-        var getResponse = Unirest.get(baseUrl + "/transactions/" + transactionId)
+        var getResponse = Unirest.get(baseUrl + "/v1/transactions/" + transactionId)
                 .header("Authorization", "Bearer " + token)
                 .asString();
 
@@ -515,7 +515,7 @@ public class RemoveTransactionIT extends AppTestUtil {
         assertEquals(0, new BigDecimal("0").compareTo(remainingAfterPayment));
 
         // Remove the transaction
-        var response = Unirest.delete(baseUrl + "/transactions/" + transactionId)
+        var response = Unirest.delete(baseUrl + "/v1/transactions/" + transactionId)
                 .header("Authorization", "Bearer " + token)
                 .asString();
 
@@ -536,7 +536,7 @@ public class RemoveTransactionIT extends AppTestUtil {
         var transactionId = createTransaction("DEBIT", "Shopping", "Grocery shopping", sourceAccountId, null, null,
                 50000, "FOOD");
 
-        var response = Unirest.delete(baseUrl + "/transactions/" + transactionId)
+        var response = Unirest.delete(baseUrl + "/v1/transactions/" + transactionId)
                 .header("Authorization", "Bearer " + token)
                 .asString();
 
@@ -574,7 +574,7 @@ public class RemoveTransactionIT extends AppTestUtil {
         assertEquals(0, new BigDecimal("7777777").compareTo(balance2AfterTransfer));
 
         // Remove the transaction
-        var response = Unirest.delete(baseUrl + "/transactions/" + transactionId)
+        var response = Unirest.delete(baseUrl + "/v1/transactions/" + transactionId)
                 .header("Authorization", "Bearer " + token)
                 .asString();
 
@@ -603,14 +603,14 @@ public class RemoveTransactionIT extends AppTestUtil {
                 null, 100000, "INCOME");
 
         // Remove the second transaction
-        var deleteResponse = Unirest.delete(baseUrl + "/transactions/" + transaction2Id)
+        var deleteResponse = Unirest.delete(baseUrl + "/v1/transactions/" + transaction2Id)
                 .header("Authorization", "Bearer " + token)
                 .asString();
 
         assertEquals(200, deleteResponse.getStatus());
 
         // Get user's transactions list
-        var listResponse = Unirest.get(baseUrl + "/users/" + USER_ID + "/transactions")
+        var listResponse = Unirest.get(baseUrl + "/v1/users/" + USER_ID + "/transactions")
                 .header("Authorization", "Bearer " + token)
                 .asString();
 
@@ -654,25 +654,25 @@ public class RemoveTransactionIT extends AppTestUtil {
                 50000, "FOOD");
 
         // Verify transaction exists before deletion
-        var getBeforeDelete = Unirest.get(baseUrl + "/transactions/" + transactionId)
+        var getBeforeDelete = Unirest.get(baseUrl + "/v1/transactions/" + transactionId)
                 .header("Authorization", "Bearer " + token)
                 .asString();
         assertEquals(200, getBeforeDelete.getStatus());
 
         // Remove the transaction
-        var deleteResponse = Unirest.delete(baseUrl + "/transactions/" + transactionId)
+        var deleteResponse = Unirest.delete(baseUrl + "/v1/transactions/" + transactionId)
                 .header("Authorization", "Bearer " + token)
                 .asString();
         assertEquals(200, deleteResponse.getStatus());
 
         // Verify transaction no longer exists - should return 404 (hard delete)
-        var getAfterDelete = Unirest.get(baseUrl + "/transactions/" + transactionId)
+        var getAfterDelete = Unirest.get(baseUrl + "/v1/transactions/" + transactionId)
                 .header("Authorization", "Bearer " + token)
                 .asString();
         assertEquals(404, getAfterDelete.getStatus());
 
         // Verify it's not in the user's transaction list either
-        var listResponse = Unirest.get(baseUrl + "/users/" + USER_ID + "/transactions")
+        var listResponse = Unirest.get(baseUrl + "/v1/users/" + USER_ID + "/transactions")
                 .header("Authorization", "Bearer " + token)
                 .asString();
         assertEquals(200, listResponse.getStatus());
@@ -704,35 +704,35 @@ public class RemoveTransactionIT extends AppTestUtil {
                 100000, "INCOME");
 
         // Remove three transactions
-        var delete1 = Unirest.delete(baseUrl + "/transactions/" + transaction1Id)
+        var delete1 = Unirest.delete(baseUrl + "/v1/transactions/" + transaction1Id)
                 .header("Authorization", "Bearer " + token)
                 .asString();
         assertEquals(200, delete1.getStatus());
 
-        var delete2 = Unirest.delete(baseUrl + "/transactions/" + transaction2Id)
+        var delete2 = Unirest.delete(baseUrl + "/v1/transactions/" + transaction2Id)
                 .header("Authorization", "Bearer " + token)
                 .asString();
         assertEquals(200, delete2.getStatus());
 
-        var delete3 = Unirest.delete(baseUrl + "/transactions/" + transaction3Id)
+        var delete3 = Unirest.delete(baseUrl + "/v1/transactions/" + transaction3Id)
                 .header("Authorization", "Bearer " + token)
                 .asString();
         assertEquals(200, delete3.getStatus());
 
         // Verify none of the deleted transactions can be retrieved
-        assertEquals(404, Unirest.get(baseUrl + "/transactions/" + transaction1Id)
+        assertEquals(404, Unirest.get(baseUrl + "/v1/transactions/" + transaction1Id)
                 .header("Authorization", "Bearer " + token).asString().getStatus());
-        assertEquals(404, Unirest.get(baseUrl + "/transactions/" + transaction2Id)
+        assertEquals(404, Unirest.get(baseUrl + "/v1/transactions/" + transaction2Id)
                 .header("Authorization", "Bearer " + token).asString().getStatus());
-        assertEquals(404, Unirest.get(baseUrl + "/transactions/" + transaction3Id)
+        assertEquals(404, Unirest.get(baseUrl + "/v1/transactions/" + transaction3Id)
                 .header("Authorization", "Bearer " + token).asString().getStatus());
 
         // Verify the kept transaction still exists
-        assertEquals(200, Unirest.get(baseUrl + "/transactions/" + keepTransactionId)
+        assertEquals(200, Unirest.get(baseUrl + "/v1/transactions/" + keepTransactionId)
                 .header("Authorization", "Bearer " + token).asString().getStatus());
 
         // Verify none of the deleted transactions appear in the user's list
-        var listResponse = Unirest.get(baseUrl + "/users/" + USER_ID + "/transactions")
+        var listResponse = Unirest.get(baseUrl + "/v1/users/" + USER_ID + "/transactions")
                 .header("Authorization", "Bearer " + token)
                 .asString();
         assertEquals(200, listResponse.getStatus());

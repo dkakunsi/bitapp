@@ -21,7 +21,7 @@ public final class UpdateAccountEndpoint extends JavalinEndpoint<UpdateAccountIn
 
   @Override
   public String getPath() {
-    return "/accounts/{id}";
+    return "/v1/accounts/{id}";
   }
 
   @Override

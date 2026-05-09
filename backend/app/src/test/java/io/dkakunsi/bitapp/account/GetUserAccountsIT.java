@@ -71,7 +71,7 @@ public class GetUserAccountsIT extends AppTestUtil {
         }
         """, name, type, themeColor);
 
-    Unirest.post(baseUrl + "/accounts")
+    Unirest.post(baseUrl + "/v1/accounts")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -89,7 +89,7 @@ public class GetUserAccountsIT extends AppTestUtil {
   public void getExistingUserAccountsShouldBeOk() {
     // Given
     // When
-    var response = Unirest.get(baseUrl + "/users/{userId}/accounts")
+    var response = Unirest.get(baseUrl + "/v1/users/{userId}/accounts")
         .routeParam("userId", USER_ID)
         .header("Authorization", "Bearer " + token)
         .asString();
@@ -124,7 +124,7 @@ public class GetUserAccountsIT extends AppTestUtil {
   public void getUserSpecificAccountsShouldNotIncludeOtherUsersAccounts() {
     // Given
     // When
-    var response = Unirest.get(baseUrl + "/users/{userId}/accounts")
+    var response = Unirest.get(baseUrl + "/v1/users/{userId}/accounts")
         .routeParam("userId", USER_ID)
         .header("Authorization", "Bearer " + token)
         .asString();
@@ -156,7 +156,7 @@ public class GetUserAccountsIT extends AppTestUtil {
   public void getAccountsWithCorrectDetailsShouldBeOk() {
     // Given
     // When
-    var response = Unirest.get(baseUrl + "/users/{userId}/accounts")
+    var response = Unirest.get(baseUrl + "/v1/users/{userId}/accounts")
         .routeParam("userId", USER_ID)
         .header("Authorization", "Bearer " + token)
         .asString();
@@ -209,7 +209,7 @@ public class GetUserAccountsIT extends AppTestUtil {
     var token = SecureTestUtil.generateToken(newUserId);
 
     // When
-    var response = Unirest.get(baseUrl + "/users/{userId}/accounts")
+    var response = Unirest.get(baseUrl + "/v1/users/{userId}/accounts")
         .routeParam("userId", newUserId)
         .header("Authorization", "Bearer " + token)
         .asString();
@@ -233,7 +233,7 @@ public class GetUserAccountsIT extends AppTestUtil {
   public void getCorrectAccountsForDifferentUsers() {
     // Given
     // When - Get accounts for first user
-    var response1 = Unirest.get(baseUrl + "/users/{userId}/accounts")
+    var response1 = Unirest.get(baseUrl + "/v1/users/{userId}/accounts")
         .routeParam("userId", USER_ID)
         .header("Authorization", "Bearer " + token)
         .asString();
@@ -249,7 +249,7 @@ public class GetUserAccountsIT extends AppTestUtil {
     }
 
     // When - Get accounts for second user
-    var response2 = Unirest.get(baseUrl + "/users/{userId}/accounts")
+    var response2 = Unirest.get(baseUrl + "/v1/users/{userId}/accounts")
         .routeParam("userId", OTHER_USER_ID)
         .header("Authorization", "Bearer " + otherUserToken)
         .asString();
@@ -272,7 +272,7 @@ public class GetUserAccountsIT extends AppTestUtil {
   @Test
   public void getUserAccountsWithoutAuthorizationHeaderShouldReturn401() {
     // When
-    var response = Unirest.get(baseUrl + "/users/{userId}/accounts")
+    var response = Unirest.get(baseUrl + "/v1/users/{userId}/accounts")
         .routeParam("userId", USER_ID)
         .asString();
 
@@ -288,7 +288,7 @@ public class GetUserAccountsIT extends AppTestUtil {
   @Test
   public void getUserAccountsWithInvalidTokenShouldReturn401() {
     // When
-    var response = Unirest.get(baseUrl + "/users/{userId}/accounts")
+    var response = Unirest.get(baseUrl + "/v1/users/{userId}/accounts")
         .routeParam("userId", USER_ID)
         .header("Authorization", "Bearer invalid.token.here")
         .asString();
@@ -308,13 +308,13 @@ public class GetUserAccountsIT extends AppTestUtil {
   public void getUserAccountsMultipleTimesShouldReturnConsistentResults() {
     // Given
     // When - First call
-    var response1 = Unirest.get(baseUrl + "/users/{userId}/accounts")
+    var response1 = Unirest.get(baseUrl + "/v1/users/{userId}/accounts")
         .routeParam("userId", USER_ID)
         .header("Authorization", "Bearer " + token)
         .asString();
 
     // When - Second call
-    var response2 = Unirest.get(baseUrl + "/users/{userId}/accounts")
+    var response2 = Unirest.get(baseUrl + "/v1/users/{userId}/accounts")
         .routeParam("userId", USER_ID)
         .header("Authorization", "Bearer " + token)
         .asString();

@@ -20,7 +20,7 @@ public final class GetUserEndpoint extends JavalinEndpoint<String, UserResult> {
 
   @Override
   public String getPath() {
-    return "/users/{email}";
+    return "/v1/users/{email}";
   }
 
   @Override

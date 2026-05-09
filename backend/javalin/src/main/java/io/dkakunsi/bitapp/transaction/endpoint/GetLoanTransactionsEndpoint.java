@@ -1,26 +1,28 @@
 package io.dkakunsi.bitapp.transaction.endpoint;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 import io.dkakunsi.bitapp.javalin.JavalinEndpoint;
 import io.dkakunsi.bitapp.transaction.dto.TransactionResult;
-import io.dkakunsi.bitapp.transaction.usecase.RemoveTransaction;
+import io.dkakunsi.bitapp.transaction.usecase.GetLoanTransactions;
 import io.javalin.http.Context;
 
-public final class RemoveTransactionEndpoint extends JavalinEndpoint<String, TransactionResult> {
+public final class GetLoanTransactionsEndpoint
+    extends JavalinEndpoint<String, List<TransactionResult>> {
 
-  public RemoveTransactionEndpoint(RemoveTransaction usecase) {
+  public GetLoanTransactionsEndpoint(GetLoanTransactions usecase) {
     super(usecase);
   }
 
   @Override
   public Method getMethod() {
-    return Method.DELETE;
+    return Method.GET;
   }
 
   @Override
   public String getPath() {
-    return "/v1/transactions/{id}";
+    return "/v1/loans/{loanId}/transactions";
   }
 
   @Override
@@ -30,6 +32,6 @@ public final class RemoveTransactionEndpoint extends JavalinEndpoint<String, Tra
 
   @Override
   protected String buildInput(Context ctx) {
-    return ctx.pathParam("id");
+    return ctx.pathParam("loanId");
   }
 }

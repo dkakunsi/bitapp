@@ -66,7 +66,7 @@ public class RemoveAccountIT extends AppTestUtil {
         }
         """, name, type);
 
-    var response = Unirest.post(baseUrl + "/accounts")
+    var response = Unirest.post(baseUrl + "/v1/accounts")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -89,7 +89,7 @@ public class RemoveAccountIT extends AppTestUtil {
         }
         """, type, partyName, title, amount, accountId);
 
-    var response = Unirest.post(baseUrl + "/loans")
+    var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -116,7 +116,7 @@ public class RemoveAccountIT extends AppTestUtil {
     bodyBuilder.append("\"category\":\"OTHER\"");
     bodyBuilder.append("}");
 
-    var response = Unirest.post(baseUrl + "/transactions")
+    var response = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(bodyBuilder.toString())
         .asString();
@@ -135,19 +135,19 @@ public class RemoveAccountIT extends AppTestUtil {
     var accountId = createAccount("Empty Account", "BANK");
 
     // Verify account exists
-    var getResponse = Unirest.get(baseUrl + "/accounts/" + accountId)
+    var getResponse = Unirest.get(baseUrl + "/v1/accounts/" + accountId)
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, getResponse.getStatus());
 
     // Remove the account
-    var deleteResponse = Unirest.delete(baseUrl + "/accounts/" + accountId)
+    var deleteResponse = Unirest.delete(baseUrl + "/v1/accounts/" + accountId)
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, deleteResponse.getStatus());
 
     // Verify account is deleted from database
-    var getAfterDelete = Unirest.get(baseUrl + "/accounts/" + accountId)
+    var getAfterDelete = Unirest.get(baseUrl + "/v1/accounts/" + accountId)
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(404, getAfterDelete.getStatus());
@@ -164,21 +164,21 @@ public class RemoveAccountIT extends AppTestUtil {
     var loanId = createLoanWithAccount("BORROW", "Bank ABC", "Car Loan", 5000000, accountId);
 
     // Verify both exist
-    assertEquals(200, Unirest.get(baseUrl + "/accounts/" + accountId)
+    assertEquals(200, Unirest.get(baseUrl + "/v1/accounts/" + accountId)
         .header("Authorization", "Bearer " + token).asString().getStatus());
-    assertEquals(200, Unirest.get(baseUrl + "/loans/" + loanId)
+    assertEquals(200, Unirest.get(baseUrl + "/v1/loans/" + loanId)
         .header("Authorization", "Bearer " + token).asString().getStatus());
 
     // Remove the account
-    var deleteResponse = Unirest.delete(baseUrl + "/accounts/" + accountId)
+    var deleteResponse = Unirest.delete(baseUrl + "/v1/accounts/" + accountId)
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, deleteResponse.getStatus());
 
     // Verify both account and loan are deleted
-    assertEquals(404, Unirest.get(baseUrl + "/accounts/" + accountId)
+    assertEquals(404, Unirest.get(baseUrl + "/v1/accounts/" + accountId)
         .header("Authorization", "Bearer " + token).asString().getStatus());
-    assertEquals(404, Unirest.get(baseUrl + "/loans/" + loanId)
+    assertEquals(404, Unirest.get(baseUrl + "/v1/loans/" + loanId)
         .header("Authorization", "Bearer " + token).asString().getStatus());
   }
 
@@ -195,21 +195,21 @@ public class RemoveAccountIT extends AppTestUtil {
     var loan3Id = createLoanWithAccount("LEND", "Friend", "Loan 3", 500000, accountId);
 
     // Remove the account
-    var deleteResponse = Unirest.delete(baseUrl + "/accounts/" + accountId)
+    var deleteResponse = Unirest.delete(baseUrl + "/v1/accounts/" + accountId)
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, deleteResponse.getStatus());
 
     // Verify account is deleted
-    assertEquals(404, Unirest.get(baseUrl + "/accounts/" + accountId)
+    assertEquals(404, Unirest.get(baseUrl + "/v1/accounts/" + accountId)
         .header("Authorization", "Bearer " + token).asString().getStatus());
 
     // Verify all loans are deleted
-    assertEquals(404, Unirest.get(baseUrl + "/loans/" + loan1Id)
+    assertEquals(404, Unirest.get(baseUrl + "/v1/loans/" + loan1Id)
         .header("Authorization", "Bearer " + token).asString().getStatus());
-    assertEquals(404, Unirest.get(baseUrl + "/loans/" + loan2Id)
+    assertEquals(404, Unirest.get(baseUrl + "/v1/loans/" + loan2Id)
         .header("Authorization", "Bearer " + token).asString().getStatus());
-    assertEquals(404, Unirest.get(baseUrl + "/loans/" + loan3Id)
+    assertEquals(404, Unirest.get(baseUrl + "/v1/loans/" + loan3Id)
         .header("Authorization", "Bearer " + token).asString().getStatus());
   }
 
@@ -223,17 +223,17 @@ public class RemoveAccountIT extends AppTestUtil {
     var transactionId = createTransaction("DEBIT", "Shopping", account1Id, null, 50000);
 
     // Remove the account
-    var deleteResponse = Unirest.delete(baseUrl + "/accounts/" + account1Id)
+    var deleteResponse = Unirest.delete(baseUrl + "/v1/accounts/" + account1Id)
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, deleteResponse.getStatus());
 
     // Verify account is deleted
-    assertEquals(404, Unirest.get(baseUrl + "/accounts/" + account1Id)
+    assertEquals(404, Unirest.get(baseUrl + "/v1/accounts/" + account1Id)
         .header("Authorization", "Bearer " + token).asString().getStatus());
 
     // Verify transaction is deleted (no other account relation)
-    assertEquals(404, Unirest.get(baseUrl + "/transactions/" + transactionId)
+    assertEquals(404, Unirest.get(baseUrl + "/v1/transactions/" + transactionId)
         .header("Authorization", "Bearer " + token).asString().getStatus());
   }
 
@@ -247,17 +247,17 @@ public class RemoveAccountIT extends AppTestUtil {
     var transactionId = createTransaction("CREDIT", "Income", null, account1Id, 100000);
 
     // Remove the account
-    var deleteResponse = Unirest.delete(baseUrl + "/accounts/" + account1Id)
+    var deleteResponse = Unirest.delete(baseUrl + "/v1/accounts/" + account1Id)
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, deleteResponse.getStatus());
 
     // Verify account is deleted
-    assertEquals(404, Unirest.get(baseUrl + "/accounts/" + account1Id)
+    assertEquals(404, Unirest.get(baseUrl + "/v1/accounts/" + account1Id)
         .header("Authorization", "Bearer " + token).asString().getStatus());
 
     // Verify transaction is deleted (no other account relation)
-    assertEquals(404, Unirest.get(baseUrl + "/transactions/" + transactionId)
+    assertEquals(404, Unirest.get(baseUrl + "/v1/transactions/" + transactionId)
         .header("Authorization", "Bearer " + token).asString().getStatus());
   }
 
@@ -271,7 +271,7 @@ public class RemoveAccountIT extends AppTestUtil {
     var transactionId = createTransaction("TRANSFER", "Transfer Money", account1Id, account2Id, 75000);
 
     // Verify transaction is TRANSFER before deletion
-    var getTransactionBefore = Unirest.get(baseUrl + "/transactions/" + transactionId)
+    var getTransactionBefore = Unirest.get(baseUrl + "/v1/transactions/" + transactionId)
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, getTransactionBefore.getStatus());
@@ -281,17 +281,17 @@ public class RemoveAccountIT extends AppTestUtil {
     assertEquals(account2Id, transactionBefore.getString("destination"));
 
     // Remove the source account
-    var deleteResponse = Unirest.delete(baseUrl + "/accounts/" + account1Id)
+    var deleteResponse = Unirest.delete(baseUrl + "/v1/accounts/" + account1Id)
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, deleteResponse.getStatus());
 
     // Verify account is deleted
-    assertEquals(404, Unirest.get(baseUrl + "/accounts/" + account1Id)
+    assertEquals(404, Unirest.get(baseUrl + "/v1/accounts/" + account1Id)
         .header("Authorization", "Bearer " + token).asString().getStatus());
 
     // Verify transaction still exists but is now CREDIT
-    var getTransactionAfter = Unirest.get(baseUrl + "/transactions/" + transactionId)
+    var getTransactionAfter = Unirest.get(baseUrl + "/v1/transactions/" + transactionId)
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, getTransactionAfter.getStatus());
@@ -312,7 +312,7 @@ public class RemoveAccountIT extends AppTestUtil {
     var transactionId = createTransaction("TRANSFER", "Transfer Money", account1Id, account2Id, 80000);
 
     // Verify transaction is TRANSFER before deletion
-    var getTransactionBefore = Unirest.get(baseUrl + "/transactions/" + transactionId)
+    var getTransactionBefore = Unirest.get(baseUrl + "/v1/transactions/" + transactionId)
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, getTransactionBefore.getStatus());
@@ -322,17 +322,17 @@ public class RemoveAccountIT extends AppTestUtil {
     assertEquals(account2Id, transactionBefore.getString("destination"));
 
     // Remove the destination account
-    var deleteResponse = Unirest.delete(baseUrl + "/accounts/" + account2Id)
+    var deleteResponse = Unirest.delete(baseUrl + "/v1/accounts/" + account2Id)
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, deleteResponse.getStatus());
 
     // Verify account is deleted
-    assertEquals(404, Unirest.get(baseUrl + "/accounts/" + account2Id)
+    assertEquals(404, Unirest.get(baseUrl + "/v1/accounts/" + account2Id)
         .header("Authorization", "Bearer " + token).asString().getStatus());
 
     // Verify transaction still exists but is now DEBIT
-    var getTransactionAfter = Unirest.get(baseUrl + "/transactions/" + transactionId)
+    var getTransactionAfter = Unirest.get(baseUrl + "/v1/transactions/" + transactionId)
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, getTransactionAfter.getStatus());
@@ -359,33 +359,33 @@ public class RemoveAccountIT extends AppTestUtil {
     var transfer4Id = createTransaction("TRANSFER", "Transfer 4", account3Id, account1Id, 25000);
 
     // Remove account1
-    var deleteResponse = Unirest.delete(baseUrl + "/accounts/" + account1Id)
+    var deleteResponse = Unirest.delete(baseUrl + "/v1/accounts/" + account1Id)
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, deleteResponse.getStatus());
 
     // Verify account is deleted
-    assertEquals(404, Unirest.get(baseUrl + "/accounts/" + account1Id)
+    assertEquals(404, Unirest.get(baseUrl + "/v1/accounts/" + account1Id)
         .header("Authorization", "Bearer " + token).asString().getStatus());
 
     // Transfers where account1 was source should become CREDIT
-    var transaction1 = new JSONObject(Unirest.get(baseUrl + "/transactions/" + transfer1Id)
+    var transaction1 = new JSONObject(Unirest.get(baseUrl + "/v1/transactions/" + transfer1Id)
         .header("Authorization", "Bearer " + token).asString().getBody());
     assertEquals("CREDIT", transaction1.getString("type"));
     assertEquals(account2Id, transaction1.getString("destination"));
 
-    var transaction2 = new JSONObject(Unirest.get(baseUrl + "/transactions/" + transfer2Id)
+    var transaction2 = new JSONObject(Unirest.get(baseUrl + "/v1/transactions/" + transfer2Id)
         .header("Authorization", "Bearer " + token).asString().getBody());
     assertEquals("CREDIT", transaction2.getString("type"));
     assertEquals(account3Id, transaction2.getString("destination"));
 
     // Transfers where account1 was destination should become DEBIT
-    var transaction3 = new JSONObject(Unirest.get(baseUrl + "/transactions/" + transfer3Id)
+    var transaction3 = new JSONObject(Unirest.get(baseUrl + "/v1/transactions/" + transfer3Id)
         .header("Authorization", "Bearer " + token).asString().getBody());
     assertEquals("DEBIT", transaction3.getString("type"));
     assertEquals(account2Id, transaction3.getString("source"));
 
-    var transaction4 = new JSONObject(Unirest.get(baseUrl + "/transactions/" + transfer4Id)
+    var transaction4 = new JSONObject(Unirest.get(baseUrl + "/v1/transactions/" + transfer4Id)
         .header("Authorization", "Bearer " + token).asString().getBody());
     assertEquals("DEBIT", transaction4.getString("type"));
     assertEquals(account3Id, transaction4.getString("source"));
@@ -410,27 +410,27 @@ public class RemoveAccountIT extends AppTestUtil {
     var transferId = createTransaction("TRANSFER", "Transfer", accountId, account2Id, 30000);
 
     // Remove the account
-    var deleteResponse = Unirest.delete(baseUrl + "/accounts/" + accountId)
+    var deleteResponse = Unirest.delete(baseUrl + "/v1/accounts/" + accountId)
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, deleteResponse.getStatus());
 
     // Verify account is deleted
-    assertEquals(404, Unirest.get(baseUrl + "/accounts/" + accountId)
+    assertEquals(404, Unirest.get(baseUrl + "/v1/accounts/" + accountId)
         .header("Authorization", "Bearer " + token).asString().getStatus());
 
     // Verify loans are deleted
-    assertEquals(404, Unirest.get(baseUrl + "/loans/" + loan1Id)
+    assertEquals(404, Unirest.get(baseUrl + "/v1/loans/" + loan1Id)
         .header("Authorization", "Bearer " + token).asString().getStatus());
-    assertEquals(404, Unirest.get(baseUrl + "/loans/" + loan2Id)
+    assertEquals(404, Unirest.get(baseUrl + "/v1/loans/" + loan2Id)
         .header("Authorization", "Bearer " + token).asString().getStatus());
 
     // Verify debit transaction is deleted (no other account)
-    assertEquals(404, Unirest.get(baseUrl + "/transactions/" + debitId)
+    assertEquals(404, Unirest.get(baseUrl + "/v1/transactions/" + debitId)
         .header("Authorization", "Bearer " + token).asString().getStatus());
 
     // Verify transfer becomes CREDIT (account was source)
-    var transfer = new JSONObject(Unirest.get(baseUrl + "/transactions/" + transferId)
+    var transfer = new JSONObject(Unirest.get(baseUrl + "/v1/transactions/" + transferId)
         .header("Authorization", "Bearer " + token).asString().getBody());
     assertEquals("CREDIT", transfer.getString("type"));
   }
@@ -444,7 +444,7 @@ public class RemoveAccountIT extends AppTestUtil {
   public void removeNonExistentAccountShouldFail() {
     var nonExistentId = "non-existent-account-id";
 
-    var response = Unirest.delete(baseUrl + "/accounts/" + nonExistentId)
+    var response = Unirest.delete(baseUrl + "/v1/accounts/" + nonExistentId)
         .header("Authorization", "Bearer " + token)
         .asString();
 
@@ -458,13 +458,13 @@ public class RemoveAccountIT extends AppTestUtil {
    */
   @Test
   public void removeAccountWithoutAuthorizationShouldFail() {
-    var response = Unirest.delete(baseUrl + "/accounts/" + account1Id)
+    var response = Unirest.delete(baseUrl + "/v1/accounts/" + account1Id)
         .asString();
 
     assertEquals(401, response.getStatus());
 
     // Verify the account still exists
-    assertEquals(200, Unirest.get(baseUrl + "/accounts/" + account1Id)
+    assertEquals(200, Unirest.get(baseUrl + "/v1/accounts/" + account1Id)
         .header("Authorization", "Bearer " + token).asString().getStatus());
   }
 
@@ -475,14 +475,14 @@ public class RemoveAccountIT extends AppTestUtil {
    */
   @Test
   public void removeAccountWithInvalidTokenShouldFail() {
-    var response = Unirest.delete(baseUrl + "/accounts/" + account1Id)
+    var response = Unirest.delete(baseUrl + "/v1/accounts/" + account1Id)
         .header("Authorization", "Bearer invalid-token")
         .asString();
 
     assertEquals(401, response.getStatus());
 
     // Verify the account still exists
-    assertEquals(200, Unirest.get(baseUrl + "/accounts/" + account1Id)
+    assertEquals(200, Unirest.get(baseUrl + "/v1/accounts/" + account1Id)
         .header("Authorization", "Bearer " + token).asString().getStatus());
   }
 
@@ -495,7 +495,7 @@ public class RemoveAccountIT extends AppTestUtil {
   public void removeAnotherUserAccountShouldFail() {
     var otherUserToken = SecureTestUtil.generateToken("otheruser@email.com");
 
-    var response = Unirest.delete(baseUrl + "/accounts/" + account1Id)
+    var response = Unirest.delete(baseUrl + "/v1/accounts/" + account1Id)
         .header("Authorization", "Bearer " + otherUserToken)
         .asString();
 
@@ -503,7 +503,7 @@ public class RemoveAccountIT extends AppTestUtil {
     assertTrue(response.getStatus() == 403 || response.getStatus() == 404);
 
     // Verify the account still exists
-    assertEquals(200, Unirest.get(baseUrl + "/accounts/" + account1Id)
+    assertEquals(200, Unirest.get(baseUrl + "/v1/accounts/" + account1Id)
         .header("Authorization", "Bearer " + token).asString().getStatus());
   }
 
@@ -517,14 +517,14 @@ public class RemoveAccountIT extends AppTestUtil {
     var accountId = createAccount("Test Account", "BANK");
 
     // Remove the account
-    var deleteResponse = Unirest.delete(baseUrl + "/accounts/" + accountId)
+    var deleteResponse = Unirest.delete(baseUrl + "/v1/accounts/" + accountId)
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, deleteResponse.getStatus());
 
     // Try to retrieve the removed account - should return 404 (not found in
     // database)
-    var getResponse = Unirest.get(baseUrl + "/accounts/" + accountId)
+    var getResponse = Unirest.get(baseUrl + "/v1/accounts/" + accountId)
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(404, getResponse.getStatus());
@@ -540,13 +540,13 @@ public class RemoveAccountIT extends AppTestUtil {
     var accountToRemove = createAccount("Account to Remove", "BANK");
 
     // Remove the account
-    var deleteResponse = Unirest.delete(baseUrl + "/accounts/" + accountToRemove)
+    var deleteResponse = Unirest.delete(baseUrl + "/v1/accounts/" + accountToRemove)
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, deleteResponse.getStatus());
 
     // Get user's accounts list
-    var listResponse = Unirest.get(baseUrl + "/users/" + USER_ID + "/accounts")
+    var listResponse = Unirest.get(baseUrl + "/v1/users/" + USER_ID + "/accounts")
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, listResponse.getStatus());
@@ -589,25 +589,25 @@ public class RemoveAccountIT extends AppTestUtil {
     var accountId = createAccount("Test Account", "BANK");
 
     // Verify account exists before deletion
-    var getBeforeDelete = Unirest.get(baseUrl + "/accounts/" + accountId)
+    var getBeforeDelete = Unirest.get(baseUrl + "/v1/accounts/" + accountId)
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, getBeforeDelete.getStatus());
 
     // Remove the account
-    var deleteResponse = Unirest.delete(baseUrl + "/accounts/" + accountId)
+    var deleteResponse = Unirest.delete(baseUrl + "/v1/accounts/" + accountId)
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, deleteResponse.getStatus());
 
     // Verify account no longer exists - should return 404 (hard delete)
-    var getAfterDelete = Unirest.get(baseUrl + "/accounts/" + accountId)
+    var getAfterDelete = Unirest.get(baseUrl + "/v1/accounts/" + accountId)
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(404, getAfterDelete.getStatus());
 
     // Verify it's not in the user's account list either
-    var listResponse = Unirest.get(baseUrl + "/users/" + USER_ID + "/accounts")
+    var listResponse = Unirest.get(baseUrl + "/v1/users/" + USER_ID + "/accounts")
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, listResponse.getStatus());
@@ -633,23 +633,23 @@ public class RemoveAccountIT extends AppTestUtil {
     var acc3 = createAccount("Account C", "BANK");
 
     // Remove three accounts
-    assertEquals(200, Unirest.delete(baseUrl + "/accounts/" + acc1)
+    assertEquals(200, Unirest.delete(baseUrl + "/v1/accounts/" + acc1)
         .header("Authorization", "Bearer " + token).asString().getStatus());
-    assertEquals(200, Unirest.delete(baseUrl + "/accounts/" + acc2)
+    assertEquals(200, Unirest.delete(baseUrl + "/v1/accounts/" + acc2)
         .header("Authorization", "Bearer " + token).asString().getStatus());
-    assertEquals(200, Unirest.delete(baseUrl + "/accounts/" + acc3)
+    assertEquals(200, Unirest.delete(baseUrl + "/v1/accounts/" + acc3)
         .header("Authorization", "Bearer " + token).asString().getStatus());
 
     // Verify none of the deleted accounts can be retrieved
-    assertEquals(404, Unirest.get(baseUrl + "/accounts/" + acc1)
+    assertEquals(404, Unirest.get(baseUrl + "/v1/accounts/" + acc1)
         .header("Authorization", "Bearer " + token).asString().getStatus());
-    assertEquals(404, Unirest.get(baseUrl + "/accounts/" + acc2)
+    assertEquals(404, Unirest.get(baseUrl + "/v1/accounts/" + acc2)
         .header("Authorization", "Bearer " + token).asString().getStatus());
-    assertEquals(404, Unirest.get(baseUrl + "/accounts/" + acc3)
+    assertEquals(404, Unirest.get(baseUrl + "/v1/accounts/" + acc3)
         .header("Authorization", "Bearer " + token).asString().getStatus());
 
     // Verify none of the deleted accounts appear in the user's list
-    var listResponse = Unirest.get(baseUrl + "/users/" + USER_ID + "/accounts")
+    var listResponse = Unirest.get(baseUrl + "/v1/users/" + USER_ID + "/accounts")
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, listResponse.getStatus());
@@ -672,7 +672,7 @@ public class RemoveAccountIT extends AppTestUtil {
   public void removeAccountShouldReturnAccountDetails() {
     var accountId = createAccount("Test Account", "CASH");
 
-    var response = Unirest.delete(baseUrl + "/accounts/" + accountId)
+    var response = Unirest.delete(baseUrl + "/v1/accounts/" + accountId)
         .header("Authorization", "Bearer " + token)
         .asString();
 
@@ -708,25 +708,25 @@ public class RemoveAccountIT extends AppTestUtil {
     var transferDest = createTransaction("TRANSFER", "Transfer In", account3Id, accountId, 40000);
 
     // Remove the account
-    var deleteResponse = Unirest.delete(baseUrl + "/accounts/" + accountId)
+    var deleteResponse = Unirest.delete(baseUrl + "/v1/accounts/" + accountId)
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, deleteResponse.getStatus());
 
     // Verify DEBIT and CREDIT are deleted
-    assertEquals(404, Unirest.get(baseUrl + "/transactions/" + debitId)
+    assertEquals(404, Unirest.get(baseUrl + "/v1/transactions/" + debitId)
         .header("Authorization", "Bearer " + token).asString().getStatus());
-    assertEquals(404, Unirest.get(baseUrl + "/transactions/" + creditId)
+    assertEquals(404, Unirest.get(baseUrl + "/v1/transactions/" + creditId)
         .header("Authorization", "Bearer " + token).asString().getStatus());
 
     // Verify TRANSFER as source became CREDIT
-    var transferSourceAfter = new JSONObject(Unirest.get(baseUrl + "/transactions/" + transferSource)
+    var transferSourceAfter = new JSONObject(Unirest.get(baseUrl + "/v1/transactions/" + transferSource)
         .header("Authorization", "Bearer " + token).asString().getBody());
     assertEquals("CREDIT", transferSourceAfter.getString("type"));
     assertEquals(account2Id, transferSourceAfter.getString("destination"));
 
     // Verify TRANSFER as destination became DEBIT
-    var transferDestAfter = new JSONObject(Unirest.get(baseUrl + "/transactions/" + transferDest)
+    var transferDestAfter = new JSONObject(Unirest.get(baseUrl + "/v1/transactions/" + transferDest)
         .header("Authorization", "Bearer " + token).asString().getBody());
     assertEquals("DEBIT", transferDestAfter.getString("type"));
     assertEquals(account3Id, transferDestAfter.getString("source"));

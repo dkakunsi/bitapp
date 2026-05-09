@@ -60,7 +60,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """;
 
-    var accountResponse = Unirest.post(baseUrl + "/accounts")
+    var accountResponse = Unirest.post(baseUrl + "/v1/accounts")
         .header("Authorization", "Bearer " + token)
         .body(accountBody)
         .asString();
@@ -87,7 +87,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """.formatted(accountId);
 
-    var response = Unirest.post(baseUrl + "/loans")
+    var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -112,7 +112,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.put(baseUrl + "/loans/" + loanId)
+    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId)
         .body(body)
         .asString();
 
@@ -132,7 +132,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.put(baseUrl + "/loans/" + loanId)
+    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId)
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -158,7 +158,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.put(baseUrl + "/loans/" + loanId)
+    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId)
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -182,7 +182,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.put(baseUrl + "/loans/" + loanId)
+    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId)
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -206,7 +206,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.put(baseUrl + "/loans/" + loanId)
+    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId)
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -231,7 +231,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.put(baseUrl + "/loans/" + loanId)
+    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId)
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -255,7 +255,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.put(baseUrl + "/loans/" + loanId)
+    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId)
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -280,7 +280,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.put(baseUrl + "/loans/" + loanId)
+    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId)
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -312,7 +312,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.put(baseUrl + "/loans/" + loanId)
+    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId)
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -346,7 +346,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.put(baseUrl + "/loans/" + loanId)
+    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId)
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -370,7 +370,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.put(baseUrl + "/loans/" + loanId)
+    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId)
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -394,7 +394,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.put(baseUrl + "/loans/" + loanId)
+    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId)
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -419,7 +419,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.put(baseUrl + "/loans/" + loanId)
+    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId)
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -441,7 +441,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.put(baseUrl + "/loans/" + loanId)
+    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId)
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -463,7 +463,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.put(baseUrl + "/loans/" + loanId)
+    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId)
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -485,7 +485,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.put(baseUrl + "/loans/" + loanId)
+    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId)
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -507,7 +507,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.put(baseUrl + "/loans/" + loanId)
+    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId)
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -529,7 +529,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.put(baseUrl + "/loans/" + loanId)
+    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId)
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -551,7 +551,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.put(baseUrl + "/loans/" + loanId)
+    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId)
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -574,7 +574,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.put(baseUrl + "/loans/" + loanId)
+    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId)
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -599,7 +599,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.put(baseUrl + "/loans/non-existent-id")
+    var response = Unirest.put(baseUrl + "/v1/loans/non-existent-id")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -624,7 +624,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.put(baseUrl + "/loans/" + loanId)
+    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId)
         .header("Authorization", "Bearer " + anotherUserToken)
         .body(body)
         .asString();
@@ -650,7 +650,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """;
 
-    var accountResponse = Unirest.post(baseUrl + "/accounts")
+    var accountResponse = Unirest.post(baseUrl + "/v1/accounts")
         .header("Authorization", "Bearer " + token)
         .body(accountBody)
         .asString();
@@ -671,7 +671,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """.formatted(sourceAccountId);
 
-    var creditResponse = Unirest.post(baseUrl + "/transactions")
+    var creditResponse = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(creditBody)
         .asString();
@@ -694,7 +694,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """.formatted(sourceAccountId, loanId);
 
-    var transactionResponse = Unirest.post(baseUrl + "/transactions")
+    var transactionResponse = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(transactionBody)
         .asString();
@@ -702,7 +702,7 @@ public class UpdateLoanIT extends AppTestUtil {
     assertEquals(200, transactionResponse.getStatus());
 
     // Verify the loan has remaining amount of 300,000,000
-    var getLoanResponse = Unirest.get(baseUrl + "/loans/" + loanId)
+    var getLoanResponse = Unirest.get(baseUrl + "/v1/loans/" + loanId)
         .header("Authorization", "Bearer " + token)
         .asString();
 
@@ -717,7 +717,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """;
 
-    var updateResponse = Unirest.put(baseUrl + "/loans/" + loanId)
+    var updateResponse = Unirest.put(baseUrl + "/v1/loans/" + loanId)
         .header("Authorization", "Bearer " + token)
         .body(updateBody)
         .asString();
@@ -749,7 +749,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """;
 
-    var accountResponse = Unirest.post(baseUrl + "/accounts")
+    var accountResponse = Unirest.post(baseUrl + "/v1/accounts")
         .header("Authorization", "Bearer " + token)
         .body(accountBody)
         .asString();
@@ -770,7 +770,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """.formatted(sourceAccountId);
 
-    var creditResponse = Unirest.post(baseUrl + "/transactions")
+    var creditResponse = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(creditBody)
         .asString();
@@ -794,7 +794,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """.formatted(sourceAccountId, loanId);
 
-    var transactionResponse = Unirest.post(baseUrl + "/transactions")
+    var transactionResponse = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(transactionBody)
         .asString();
@@ -802,7 +802,7 @@ public class UpdateLoanIT extends AppTestUtil {
     assertEquals(200, transactionResponse.getStatus());
 
     // Verify the loan has remaining amount of 100,000,000
-    var getLoanResponse = Unirest.get(baseUrl + "/loans/" + loanId)
+    var getLoanResponse = Unirest.get(baseUrl + "/v1/loans/" + loanId)
         .header("Authorization", "Bearer " + token)
         .asString();
 
@@ -817,7 +817,7 @@ public class UpdateLoanIT extends AppTestUtil {
         }
         """;
 
-    var updateResponse = Unirest.put(baseUrl + "/loans/" + loanId)
+    var updateResponse = Unirest.put(baseUrl + "/v1/loans/" + loanId)
         .header("Authorization", "Bearer " + token)
         .body(updateBody)
         .asString();

@@ -64,7 +64,7 @@ public class GetTransactionIT extends AppTestUtil {
         }
         """, name, type);
 
-    var response = Unirest.post(baseUrl + "/accounts")
+    var response = Unirest.post(baseUrl + "/v1/accounts")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -84,7 +84,7 @@ public class GetTransactionIT extends AppTestUtil {
           }
           """, accountId, initialBalance);
 
-      var depositResponse = Unirest.post(baseUrl + "/transactions")
+      var depositResponse = Unirest.post(baseUrl + "/v1/transactions")
           .header("Authorization", "Bearer " + token)
           .body(depositBody)
           .asString();
@@ -108,7 +108,7 @@ public class GetTransactionIT extends AppTestUtil {
         }
         """, type, partyName, title, amount, interestRate);
 
-    var response = Unirest.post(baseUrl + "/loans")
+    var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -139,7 +139,7 @@ public class GetTransactionIT extends AppTestUtil {
         }
         """, sourceAccountId);
 
-    var postResponse = Unirest.post(baseUrl + "/transactions")
+    var postResponse = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(createBody)
         .asString();
@@ -147,7 +147,7 @@ public class GetTransactionIT extends AppTestUtil {
     var transactionId = new JSONObject(postResponse.getBody()).getString("id");
 
     // When - Get the transaction by ID
-    var getResponse = Unirest.get(baseUrl + "/transactions/" + transactionId)
+    var getResponse = Unirest.get(baseUrl + "/v1/transactions/" + transactionId)
         .header("Authorization", "Bearer " + token)
         .asString();
 
@@ -189,7 +189,7 @@ public class GetTransactionIT extends AppTestUtil {
         }
         """, destinationAccountId);
 
-    var postResponse = Unirest.post(baseUrl + "/transactions")
+    var postResponse = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(createBody)
         .asString();
@@ -197,7 +197,7 @@ public class GetTransactionIT extends AppTestUtil {
     var transactionId = new JSONObject(postResponse.getBody()).getString("id");
 
     // When - Get the transaction by ID
-    var getResponse = Unirest.get(baseUrl + "/transactions/" + transactionId)
+    var getResponse = Unirest.get(baseUrl + "/v1/transactions/" + transactionId)
         .header("Authorization", "Bearer " + token)
         .asString();
 
@@ -239,7 +239,7 @@ public class GetTransactionIT extends AppTestUtil {
         }
         """, sourceAccountId, destinationAccountId);
 
-    var postResponse = Unirest.post(baseUrl + "/transactions")
+    var postResponse = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(createBody)
         .asString();
@@ -247,7 +247,7 @@ public class GetTransactionIT extends AppTestUtil {
     var transactionId = new JSONObject(postResponse.getBody()).getString("id");
 
     // When - Get the transaction by ID
-    var getResponse = Unirest.get(baseUrl + "/transactions/" + transactionId)
+    var getResponse = Unirest.get(baseUrl + "/v1/transactions/" + transactionId)
         .header("Authorization", "Bearer " + token)
         .asString();
 
@@ -291,7 +291,7 @@ public class GetTransactionIT extends AppTestUtil {
         }
         """, sourceAccountId, loanId);
 
-    var postResponse = Unirest.post(baseUrl + "/transactions")
+    var postResponse = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(createBody)
         .asString();
@@ -299,7 +299,7 @@ public class GetTransactionIT extends AppTestUtil {
     var transactionId = new JSONObject(postResponse.getBody()).getString("id");
 
     // When - Get the transaction by ID
-    var getResponse = Unirest.get(baseUrl + "/transactions/" + transactionId)
+    var getResponse = Unirest.get(baseUrl + "/v1/transactions/" + transactionId)
         .header("Authorization", "Bearer " + token)
         .asString();
 
@@ -329,7 +329,7 @@ public class GetTransactionIT extends AppTestUtil {
     var nonExistentId = "non-existent-transaction-id";
 
     // When
-    var response = Unirest.get(baseUrl + "/transactions/" + nonExistentId)
+    var response = Unirest.get(baseUrl + "/v1/transactions/" + nonExistentId)
         .header("Authorization", "Bearer " + token)
         .asString();
 
@@ -356,7 +356,7 @@ public class GetTransactionIT extends AppTestUtil {
         }
         """, sourceAccountId);
 
-    var postResponse = Unirest.post(baseUrl + "/transactions")
+    var postResponse = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(createBody)
         .asString();
@@ -364,7 +364,7 @@ public class GetTransactionIT extends AppTestUtil {
     var transactionId = new JSONObject(postResponse.getBody()).getString("id");
 
     // When - Try to get without authorization
-    var response = Unirest.get(baseUrl + "/transactions/" + transactionId)
+    var response = Unirest.get(baseUrl + "/v1/transactions/" + transactionId)
         .asString();
 
     // Then
@@ -392,7 +392,7 @@ public class GetTransactionIT extends AppTestUtil {
         }
         """, sourceAccountId);
 
-    var postResponse = Unirest.post(baseUrl + "/transactions")
+    var postResponse = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(createBody)
         .asString();
@@ -403,7 +403,7 @@ public class GetTransactionIT extends AppTestUtil {
     var otherUserId = "otheruser@email.com";
     var otherToken = SecureTestUtil.generateToken(otherUserId);
 
-    var response = Unirest.get(baseUrl + "/transactions/" + transactionId)
+    var response = Unirest.get(baseUrl + "/v1/transactions/" + transactionId)
         .header("Authorization", "Bearer " + otherToken)
         .asString();
 
@@ -431,7 +431,7 @@ public class GetTransactionIT extends AppTestUtil {
         }
         """, sourceAccountId);
 
-    var postResponse = Unirest.post(baseUrl + "/transactions")
+    var postResponse = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
         .body(createBody)
         .asString();
@@ -439,7 +439,7 @@ public class GetTransactionIT extends AppTestUtil {
     var transactionId = new JSONObject(postResponse.getBody()).getString("id");
 
     // When - Try to get with invalid token
-    var response = Unirest.get(baseUrl + "/transactions/" + transactionId)
+    var response = Unirest.get(baseUrl + "/v1/transactions/" + transactionId)
         .header("Authorization", "Bearer invalid-token")
         .asString();
 

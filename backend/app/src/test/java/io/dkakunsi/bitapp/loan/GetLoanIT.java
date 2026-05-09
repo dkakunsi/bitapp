@@ -62,7 +62,7 @@ public class GetLoanIT extends AppTestUtil {
         }
         """;
 
-    var postResponse = Unirest.post(baseUrl + "/loans")
+    var postResponse = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
         .body(createBody)
         .asString();
@@ -74,7 +74,7 @@ public class GetLoanIT extends AppTestUtil {
     assertEquals("John Doe", postResponseBody.getString("partyName"));
     assertEquals("Personal Loan", postResponseBody.getString("title"));
 
-    var getResponse = Unirest.get(baseUrl + "/loans/" + loanId)
+    var getResponse = Unirest.get(baseUrl + "/v1/loans/" + loanId)
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, getResponse.getStatus());
@@ -100,7 +100,7 @@ public class GetLoanIT extends AppTestUtil {
    */
   @Test
   public void getNonExistingLoanShouldReturn404() {
-    var getResponse = Unirest.get(baseUrl + "/loans/550e8400-e29b-41d4-a716-446655440001")
+    var getResponse = Unirest.get(baseUrl + "/v1/loans/550e8400-e29b-41d4-a716-446655440001")
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(404, getResponse.getStatus());
@@ -114,7 +114,7 @@ public class GetLoanIT extends AppTestUtil {
    */
   @Test
   public void getLoanWithoutAuthorizationHeaderShouldReturn401() {
-    var getResponse = Unirest.get(baseUrl + "/loans/some-loan-id")
+    var getResponse = Unirest.get(baseUrl + "/v1/loans/some-loan-id")
         .asString();
     assertEquals(401, getResponse.getStatus());
   }
@@ -126,7 +126,7 @@ public class GetLoanIT extends AppTestUtil {
    */
   @Test
   public void getLoanWithInvalidTokenShouldReturn401() {
-    var getResponse = Unirest.get(baseUrl + "/loans/some-loan-id")
+    var getResponse = Unirest.get(baseUrl + "/v1/loans/some-loan-id")
         .header("Authorization", "Bearer invalid-token")
         .asString();
     assertEquals(401, getResponse.getStatus());

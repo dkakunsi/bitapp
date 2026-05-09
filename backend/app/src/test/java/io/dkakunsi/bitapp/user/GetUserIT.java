@@ -57,7 +57,7 @@ public class GetUserIT extends AppTestUtil {
         }
         """;
 
-    var postResponse = Unirest.post(baseUrl + "/users").body(body)
+    var postResponse = Unirest.post(baseUrl + "/v1/users").body(body)
         .asString();
     assertEquals(200, postResponse.getStatus());
     var postResponseBody = new JSONObject(postResponse.getBody());
@@ -67,7 +67,7 @@ public class GetUserIT extends AppTestUtil {
     assertEquals("http://example.com/photo.jpg", postResponseBody.getString("photoUrl"));
     assertEquals("EN", postResponseBody.getString("language"));
 
-    var getResponse = Unirest.get(baseUrl + "/users/john.doe@example.com")
+    var getResponse = Unirest.get(baseUrl + "/v1/users/john.doe@example.com")
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, getResponse.getStatus());
@@ -86,7 +86,7 @@ public class GetUserIT extends AppTestUtil {
    */
   @Test
   public void getNonExistingUserShouldReturn404() {
-    var getResponse = Unirest.get(baseUrl + "/users/notexist@example.com")
+    var getResponse = Unirest.get(baseUrl + "/v1/users/notexist@example.com")
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(404, getResponse.getStatus());
@@ -100,7 +100,7 @@ public class GetUserIT extends AppTestUtil {
    */
   @Test
   public void getUserWithoutAuthorizationHeaderShouldReturn401() {
-    var getResponse = Unirest.get(baseUrl + "/users/test@example.com")
+    var getResponse = Unirest.get(baseUrl + "/v1/users/test@example.com")
         .asString();
     assertEquals(401, getResponse.getStatus());
   }
@@ -112,7 +112,7 @@ public class GetUserIT extends AppTestUtil {
    */
   @Test
   public void getUserWithInvalidTokenShouldReturn401() {
-    var getResponse = Unirest.get(baseUrl + "/users/test@example.com")
+    var getResponse = Unirest.get(baseUrl + "/v1/users/test@example.com")
         .header("Authorization", "Bearer invalid-token")
         .asString();
     assertEquals(401, getResponse.getStatus());

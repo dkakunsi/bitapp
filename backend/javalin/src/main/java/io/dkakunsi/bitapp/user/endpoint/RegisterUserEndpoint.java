@@ -21,7 +21,7 @@ public final class RegisterUserEndpoint extends JavalinEndpoint<RegisterUserInpu
 
   @Override
   public String getPath() {
-    return "/users";
+    return "/v1/users";
   }
 
   @Override

@@ -20,7 +20,7 @@ public final class GetAccountEndpoint extends JavalinEndpoint<String, AccountRes
 
   @Override
   public String getPath() {
-    return "/accounts/{id}";
+    return "/v1/accounts/{id}";
   }
 
   @Override

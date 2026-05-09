@@ -22,7 +22,7 @@ public final class UpdateUserEndpoint
 
   @Override
   public String getPath() {
-    return "/users/{email}";
+    return "/v1/users/{email}";
   }
 
   @Override

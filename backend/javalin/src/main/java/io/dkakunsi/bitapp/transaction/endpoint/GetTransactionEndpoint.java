@@ -20,7 +20,7 @@ public final class GetTransactionEndpoint extends JavalinEndpoint<String, Transa
 
   @Override
   public String getPath() {
-    return "/transactions/{id}";
+    return "/v1/transactions/{id}";
   }
 
   @Override

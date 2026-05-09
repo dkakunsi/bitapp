@@ -22,7 +22,7 @@ public final class UpdateLoanEndpoint extends JavalinEndpoint<UpdateLoanInput, L
 
   @Override
   public String getPath() {
-    return "/loans/{id}";
+    return "/v1/loans/{id}";
   }
 
   @Override

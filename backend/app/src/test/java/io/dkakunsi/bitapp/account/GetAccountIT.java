@@ -56,7 +56,7 @@ public class GetAccountIT extends AppTestUtil {
         }
         """;
 
-    var postResponse = Unirest.post(baseUrl + "/accounts")
+    var postResponse = Unirest.post(baseUrl + "/v1/accounts")
         .header("Authorization", "Bearer " + token)
         .body(createBody)
         .asString();
@@ -68,7 +68,7 @@ public class GetAccountIT extends AppTestUtil {
     assertEquals("BANK", postResponseBody.getString("type"));
     assertEquals("#FF5733", postResponseBody.getString("themeColor"));
 
-    var getResponse = Unirest.get(baseUrl + "/accounts/" + accountId)
+    var getResponse = Unirest.get(baseUrl + "/v1/accounts/" + accountId)
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(200, getResponse.getStatus());
@@ -88,7 +88,7 @@ public class GetAccountIT extends AppTestUtil {
    */
   @Test
   public void getNonExistingAccountShouldReturn404() {
-    var getResponse = Unirest.get(baseUrl + "/accounts/550e8400-e29b-41d4-a716-446655440000")
+    var getResponse = Unirest.get(baseUrl + "/v1/accounts/550e8400-e29b-41d4-a716-446655440000")
         .header("Authorization", "Bearer " + token)
         .asString();
     assertEquals(404, getResponse.getStatus());
@@ -102,7 +102,7 @@ public class GetAccountIT extends AppTestUtil {
    */
   @Test
   public void getAccountWithoutAuthorizationHeaderShouldReturn401() {
-    var getResponse = Unirest.get(baseUrl + "/accounts/some-account-id")
+    var getResponse = Unirest.get(baseUrl + "/v1/accounts/some-account-id")
         .asString();
     assertEquals(401, getResponse.getStatus());
   }
@@ -114,7 +114,7 @@ public class GetAccountIT extends AppTestUtil {
    */
   @Test
   public void getAccountWithInvalidTokenShouldReturn401() {
-    var getResponse = Unirest.get(baseUrl + "/accounts/some-account-id")
+    var getResponse = Unirest.get(baseUrl + "/v1/accounts/some-account-id")
         .header("Authorization", "Bearer invalid-token")
         .asString();
     assertEquals(401, getResponse.getStatus());

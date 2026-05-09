@@ -59,7 +59,7 @@ public class CreateAccountIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/accounts")
+    var response = Unirest.post(baseUrl + "/v1/accounts")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -90,7 +90,7 @@ public class CreateAccountIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/accounts")
+    var response = Unirest.post(baseUrl + "/v1/accounts")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -121,7 +121,7 @@ public class CreateAccountIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/accounts")
+    var response = Unirest.post(baseUrl + "/v1/accounts")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -151,7 +151,7 @@ public class CreateAccountIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/accounts")
+    var response = Unirest.post(baseUrl + "/v1/accounts")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -174,7 +174,7 @@ public class CreateAccountIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/accounts")
+    var response = Unirest.post(baseUrl + "/v1/accounts")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -198,7 +198,7 @@ public class CreateAccountIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/accounts")
+    var response = Unirest.post(baseUrl + "/v1/accounts")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -229,7 +229,7 @@ public class CreateAccountIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/accounts")
+    var response = Unirest.post(baseUrl + "/v1/accounts")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -253,7 +253,7 @@ public class CreateAccountIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/accounts")
+    var response = Unirest.post(baseUrl + "/v1/accounts")
         .header("Authorization", "Bearer " + token)
         .body(body)
         .asString();
@@ -277,7 +277,7 @@ public class CreateAccountIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/accounts")
+    var response = Unirest.post(baseUrl + "/v1/accounts")
         .body(body)
         .asString();
 
@@ -300,7 +300,7 @@ public class CreateAccountIT extends AppTestUtil {
         }
         """;
 
-    var response = Unirest.post(baseUrl + "/accounts")
+    var response = Unirest.post(baseUrl + "/v1/accounts")
         .header("Authorization", "Bearer invalid_token")
         .body(body)
         .asString();
