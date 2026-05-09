@@ -85,9 +85,10 @@ class BitApp extends StatelessWidget {
               (context) =>
                   ConfigurationBloc(getInstance<ConfigurationUseCase>())..add(
                     SetAppSettings(
-                      baseUrl: 'http://192.168.1.10:8081',
+                      baseUrl:
+                          'https://bitapp-159272058870.asia-southeast2.run.app',
                       // enable for paid customers
-                      remoteEnabled: false,
+                      remoteEnabled: true,
                       startColor: Colors.white,
                       endColor: Colors.cyanAccent,
                       appLogoUrl: 'assets/images/bitapp_logo.png',
