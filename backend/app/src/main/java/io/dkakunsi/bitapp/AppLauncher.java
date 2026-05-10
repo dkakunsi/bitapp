@@ -30,11 +30,15 @@ import io.dkakunsi.bitapp.loan.usecase.RemoveLoan;
 import io.dkakunsi.bitapp.loan.usecase.UpdateLoan;
 import io.dkakunsi.bitapp.mongo.MongoConfiguration;
 import io.dkakunsi.bitapp.transaction.endpoint.CreateTransactionEndpoint;
+import io.dkakunsi.bitapp.transaction.endpoint.GetAccountTransactionsEndpoint;
+import io.dkakunsi.bitapp.transaction.endpoint.GetLoanTransactionsEndpoint;
 import io.dkakunsi.bitapp.transaction.endpoint.GetTransactionEndpoint;
 import io.dkakunsi.bitapp.transaction.endpoint.GetUserTransactionsEndpoint;
 import io.dkakunsi.bitapp.transaction.endpoint.RemoveTransactionEndpoint;
 import io.dkakunsi.bitapp.transaction.repository.MongoTransactionRepository;
 import io.dkakunsi.bitapp.transaction.usecase.CreateTransaction;
+import io.dkakunsi.bitapp.transaction.usecase.GetAccountTransactions;
+import io.dkakunsi.bitapp.transaction.usecase.GetLoanTransactions;
 import io.dkakunsi.bitapp.transaction.usecase.GetTransaction;
 import io.dkakunsi.bitapp.transaction.usecase.GetUserTransactions;
 import io.dkakunsi.bitapp.transaction.usecase.RemoveTransaction;
@@ -82,6 +86,8 @@ public final class AppLauncher implements Launcher {
         sessionManager);
     var getTransaction = new GetTransaction(transactionRepository);
     var getUserTransactions = new GetUserTransactions(transactionRepository);
+    var getAccountTransactions = new GetAccountTransactions(transactionRepository);
+    var getLoanTransactions = new GetLoanTransactions(transactionRepository);
     var removeTransaction = new RemoveTransaction(transactionRepository, accountRepository, loanRepository,
         sessionManager);
 
@@ -122,6 +128,10 @@ public final class AppLauncher implements Launcher {
         .setAuthorizer(authorizer);
     var getUserTransactionsEndpoint = new GetUserTransactionsEndpoint(getUserTransactions)
         .setAuthorizer(authorizer);
+    var getAccountTransactionsEndpoint = new GetAccountTransactionsEndpoint(getAccountTransactions)
+        .setAuthorizer(authorizer);
+    var getLoanTransactionsEndpoint = new GetLoanTransactionsEndpoint(getLoanTransactions)
+        .setAuthorizer(authorizer);
     var removeTransactionEndpoint = new RemoveTransactionEndpoint(removeTransaction)
         .setAuthorizer(authorizer);
 
@@ -143,6 +153,8 @@ public final class AppLauncher implements Launcher {
         .addEndpoint(createTransactionEndpoint)
         .addEndpoint(getTransactionEndpoint)
         .addEndpoint(getUserTransactionsEndpoint)
+        .addEndpoint(getAccountTransactionsEndpoint)
+        .addEndpoint(getLoanTransactionsEndpoint)
         .addEndpoint(removeTransactionEndpoint)
         .start();
   }
