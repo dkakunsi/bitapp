@@ -73,7 +73,7 @@ class UpdateAccountEndpointTest {
         """;
 
     // When
-    var response = Unirest.put(baseUrl + "/accounts/" + ACCOUNT_ID)
+    var response = Unirest.put(baseUrl + "/v1/accounts/" + ACCOUNT_ID)
         .header("Content-Type", "application/json")
         .body(requestBody)
         .asJson();
@@ -107,7 +107,7 @@ class UpdateAccountEndpointTest {
         """;
 
     // When
-    var response = Unirest.put(baseUrl + "/accounts/" + ACCOUNT_ID)
+    var response = Unirest.put(baseUrl + "/v1/accounts/" + ACCOUNT_ID)
         .header("Content-Type", "application/json")
         .body(requestBody)
         .asJson();
@@ -131,7 +131,7 @@ class UpdateAccountEndpointTest {
         """;
 
     // When
-    var response = Unirest.put(baseUrl + "/accounts/" + ACCOUNT_ID)
+    var response = Unirest.put(baseUrl + "/v1/accounts/" + ACCOUNT_ID)
         .header("Content-Type", "application/json")
         .body(requestBody)
         .asString();
@@ -159,7 +159,7 @@ class UpdateAccountEndpointTest {
         """;
 
     // When
-    var response = Unirest.put(baseUrl + "/accounts/invalid-id")
+    var response = Unirest.put(baseUrl + "/v1/accounts/invalid-id")
         .header("Content-Type", "application/json")
         .body(requestBody)
         .asJson();

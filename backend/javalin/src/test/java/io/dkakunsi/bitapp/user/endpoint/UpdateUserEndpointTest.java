@@ -68,7 +68,7 @@ class UpdateUserEndpointTest {
 
     // When
     var body = new JSONObject().put("language", "ID").toString();
-    var response = Unirest.put(baseUrl + "/users/" + email).body(body).asString();
+    var response = Unirest.put(baseUrl + "/v1/users/" + email).body(body).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -99,7 +99,7 @@ class UpdateUserEndpointTest {
 
     // When
     var body = new JSONObject().put("language", "EN").toString();
-    var response = Unirest.put(baseUrl + "/users/" + email).body(body).asString();
+    var response = Unirest.put(baseUrl + "/v1/users/" + email).body(body).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -128,7 +128,7 @@ class UpdateUserEndpointTest {
 
     // When
     var body = new JSONObject().put("language", "ID").toString();
-    var response = Unirest.put(baseUrl + "/users/" + email).body(body).asString();
+    var response = Unirest.put(baseUrl + "/v1/users/" + email).body(body).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -155,7 +155,7 @@ class UpdateUserEndpointTest {
 
     // When
     var body = new JSONObject().put("language", "ID").toString();
-    var response = Unirest.put(baseUrl + "/users/" + email).body(body).asString();
+    var response = Unirest.put(baseUrl + "/v1/users/" + email).body(body).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -178,7 +178,7 @@ class UpdateUserEndpointTest {
 
     // When
     var body = new JSONObject().put("language", "ID").toString();
-    var response = Unirest.put(baseUrl + "/users/" + email).body(body).asString();
+    var response = Unirest.put(baseUrl + "/v1/users/" + email).body(body).asString();
 
     // Then
     assertEquals(404, response.getStatus());
@@ -201,7 +201,7 @@ class UpdateUserEndpointTest {
 
     // When
     var body = new JSONObject().put("language", "ID").toString();
-    var response = Unirest.put(baseUrl + "/users/" + email).body(body).asString();
+    var response = Unirest.put(baseUrl + "/v1/users/" + email).body(body).asString();
 
     // Then
     assertEquals(500, response.getStatus());
@@ -219,7 +219,7 @@ class UpdateUserEndpointTest {
   void givenInvalidTargetUrl_WhenRequested_ThenShouldReturnNotFound() {
     // Given
     // When
-    var response = Unirest.put(baseUrl + "/users/invalid/wrongpath").asString();
+    var response = Unirest.put(baseUrl + "/v1/users/invalid/wrongpath").asString();
 
     // Then
     assertEquals(404, response.getStatus());
@@ -237,7 +237,7 @@ class UpdateUserEndpointTest {
     var body = new JSONObject().put("language", "ID").toString();
 
     // When
-    var response = Unirest.post(baseUrl + "/users/" + email).body(body).asString();
+    var response = Unirest.post(baseUrl + "/v1/users/" + email).body(body).asString();
 
     // Then
     assertEquals(404, response.getStatus());
@@ -271,9 +271,9 @@ class UpdateUserEndpointTest {
 
     // When
     var body1 = new JSONObject().put("language", "ID").toString();
-    var response1 = Unirest.put(baseUrl + "/users/" + email1).body(body1).asString();
+    var response1 = Unirest.put(baseUrl + "/v1/users/" + email1).body(body1).asString();
     var body2 = new JSONObject().put("language", "ID").toString();
-    var response2 = Unirest.put(baseUrl + "/users/" + email2).body(body2).asString();
+    var response2 = Unirest.put(baseUrl + "/v1/users/" + email2).body(body2).asString();
 
     // Then
     assertEquals(200, response1.getStatus());

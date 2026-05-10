@@ -59,7 +59,7 @@ class GetUserEndpointTest {
     when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
-    var response = Unirest.get(baseUrl + "/users/" + email).asString();
+    var response = Unirest.get(baseUrl + "/v1/users/" + email).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -82,7 +82,7 @@ class GetUserEndpointTest {
     when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
-    var response = Unirest.get(baseUrl + "/users/" + email).asString();
+    var response = Unirest.get(baseUrl + "/v1/users/" + email).asString();
 
     // Then
     assertEquals(404, response.getStatus());
@@ -97,7 +97,7 @@ class GetUserEndpointTest {
     when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
-    var response = Unirest.get(baseUrl + "/users/" + email).asString();
+    var response = Unirest.get(baseUrl + "/v1/users/" + email).asString();
 
     // Then
     assertEquals(500, response.getStatus());

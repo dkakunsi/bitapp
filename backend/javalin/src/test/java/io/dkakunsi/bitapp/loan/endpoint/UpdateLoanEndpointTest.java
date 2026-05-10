@@ -79,7 +79,7 @@ class UpdateLoanEndpointTest {
         """;
 
     // When
-    var response = Unirest.put(baseUrl + "/loans/" + loanId).body(requestBody).asString();
+    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId).body(requestBody).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -124,7 +124,7 @@ class UpdateLoanEndpointTest {
         """;
 
     // When
-    var response = Unirest.put(baseUrl + "/loans/" + loanId).body(requestBody).asString();
+    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId).body(requestBody).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -169,7 +169,7 @@ class UpdateLoanEndpointTest {
         """;
 
     // When
-    var response = Unirest.put(baseUrl + "/loans/" + loanId).body(requestBody).asString();
+    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId).body(requestBody).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -198,7 +198,7 @@ class UpdateLoanEndpointTest {
         """;
 
     // When
-    var response = Unirest.put(baseUrl + "/loans/" + loanId).body(requestBody).asString();
+    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId).body(requestBody).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -221,7 +221,7 @@ class UpdateLoanEndpointTest {
         """;
 
     // When
-    var response = Unirest.put(baseUrl + "/loans/" + loanId).body(requestBody).asString();
+    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId).body(requestBody).asString();
 
     // Then
     assertEquals(404, response.getStatus());
@@ -244,7 +244,7 @@ class UpdateLoanEndpointTest {
         """;
 
     // When
-    var response = Unirest.put(baseUrl + "/loans/" + loanId).body(requestBody).asString();
+    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId).body(requestBody).asString();
 
     // Then
     assertEquals(403, response.getStatus());
@@ -267,7 +267,7 @@ class UpdateLoanEndpointTest {
         """;
 
     // When
-    var response = Unirest.put(baseUrl + "/loans/" + loanId).body(requestBody).asString();
+    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId).body(requestBody).asString();
 
     // Then
     assertEquals(400, response.getStatus());
@@ -290,7 +290,7 @@ class UpdateLoanEndpointTest {
         """;
 
     // When
-    var response = Unirest.put(baseUrl + "/loans/" + loanId).body(requestBody).asString();
+    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId).body(requestBody).asString();
 
     // Then
     assertEquals(500, response.getStatus());
@@ -328,7 +328,7 @@ class UpdateLoanEndpointTest {
         """;
 
     // When
-    var response = Unirest.put(baseUrl + "/loans/" + loanId).body(requestBody).asString();
+    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId).body(requestBody).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -368,7 +368,7 @@ class UpdateLoanEndpointTest {
         """;
 
     // When
-    var response = Unirest.put(baseUrl + "/loans/" + loanId).body(requestBody).asString();
+    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId).body(requestBody).asString();
 
     // Then
     assertEquals(200, response.getStatus());

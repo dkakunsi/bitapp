@@ -92,7 +92,7 @@ class GetUserLoansEndpointTest {
     when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
-    var response = Unirest.get(baseUrl + "/users/{userId}/loans")
+    var response = Unirest.get(baseUrl + "/v1/users/{userId}/loans")
         .routeParam("userId", USER_ID)
         .asString();
 
@@ -126,7 +126,7 @@ class GetUserLoansEndpointTest {
     when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
-    var response = Unirest.get(baseUrl + "/users/{userId}/loans")
+    var response = Unirest.get(baseUrl + "/v1/users/{userId}/loans")
         .routeParam("userId", USER_ID)
         .asString();
 
@@ -160,7 +160,7 @@ class GetUserLoansEndpointTest {
     when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
-    var response = Unirest.get(baseUrl + "/users/{userId}/loans")
+    var response = Unirest.get(baseUrl + "/v1/users/{userId}/loans")
         .routeParam("userId", USER_ID)
         .asString();
 
@@ -182,7 +182,7 @@ class GetUserLoansEndpointTest {
     when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
-    var response = Unirest.get(baseUrl + "/users/{userId}/loans")
+    var response = Unirest.get(baseUrl + "/v1/users/{userId}/loans")
         .routeParam("userId", USER_ID)
         .asString();
 
@@ -197,7 +197,7 @@ class GetUserLoansEndpointTest {
     when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
-    var response = Unirest.get(baseUrl + "/users/{userId}/loans")
+    var response = Unirest.get(baseUrl + "/v1/users/{userId}/loans")
         .routeParam("userId", USER_ID)
         .asString();
 

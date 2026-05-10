@@ -61,7 +61,7 @@ class GetAccountEndpointTest {
     when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
-    var response = Unirest.get(baseUrl + "/accounts/" + accountId).asString();
+    var response = Unirest.get(baseUrl + "/v1/accounts/" + accountId).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -85,7 +85,7 @@ class GetAccountEndpointTest {
     when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
-    var response = Unirest.get(baseUrl + "/accounts/" + accountId).asString();
+    var response = Unirest.get(baseUrl + "/v1/accounts/" + accountId).asString();
 
     // Then
     assertEquals(404, response.getStatus());
@@ -100,7 +100,7 @@ class GetAccountEndpointTest {
     when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
-    var response = Unirest.get(baseUrl + "/accounts/" + accountId).asString();
+    var response = Unirest.get(baseUrl + "/v1/accounts/" + accountId).asString();
 
     // Then
     assertEquals(500, response.getStatus());

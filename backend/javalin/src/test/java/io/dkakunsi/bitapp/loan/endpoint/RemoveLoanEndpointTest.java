@@ -67,7 +67,7 @@ class RemoveLoanEndpointTest {
     when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
-    var response = Unirest.delete(baseUrl + "/loans/" + loanId).asString();
+    var response = Unirest.delete(baseUrl + "/v1/loans/" + loanId).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -89,7 +89,7 @@ class RemoveLoanEndpointTest {
     when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
-    var response = Unirest.delete(baseUrl + "/loans/" + loanId).asString();
+    var response = Unirest.delete(baseUrl + "/v1/loans/" + loanId).asString();
 
     // Then
     assertEquals(404, response.getStatus());

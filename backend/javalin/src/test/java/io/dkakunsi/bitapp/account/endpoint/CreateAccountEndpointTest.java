@@ -70,7 +70,7 @@ class CreateAccountEndpointTest {
         """;
 
     // When
-    var response = Unirest.post(baseUrl + "/accounts").body(requestBody).asString();
+    var response = Unirest.post(baseUrl + "/v1/accounts").body(requestBody).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -99,7 +99,7 @@ class CreateAccountEndpointTest {
         """;
 
     // When
-    var response = Unirest.post(baseUrl + "/accounts").body(requestBody).asString();
+    var response = Unirest.post(baseUrl + "/v1/accounts").body(requestBody).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -121,7 +121,7 @@ class CreateAccountEndpointTest {
         """;
 
     // When
-    var response = Unirest.post(baseUrl + "/accounts").body(requestBody).asString();
+    var response = Unirest.post(baseUrl + "/v1/accounts").body(requestBody).asString();
 
     // Then
     assertEquals(500, response.getStatus());
@@ -143,7 +143,7 @@ class CreateAccountEndpointTest {
         """;
 
     // When
-    var response = Unirest.post(baseUrl + "/accounts").body(requestBody).asString();
+    var response = Unirest.post(baseUrl + "/v1/accounts").body(requestBody).asString();
 
     // Then
     assertEquals(400, response.getStatus());

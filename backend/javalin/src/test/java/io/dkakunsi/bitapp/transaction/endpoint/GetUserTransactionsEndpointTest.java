@@ -94,7 +94,7 @@ class GetUserTransactionsEndpointTest {
     when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
-    var response = Unirest.get(baseUrl + "/users/{userId}/transactions")
+    var response = Unirest.get(baseUrl + "/v1/users/{userId}/transactions")
         .routeParam("userId", USER_ID)
         .asString();
 
@@ -124,7 +124,7 @@ class GetUserTransactionsEndpointTest {
     when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
-    var response = Unirest.get(baseUrl + "/users/{userId}/transactions")
+    var response = Unirest.get(baseUrl + "/v1/users/{userId}/transactions")
         .routeParam("userId", USER_ID)
         .asString();
 
@@ -158,7 +158,7 @@ class GetUserTransactionsEndpointTest {
     when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
-    var response = Unirest.get(baseUrl + "/users/{userId}/transactions")
+    var response = Unirest.get(baseUrl + "/v1/users/{userId}/transactions")
         .routeParam("userId", USER_ID)
         .asString();
 
@@ -185,7 +185,7 @@ class GetUserTransactionsEndpointTest {
     when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
-    var response = Unirest.get(baseUrl + "/users/{userId}/transactions")
+    var response = Unirest.get(baseUrl + "/v1/users/{userId}/transactions")
         .routeParam("userId", USER_ID)
         .asString();
 
@@ -200,7 +200,7 @@ class GetUserTransactionsEndpointTest {
     when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
-    var response = Unirest.get(baseUrl + "/users/{userId}/transactions")
+    var response = Unirest.get(baseUrl + "/v1/users/{userId}/transactions")
         .routeParam("userId", USER_ID)
         .asString();
 

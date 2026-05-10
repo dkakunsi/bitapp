@@ -69,7 +69,7 @@ class RegisterUserEndpointTest {
         """;
 
     // When
-    var response = Unirest.post(baseUrl + "/users").body(requestBody).asString();
+    var response = Unirest.post(baseUrl + "/v1/users").body(requestBody).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -100,7 +100,7 @@ class RegisterUserEndpointTest {
         """;
 
     // When
-    var response = Unirest.post(baseUrl + "/users").body(requestBody).asString();
+    var response = Unirest.post(baseUrl + "/v1/users").body(requestBody).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -125,7 +125,7 @@ class RegisterUserEndpointTest {
         """;
 
     // When
-    var response = Unirest.post(baseUrl + "/users").body(requestBody).asString();
+    var response = Unirest.post(baseUrl + "/v1/users").body(requestBody).asString();
 
     // Then
     assertEquals(500, response.getStatus());
@@ -148,7 +148,7 @@ class RegisterUserEndpointTest {
         """;
 
     // When
-    var response = Unirest.post(baseUrl + "/users").body(requestBody).asString();
+    var response = Unirest.post(baseUrl + "/v1/users").body(requestBody).asString();
 
     // Then
     assertEquals(400, response.getStatus());
@@ -168,7 +168,7 @@ class RegisterUserEndpointTest {
         """;
 
     // When
-    var response = Unirest.put(baseUrl + "/users/invalid").body(requestBody).asString();
+    var response = Unirest.put(baseUrl + "/v1/users/invalid/wrongpath").body(requestBody).asString();
 
     // Then
     assertEquals(404, response.getStatus());
@@ -195,7 +195,7 @@ class RegisterUserEndpointTest {
         """;
 
     // When
-    var response = Unirest.post(baseUrl + "/users").body(requestBody).asString();
+    var response = Unirest.post(baseUrl + "/v1/users").body(requestBody).asString();
 
     // Then
     assertEquals(200, response.getStatus());

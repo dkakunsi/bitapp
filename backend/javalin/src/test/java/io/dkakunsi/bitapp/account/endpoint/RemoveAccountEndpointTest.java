@@ -61,7 +61,7 @@ class RemoveAccountEndpointTest {
     when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
-    var response = Unirest.delete(baseUrl + "/accounts/" + accountId).asString();
+    var response = Unirest.delete(baseUrl + "/v1/accounts/" + accountId).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -82,7 +82,7 @@ class RemoveAccountEndpointTest {
     when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
-    var response = Unirest.delete(baseUrl + "/accounts/" + accountId).asString();
+    var response = Unirest.delete(baseUrl + "/v1/accounts/" + accountId).asString();
 
     // Then
     assertEquals(404, response.getStatus());

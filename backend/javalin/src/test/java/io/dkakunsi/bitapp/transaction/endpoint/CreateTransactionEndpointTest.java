@@ -80,7 +80,7 @@ class CreateTransactionEndpointTest {
         """;
 
     // When
-    var response = Unirest.post(baseUrl + "/transactions").body(requestBody).asString();
+    var response = Unirest.post(baseUrl + "/v1/transactions").body(requestBody).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -127,7 +127,7 @@ class CreateTransactionEndpointTest {
         """;
 
     // When
-    var response = Unirest.post(baseUrl + "/transactions").body(requestBody).asString();
+    var response = Unirest.post(baseUrl + "/v1/transactions").body(requestBody).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -176,7 +176,7 @@ class CreateTransactionEndpointTest {
         """;
 
     // When
-    var response = Unirest.post(baseUrl + "/transactions").body(requestBody).asString();
+    var response = Unirest.post(baseUrl + "/v1/transactions").body(requestBody).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -219,7 +219,7 @@ class CreateTransactionEndpointTest {
         """;
 
     // When
-    var response = Unirest.post(baseUrl + "/transactions").body(requestBody).asString();
+    var response = Unirest.post(baseUrl + "/v1/transactions").body(requestBody).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -246,7 +246,7 @@ class CreateTransactionEndpointTest {
         """;
 
     // When
-    var response = Unirest.post(baseUrl + "/transactions").body(requestBody).asString();
+    var response = Unirest.post(baseUrl + "/v1/transactions").body(requestBody).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -270,7 +270,7 @@ class CreateTransactionEndpointTest {
         """;
 
     // When
-    var response = Unirest.post(baseUrl + "/transactions").body(requestBody).asString();
+    var response = Unirest.post(baseUrl + "/v1/transactions").body(requestBody).asString();
 
     // Then
     assertEquals(500, response.getStatus());
@@ -294,7 +294,7 @@ class CreateTransactionEndpointTest {
         """;
 
     // When
-    var response = Unirest.post(baseUrl + "/transactions").body(requestBody).asString();
+    var response = Unirest.post(baseUrl + "/v1/transactions").body(requestBody).asString();
 
     // Then
     assertEquals(404, response.getStatus());
@@ -318,7 +318,7 @@ class CreateTransactionEndpointTest {
         """;
 
     // When
-    var response = Unirest.post(baseUrl + "/transactions").body(requestBody).asString();
+    var response = Unirest.post(baseUrl + "/v1/transactions").body(requestBody).asString();
 
     // Then
     assertEquals(400, response.getStatus());

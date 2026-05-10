@@ -66,7 +66,7 @@ class RemoveTransactionEndpointTest {
     when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
-    var response = Unirest.delete(baseUrl + "/transactions/" + transactionId).asString();
+    var response = Unirest.delete(baseUrl + "/v1/transactions/" + transactionId).asString();
 
     // Then
     assertEquals(200, response.getStatus());
@@ -88,7 +88,7 @@ class RemoveTransactionEndpointTest {
     when(usecase.process(any(String.class))).thenReturn(result);
 
     // When
-    var response = Unirest.delete(baseUrl + "/transactions/" + transactionId).asString();
+    var response = Unirest.delete(baseUrl + "/v1/transactions/" + transactionId).asString();
 
     // Then
     assertEquals(404, response.getStatus());
