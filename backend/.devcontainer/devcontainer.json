@@ -6,13 +6,16 @@
     "dockerfile": "Dockerfile"
   },
   "runArgs": [
-    "--privileged",
     "-v",
-    "/dev/bus/usb:/dev/bus/usb"
+    "/var/run/docker.sock:/var/run/docker.sock",
+    "--add-host=host.docker.internal:host-gateway"
   ],
+  "containerEnv": {
+    "TESTCONTAINERS_HOST_OVERRIDE": "host.docker.internal"
+  },
   "mounts": [
-    "source=./.devcontainer/.m2,target=/root/.m2,type=volume",
-    "source=./.devcontainer/.docker,target=/var/lib/docker,type=volume"
+    "source=./.devcontainer/.docker,target=/var/lib/docker,type=bind",
+    "source=./.devcontainer/.m2,target=/root/.m2,type=bind"
   ],
   "forwardPorts": [
     8081,
@@ -50,6 +53,6 @@
   // Use 'postCreateCommand' to run commands after the container is created.
   // "postCreateCommand": "uname -a",
   // Start Docker daemon and wait for it to be ready
-  "postStartCommand": "bash ${containerWorkspaceFolder}/.devcontainer/start-docker.sh"
+  "postStartCommand": "java --version"
   // Configure tool-specific properties.
 }
