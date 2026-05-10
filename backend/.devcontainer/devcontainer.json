@@ -1,5 +1,3 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/ubuntu
 {
   "name": "bitapp-backend",
   "build": {
@@ -14,8 +12,8 @@
     "TESTCONTAINERS_HOST_OVERRIDE": "host.docker.internal"
   },
   "mounts": [
-    "source=./.devcontainer/.docker,target=/var/lib/docker,type=bind",
-    "source=./.devcontainer/.m2,target=/root/.m2,type=bind"
+    "type=volume,source=docker,target=/var/lib/docker",
+    "type=volume,source=m2,target=/root/.m2"
   ],
   "forwardPorts": [
     8081,
@@ -48,11 +46,5 @@
       }
     }
   },
-  // Features to add to the dev container. More info: https://containers.dev/features.
-  // "features": {},
-  // Use 'postCreateCommand' to run commands after the container is created.
-  // "postCreateCommand": "uname -a",
-  // Start Docker daemon and wait for it to be ready
   "postStartCommand": "java --version"
-  // Configure tool-specific properties.
 }
