@@ -18,6 +18,7 @@ public abstract class AppTestUtil {
   protected void create(Map<String, String> appEnv) throws Exception {
     MongoServer.startDb();
     env = new HashMap<>();
+    env.put("app.env", "test");
     env.putAll(appEnv);
   }
 

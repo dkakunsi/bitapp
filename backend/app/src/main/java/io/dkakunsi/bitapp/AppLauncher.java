@@ -13,10 +13,13 @@ import io.dkakunsi.bitapp.account.usecase.GetAccount;
 import io.dkakunsi.bitapp.account.usecase.GetUserAccounts;
 import io.dkakunsi.bitapp.account.usecase.RemoveAccount;
 import io.dkakunsi.bitapp.account.usecase.UpdateAccount;
+import io.dkakunsi.bitapp.common.Authorizer;
+import io.dkakunsi.bitapp.common.Configuration;
 import io.dkakunsi.bitapp.common.EnvironmentConfiguration;
 import io.dkakunsi.bitapp.common.Launcher;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.jwt.GoogleJWTAuthorizer;
+import io.dkakunsi.bitapp.jwt.JWTAuthorizer;
 import io.dkakunsi.bitapp.loan.endpoint.CreateLoanEndpoint;
 import io.dkakunsi.bitapp.loan.endpoint.GetLoanEndpoint;
 import io.dkakunsi.bitapp.loan.endpoint.GetUserLoansEndpoint;
@@ -96,7 +99,7 @@ public final class AppLauncher implements Launcher {
         sessionManager);
 
     // endpoints
-    var authorizer = GoogleJWTAuthorizer.of(configuration);
+    var authorizer = createAuthorizer(configuration);
     var registerUserEndpoint = new RegisterUserEndpoint(registerUser);
     var getUserEndpoint = new GetUserEndpoint(getUser)
         .setAuthorizer(authorizer);
@@ -164,5 +167,10 @@ public final class AppLauncher implements Launcher {
     if (server != null) {
       server.stop();
     }
+  }
+
+  private static Authorizer createAuthorizer(Configuration configuration) {
+    var isTestEnv = configuration.get("app.env").orElse("").equalsIgnoreCase("test");
+    return isTestEnv ? JWTAuthorizer.of(configuration) : GoogleJWTAuthorizer.of(configuration);
   }
 }
