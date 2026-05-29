@@ -21,7 +21,7 @@ public class GoogleJWTAuthorizer implements Authorizer {
 
   public static final String GOOGLE_JWKS_URL = "GOOGLE_JWKS_URL";
 
-  private static final String DEFAULT_GOOGLE_JWKS_URL = "https://www.googleapis.com/oauth2/v3/certs";
+  private static final String DEFAULT_GOOGLE_JWKS_URL = "https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com";
   private static final String EMAIL_CLAIM = "email";
 
   private final JwkProvider jwkProvider;

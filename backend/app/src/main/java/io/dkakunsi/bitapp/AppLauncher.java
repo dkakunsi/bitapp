@@ -16,7 +16,7 @@ import io.dkakunsi.bitapp.account.usecase.UpdateAccount;
 import io.dkakunsi.bitapp.common.EnvironmentConfiguration;
 import io.dkakunsi.bitapp.common.Launcher;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
-import io.dkakunsi.bitapp.jwt.JWTAuthorizer;
+import io.dkakunsi.bitapp.jwt.GoogleJWTAuthorizer;
 import io.dkakunsi.bitapp.loan.endpoint.CreateLoanEndpoint;
 import io.dkakunsi.bitapp.loan.endpoint.GetLoanEndpoint;
 import io.dkakunsi.bitapp.loan.endpoint.GetUserLoansEndpoint;
@@ -96,7 +96,7 @@ public final class AppLauncher implements Launcher {
         sessionManager);
 
     // endpoints
-    var authorizer = JWTAuthorizer.of(configuration);
+    var authorizer = GoogleJWTAuthorizer.of(configuration);
     var registerUserEndpoint = new RegisterUserEndpoint(registerUser);
     var getUserEndpoint = new GetUserEndpoint(getUser)
         .setAuthorizer(authorizer);
