@@ -1,4 +1,4 @@
-FROM ghcr.io/dkakunsi/lab/flutter:1.0
+FROM ghcr.io/dkakunsi/lab/flutter:1.2
 
 # Copy private key for cloning from git repositories
 COPY .ssh/* "/root/.ssh/"

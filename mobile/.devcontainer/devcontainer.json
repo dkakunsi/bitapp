@@ -1,5 +1,3 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/ubuntu
 {
   "name": "bitapp-mobile",
   "build": {
@@ -11,11 +9,11 @@
     "/dev/bus/usb:/dev/bus/usb"
   ],
   "mounts": [
-    "source=./.devcontainer/.docker,target=/var/lib/docker,type=bind",
-    "source=./.devcontainer/.pub-cache,target=/root/.pub-cache,type=bind",
-    "source=./.devcontainer/.android-sdk,target=/opt/android-sdk,type=bind",
-    "source=./.devcontainer/.gradle-cache,target=/home/vscode/.gradle,type=bind",
-    "source=./.devcontainer/.android-keystore,target=/home/vscode/.android,type=bind"
+    "type=volume,source=docker,target=/var/lib/docker",
+    "type=volume,source=pub-cache,target=/root/.pub-cache",
+    "type=volume,source=android-sdk,target=/opt/android-sdk",
+    "type=volume,source=gradle-cache,target=/home/vscode/.gradle",
+    "type=volume,source=android-keystore,target=/home/vscode/.android"
   ],
   "forwardPorts": [
     8081,
@@ -42,11 +40,5 @@
       }
     }
   },
-  // Features to add to the dev container. More info: https://containers.dev/features.
-  // "features": {},
-  // Use 'postCreateCommand' to run commands after the container is created.
-  // "postCreateCommand": "uname -a",
-  // Start Docker daemon and wait for it to be ready
-  "postStartCommand": "bash ${containerWorkspaceFolder}/.devcontainer/start-docker.sh"
-  // Configure tool-specific properties.
+  "postStartCommand": "flutter doctor"
 }
