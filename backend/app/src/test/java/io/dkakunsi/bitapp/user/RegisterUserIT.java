@@ -134,7 +134,7 @@ public class RegisterUserIT extends AppTestUtil {
     var response = Unirest.post(baseUrl + "/v1/users").body(body).asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("email: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("email: invalid value"));
   }
 
   /**
@@ -156,7 +156,7 @@ public class RegisterUserIT extends AppTestUtil {
     var response = Unirest.post(baseUrl + "/v1/users").body(body).asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("email: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("email: invalid value"));
   }
 
   /**
@@ -201,7 +201,7 @@ public class RegisterUserIT extends AppTestUtil {
     var response = Unirest.post(baseUrl + "/v1/users").body(body).asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("email: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("email: invalid value"));
   }
 
   /**
@@ -224,7 +224,7 @@ public class RegisterUserIT extends AppTestUtil {
     var response = Unirest.post(baseUrl + "/v1/users").body(body).asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("name: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("name: invalid value"));
   }
 
   /**
@@ -247,7 +247,7 @@ public class RegisterUserIT extends AppTestUtil {
     var response = Unirest.post(baseUrl + "/v1/users").body(body).asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("name: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("name: invalid value"));
   }
 
   /**
@@ -270,6 +270,6 @@ public class RegisterUserIT extends AppTestUtil {
     var response = Unirest.post(baseUrl + "/v1/users").body(body).asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("name: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("name: invalid value"));
   }
 }

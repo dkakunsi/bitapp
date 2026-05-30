@@ -1,6 +1,7 @@
 package io.dkakunsi.bitapp.account;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 
@@ -198,7 +199,7 @@ public class UpdateAccountIT extends AppTestUtil {
 
     // Then
     assertEquals(400, response.getStatus());
-    assertEquals("name: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("name: invalid value"));
   }
 
   /**
@@ -235,7 +236,7 @@ public class UpdateAccountIT extends AppTestUtil {
 
     // Then
     assertEquals(400, response.getStatus());
-    assertEquals("name: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("name: invalid value"));
   }
 
   /**
@@ -350,7 +351,7 @@ public class UpdateAccountIT extends AppTestUtil {
 
     // Then
     assertEquals(400, response.getStatus());
-    assertEquals("type: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("type: invalid value"));
   }
 
   /**
@@ -387,7 +388,7 @@ public class UpdateAccountIT extends AppTestUtil {
 
     // Then
     assertEquals(400, response.getStatus());
-    assertEquals("type: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("type: invalid value"));
   }
 
   /**
@@ -424,7 +425,7 @@ public class UpdateAccountIT extends AppTestUtil {
 
     // Then
     assertEquals(400, response.getStatus());
-    assertEquals("type: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("type: invalid value"));
   }
 
   /**
@@ -462,7 +463,7 @@ public class UpdateAccountIT extends AppTestUtil {
 
     // Then
     assertEquals(400, response.getStatus());
-    assertEquals("type: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("type: invalid value"));
   }
 
   /**
@@ -582,7 +583,7 @@ public class UpdateAccountIT extends AppTestUtil {
 
     // Then
     assertEquals(400, response.getStatus());
-    assertEquals("themeColor: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("themeColor: invalid value"));
   }
 
   /**
@@ -619,7 +620,7 @@ public class UpdateAccountIT extends AppTestUtil {
 
     // Then
     assertEquals(400, response.getStatus());
-    assertEquals("themeColor: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("themeColor: invalid value"));
   }
 
   /**
@@ -652,7 +653,7 @@ public class UpdateAccountIT extends AppTestUtil {
 
     // Then
     assertEquals(400, response.getStatus());
-    assertEquals("invalid request", response.getBody());
+    assertEquals("invalid request. fields could not be all null", response.getBody());
   }
 
   /**

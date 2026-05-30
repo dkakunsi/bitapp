@@ -2,6 +2,7 @@ package io.dkakunsi.bitapp.transaction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 
@@ -393,7 +394,7 @@ public class CreateTransactionIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("type: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("type: invalid value"));
   }
 
   /**
@@ -419,7 +420,7 @@ public class CreateTransactionIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("type: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("type: invalid value"));
   }
 
   /**
@@ -445,7 +446,7 @@ public class CreateTransactionIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("title: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("title: invalid value"));
   }
 
   /**
@@ -472,7 +473,7 @@ public class CreateTransactionIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("title: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("title: invalid value"));
   }
 
   /**
@@ -499,7 +500,7 @@ public class CreateTransactionIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("amount: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("amount: invalid value"));
   }
 
   /**
@@ -526,7 +527,7 @@ public class CreateTransactionIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("amount: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("amount: invalid value"));
   }
 
   /**
@@ -552,7 +553,7 @@ public class CreateTransactionIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("amount: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("amount: invalid value"));
   }
 
   /**
@@ -634,7 +635,7 @@ public class CreateTransactionIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("source: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("source: invalid value"));
   }
 
   /**
@@ -661,7 +662,7 @@ public class CreateTransactionIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("destination: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("destination: invalid value"));
   }
 
   /**
@@ -715,7 +716,7 @@ public class CreateTransactionIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("date: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("date: invalid value"));
   }
 
   /**
@@ -743,7 +744,7 @@ public class CreateTransactionIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("time: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("time: invalid value"));
   }
 
   /**

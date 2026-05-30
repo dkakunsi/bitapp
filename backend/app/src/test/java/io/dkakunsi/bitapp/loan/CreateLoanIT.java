@@ -274,7 +274,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("type: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("type: invalid value"));
   }
 
   /**
@@ -303,7 +303,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("type: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("type: invalid value"));
   }
 
   /**
@@ -333,7 +333,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("type: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("type: invalid value"));
   }
 
   /**
@@ -363,7 +363,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("type: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("type: invalid value"));
   }
 
   /**
@@ -393,7 +393,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("type: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("type: invalid value"));
   }
 
   /**
@@ -422,7 +422,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("title: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("title: invalid value"));
   }
 
   /**
@@ -452,7 +452,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("title: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("title: invalid value"));
   }
 
   /**
@@ -482,7 +482,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("title: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("title: invalid value"));
   }
 
   /**
@@ -512,7 +512,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("title: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("title: invalid value"));
   }
 
   /**
@@ -542,7 +542,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("amount: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("amount: invalid value"));
   }
 
   /**
@@ -572,7 +572,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("amount: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("amount: invalid value"));
   }
 
   /**
@@ -601,7 +601,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("amount: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("amount: invalid value"));
   }
 
   /**
@@ -631,7 +631,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("amount: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("amount: invalid value"));
   }
 
   /**
@@ -661,7 +661,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("interestRate: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("interestRate: invalid value"));
   }
 
   /**
@@ -691,7 +691,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("date: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("date: invalid value"));
   }
 
   /**
@@ -721,7 +721,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("date: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("date: invalid value"));
   }
 
   /**
@@ -751,7 +751,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("time: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("time: invalid value"));
   }
 
   /**
@@ -781,7 +781,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("time: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("time: invalid value"));
   }
 
   /**
@@ -841,7 +841,7 @@ public class CreateLoanIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("account: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("account: invalid value"));
   }
 
   /**

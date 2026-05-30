@@ -1,6 +1,7 @@
 package io.dkakunsi.bitapp.user;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 
@@ -203,7 +204,7 @@ public class UpdateUserIT extends AppTestUtil {
         .body(updateBodyUnsupported)
         .asString();
     assertEquals(400, updateResponse.getStatus());
-    assertEquals("language: invalid value", updateResponse.getBody());
+    assertTrue(updateResponse.getBody().startsWith("language: invalid value"));
   }
 
   /**

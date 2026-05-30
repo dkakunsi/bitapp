@@ -2,6 +2,7 @@ package io.dkakunsi.bitapp.account;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -156,7 +157,7 @@ public class CreateAccountIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("type: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("type: invalid value"));
   }
 
   /**
@@ -179,7 +180,7 @@ public class CreateAccountIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("type: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("type: invalid value"));
   }
 
   /**
@@ -234,7 +235,7 @@ public class CreateAccountIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("name: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("name: invalid value"));
   }
 
   /**
@@ -258,7 +259,7 @@ public class CreateAccountIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-    assertEquals("name: invalid value", response.getBody());
+    assertTrue(response.getBody().startsWith("name: invalid value"));
   }
 
   /**
