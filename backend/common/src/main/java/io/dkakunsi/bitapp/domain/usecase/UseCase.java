@@ -4,9 +4,14 @@ import java.util.NoSuchElementException;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
+import io.dkakunsi.bitapp.common.Logger;
+import io.dkakunsi.bitapp.common.SystemLogger;
 import io.dkakunsi.bitapp.common.Validatable;
 
 public interface UseCase<IN, OUT> {
+
+  Logger LOGGER = SystemLogger.getLogger(UseCase.class);
+  
   default Result<OUT> process(IN input) {
     try {
       if (input instanceof Validatable validatable) {
@@ -14,8 +19,10 @@ public interface UseCase<IN, OUT> {
       }
       return execute(input);
     } catch (IllegalArgumentException e) {
+      LOGGER.info("Request failed with message: {}", e.getMessage());
       return Result.failure(Code.BAD_REQUEST, e.getMessage());
     } catch (Exception e) {
+      LOGGER.error("Request failed with message: {}", e.getMessage());
       return Result.failure(Code.SERVER_ERROR, e.getMessage());
     }
   }
