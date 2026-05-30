@@ -30,7 +30,7 @@ public interface UseCase<IN, OUT> {
     try {
       return getContext().requester();
     } catch (NoSuchElementException e) {
-      return "NOT-SPECIFIED";
+      throw new RuntimeException("No requester found in context");
     }
   }
 }
