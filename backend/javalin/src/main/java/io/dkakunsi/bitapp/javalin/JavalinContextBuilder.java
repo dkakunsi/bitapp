@@ -11,7 +11,7 @@ public final class JavalinContextBuilder {
   private io.javalin.http.Context context;
   private AuthorizedPrincipal requester;
 
-  private static String fromHeader(io.javalin.http.Context context, Header headerKey) {
+  static String fromHeader(io.javalin.http.Context context, Header headerKey) {
     var headerValue = context.header(headerKey.getName());
     return headerValue != null ? headerValue : "";
   }

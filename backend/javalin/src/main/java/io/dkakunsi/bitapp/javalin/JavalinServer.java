@@ -11,6 +11,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import io.dkakunsi.bitapp.common.Logger;
 import io.dkakunsi.bitapp.common.SystemLogger;
+import io.dkakunsi.bitapp.common.Endpoint.Header;
 import io.javalin.Javalin;
 import io.javalin.config.JavalinConfig;
 import io.javalin.http.ExceptionHandler;
@@ -82,6 +83,11 @@ public final class JavalinServer {
     endpoints.forEach(e -> {
       app.addHttpHandler(e.getHandlerType(), e.getPath(), e.getHandler());
     });
+
+    app.before(ctx -> {
+      LOGGER.info("{}: {}. Incoming request: {} {}", Logger.REQUEST_ID,
+          JavalinContextBuilder.fromHeader(ctx, Header.REQUEST_ID), ctx.method(), ctx.path());
+    });
   }
 
   private void initExceptionHandling() {
@@ -92,7 +98,8 @@ public final class JavalinServer {
 
   private static ExceptionHandler<Exception> exceptionHandler(int statusCode) {
     return (ex, ctx) -> {
-      LOGGER.error("Cannot process request. Reason: {}", ex, ex.getMessage());
+      LOGGER.error("{}: {}. Cannot process request. Reason: {}", Logger.REQUEST_ID,
+          JavalinContextBuilder.fromHeader(ctx, Header.REQUEST_ID), ex.getMessage(), ex);
       ctx.status(statusCode).contentType("text/plain").result(ex.getMessage());
     };
   }

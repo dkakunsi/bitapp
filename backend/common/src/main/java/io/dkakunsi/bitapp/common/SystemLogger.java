@@ -1,7 +1,6 @@
 package io.dkakunsi.bitapp.common;
 
 import org.slf4j.LoggerFactory;
-import org.slf4j.helpers.MessageFormatter;
 
 public final class SystemLogger implements Logger {
 
@@ -17,89 +16,79 @@ public final class SystemLogger implements Logger {
 
   public void debug(String message) {
     if (logger.isDebugEnabled()) {
-      logger.debug(getMessage(message));
+      logger.debug(addRequestIdIfAvailable(message));
     }
   }
 
   public void debug(String format, Object... args) {
     if (logger.isDebugEnabled()) {
-      logger.debug(getMessage(format, args));
+      logger.debug(buildMessage(format, args));
     }
   }
 
   public void error(String message) {
     if (logger.isErrorEnabled()) {
-      logger.error(getMessage(message));
+      logger.error(addRequestIdIfAvailable(message));
     }
   }
 
   public void error(String message, Throwable ex) {
     if (logger.isErrorEnabled()) {
-      logger.error(getMessage(message), ex);
+      logger.error(addRequestIdIfAvailable(message), ex);
     }
   }
 
   public void error(String format, Throwable ex, Object... args) {
     if (logger.isErrorEnabled()) {
-      logger.error(getMessage(format, args), ex);
+      logger.error(buildMessage(format, args), ex);
     }
   }
 
   public void error(String format, String arg) {
     if (logger.isErrorEnabled()) {
-      logger.error(getMessage(format, arg));
+      logger.error(buildMessage(format, arg));
     }
   }
 
   public void error(String format, Object... args) {
     if (logger.isErrorEnabled()) {
-      logger.error(getMessage(format, args));
+      logger.error(buildMessage(format, args));
     }
   }
 
   public void info(String message) {
     if (logger.isInfoEnabled()) {
-      logger.info(getMessage(message));
+      logger.info(addRequestIdIfAvailable(message));
     }
   }
 
   public void info(String format, Object... args) {
     if (logger.isInfoEnabled()) {
-      logger.info(getMessage(format, args));
+      logger.info(buildMessage(format, args));
     }
   }
 
   public void trace(String message) {
     if (logger.isTraceEnabled()) {
-      logger.trace(getMessage(message));
+      logger.trace(addRequestIdIfAvailable(message));
     }
   }
 
   public void trace(String format, Object... args) {
     if (logger.isTraceEnabled()) {
-      logger.trace(getMessage(format, args));
+      logger.trace(buildMessage(format, args));
     }
   }
 
   public void warn(String message) {
     if (logger.isWarnEnabled()) {
-      logger.warn(getMessage(message));
+      logger.warn(addRequestIdIfAvailable(message));
     }
   }
 
   public void warn(String format, Object... args) {
     if (logger.isWarnEnabled()) {
-      logger.warn(getMessage(format, args));
+      logger.warn(buildMessage(format, args));
     }
-  }
-
-  private String getMessage(String format, Object... args) {
-    var formatter = MessageFormatter.arrayFormat(format, args);
-    return getMessage(formatter.getMessage());
-  }
-
-  private String getMessage(String message) {
-    var formatter = MessageFormatter.format("Request_ID: '{}'. {}", requestId(), message);
-    return formatter.getMessage();
   }
 }

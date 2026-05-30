@@ -6,6 +6,8 @@ import io.dkakunsi.bitapp.common.AuthorizedPrincipal;
 import io.dkakunsi.bitapp.common.Authorizer;
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.common.Endpoint;
+import io.dkakunsi.bitapp.common.Logger;
+import io.dkakunsi.bitapp.common.SystemLogger;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.domain.usecase.UseCase;
 import io.javalin.http.Handler;
@@ -13,6 +15,8 @@ import io.javalin.http.HandlerType;
 import io.javalin.http.UnauthorizedResponse;
 
 public abstract class JavalinEndpoint<S, T> extends Endpoint<S, T> {
+
+  private static final Logger LOGGER = SystemLogger.getLogger(JavalinEndpoint.class);
 
   public JavalinEndpoint(UseCase<S, T> usecase) {
     super(usecase);
@@ -39,6 +43,7 @@ public abstract class JavalinEndpoint<S, T> extends Endpoint<S, T> {
       var principal = authorizeRequest(ctx);
       var context = initiateContext(ctx, principal);
       var result = Context.executeInContext(context, () -> {
+        LOGGER.info("Handling request for endpoint: " + getPath());
         var input = buildInput(ctx);
         return usecase.process(input);
       });
