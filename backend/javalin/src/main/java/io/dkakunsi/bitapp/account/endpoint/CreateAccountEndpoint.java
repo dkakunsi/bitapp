@@ -2,6 +2,8 @@ package io.dkakunsi.bitapp.account.endpoint;
 
 import java.lang.reflect.Type;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import io.dkakunsi.bitapp.account.dto.AccountResult;
 import io.dkakunsi.bitapp.account.dto.CreateAccountInput;
 import io.dkakunsi.bitapp.account.usecase.CreateAccount;
@@ -40,6 +42,7 @@ public final class CreateAccountEndpoint extends JavalinEndpoint<CreateAccountIn
   }
 }
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 final record CreateAccountRequest(
     String name,
     String type,

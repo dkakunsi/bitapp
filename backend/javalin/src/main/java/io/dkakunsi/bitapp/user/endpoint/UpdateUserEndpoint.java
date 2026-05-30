@@ -2,6 +2,8 @@ package io.dkakunsi.bitapp.user.endpoint;
 
 import java.lang.reflect.Type;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import io.dkakunsi.bitapp.javalin.JavalinEndpoint;
 import io.dkakunsi.bitapp.user.dto.UpdateUserInput;
 import io.dkakunsi.bitapp.user.dto.UserResult;
@@ -42,6 +44,7 @@ public final class UpdateUserEndpoint
   }
 }
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 final record UpdateUserRequest(
     String language) {
 }

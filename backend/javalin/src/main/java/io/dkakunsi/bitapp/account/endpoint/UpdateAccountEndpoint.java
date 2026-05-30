@@ -2,6 +2,8 @@ package io.dkakunsi.bitapp.account.endpoint;
 
 import java.lang.reflect.Type;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import io.dkakunsi.bitapp.account.dto.AccountResult;
 import io.dkakunsi.bitapp.account.dto.UpdateAccountInput;
 import io.dkakunsi.bitapp.account.usecase.UpdateAccount;
@@ -51,6 +53,7 @@ public final class UpdateAccountEndpoint extends JavalinEndpoint<UpdateAccountIn
   }
 }
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 final record UpdateAccountRequest(
     String name,
     String type,

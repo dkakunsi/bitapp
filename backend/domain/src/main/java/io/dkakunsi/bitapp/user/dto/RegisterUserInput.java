@@ -2,10 +2,13 @@ package io.dkakunsi.bitapp.user.dto;
 
 import java.util.ArrayList;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import io.dkakunsi.bitapp.common.Validatable;
 import lombok.Builder;
 
 @Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
 public final record RegisterUserInput(
     String name,
     String email,

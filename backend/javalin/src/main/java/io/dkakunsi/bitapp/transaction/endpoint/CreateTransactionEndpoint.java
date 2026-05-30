@@ -3,6 +3,8 @@ package io.dkakunsi.bitapp.transaction.endpoint;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import io.dkakunsi.bitapp.common.Context;
 import io.dkakunsi.bitapp.javalin.JavalinEndpoint;
 import io.dkakunsi.bitapp.transaction.dto.CreateTransactionInput;
@@ -68,6 +70,7 @@ public final class CreateTransactionEndpoint extends JavalinEndpoint<CreateTrans
   }
 }
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 record CreateTransactionRequest(
     String title,
     String description,

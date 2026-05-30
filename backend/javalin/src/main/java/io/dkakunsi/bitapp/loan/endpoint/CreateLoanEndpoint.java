@@ -3,6 +3,8 @@ package io.dkakunsi.bitapp.loan.endpoint;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import io.dkakunsi.bitapp.javalin.JavalinEndpoint;
 import io.dkakunsi.bitapp.loan.dto.CreateLoanInput;
 import io.dkakunsi.bitapp.loan.dto.LoanResult;
@@ -48,6 +50,7 @@ public final class CreateLoanEndpoint extends JavalinEndpoint<CreateLoanInput, L
   }
 }
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 final record CreateLoanRequest(
     String type,
     String date,
