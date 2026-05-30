@@ -31,19 +31,19 @@ public final record CreateLoanInput(
     var errors = new ArrayList<String>();
 
     if (StringUtils.isBlank(title)) {
-      errors.add("title: invalid value");
+      errors.add("title: invalid value: " + title);
     }
     if (!Loan.Type.isValid(type)) {
-      errors.add("type: invalid value");
+      errors.add("type: invalid value: " + type);
     }
     if (date != null && (StringUtils.isBlank(date) || !date.matches(DATE_REGEX))) {
-      errors.add("date: invalid value");
+      errors.add("date: invalid value: " + date);
     }
     if (time != null && (StringUtils.isBlank(time) || !time.matches(TIME_REGEX))) {
-      errors.add("time: invalid value");
+      errors.add("time: invalid value: " + time);
     }
     if (amount == null || amount.compareTo(new BigDecimal("0.01")) < 0) {
-      errors.add("amount: invalid value");
+      errors.add("amount: invalid value: " + amount);
     }
     if (StringUtils.isNotBlank(currency)) {
       try {
@@ -51,14 +51,14 @@ public final record CreateLoanInput(
       } catch (
 
       IllegalArgumentException e) {
-        errors.add("currency: invalid value");
+        errors.add("currency: invalid value: " + currency);
       }
     }
     if (interestRate < 0) {
-      errors.add("interestRate: invalid value");
+      errors.add("interestRate: invalid value: " + interestRate);
     }
     if (account != null && StringUtils.isBlank(account)) {
-      errors.add("account: invalid value");
+      errors.add("account: invalid value: " + account);
     }
 
     if (!errors.isEmpty()) {

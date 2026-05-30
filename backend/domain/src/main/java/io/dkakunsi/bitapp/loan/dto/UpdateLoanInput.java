@@ -29,32 +29,32 @@ public final record UpdateLoanInput(
     var errors = new ArrayList<String>();
 
     if (StringUtils.isBlank(id)) {
-      errors.add("id: invalid value");
+      errors.add("id: invalid value: " + id);
     }
     if (partyName != null && StringUtils.isBlank(partyName)) {
-      errors.add("partyName: invalid value");
+      errors.add("partyName: invalid value: " + partyName);
     }
     if (title != null && StringUtils.isBlank(title)) {
-      errors.add("title: invalid value");
+      errors.add("title: invalid value: " + title);
     }
     if (date != null && (StringUtils.isBlank(date) || !date.matches(DATE_REGEX))) {
-      errors.add("date: invalid value");
+      errors.add("date: invalid value: " + date);
     }
     if (time != null && (StringUtils.isBlank(time) || !time.matches(TIME_REGEX))) {
-      errors.add("time: invalid value");
+      errors.add("time: invalid value: " + time);
     }
     if (amount != null && amount.compareTo(new BigDecimal("0.01")) < 0) {
-      errors.add("amount: invalid value");
+      errors.add("amount: invalid value: " + amount);
     }
     if (currency != null && StringUtils.isNotBlank(currency)) {
       try {
         java.util.Currency.getInstance(currency);
       } catch (IllegalArgumentException _) {
-        errors.add("currency: invalid value");
+        errors.add("currency: invalid value: " + currency);
       }
     }
     if (interestRate != null && interestRate < 0) {
-      errors.add("interestRate: invalid value");
+      errors.add("interestRate: invalid value: " + interestRate);
     }
 
     if (!errors.isEmpty()) {

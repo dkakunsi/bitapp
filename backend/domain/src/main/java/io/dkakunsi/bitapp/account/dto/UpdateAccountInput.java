@@ -17,19 +17,19 @@ public final record UpdateAccountInput(
   public void validate() {
     var errors = new java.util.ArrayList<String>();
     if (name == null && type == null && themeColor == null) {
-      errors.add("invalid request");
+      errors.add("invalid request. fields could not be all null");
     }
     if (StringUtils.isBlank(id)) {
-      errors.add("id: invalid value");
+      errors.add("id: invalid value: " + id);
     }
     if (name != null && StringUtils.isBlank(name)) {
-      errors.add("name: invalid value");
+      errors.add("name: invalid value: " + name);
     }
     if (type != null && !Account.Type.isValid(type)) {
-      errors.add("type: invalid value");
+      errors.add("type: invalid value: " + type);
     }
     if (themeColor != null && StringUtils.isBlank(themeColor)) {
-      errors.add("themeColor: invalid value");
+      errors.add("themeColor: invalid value: " + themeColor);
     }
 
     if (!errors.isEmpty()) {

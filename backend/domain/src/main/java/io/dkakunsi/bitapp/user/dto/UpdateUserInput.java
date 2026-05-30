@@ -17,10 +17,10 @@ public final record UpdateUserInput(
   public void validate() throws IllegalArgumentException {
     var errors = new ArrayList<String>();
     if (StringUtils.isBlank(email)) {
-      errors.add("email: invalid value");
+      errors.add("email: invalid value: " + email);
     }
     if (!User.Language.isValid(language)) {
-      errors.add("language: invalid value");
+      errors.add("language: invalid value: " + language);
     }
 
     if (!errors.isEmpty()) {

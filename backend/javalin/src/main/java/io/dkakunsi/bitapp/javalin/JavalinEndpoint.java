@@ -84,10 +84,12 @@ public abstract class JavalinEndpoint<S, T> extends Endpoint<S, T> {
 
   private void failureResponse(io.javalin.http.Context ctx, Result<T> result) {
     var error = result.error().get();
+    LOGGER.info("Request failed with message: " + error.message());
     ctx.status(error.code().getHttpCode()).result(error.message());
   }
 
   private void successResponse(io.javalin.http.Context ctx, Result<T> result) {
+    LOGGER.info("Request succeeded");
     if (result.isEmpty()) {
       ctx.status(SUCCESS_RC);
     } else {

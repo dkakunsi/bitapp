@@ -35,38 +35,38 @@ public record CreateUserTransactionInput(
     var errors = new ArrayList<String>();
 
     if (StringUtils.isBlank(title)) {
-      errors.add("title: invalid value");
+      errors.add("title: invalid value: " + title);
     }
 
     if (!Transaction.Type.isValid(type)) {
-      errors.add("type: invalid value");
+      errors.add("type: invalid value: " + type);
     }
 
     if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
-      errors.add("amount: invalid value");
+      errors.add("amount: invalid value: " + amount);
     }
 
     if (!Transaction.Category.isValid(category)) {
-      errors.add("category: invalid value");
+      errors.add("category: invalid value: " + category);
     }
 
     // Only validate source/destination if type is valid
     if (Transaction.Type.isValid(type)) {
       var transactionType = Transaction.Type.valueOf(type);
       if (transactionType == Transaction.Type.DEBIT && StringUtils.isBlank(source)) {
-        errors.add("source: invalid value");
+        errors.add("source: invalid value: " + source);
       }
 
       if (transactionType == Transaction.Type.CREDIT && StringUtils.isBlank(destination)) {
-        errors.add("destination: invalid value");
+        errors.add("destination: invalid value: " + destination);
       }
 
       if (transactionType == Transaction.Type.TRANSFER) {
         if (StringUtils.isBlank(source)) {
-          errors.add("source: invalid value");
+          errors.add("source: invalid value: " + source);
         }
         if (StringUtils.isBlank(destination)) {
-          errors.add("destination: invalid value");
+          errors.add("destination: invalid value: " + destination);
         }
       }
     }
@@ -86,7 +86,7 @@ public record CreateUserTransactionInput(
       try {
         parsedDate = LocalDate.parse(dateStr);
       } catch (DateTimeParseException _) {
-        throw new IllegalArgumentException("date: invalid value");
+        throw new IllegalArgumentException("date: invalid value: " + dateStr);
       }
     }
 
@@ -94,7 +94,7 @@ public record CreateUserTransactionInput(
       try {
         parsedTime = LocalTime.parse(timeStr);
       } catch (DateTimeParseException _) {
-        throw new IllegalArgumentException("time: invalid value");
+        throw new IllegalArgumentException("time: invalid value: " + timeStr);
       }
     }
 

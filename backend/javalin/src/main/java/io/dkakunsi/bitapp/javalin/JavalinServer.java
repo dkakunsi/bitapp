@@ -83,11 +83,6 @@ public final class JavalinServer {
     endpoints.forEach(e -> {
       app.addHttpHandler(e.getHandlerType(), e.getPath(), e.getHandler());
     });
-
-    app.before(ctx -> {
-      LOGGER.info("{}: {}. Incoming request: {} {}", Logger.REQUEST_ID,
-          JavalinContextBuilder.fromHeader(ctx, Header.REQUEST_ID), ctx.method(), ctx.path());
-    });
   }
 
   private void initExceptionHandling() {
@@ -98,8 +93,8 @@ public final class JavalinServer {
 
   private static ExceptionHandler<Exception> exceptionHandler(int statusCode) {
     return (ex, ctx) -> {
-      LOGGER.error("{}: {}. Cannot process request. Reason: {}", Logger.REQUEST_ID,
-          JavalinContextBuilder.fromHeader(ctx, Header.REQUEST_ID), ex.getMessage(), ex);
+      LOGGER.error("{}: {}. Cannot process request. Reason: {}", ex, Logger.REQUEST_ID,
+          JavalinContextBuilder.fromHeader(ctx, Header.REQUEST_ID), ex.getMessage());
       ctx.status(statusCode).contentType("text/plain").result(ex.getMessage());
     };
   }

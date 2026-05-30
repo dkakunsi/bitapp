@@ -18,10 +18,10 @@ public final record CreateAccountInput(
   public void validate() {
     var errors = new ArrayList<String>();
     if (StringUtils.isBlank(name)) {
-      errors.add("name: invalid value");
+      errors.add("name: invalid value: " + name);
     }
     if (!Account.Type.isValid(type)) {
-      errors.add("type: invalid value");
+      errors.add("type: invalid value: " + type);
     }
 
     if (!errors.isEmpty()) {

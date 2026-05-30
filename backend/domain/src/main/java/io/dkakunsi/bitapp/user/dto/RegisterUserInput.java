@@ -21,10 +21,10 @@ public final record RegisterUserInput(
   public void validate() throws IllegalArgumentException {
     var errors = new ArrayList<String>();
     if (name == null || name.isBlank()) {
-      errors.add("name: invalid value");
+      errors.add("name: invalid value: " + name);
     }
     if (email == null || email.isBlank() || !email.matches(EMAIL_REGEX)) {
-      errors.add("email: invalid value");
+      errors.add("email: invalid value: " + email);
     }
 
     if (!errors.isEmpty()) {
