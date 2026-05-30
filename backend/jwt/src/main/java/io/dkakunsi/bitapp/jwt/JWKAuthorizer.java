@@ -19,8 +19,8 @@ public class JWKAuthorizer extends JWTAuthorizer {
 
   public static final String JWK_URL = "JWK_URL";
 
-  // Google JWK through Firebase
-  private static final String DEFAULT_JWK_URL = "https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com";
+  // Google JWK
+  private static final String DEFAULT_JWK_URL = "https://www.googleapis.com/oauth2/v3/certs";
 
   private final JwkProvider jwkProvider;
 
