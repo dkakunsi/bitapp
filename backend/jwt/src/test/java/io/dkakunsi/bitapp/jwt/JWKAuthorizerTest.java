@@ -31,11 +31,11 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import io.dkakunsi.bitapp.common.Configuration;
 import io.dkakunsi.bitapp.test.SecureTestUtil;
 
-class GoogleJWTAuthorizerTest {
+class JWKAuthorizerTest {
 
   private static final String TEST_KID = "google-test-key-id";
 
-  private GoogleJWTAuthorizer authorizer;
+  private JWKAuthorizer authorizer;
   private JwkProvider jwkProvider;
 
   @BeforeEach
@@ -45,33 +45,33 @@ class GoogleJWTAuthorizerTest {
     when(jwk.getPublicKey()).thenReturn(toPublicKey(SecureTestUtil.PUBLIC_KEY));
     when(jwkProvider.get(TEST_KID)).thenReturn(jwk);
 
-    authorizer = new GoogleJWTAuthorizer(jwkProvider);
+    authorizer = new JWKAuthorizer(jwkProvider);
   }
 
   @Test
   void testBuildAuthorizerWithInvalidJwksUrl() {
     // Given
     var configuration = mock(Configuration.class);
-    when(configuration.get(GoogleJWTAuthorizer.GOOGLE_JWKS_URL)).thenReturn(Optional.of("invalid-url"));
+    when(configuration.get(JWKAuthorizer.JWK_URL)).thenReturn(Optional.of("invalid-url"));
 
     // When
-    var ex = assertThrows(RuntimeException.class, () -> GoogleJWTAuthorizer.of(configuration));
+    var ex = assertThrows(IllegalArgumentException.class, () -> JWKAuthorizer.of(configuration));
 
     // Then
-    assertEquals("GOOGLE_JWKS_URL is not configured correctly", ex.getMessage());
+    assertEquals("JWK_URL is not configured correctly", ex.getMessage());
   }
 
   @Test
   void testBuildAuthorizerWithDefaultJwksUrlWhenNotProvided() {
     // Given
     var configuration = mock(Configuration.class);
-    when(configuration.get(GoogleJWTAuthorizer.GOOGLE_JWKS_URL)).thenReturn(Optional.empty());
+    when(configuration.get(JWKAuthorizer.JWK_URL)).thenReturn(Optional.empty());
 
     // When
-    var builtAuthorizer = GoogleJWTAuthorizer.of(configuration);
+    var builtAuthorizer = JWKAuthorizer.of(configuration);
 
     // Then
-    assertInstanceOf(GoogleJWTAuthorizer.class, builtAuthorizer);
+    assertInstanceOf(JWKAuthorizer.class, builtAuthorizer);
   }
 
   @Test
@@ -137,7 +137,7 @@ class GoogleJWTAuthorizerTest {
     var ex = assertThrows(IllegalArgumentException.class, () -> authorizer.verify(token));
 
     // Then
-    assertEquals("Token is not valid", ex.getMessage());
+    assertEquals("Token doesn't have a valid key ID", ex.getMessage());
     assertNull(ex.getCause());
   }
 
@@ -158,10 +158,10 @@ class GoogleJWTAuthorizerTest {
         .sign(Algorithm.RSA256(null, privateKey));
 
     // When
-    var ex = assertThrows(IllegalArgumentException.class, () -> authorizer.verify(token));
+    var ex = assertThrows(RuntimeException.class, () -> authorizer.verify(token));
 
     // Then
-    assertEquals("Token is not valid", ex.getMessage());
+    assertEquals("Cannot retrieve public key for authentication", ex.getMessage());
     assertInstanceOf(JwkException.class, ex.getCause());
   }
 
@@ -171,7 +171,7 @@ class GoogleJWTAuthorizerTest {
     var ex = assertThrows(IllegalArgumentException.class, () -> authorizer.verify(null));
 
     // Then
-    assertEquals("Token is not valid", ex.getMessage());
+    assertEquals("Token is empty", ex.getMessage());
     assertNull(ex.getCause());
   }
 
@@ -181,7 +181,7 @@ class GoogleJWTAuthorizerTest {
     var ex = assertThrows(IllegalArgumentException.class, () -> authorizer.verify(""));
 
     // Then
-    assertEquals("Token is not valid", ex.getMessage());
+    assertEquals("Token is empty", ex.getMessage());
     assertNull(ex.getCause());
   }
 
@@ -191,7 +191,7 @@ class GoogleJWTAuthorizerTest {
     var ex = assertThrows(IllegalArgumentException.class, () -> authorizer.verify("   "));
 
     // Then
-    assertEquals("Token is not valid", ex.getMessage());
+    assertEquals("Token is empty", ex.getMessage());
     assertNull(ex.getCause());
   }
 

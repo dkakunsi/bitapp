@@ -100,7 +100,7 @@ class JWTAuthorizerTest {
     var ex = assertThrows(IllegalArgumentException.class, () -> authorizer.verify(null));
 
     // Then
-    assertEquals("Token is not valid", ex.getMessage());
+    assertEquals("Token is empty", ex.getMessage());
     assertNull(ex.getCause());
   }
 
@@ -110,7 +110,7 @@ class JWTAuthorizerTest {
     var ex = assertThrows(IllegalArgumentException.class, () -> authorizer.verify(""));
 
     // Then
-    assertEquals("Token is not valid", ex.getMessage());
+    assertEquals("Token is empty", ex.getMessage());
     assertNull(ex.getCause());
   }
 
@@ -120,7 +120,7 @@ class JWTAuthorizerTest {
     var ex = assertThrows(IllegalArgumentException.class, () -> authorizer.verify("   "));
 
     // Then
-    assertEquals("Token is not valid", ex.getMessage());
+    assertEquals("Token is empty", ex.getMessage());
     assertNull(ex.getCause());
   }
 

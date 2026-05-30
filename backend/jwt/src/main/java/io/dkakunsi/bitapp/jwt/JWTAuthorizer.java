@@ -4,12 +4,11 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
-
-import org.apache.commons.lang3.StringUtils;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -23,11 +22,12 @@ public class JWTAuthorizer implements Authorizer {
 
   public static final String JWT_PUBLIC_KEY = "JWT_PUBLIC_KEY";
 
-  private static final String EMAIL_CLAIM = "email";
+  private PublicKey publicKey;
 
-  protected RSAPublicKey publicKey;
+  protected JWTAuthorizer() {
+  }
 
-  protected JWTAuthorizer(RSAPublicKey publicKey) {
+  protected JWTAuthorizer(PublicKey publicKey) {
     this.publicKey = publicKey;
   }
 
@@ -42,35 +42,37 @@ public class JWTAuthorizer implements Authorizer {
     }
   }
 
-  protected static RSAPublicKey toRSAPublicKey(byte[] byteKey) {
+  private static PublicKey toRSAPublicKey(byte[] byteKey) {
     try {
       var keySpec = new X509EncodedKeySpec(decode(byteKey));
       var keyFactory = KeyFactory.getInstance("RSA");
-      return (RSAPublicKey) keyFactory.generatePublic(keySpec);
+      return keyFactory.generatePublic(keySpec);
     } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
       throw new RuntimeException("Cannot create RSA key for authentication", ex);
     }
   }
 
+  private static byte[] decode(byte[] encoded) {
+    return Base64.getDecoder().decode(encoded);
+  }
+
   @Override
   public AuthorizedPrincipal verify(String key) {
-    if (StringUtils.isBlank(key)) {
-      throw new IllegalArgumentException("Token is not valid");
-    }
+    var token = cleanToken(key);
+    var rsaPublicKey = (RSAPublicKey) publicKey;
+    return verify(rsaPublicKey, token);
+  }
 
-    var token = key.replace("Bearer ", "");
-    var algorithm = Algorithm.RSA256(publicKey, null);
+  protected AuthorizedPrincipal verify(RSAPublicKey rsaPublicKey, String token) {
+    var algorithm = Algorithm.RSA256(rsaPublicKey, null);
     var verifier = JWT.require(algorithm).build();
+
     try {
       var jwt = verifier.verify(token);
-      var email = jwt.getClaim(EMAIL_CLAIM).asString();
+      var email = jwt.getClaim(Authorizer.EMAIL_CLAIM).asString();
       return new AuthorizedPrincipal(email);
     } catch (JWTVerificationException ex) {
       throw new IllegalArgumentException("Token is not valid", ex);
     }
-  }
-
-  private static byte[] decode(byte[] encoded) {
-    return Base64.getDecoder().decode(encoded);
   }
 }

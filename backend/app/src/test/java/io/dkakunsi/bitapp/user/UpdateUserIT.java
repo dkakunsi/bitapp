@@ -17,14 +17,13 @@ import kong.unirest.json.JSONObject;
 
 public class UpdateUserIT extends AppTestUtil {
 
-  private static final int port = 20006;
-
   private static UpdateUserIT sut = new UpdateUserIT();
 
   private static String baseUrl;
 
   @BeforeAll
   static void setup() throws Exception {
+    var port = getPort();
     sut.create(Map.of(APP_PORT, Integer.toString(port),
         JWTAuthorizer.JWT_PUBLIC_KEY, SecureTestUtil.PUBLIC_KEY));
     sut.startServer(new AppLauncher());

@@ -18,8 +18,6 @@ import kong.unirest.Unirest;
 
 public class GetLoanIT extends AppTestUtil {
 
-  private static final int port = 20013;
-
   private static GetLoanIT sut = new GetLoanIT();
 
   private static String baseUrl;
@@ -28,6 +26,7 @@ public class GetLoanIT extends AppTestUtil {
 
   @BeforeAll
   static void setup() throws Exception {
+    var port = getPort();
     sut.create(Map.of(APP_PORT, Integer.toString(port),
         JWTAuthorizer.JWT_PUBLIC_KEY, SecureTestUtil.PUBLIC_KEY));
     sut.startServer(new AppLauncher());

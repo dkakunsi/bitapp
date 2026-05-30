@@ -19,8 +19,6 @@ import kong.unirest.Unirest;
 
 public class CreateTransactionIT extends AppTestUtil {
 
-  private static final int port = 20010;
-
   private static CreateTransactionIT sut = new CreateTransactionIT();
 
   private static String baseUrl;
@@ -28,10 +26,12 @@ public class CreateTransactionIT extends AppTestUtil {
   private static String token;
 
   private String sourceAccountId;
+
   private String destinationAccountId;
 
   @BeforeAll
   static void setup() throws Exception {
+    var port = getPort();
     var appEnv = Map.of(APP_PORT, Integer.toString(port),
         JWTAuthorizer.JWT_PUBLIC_KEY, SecureTestUtil.PUBLIC_KEY);
     sut.create(appEnv);

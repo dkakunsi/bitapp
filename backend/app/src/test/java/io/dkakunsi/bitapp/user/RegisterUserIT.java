@@ -18,8 +18,6 @@ import kong.unirest.json.JSONObject;
 
 public class RegisterUserIT extends AppTestUtil {
 
-  private static final int port = 20004;
-
   private static RegisterUserIT sut = new RegisterUserIT();
 
   private static String baseUrl;
@@ -28,6 +26,7 @@ public class RegisterUserIT extends AppTestUtil {
 
   @BeforeAll
   static void setup() throws Exception {
+    var port = getPort();
     sut.create(Map.of(APP_PORT, Integer.toString(port),
         JWTAuthorizer.JWT_PUBLIC_KEY, SecureTestUtil.PUBLIC_KEY));
     sut.startServer(new AppLauncher());

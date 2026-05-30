@@ -18,7 +18,6 @@ import io.dkakunsi.bitapp.test.SecureTestUtil;
 import kong.unirest.Unirest;
 
 public class UpdateLoanIT extends AppTestUtil {
-  private static final int port = 20009;
 
   private static UpdateLoanIT sut = new UpdateLoanIT();
 
@@ -30,6 +29,7 @@ public class UpdateLoanIT extends AppTestUtil {
 
   @BeforeAll
   static void setup() throws Exception {
+    var port = getPort();
     var appEnv = Map.of(APP_PORT, Integer.toString(port),
         JWTAuthorizer.JWT_PUBLIC_KEY, SecureTestUtil.PUBLIC_KEY);
     sut.create(appEnv);

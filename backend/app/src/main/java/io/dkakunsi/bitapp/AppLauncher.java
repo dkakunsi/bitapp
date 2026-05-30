@@ -18,7 +18,7 @@ import io.dkakunsi.bitapp.common.Configuration;
 import io.dkakunsi.bitapp.common.EnvironmentConfiguration;
 import io.dkakunsi.bitapp.common.Launcher;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
-import io.dkakunsi.bitapp.jwt.GoogleJWTAuthorizer;
+import io.dkakunsi.bitapp.jwt.JWKAuthorizer;
 import io.dkakunsi.bitapp.jwt.JWTAuthorizer;
 import io.dkakunsi.bitapp.loan.endpoint.CreateLoanEndpoint;
 import io.dkakunsi.bitapp.loan.endpoint.GetLoanEndpoint;
@@ -171,6 +171,6 @@ public final class AppLauncher implements Launcher {
 
   private static Authorizer createAuthorizer(Configuration configuration) {
     var isTestEnv = configuration.get("app.env").orElse("").equalsIgnoreCase("test");
-    return isTestEnv ? JWTAuthorizer.of(configuration) : GoogleJWTAuthorizer.of(configuration);
+    return isTestEnv ? JWTAuthorizer.of(configuration) : JWKAuthorizer.of(configuration);
   }
 }

@@ -17,8 +17,6 @@ import kong.unirest.Unirest;
 
 public class GetUserIT extends AppTestUtil {
 
-  private static final int port = 20003;
-
   private static GetUserIT sut = new GetUserIT();
 
   private static String baseUrl;
@@ -27,6 +25,7 @@ public class GetUserIT extends AppTestUtil {
 
   @BeforeAll
   static void setup() throws Exception {
+    var port = getPort();
     sut.create(Map.of(APP_PORT, Integer.toString(port),
         JWTAuthorizer.JWT_PUBLIC_KEY, SecureTestUtil.PUBLIC_KEY));
     sut.startServer(new AppLauncher());
