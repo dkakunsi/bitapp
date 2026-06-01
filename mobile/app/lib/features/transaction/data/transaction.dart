@@ -95,7 +95,7 @@ class Transaction implements ApiData, StoreData {
       'date': date.millisecondsSinceEpoch,
       'time': time.toInt(),
       'type': transactionType.value,
-      'category': category?.name,
+      'category': category?.value,
       'source': sourceAccountId,
       'destination': destinationAccountId,
       'amount': amount,
@@ -229,66 +229,81 @@ enum TransactionType {
 
 enum TransactionCategory {
   bonus(
+    value: 'BONUS',
     isCredit: true,
     icon: FontAwesomeIcons.moneyBillTrendUp,
     color: Colors.amber,
   ),
-  bills(isDebit: true, icon: FontAwesomeIcons.moneyBill1, color: Colors.blue),
+  bills(value: 'BILLS', isDebit: true, icon: FontAwesomeIcons.moneyBill1, color: Colors.blue),
   charity(
+    value: 'CHARITY',
     isDebit: true,
     icon: Icons.volunteer_activism,
     color: Colors.blueGrey,
   ),
-  education(isDebit: true, icon: Icons.school, color: Colors.brown),
-  entertainment(isDebit: true, icon: Icons.movie, color: Colors.cyan),
-  food(isDebit: true, icon: Icons.restaurant, color: Colors.deepOrange),
-  gift(isDebit: true, icon: FontAwesomeIcons.gift, color: Colors.deepPurple),
-  health(isDebit: true, icon: Icons.local_hospital, color: Colors.green),
-  hobbies(isDebit: true, icon: Icons.sports_esports, color: Colors.grey),
-  interest(isCredit: true, icon: Icons.receipt, color: Colors.indigo),
-  investment(isDebit: true, icon: Icons.attach_money, color: Colors.lightBlue),
-  loan(isDebit: true, icon: Icons.real_estate_agent, color: Colors.lightGreen),
+  education(value: 'EDUCATION', isDebit: true, icon: Icons.school, color: Colors.brown),
+  entertainment(value: 'ENTERTAINMENT', isDebit: true, icon: Icons.movie, color: Colors.cyan),
+  food(value: 'FOOD', isDebit: true, icon: Icons.restaurant, color: Colors.deepOrange),
+  gift(value: 'GIFT', isDebit: true, icon: FontAwesomeIcons.gift, color: Colors.deepPurple),
+  health(value: 'HEALTH', isDebit: true, icon: Icons.local_hospital, color: Colors.green),
+  hobbies(value: 'HOBBIES', isDebit: true, icon: Icons.sports_esports, color: Colors.grey),
+  interest(value: 'INTEREST', isCredit: true, icon: Icons.receipt, color: Colors.indigo),
+  investment(value: 'INVESTMENT', isDebit: true, icon: Icons.attach_money, color: Colors.lightBlue),
+  loan(value: 'LOAN', isDebit: true, icon: Icons.real_estate_agent, color: Colors.lightGreen),
+  loanDisbursement(
+    value: 'LOAN_DISBURSEMENT',
+    isCredit: true,
+    icon: Icons.real_estate_agent,
+    color: Colors.lightGreenAccent,
+  ),
   loanPayment(
+    value: 'LOAN_PAYMENT',
     isCredit: true,
     isDebit: true,
     icon: Icons.payment,
     color: Colors.lime,
   ),
   other(
+    value: 'OTHER',
     isCredit: true,
     isDebit: true,
     isTransfer: true,
     icon: Icons.question_mark,
     color: Colors.orange,
   ),
-  rent(isDebit: true, icon: Icons.apartment, color: Colors.pink),
+  rent(value: 'RENT', isDebit: true, icon: Icons.apartment, color: Colors.pink),
   salary(
+    value: 'SALARY',
     isCredit: true,
     icon: FontAwesomeIcons.sackDollar,
     color: Colors.purple,
   ),
   savings(
+    value: 'SAVINGS',
     isCredit: true,
     isDebit: true,
     isTransfer: true,
     icon: Icons.savings,
     color: Colors.red,
   ),
-  shopping(isDebit: true, icon: Icons.shopping_cart, color: Colors.teal),
-  subscription(isDebit: true, icon: Icons.subscriptions, color: Colors.white),
-  tax(isDebit: true, icon: Icons.receipt, color: Colors.yellow),
+  shopping(value: 'SHOPPING', isDebit: true, icon: Icons.shopping_cart, color: Colors.teal),
+  subscription(value: 'SUBSCRIPTION', isDebit: true, icon: Icons.subscriptions, color: Colors.white),
+  tax(value: 'TAX', isDebit: true, icon: Icons.receipt, color: Colors.yellow),
   transport(
+    value: 'TRANSPORTATION',
     isDebit: true,
     icon: Icons.directions_car,
     color: Colors.amberAccent,
   ),
-  travel(isDebit: true, icon: Icons.flight, color: Colors.blueAccent),
+  travel(value: 'TRAVEL', isDebit: true, icon: Icons.flight, color: Colors.blueAccent),
   utilities(
+    value: 'UTILITIES',
     isDebit: true,
     icon: Icons.electrical_services,
     color: Colors.cyanAccent,
   );
 
+  final String value;
   final bool isCredit;
   final bool isDebit;
   final bool isTransfer;
@@ -301,6 +316,7 @@ enum TransactionCategory {
     this.isTransfer = false,
     required this.icon,
     required this.color,
+    required this.value,
   });
 
   bool canShow(TransactionType type) {

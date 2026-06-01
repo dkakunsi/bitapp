@@ -1,3 +1,5 @@
+import 'package:bitapp/features/user/data/user.dart';
+
 class Session {
   final String token;
 
@@ -16,4 +18,12 @@ class Session {
     this.phone,
     this.photoUrl,
   });
+
+  User get user => User(
+    id: email,
+    name: name,
+    email: email,
+    phone: phone,
+    photoUrl: photoUrl,
+  );
 }

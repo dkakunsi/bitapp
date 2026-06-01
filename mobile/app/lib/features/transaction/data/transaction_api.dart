@@ -20,11 +20,8 @@ class TransactionApi extends AppApi<Transaction> {
 
   Future<List<Transaction>> fetchTransactionsByAccount(String accountId) async {
     final response = await http.get(
-      Uri.parse('${await baseUrl}/v1/account/$accountId/transactions'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${await token}',
-      },
+      Uri.parse('${await baseUrl}/v1/accounts/$accountId/transactions'),
+      headers: await buildRequestHeaders(),
     );
 
     if (response.statusCode == 200) {
@@ -38,11 +35,8 @@ class TransactionApi extends AppApi<Transaction> {
 
   Future<List<Transaction>> fetchTransactionsByLoan(String loanId) async {
     final response = await http.get(
-      Uri.parse('${await baseUrl}/v1/loan/$loanId/transactions'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${await token}',
-      },
+      Uri.parse('${await baseUrl}/v1/loans/$loanId/transactions'),
+      headers: await buildRequestHeaders(),
     );
 
     if (response.statusCode == 200) {

@@ -36,8 +36,8 @@ class GoogleAuthenticationApi {
     await initialize();
     final googleAccount = await _googleSignIn.authenticate();
     final user = await _loginToFirebase(googleAccount);
-    final idToken = googleAccount.authentication.idToken;
-    return _sessionFromFirebaseUser(user, idToken!);
+    final firebaseIdToken = await _firebaseAuth.currentUser?.getIdToken();
+    return _sessionFromFirebaseUser(user, firebaseIdToken!);
   }
 
   Future<Session> silentLogin() async {

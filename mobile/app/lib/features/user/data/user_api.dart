@@ -19,11 +19,9 @@ class UserApi extends AppApi<User> {
 
   Future<User> updateUserLanguage(String userId, Language language) async {
     final response = await http.put(
-      Uri.parse('${await baseUrl}/v1/user/$userId/language/${language.value}'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${await token}',
-      },
+      Uri.parse('${await baseUrl}/v1/users/$userId'),
+      headers: await buildRequestHeaders(),
+      body: '{"language": "${language.value}"}',
     );
 
     if (response.statusCode == 200) {

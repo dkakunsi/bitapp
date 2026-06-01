@@ -120,12 +120,12 @@ class Loan implements ApiData, StoreData {
   }
 }
 
-const _debt = 'DEBT';
-const _receivable = 'RECEIVABLE';
+const _borrow = 'BORROW';
+const _lend = 'LEND';
 
 enum LoanType {
-  debt(_debt),
-  receivable(_receivable);
+  debt(_borrow),
+  receivable(_lend);
 
   final String value;
 
@@ -133,12 +133,12 @@ enum LoanType {
 
   static LoanType valueOf(String s) {
     switch (s) {
-      case _debt:
+      case _borrow:
         return LoanType.debt;
-      case _receivable:
+      case _lend:
         return LoanType.receivable;
       default:
-        throw Exception('DebtType not found');
+        throw Exception('LoanType not found');
     }
   }
 

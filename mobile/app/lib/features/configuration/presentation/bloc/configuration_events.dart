@@ -38,14 +38,9 @@ class SetAppSettings extends ConfigurationEvent {
 
 class SetSession extends ConfigurationEvent {
   final User user;
-
-  const SetSession({required this.user});
-}
-
-class SetToken extends ConfigurationEvent {
   final String token;
 
-  const SetToken({required this.token});
+  const SetSession({required this.user, required this.token});
 }
 
 class SetLanguage extends ConfigurationEvent {

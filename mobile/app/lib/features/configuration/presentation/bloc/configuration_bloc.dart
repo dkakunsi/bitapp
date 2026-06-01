@@ -18,7 +18,6 @@ class ConfigurationBloc extends Bloc<ConfigurationEvent, ConfigurationState> {
   ConfigurationBloc(this.configurationUseCase) : super(ConfigurationInitial()) {
     on<SetAppSettings>(_setAppSettings);
     on<SetSession>(_setSession);
-    on<SetToken>(_setToken);
     on<SetLanguage>(_setLanguage);
     on<DeleteSession>(_deleteSession);
   }
@@ -58,18 +57,9 @@ class ConfigurationBloc extends Bloc<ConfigurationEvent, ConfigurationState> {
     final updateResult = await configurationUseCase.updateConfiguration(
       user: event.user,
       language: event.user.language,
-    );
-    emit(SessionConfigured(updateResult.data));
-  }
-
-  Future<void> _setToken(
-    SetToken event,
-    Emitter<ConfigurationState> emit,
-  ) async {
-    final updateResult = await configurationUseCase.updateConfiguration(
       token: event.token,
     );
-    emit(TokenConfigured(updateResult.data));
+    emit(SessionConfigured(updateResult.data));
   }
 
   Future<void> _setLanguage(

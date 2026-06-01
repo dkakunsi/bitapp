@@ -39,7 +39,6 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       return;
     }
 
-    _configurationBloc.add(SetSession(user: result.data));
     emit(UserRetrieved(result.data));
   }
 

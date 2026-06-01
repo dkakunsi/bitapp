@@ -103,9 +103,9 @@ class Account implements ApiData, StoreData {
   }
 }
 
-const _cash = 'Cash';
-const _ewallet = 'E-Wallet';
-const _bank = 'Bank';
+const _cash = 'CASH';
+const _ewallet = 'EWALLET';
+const _bank = 'BANK';
 
 enum AccountType {
   cash(value: _cash),

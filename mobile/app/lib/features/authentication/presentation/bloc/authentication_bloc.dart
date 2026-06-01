@@ -38,7 +38,9 @@ class AuthenticationBloc
     }
 
     final session = result.data;
-    _configurationBloc.add(SetToken(token: session.token));
+    _configurationBloc.add(
+      SetSession(user: session.user, token: session.token),
+    );
     _userBloc.add(
       RegisterUser(
         userId: session.email,
@@ -63,7 +65,9 @@ class AuthenticationBloc
     }
 
     final session = result.data;
-    _configurationBloc.add(SetToken(token: session.token));
+    _configurationBloc.add(
+      SetSession(user: session.user, token: session.token),
+    );
     emit(Authenticated());
   }
 

@@ -2,6 +2,7 @@ import 'package:bitapp/common/data/model/api_data.dart';
 import 'package:bitapp/features/configuration/data/configuration.dart';
 import 'package:bitapp/features/configuration/data/configuration_store.dart';
 import 'package:http/http.dart' as http;
+import 'package:uuid/uuid.dart';
 
 abstract class AppApi<T extends ApiData> {
   final ConfigurationStore configurationStore;
@@ -18,19 +19,32 @@ abstract class AppApi<T extends ApiData> {
     return config!.token;
   }
 
+  String buildRequestId() => Uuid().v4();
+
   String get dataName;
+
+  String get pluralDataName => '${dataName}s';
+
+  Future<String> get endpoint async => '${await baseUrl}/v1/$pluralDataName';
 
   List<T> fromList(String data);
 
   T from(String data);
 
+  Future<Map<String, String>> buildRequestHeaders() async {
+    final activeToken = await token;
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $activeToken',
+      'Request-Id': buildRequestId(),
+    };
+  }
+
   Future<List<T>> fetchByUser(String userId) async {
+    final url = '${await baseUrl}/v1/users/$userId/$pluralDataName';
     final response = await http.get(
-      Uri.parse('${await baseUrl}/v1/user/$userId/${dataName}s'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${await token}',
-      },
+      Uri.parse(url),
+      headers: await buildRequestHeaders(),
     );
 
     if (response.statusCode == 200) {
@@ -43,12 +57,10 @@ abstract class AppApi<T extends ApiData> {
   }
 
   Future<T> add(T t) async {
+    final url = await endpoint;
     final response = await http.post(
-      Uri.parse('${await baseUrl}/v1/$dataName'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${await token}',
-      },
+      Uri.parse(url),
+      headers: await buildRequestHeaders(),
       body: t.toRequestJson(),
     );
     if (response.statusCode == 200) {
@@ -61,12 +73,10 @@ abstract class AppApi<T extends ApiData> {
   }
 
   Future<void> delete(String id) async {
+    final url = '${await endpoint}/$id';
     final response = await http.delete(
-      Uri.parse('${await baseUrl}/v1/$dataName/$id'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${await token}',
-      },
+      Uri.parse(url),
+      headers: await buildRequestHeaders(),
     );
     if (response.statusCode != 200) {
       throw Exception(
@@ -76,12 +86,10 @@ abstract class AppApi<T extends ApiData> {
   }
 
   Future<T> update(String id, T t) async {
+    final url = '${await endpoint}/$id';
     final response = await http.put(
-      Uri.parse('${await baseUrl}/v1/$dataName/$id'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${await token}',
-      },
+      Uri.parse(url),
+      headers: await buildRequestHeaders(),
       body: t.toRequestJson(),
     );
     if (response.statusCode == 200) {

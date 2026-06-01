@@ -64,19 +64,14 @@ class AccountUseCase {
 
   Future<ProcessingResult<List<Account>>> fetchAccounts(String userId) async {
     try {
-      List<Account> accounts;
       if (await _configurationStore.isRemoteEnabled) {
         final fetchedAccounts = await _accountApi.fetchByUser(userId);
         if (fetchedAccounts.isNotEmpty) {
           await _accountStore.clear();
           await _accountStore.addAll(fetchedAccounts);
-          accounts = await _accountStore.getList(userId);
-        } else {
-          accounts = await _accountStore.getList(userId);
         }
-      } else {
-        accounts = await _accountStore.getList(userId);
       }
+      final accounts = await _accountStore.getList(userId);
       return ProcessingResult(data: accounts);
     } on Exception catch (e) {
       _logger.warning('Error fetching accounts: $e');
