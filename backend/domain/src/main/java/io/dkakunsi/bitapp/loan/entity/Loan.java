@@ -40,7 +40,6 @@ public final record Loan(
     String updatedBy) implements DateTimeConverter {
 
   public static final String DEFAULT_CURRENCY = "IDR";
-  private static final int TIME_FORMAT_LENGTH = 5;
 
   public static enum Type {
     BORROW,

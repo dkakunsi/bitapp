@@ -104,7 +104,7 @@ public final class GetTransactionTest {
         .loan(null)
         .amount(BigDecimal.valueOf(5000000))
         .currency(Currency.getInstance("IDR"))
-        .category(Transaction.Category.INCOME)
+        .category(Transaction.Category.SALARY)
         .type(Transaction.Type.CREDIT)
         .status(EntityStatus.ACTIVE)
         .createdAt(LocalDateTime.now())
@@ -126,7 +126,7 @@ public final class GetTransactionTest {
     assertEquals("Salary Payment", transaction.title());
     assertEquals("account-2", transaction.destination());
     assertEquals(BigDecimal.valueOf(5000000), transaction.amount());
-    assertEquals("INCOME", transaction.category());
+    assertEquals("SALARY", transaction.category());
     verify(transactionRepository).findById(transactionIdObj);
   }
 
