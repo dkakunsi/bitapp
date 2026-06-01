@@ -59,17 +59,30 @@ public final record Transaction(
   }
 
   public static enum Category {
-    FOOD,
-    TRANSPORT,
-    TRANSPORTATION,
-    SHOPPING,
-    ENTERTAINMENT,
-    HEALTH,
+    BONUS,
+    BILLS,
+    CHARITY,
     EDUCATION,
-    INCOME,
+    ENTERTAINMENT,
+    FOOD,
+    GIFT,
+    HEALTH,
+    HOBBIES,
+    INTEREST,
+    INVESTMENT,
     LOAN,
+    LOAN_DISBURSEMENT,
+    LOAN_PAYMENT,
     OTHER,
-    LOAN_DISBURSEMENT;
+    RENT,
+    SALARY,
+    SAVINGS,
+    SHOPPING,
+    SUBSCRIPTION,
+    TAX,
+    TRANSPORT,
+    TRAVEL,
+    UTILITIES;
 
     public static boolean isValid(String category) {
       if (StringUtils.isBlank(category)) {

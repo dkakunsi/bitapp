@@ -1,9 +1,0 @@
-{
-    "editor.formatOnSave": true,
-    "java.saveActions.organizeImports": true,
-    "editor.tabSize": 2,
-    "java.configuration.updateBuildConfiguration": "automatic",
-    "files.saveAllOnSave": true,
-    "java.debug.settings.onBuildFailureProceed": true,
-    "java.compile.nullAnalysis.mode": "automatic"
-}
