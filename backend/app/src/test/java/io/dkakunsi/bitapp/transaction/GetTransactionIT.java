@@ -186,7 +186,7 @@ public class GetTransactionIT extends AppTestUtil {
           "destination": "%s",
           "amount": 5000000,
           "currency": "IDR",
-          "category": "INCOME"
+          "category": "SALARY"
         }
         """, destinationAccountId);
 
@@ -213,7 +213,7 @@ public class GetTransactionIT extends AppTestUtil {
     assertEquals(destinationAccountId, responseBody.getString("destination"));
     assertEquals(5000000, responseBody.getBigDecimal("amount").intValue());
     assertEquals("IDR", responseBody.getString("currency"));
-    assertEquals("INCOME", responseBody.getString("category"));
+    assertEquals("SALARY", responseBody.getString("category"));
     assertNotNull(responseBody.getLong("date"));
     assertNotNull(responseBody.getInt("time"));
   }

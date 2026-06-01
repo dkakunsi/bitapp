@@ -163,7 +163,7 @@ public class GetUserTransactionsIT extends AppTestUtil {
   public void getUserTransactionsShouldReturnAllTransactions() {
     // Create several transactions
     createTransaction("DEBIT", "Grocery Shopping", "Weekly groceries", sourceAccountId, null, null, 50000, "FOOD");
-    createTransaction("CREDIT", "Salary", "Monthly salary", null, destinationAccountId, null, 5000000, "INCOME");
+    createTransaction("CREDIT", "Salary", "Monthly salary", null, destinationAccountId, null, 5000000, "SALARY");
     createTransaction("TRANSFER", "Transfer to Savings", "Monthly savings", sourceAccountId, destinationAccountId,
         null, 100000, "OTHER");
 
@@ -217,7 +217,7 @@ public class GetUserTransactionsIT extends AppTestUtil {
     var debitId = createTransaction("DEBIT", "Shopping", "Grocery shopping", sourceAccountId, null, null, 50000,
         "FOOD");
     var creditId = createTransaction("CREDIT", "Income", "Freelance payment", null, destinationAccountId, null,
-        1000000, "INCOME");
+        1000000, "SALARY");
     var transferId = createTransaction("TRANSFER", "Transfer", "Move money", sourceAccountId, destinationAccountId,
         null, 200000, "OTHER");
 
@@ -352,7 +352,7 @@ public class GetUserTransactionsIT extends AppTestUtil {
   public void getUserTransactionsShouldReturnCorrectCategories() {
     createTransaction("DEBIT", "Groceries", "Food shopping", sourceAccountId, null, null, 50000, "FOOD");
     createTransaction("DEBIT", "Transport", "Bus fare", sourceAccountId, null, null, 10000, "TRANSPORTATION");
-    createTransaction("CREDIT", "Salary", "Monthly income", null, destinationAccountId, null, 5000000, "INCOME");
+    createTransaction("CREDIT", "Salary", "Monthly income", null, destinationAccountId, null, 5000000, "SALARY");
 
     var response = Unirest.get(baseUrl + "/v1/users/" + USER_ID + "/transactions")
         .header("Authorization", "Bearer " + token)
@@ -373,7 +373,7 @@ public class GetUserTransactionsIT extends AppTestUtil {
           foundFood = true;
         } else if ("TRANSPORTATION".equals(category)) {
           foundTransportation = true;
-        } else if ("INCOME".equals(category)) {
+        } else if ("SALARY".equals(category)) {
           foundIncome = true;
         }
       }
@@ -381,7 +381,7 @@ public class GetUserTransactionsIT extends AppTestUtil {
 
     assertTrue(foundFood, "Should find FOOD category");
     assertTrue(foundTransportation, "Should find TRANSPORTATION category");
-    assertTrue(foundIncome, "Should find INCOME category");
+    assertTrue(foundIncome, "Should find SALARY category");
   }
 
   /**
@@ -431,7 +431,7 @@ public class GetUserTransactionsIT extends AppTestUtil {
     var mediumId = createTransaction("DEBIT", "Groceries", "Weekly groceries", sourceAccountId, null, null,
         mediumAmount, "FOOD");
     var largeId = createTransaction("CREDIT", "Salary", "Monthly salary", null, destinationAccountId, null,
-        largeAmount, "INCOME");
+        largeAmount, "SALARY");
 
     var response = Unirest.get(baseUrl + "/v1/users/" + USER_ID + "/transactions")
         .header("Authorization", "Bearer " + token)

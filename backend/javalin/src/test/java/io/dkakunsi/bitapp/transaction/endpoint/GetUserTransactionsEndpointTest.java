@@ -93,7 +93,7 @@ class GetUserTransactionsEndpointTest {
         .destination("account-2")
         .amount(BigDecimal.valueOf(5000000))
         .currency("IDR")
-        .category("INCOME")
+        .category("SALARY")
         .build();
 
     var getResult = List.of(transactionItem1, transactionItem2);

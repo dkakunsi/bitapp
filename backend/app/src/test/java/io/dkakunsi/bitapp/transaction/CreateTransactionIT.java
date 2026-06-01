@@ -191,7 +191,7 @@ public class CreateTransactionIT extends AppTestUtil {
           "destination": "%s",
           "amount": 5000000,
           "currency": "IDR",
-          "category": "INCOME"
+          "category": "SALARY"
         }
         """, date, time, destinationAccountId);
 
@@ -211,7 +211,7 @@ public class CreateTransactionIT extends AppTestUtil {
     assertEquals(destinationAccountId, responseBody.getString("destination"));
     assertEquals(5000000, responseBody.getLong("amount"));
     assertEquals("IDR", responseBody.getString("currency"));
-    assertEquals("INCOME", responseBody.getString("category"));
+    assertEquals("SALARY", responseBody.getString("category"));
     assertEquals(USER_ID, responseBody.getString("user"));
 
     var accountResponse = Unirest.get(baseUrl + "/v1/accounts/" + destinationAccountId)

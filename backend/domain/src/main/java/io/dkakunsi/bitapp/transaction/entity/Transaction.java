@@ -80,7 +80,7 @@ public final record Transaction(
     SHOPPING,
     SUBSCRIPTION,
     TAX,
-    TRANSPORT,
+    TRANSPORTATION,
     TRAVEL,
     UTILITIES;
 

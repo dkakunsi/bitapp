@@ -115,7 +115,7 @@ class GetTransactionEndpointTest {
         .loan(null)
         .amount(BigDecimal.valueOf(5000000))
         .currency("IDR")
-        .category("INCOME")
+        .category("SALARY")
         .build();
     var result = Result.success(getResult);
     when(usecase.process(any(String.class))).thenReturn(result);
@@ -134,7 +134,7 @@ class GetTransactionEndpointTest {
     assertEquals("Salary Payment", resultBody.getString("title"));
     assertEquals("account-2", resultBody.getString("destination"));
     assertEquals(5000000, resultBody.getLong("amount"));
-    assertEquals("INCOME", resultBody.getString("category"));
+    assertEquals("SALARY", resultBody.getString("category"));
   }
 
   @Test

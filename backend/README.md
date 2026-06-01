@@ -530,7 +530,7 @@ Create a new financial transaction (CREDIT, DEBIT, or TRANSFER).
   "destination": "acc-456",
   "amount": 15000000,
   "currency": "IDR",
-  "category": "INCOME",
+  "category": "SALARY",
   "date": "2024-08-01",
   "time": "09:00:00"
 }
@@ -609,7 +609,7 @@ Create a new financial transaction (CREDIT, DEBIT, or TRANSFER).
   "destination": "acc-456",
   "amount": 15000000,
   "currency": "IDR",
-  "category": "INCOME",
+  "category": "SALARY",
   "date": "2024-08-01",
   "time": "09:00"
 }
@@ -643,7 +643,7 @@ Retrieve transaction details by transaction ID.
   "destination": "acc-456",
   "amount": 15000000,
   "currency": "IDR",
-  "category": "INCOME",
+  "category": "SALARY",
   "date": "2024-08-01",
   "time": "09:00"
 }

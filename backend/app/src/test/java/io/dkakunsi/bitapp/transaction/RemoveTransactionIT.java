@@ -209,7 +209,7 @@ public class RemoveTransactionIT extends AppTestUtil {
   public void removeCreditTransactionShouldReduceDestinationAccountBalance() {
     // Create a credit transaction
     var transactionId = createTransaction("CREDIT", "Income", "Freelance payment", null, destinationAccountId, null,
-        100000, "INCOME");
+        100000, "SALARY");
 
     // Get account balance after transaction
     var balanceAfterCredit = getAccountBalance(destinationAccountId);
@@ -601,7 +601,7 @@ public class RemoveTransactionIT extends AppTestUtil {
     var transaction2Id = createTransaction("DEBIT", "Shopping 2", "Second shopping", sourceAccountId, null, null,
         30000, "FOOD");
     var transaction3Id = createTransaction("CREDIT", "Income", "Payment received", null, destinationAccountId,
-        null, 100000, "INCOME");
+        null, 100000, "SALARY");
 
     // Remove the second transaction
     var deleteResponse = Unirest.delete(baseUrl + "/v1/transactions/" + transaction2Id)
@@ -702,7 +702,7 @@ public class RemoveTransactionIT extends AppTestUtil {
     var transaction3Id = createTransaction("DEBIT", "Shopping 3", "Third", sourceAccountId, null, null, 30000,
         "FOOD");
     var keepTransactionId = createTransaction("CREDIT", "Income", "Keep this", null, destinationAccountId, null,
-        100000, "INCOME");
+        100000, "SALARY");
 
     // Remove three transactions
     var delete1 = Unirest.delete(baseUrl + "/v1/transactions/" + transaction1Id)

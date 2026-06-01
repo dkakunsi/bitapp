@@ -115,7 +115,7 @@ class CreateTransactionEndpointTest {
         .destination("account-1")
         .amount(BigDecimal.valueOf(5000000))
         .currency("IDR")
-        .category("INCOME")
+        .category("SALARY")
         .type("CREDIT")
         .build();
     var result = Result.success(transactionResult);
@@ -130,7 +130,7 @@ class CreateTransactionEndpointTest {
           "destination":"account-1",
           "amount":5000000,
           "currency":"IDR",
-          "category":"INCOME",
+          "category":"SALARY",
           "type":"CREDIT"
         }
         """.formatted(date, time);
