@@ -9,6 +9,8 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -18,10 +20,12 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
+import io.dkakunsi.bitapp.common.DateTimeConverter;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.loan.dto.LoanResult;
 import io.dkakunsi.bitapp.loan.usecase.GetUserLoans;
+import io.dkakunsi.bitapp.common.DateTimeConverter;
 import kong.unirest.Unirest;
 
 class GetUserLoansEndpointTest {
@@ -63,8 +67,8 @@ class GetUserLoansEndpointTest {
         .id("loan1")
         .user(USER_ID)
         .type("BORROW")
-        .date("2024-06-15")
-        .time("14:30")
+        .date(DateTimeConverter.epochMilli(LocalDate.of(2024, 6, 15)))
+        .time(DateTimeConverter.minutesSinceMidnight(LocalTime.of(14, 30)))
         .partyName("Bank ABC")
         .title("Car Loan")
         .description("Loan for purchasing a car")
@@ -77,8 +81,8 @@ class GetUserLoansEndpointTest {
         .id("loan2")
         .user(USER_ID)
         .type("LEND")
-        .date("2024-06-20")
-        .time("10:00")
+        .date(DateTimeConverter.epochMilli(LocalDate.of(2024, 6, 20)))
+        .time(DateTimeConverter.minutesSinceMidnight(LocalTime.of(10, 0)))
         .partyName("John Doe")
         .title("Personal Loan")
         .description("Money lent to friend")
@@ -146,8 +150,8 @@ class GetUserLoansEndpointTest {
         .id("loan1")
         .user(USER_ID)
         .type("BORROW")
-        .date("2024-06-15")
-        .time("14:30")
+        .date(DateTimeConverter.epochMilli(LocalDate.of(2024, 6, 15)))
+        .time(DateTimeConverter.minutesSinceMidnight(LocalTime.of(14, 30)))
         .partyName("Credit Union")
         .title("Home Renovation")
         .description("Loan for home improvement")

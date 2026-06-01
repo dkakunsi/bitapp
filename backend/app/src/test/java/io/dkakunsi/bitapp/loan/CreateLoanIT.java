@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -13,6 +15,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.AppLauncher;
+import io.dkakunsi.bitapp.common.DateTimeConverter;
 import io.dkakunsi.bitapp.jwt.JWTAuthorizer;
 import io.dkakunsi.bitapp.test.AppTestUtil;
 import io.dkakunsi.bitapp.test.SecureTestUtil;
@@ -76,19 +79,21 @@ public class CreateLoanIT extends AppTestUtil {
    */
   @Test
   public void createBorrowLoanShouldBeOk() throws Exception {
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2024, 6, 15));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(14, 30));
     var body = """
         {
           "type": "BORROW",
           "partyName": "John Doe",
-          "date": "2024-06-15",
-          "time": "14:30:00",
+          "date": %d,
+          "time": %d,
           "title": "Loan for Car",
           "description": "Borrowing money to buy a car",
           "amount": 500000000,
           "currency": "IDR",
           "interestRate": 5.5
         }
-        """;
+        """.formatted(date, time);
 
     var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
@@ -101,8 +106,8 @@ public class CreateLoanIT extends AppTestUtil {
     assertEquals(USER_ID, responseBody.getString("user"));
     assertEquals("BORROW", responseBody.getString("type"));
     assertEquals("John Doe", responseBody.getString("partyName"));
-    assertEquals("2024-06-15", responseBody.getString("date"));
-    assertEquals("14:30", responseBody.getString("time"));
+    assertEquals(1718409600000L, responseBody.getLong("date"));
+    assertEquals(870, responseBody.getInt("time"));
     assertEquals("Loan for Car", responseBody.getString("title"));
     assertEquals("Borrowing money to buy a car", responseBody.getString("description"));
     assertEquals(500000000, responseBody.getLong("amount"));
@@ -120,18 +125,20 @@ public class CreateLoanIT extends AppTestUtil {
    */
   @Test
   public void shouldUseIdrAsDefaultCurrency() throws Exception {
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2024, 6, 15));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(14, 30));
     var body = """
         {
           "type": "BORROW",
           "partyName": "John Doe",
-          "date": "2024-06-15",
-          "time": "14:30:00",
+          "date": %d,
+          "time": %d,
           "title": "Loan for Car",
           "description": "Borrowing money to buy a car",
           "amount": 500000000,
           "interestRate": 5.5
         }
-        """;
+        """.formatted(date, time);
 
     var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
@@ -144,8 +151,8 @@ public class CreateLoanIT extends AppTestUtil {
     assertEquals(USER_ID, responseBody.getString("user"));
     assertEquals("BORROW", responseBody.getString("type"));
     assertEquals("John Doe", responseBody.getString("partyName"));
-    assertEquals("2024-06-15", responseBody.getString("date"));
-    assertEquals("14:30", responseBody.getString("time"));
+    assertEquals(1718409600000L, responseBody.getLong("date"));
+    assertEquals(870, responseBody.getInt("time"));
     assertEquals("Loan for Car", responseBody.getString("title"));
     assertEquals("Borrowing money to buy a car", responseBody.getString("description"));
     assertEquals(500000000, responseBody.getLong("amount"));
@@ -191,20 +198,19 @@ public class CreateLoanIT extends AppTestUtil {
     assertEquals(500000000, responseBody.getLong("remainingAmount"));
     assertEquals("IDR", responseBody.getString("currency"));
     assertEquals(5.5, responseBody.getDouble("interestRate"));
-    assertNotNull(responseBody.getString("date"));
-    assertNotNull(responseBody.getString("time"));
+    assertNotNull(responseBody.getLong("date"));
+    assertNotNull(responseBody.getInt("time"));
 
     // Verify date and time are close to current time (within a few seconds
     // tolerance)
-    var expectedDate = java.time.LocalDate.now().toString();
-    var expectedTime = java.time.LocalTime.now();
-    var actualDate = responseBody.getString("date");
-    var actualTime = java.time.LocalTime.parse(responseBody.getString("time"));
+    var expectedDate = DateTimeConverter.epochMilli(java.time.LocalDate.now());
+    var expectedTime = DateTimeConverter.minutesSinceMidnight(LocalTime.now());
+    var actualDate = responseBody.getLong("date");
+    var actualTime = responseBody.getInt("time");
 
     assertEquals(expectedDate, actualDate);
-    // Allow up to 60 seconds difference for time comparison
-    var timeDiff = java.time.Duration.between(expectedTime, actualTime).abs().getSeconds();
-    assertEquals(true, timeDiff <= 60, "Time difference should be within 60 seconds");
+    var timeDiff = Math.abs(expectedTime - actualTime);
+    assertEquals(true, timeDiff <= 1, "Time difference should be within 1 minute, but was " + timeDiff + " minutes");
   }
 
   /**
@@ -214,6 +220,8 @@ public class CreateLoanIT extends AppTestUtil {
    */
   @Test
   public void shouldCreateLendLoanSuccessfully() throws Exception {
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2025, 12, 31));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(23, 59));
     var body = """
         {
           "type": "LEND",
@@ -223,10 +231,10 @@ public class CreateLoanIT extends AppTestUtil {
           "amount": 500000000,
           "currency": "IDR",
           "interestRate": 5.5,
-          "date": "2025-12-31",
-          "time": "23:59:59"
+          "date": %d,
+          "time": %d
         }
-        """;
+        """.formatted(date, time);
 
     var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
@@ -254,6 +262,8 @@ public class CreateLoanIT extends AppTestUtil {
    */
   @Test
   public void shouldFailOnCreateLoanWithInvalidType() throws Exception {
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2025, 12, 31));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(23, 59));
     var body = """
         {
           "type": "INVALID_TYPE",
@@ -263,10 +273,10 @@ public class CreateLoanIT extends AppTestUtil {
           "amount": 500000000,
           "currency": "IDR",
           "interestRate": 5.5,
-          "date": "2025-12-31",
-          "time": "23:59:59"
+          "date": %d,
+          "time": %d
         }
-        """;
+        """.formatted(date, time);
 
     var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
@@ -284,6 +294,8 @@ public class CreateLoanIT extends AppTestUtil {
    */
   @Test
   public void shouldFailOnMissingType() throws Exception {
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2025, 12, 31));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(23, 59));
     var body = """
         {
           "partyName": "John Doe",
@@ -292,10 +304,10 @@ public class CreateLoanIT extends AppTestUtil {
           "amount": 500000000,
           "currency": "IDR",
           "interestRate": 5.5,
-          "date": "2025-12-31",
-          "time": "23:59:59"
+          "date": %d,
+          "time": %d
         }
-        """;
+        """.formatted(date, time);
 
     var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
@@ -313,6 +325,8 @@ public class CreateLoanIT extends AppTestUtil {
    */
   @Test
   public void shouldFailOnEmptyType() throws Exception {
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2025, 12, 31));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(23, 59));
     var body = """
         {
           "type": "",
@@ -322,10 +336,10 @@ public class CreateLoanIT extends AppTestUtil {
           "amount": 500000000,
           "currency": "IDR",
           "interestRate": 5.5,
-          "date": "2025-12-31",
-          "time": "23:59:59"
+          "date": %d,
+          "time": %d
         }
-        """;
+        """.formatted(date, time);
 
     var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
@@ -343,6 +357,8 @@ public class CreateLoanIT extends AppTestUtil {
    */
   @Test
   public void shouldFailOnBlankType() throws Exception {
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2025, 12, 31));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(23, 59));
     var body = """
         {
           "type": "   ",
@@ -352,10 +368,10 @@ public class CreateLoanIT extends AppTestUtil {
           "amount": 500000000,
           "currency": "IDR",
           "interestRate": 5.5,
-          "date": "2025-12-31",
-          "time": "23:59:59"
+          "date": %d,
+          "time": %d
         }
-        """;
+        """.formatted(date, time);
 
     var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
@@ -373,6 +389,8 @@ public class CreateLoanIT extends AppTestUtil {
    */
   @Test
   public void shouldFailOnNullType() throws Exception {
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2025, 12, 31));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(23, 59));
     var body = """
         {
           "type": null,
@@ -382,10 +400,10 @@ public class CreateLoanIT extends AppTestUtil {
           "amount": 500000000,
           "currency": "IDR",
           "interestRate": 5.5,
-          "date": "2025-12-31",
-          "time": "23:59:59"
+          "date": %d,
+          "time": %d
         }
-        """;
+        """.formatted(date, time);
 
     var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
@@ -403,6 +421,8 @@ public class CreateLoanIT extends AppTestUtil {
    */
   @Test
   public void shouldFailOnMissingTitle() throws Exception {
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2025, 12, 31));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(23, 59));
     var body = """
         {
           "type": "LEND",
@@ -411,10 +431,10 @@ public class CreateLoanIT extends AppTestUtil {
           "amount": 500000000,
           "currency": "IDR",
           "interestRate": 5.5,
-          "date": "2025-12-31",
-          "time": "23:59:59"
+          "date": %d,
+          "time": %d
         }
-        """;
+        """.formatted(date, time);
 
     var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
@@ -432,6 +452,8 @@ public class CreateLoanIT extends AppTestUtil {
    */
   @Test
   public void shouldFailOnNullTitle() throws Exception {
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2025, 12, 31));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(23, 59));
     var body = """
         {
           "type": "LEND",
@@ -441,10 +463,10 @@ public class CreateLoanIT extends AppTestUtil {
           "amount": 500000000,
           "currency": "IDR",
           "interestRate": 5.5,
-          "date": "2025-12-31",
-          "time": "23:59:59"
+          "date": %d,
+          "time": %d
         }
-        """;
+        """.formatted(date, time);
 
     var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
@@ -462,6 +484,8 @@ public class CreateLoanIT extends AppTestUtil {
    */
   @Test
   public void shouldFailOnEmptyTitle() throws Exception {
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2025, 12, 31));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(23, 59));
     var body = """
         {
           "type": "LEND",
@@ -471,10 +495,10 @@ public class CreateLoanIT extends AppTestUtil {
           "amount": 500000000,
           "currency": "IDR",
           "interestRate": 5.5,
-          "date": "2025-12-31",
-          "time": "23:59:59"
+          "date": %d,
+          "time": %d
         }
-        """;
+        """.formatted(date, time);
 
     var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
@@ -492,6 +516,8 @@ public class CreateLoanIT extends AppTestUtil {
    */
   @Test
   public void shouldFailOnBlankTitle() throws Exception {
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2025, 12, 31));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(23, 59));
     var body = """
         {
           "type": "LEND",
@@ -501,10 +527,10 @@ public class CreateLoanIT extends AppTestUtil {
           "amount": 500000000,
           "currency": "IDR",
           "interestRate": 5.5,
-          "date": "2025-12-31",
-          "time": "23:59:59"
+          "date": %d,
+          "time": %d
         }
-        """;
+        """.formatted(date, time);
 
     var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
@@ -522,6 +548,8 @@ public class CreateLoanIT extends AppTestUtil {
    */
   @Test
   public void shouldFailOnNegativeAmount() throws Exception {
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2025, 12, 31));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(23, 59));
     var body = """
         {
           "type": "LEND",
@@ -531,10 +559,10 @@ public class CreateLoanIT extends AppTestUtil {
           "amount": -500000000,
           "currency": "IDR",
           "interestRate": 5.5,
-          "date": "2025-12-31",
-          "time": "23:59:59"
+          "date": %d,
+          "time": %d
         }
-        """;
+        """.formatted(date, time);
 
     var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
@@ -552,6 +580,8 @@ public class CreateLoanIT extends AppTestUtil {
    */
   @Test
   public void shouldFailOnZeroAmount() throws Exception {
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2025, 12, 31));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(23, 59));
     var body = """
         {
           "type": "LEND",
@@ -561,10 +591,10 @@ public class CreateLoanIT extends AppTestUtil {
           "amount": 0,
           "currency": "IDR",
           "interestRate": 5.5,
-          "date": "2025-12-31",
-          "time": "23:59:59"
+          "date": %d,
+          "time": %d
         }
-        """;
+        """.formatted(date, time);
 
     var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
@@ -582,6 +612,8 @@ public class CreateLoanIT extends AppTestUtil {
    */
   @Test
   public void shouldFailOnMissingAmount() throws Exception {
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2025, 12, 31));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(23, 59));
     var body = """
         {
           "type": "LEND",
@@ -590,10 +622,10 @@ public class CreateLoanIT extends AppTestUtil {
           "description": "Lending money to buy a car",
           "currency": "IDR",
           "interestRate": 5.5,
-          "date": "2025-12-31",
-          "time": "23:59:59"
+          "date": %d,
+          "time": %d
         }
-        """;
+        """.formatted(date, time);
 
     var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
@@ -611,6 +643,8 @@ public class CreateLoanIT extends AppTestUtil {
    */
   @Test
   public void shouldFailOnNullAmount() throws Exception {
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2025, 12, 31));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(23, 59));
     var body = """
         {
           "type": "LEND",
@@ -620,10 +654,10 @@ public class CreateLoanIT extends AppTestUtil {
           "amount": null,
           "currency": "IDR",
           "interestRate": 5.5,
-          "date": "2025-12-31",
-          "time": "23:59:59"
+          "date": %d,
+          "time": %d
         }
-        """;
+        """.formatted(date, time);
 
     var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
@@ -641,6 +675,8 @@ public class CreateLoanIT extends AppTestUtil {
    */
   @Test
   public void shouldFailOnNegativeInterestRate() throws Exception {
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2025, 12, 31));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(23, 59));
     var body = """
         {
           "type": "LEND",
@@ -650,10 +686,10 @@ public class CreateLoanIT extends AppTestUtil {
           "amount": 500000000,
           "currency": "IDR",
           "interestRate": -5.5,
-          "date": "2025-12-31",
-          "time": "23:59:59"
+          "date": %d,
+          "time": %d
         }
-        """;
+        """.formatted(date, time);
 
     var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
@@ -662,157 +698,6 @@ public class CreateLoanIT extends AppTestUtil {
 
     assertEquals(400, response.getStatus());
     assertTrue(response.getBody().startsWith("interestRate: invalid value"));
-  }
-
-  /**
-   * <b>Given</b> a loan creation request with invalid date format<br>
-   * <b>When</b> the POST /loans endpoint is called<br>
-   * <b>Then</b> the request should fail with a 400 status code
-   */
-  @Test
-  public void shouldFailOnInvalidDateFormat() throws Exception {
-    var body = """
-        {
-          "type": "LEND",
-          "partyName": "John Doe",
-          "title": "Loan for Car",
-          "description": "Lending money to buy a car",
-          "amount": 500000000,
-          "currency": "IDR",
-          "interestRate": 5.5,
-          "date": "2024-13-45",
-          "time": "23:59:59"
-        }
-        """;
-
-    var response = Unirest.post(baseUrl + "/v1/loans")
-        .header("Authorization", "Bearer " + token)
-        .body(body)
-        .asString();
-
-    assertEquals(400, response.getStatus());
-    assertTrue(response.getBody().startsWith("date: invalid value"));
-  }
-
-  /**
-   * <b>Given</b> a loan creation request with invalid date string<br>
-   * <b>When</b> the POST /loans endpoint is called<br>
-   * <b>Then</b> the request should fail with a 400 status code
-   */
-  @Test
-  public void shouldFailOnInvalidDateString() throws Exception {
-    var body = """
-        {
-          "type": "LEND",
-          "partyName": "John Doe",
-          "title": "Loan for Car",
-          "description": "Lending money to buy a car",
-          "amount": 500000000,
-          "currency": "IDR",
-          "interestRate": 5.5,
-          "date": "invalid-date",
-          "time": "23:59:59"
-        }
-        """;
-
-    var response = Unirest.post(baseUrl + "/v1/loans")
-        .header("Authorization", "Bearer " + token)
-        .body(body)
-        .asString();
-
-    assertEquals(400, response.getStatus());
-    assertTrue(response.getBody().startsWith("date: invalid value"));
-  }
-
-  /**
-   * <b>Given</b> a loan creation request with invalid time format<br>
-   * <b>When</b> the POST /loans endpoint is called<br>
-   * <b>Then</b> the request should fail with a 400 status code
-   */
-  @Test
-  public void shouldFailOnInvalidTimeFormat() throws Exception {
-    var body = """
-        {
-          "type": "LEND",
-          "partyName": "John Doe",
-          "title": "Loan for Car",
-          "description": "Lending money to buy a car",
-          "amount": 500000000,
-          "currency": "IDR",
-          "interestRate": 5.5,
-          "date": "2025-12-31",
-          "time": "25:99:99"
-        }
-        """;
-
-    var response = Unirest.post(baseUrl + "/v1/loans")
-        .header("Authorization", "Bearer " + token)
-        .body(body)
-        .asString();
-
-    assertEquals(400, response.getStatus());
-    assertTrue(response.getBody().startsWith("time: invalid value"));
-  }
-
-  /**
-   * <b>Given</b> a loan creation request with invalid time string<br>
-   * <b>When</b> the POST /loans endpoint is called<br>
-   * <b>Then</b> the request should fail with a 400 status code
-   */
-  @Test
-  public void shouldFailOnInvalidTimeString() throws Exception {
-    var body = """
-        {
-          "type": "LEND",
-          "partyName": "John Doe",
-          "title": "Loan for Car",
-          "description": "Lending money to buy a car",
-          "amount": 500000000,
-          "currency": "IDR",
-          "interestRate": 5.5,
-          "date": "2025-12-31",
-          "time": "invalid-time"
-        }
-        """;
-
-    var response = Unirest.post(baseUrl + "/v1/loans")
-        .header("Authorization", "Bearer " + token)
-        .body(body)
-        .asString();
-
-    assertEquals(400, response.getStatus());
-    assertTrue(response.getBody().startsWith("time: invalid value"));
-  }
-
-  /**
-   * <b>Given</b> a loan creation request with both invalid date and time<br>
-   * <b>When</b> the POST /loans endpoint is called<br>
-   * <b>Then</b> the request should fail with a 400 status code
-   */
-  @Test
-  public void shouldFailOnInvalidDateAndTime() throws Exception {
-    var body = """
-        {
-          "type": "LEND",
-          "partyName": "John Doe",
-          "title": "Loan for Car",
-          "description": "Lending money to buy a car",
-          "amount": 500000000,
-          "currency": "IDR",
-          "interestRate": 5.5,
-          "date": "not-a-date",
-          "time": "not-a-time"
-        }
-        """;
-
-    var response = Unirest.post(baseUrl + "/v1/loans")
-        .header("Authorization", "Bearer " + token)
-        .body(body)
-        .asString();
-
-    assertEquals(400, response.getStatus());
-    assertTrue(response.getBody().contains("date: invalid value"));
-    assertTrue(response.getBody().contains("time: invalid value"));
   }
 
   /**

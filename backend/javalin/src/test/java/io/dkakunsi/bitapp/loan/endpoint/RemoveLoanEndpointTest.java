@@ -7,6 +7,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterAll;
@@ -14,6 +16,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
+import io.dkakunsi.bitapp.common.DateTimeConverter;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.loan.dto.LoanResult;
@@ -53,8 +56,8 @@ class RemoveLoanEndpointTest {
         .id(loanId)
         .user("user@email.com")
         .type("BORROW")
-        .date("2026-01-24")
-        .time("10:00")
+        .date(DateTimeConverter.epochMilli(LocalDate.of(2026, 1, 24)))
+        .time(DateTimeConverter.minutesSinceMidnight(LocalTime.of(10, 0)))
         .partyName("Test Bank")
         .title("Test Loan")
         .description("Test")

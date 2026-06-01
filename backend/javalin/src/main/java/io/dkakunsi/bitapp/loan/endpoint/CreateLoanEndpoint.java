@@ -53,8 +53,8 @@ public final class CreateLoanEndpoint extends JavalinEndpoint<CreateLoanInput, L
 @JsonIgnoreProperties(ignoreUnknown = true)
 final record CreateLoanRequest(
     String type,
-    String date,
-    String time,
+    Long date,
+    Integer time,
     String partyName,
     String title,
     String description,

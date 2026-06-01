@@ -16,6 +16,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
+import io.dkakunsi.bitapp.common.DateTimeConverter;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.loan.dto.CreateLoanInput;
@@ -51,12 +52,14 @@ class CreateLoanEndpointTest {
   @Test
   void givenValidBorrowLoanRequest_WhenRequested_ThenShouldReturn200AndLoan() {
     // Given
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2026, 1, 15));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(14, 30));
     var createLoanResult = LoanResult.builder()
         .id("loan-123")
         .user("user@email.com")
         .type("BORROW")
-        .date("2026-01-15")
-        .time("14:30:00")
+        .date(date)
+        .time(time)
         .partyName("John Doe")
         .title("Personal Loan")
         .description("Emergency loan")
@@ -71,8 +74,8 @@ class CreateLoanEndpointTest {
     var requestBody = """
         {
           "type":"BORROW",
-          "date":"2026-01-15",
-          "time":"14:30:00",
+          "date": %d,
+          "time": %d,
           "partyName":"John Doe",
           "title":"Personal Loan",
           "description":"Emergency loan",
@@ -80,7 +83,7 @@ class CreateLoanEndpointTest {
           "currency":"USD",
           "interestRate":5.5
         }
-        """;
+        """.formatted(date, time);
 
     // When
     var response = Unirest.post(baseUrl + "/v1/loans").body(requestBody).asString();
@@ -102,12 +105,14 @@ class CreateLoanEndpointTest {
   @Test
   void givenValidLendLoanRequest_WhenRequested_ThenShouldReturn200AndLoan() {
     // Given
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2026, 1, 20));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(10, 0));
     var createLoanResult = LoanResult.builder()
         .id("loan-456")
         .user("user@email.com")
         .type("LEND")
-        .date("2026-01-20")
-        .time("10:00:00")
+        .date(date)
+        .time(time)
         .partyName("Jane Smith")
         .title("Business Loan")
         .description("Investment")
@@ -122,8 +127,8 @@ class CreateLoanEndpointTest {
     var requestBody = """
         {
           "type":"LEND",
-          "date":"2026-01-20",
-          "time":"10:00:00",
+          "date": %d,
+          "time": %d,
           "partyName":"Jane Smith",
           "title":"Business Loan",
           "description":"Investment",
@@ -131,7 +136,7 @@ class CreateLoanEndpointTest {
           "currency":"IDR",
           "interestRate":3.0
         }
-        """;
+        """.formatted(date, time);
 
     // When
     var response = Unirest.post(baseUrl + "/v1/loans").body(requestBody).asString();
@@ -150,12 +155,14 @@ class CreateLoanEndpointTest {
   @Test
   void givenValidLoanRequestWithMinimalFields_WhenRequested_ThenShouldReturn200() {
     // Given
+    var date = DateTimeConverter.epochMilli(LocalDate.now());
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.now());
     var createLoanResult = LoanResult.builder()
         .id("loan-789")
         .user("user@email.com")
         .type("BORROW")
-        .date(LocalDate.now().toString())
-        .time(LocalTime.now().toString())
+        .date(date)
+        .time(time)
         .partyName("Test Party")
         .title("Test Loan")
         .amount(new BigDecimal("1000.00"))
@@ -307,12 +314,14 @@ class CreateLoanEndpointTest {
   @Test
   void givenLoanRequestWithZeroInterestRate_WhenRequested_ThenShouldReturn200() {
     // Given
+    var date = DateTimeConverter.epochMilli(LocalDate.now());
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.now());
     var createLoanResult = LoanResult.builder()
         .id("loan-zero")
         .user("user@email.com")
         .type("BORROW")
-        .date(LocalDate.now().toString())
-        .time(LocalTime.now().toString())
+        .date(date)
+        .time(time)
         .partyName("Interest Free Party")
         .title("No Interest Loan")
         .amount(new BigDecimal("3000.00"))
@@ -346,12 +355,14 @@ class CreateLoanEndpointTest {
   @Test
   void givenLoanRequestWithDescription_WhenRequested_ThenShouldReturn200WithDescription() {
     // Given
+    var date = DateTimeConverter.epochMilli(LocalDate.now());
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.now());
     var createLoanResult = LoanResult.builder()
         .id("loan-desc")
         .user("user@email.com")
         .type("LEND")
-        .date(LocalDate.now().toString())
-        .time(LocalTime.now().toString())
+        .date(date)
+        .time(time)
         .partyName("Described Party")
         .title("Described Loan")
         .description("This loan has a detailed description")

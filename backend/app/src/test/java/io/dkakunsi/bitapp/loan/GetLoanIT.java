@@ -3,6 +3,8 @@ package io.dkakunsi.bitapp.loan;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Map;
 
 import org.json.JSONObject;
@@ -11,6 +13,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.AppLauncher;
+import io.dkakunsi.bitapp.common.DateTimeConverter;
 import io.dkakunsi.bitapp.jwt.JWTAuthorizer;
 import io.dkakunsi.bitapp.test.AppTestUtil;
 import io.dkakunsi.bitapp.test.SecureTestUtil;
@@ -47,6 +50,8 @@ public class GetLoanIT extends AppTestUtil {
    */
   @Test
   public void getExistingLoanShouldBeOk() {
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2026, 1, 15));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(10, 30));
     var createBody = """
         {
           "type": "BORROW",
@@ -55,11 +60,11 @@ public class GetLoanIT extends AppTestUtil {
           "description": "Loan for personal use",
           "amount": 10000,
           "interestRate": 5.5,
-          "date": "2026-01-15",
-          "time": "10:30:00",
+          "date": %d,
+          "time": %d,
           "currency": "IDR"
         }
-        """;
+        """.formatted(date, time);
 
     var postResponse = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
@@ -81,8 +86,8 @@ public class GetLoanIT extends AppTestUtil {
     assertEquals(loanId, getResponseBody.getString("id"));
     assertEquals(USER_ID, getResponseBody.getString("user"));
     assertEquals("BORROW", getResponseBody.getString("type"));
-    assertEquals("2026-01-15", getResponseBody.getString("date"));
-    assertEquals("10:30", getResponseBody.getString("time"));
+    assertEquals(1768435200000L, getResponseBody.getLong("date"));
+    assertEquals(630, getResponseBody.getInt("time"));
     assertEquals("John Doe", getResponseBody.getString("partyName"));
     assertEquals("Personal Loan", getResponseBody.getString("title"));
     assertEquals("Loan for personal use", getResponseBody.getString("description"));

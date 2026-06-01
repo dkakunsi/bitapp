@@ -19,6 +19,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
+import io.dkakunsi.bitapp.common.DateTimeConverter;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.transaction.dto.TransactionResult;
@@ -146,8 +147,8 @@ class GetUserTransactionsEndpointTest {
   @Test
   void givenValidUserIdWithSingleTransaction_WhenRequested_ThenShouldReturn200AndSingleTransactionList() {
     // Given
-    var date = LocalDate.of(2026, 1, 23).toEpochDay() * 24 * 60 * 60; // Convert to seconds
-    var time = LocalTime.of(14, 30).toSecondOfDay(); //
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2026, 1, 23));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(14, 30));
     var transactionItem = TransactionResult.builder()
         .id("trans1")
         .user(USER_ID)

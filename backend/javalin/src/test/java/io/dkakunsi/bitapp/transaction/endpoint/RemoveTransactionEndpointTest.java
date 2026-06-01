@@ -16,6 +16,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
+import io.dkakunsi.bitapp.common.DateTimeConverter;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.transaction.dto.TransactionResult;
@@ -51,8 +52,8 @@ class RemoveTransactionEndpointTest {
   void givenValidTransactionId_WhenDeleted_ThenShouldReturnTransactionDetails() {
     // Given
     var transactionId = "trans-123";
-    var date = LocalDate.of(2026, 1, 24).toEpochDay() * 24 * 60 * 60; // Convert to seconds
-    var time = LocalTime.of(10, 0).toSecondOfDay(); //
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2026, 1, 24));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(10, 0));
     var transactionResult = TransactionResult.builder()
         .id(transactionId)
         .user("user@email.com")

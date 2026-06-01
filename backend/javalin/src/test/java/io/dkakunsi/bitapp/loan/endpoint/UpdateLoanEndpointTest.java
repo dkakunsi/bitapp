@@ -8,12 +8,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
+import io.dkakunsi.bitapp.common.DateTimeConverter;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.loan.dto.LoanResult;
@@ -54,8 +57,8 @@ class UpdateLoanEndpointTest {
         .id(loanId)
         .user("user@email.com")
         .type("BORROW")
-        .date("2026-01-15")
-        .time("14:30")
+        .date(DateTimeConverter.epochMilli(LocalDate.of(2026, 1, 15)))
+        .time(DateTimeConverter.minutesSinceMidnight(LocalTime.of(14, 30)))
         .partyName("Jane Smith")
         .title("Updated Personal Loan")
         .description("Updated loan description")
@@ -102,8 +105,8 @@ class UpdateLoanEndpointTest {
         .id(loanId)
         .user("user@email.com")
         .type("LEND")
-        .date("2026-02-20")
-        .time("10:00")
+        .date(DateTimeConverter.epochMilli(LocalDate.of(2026, 2, 20)))
+        .time(DateTimeConverter.minutesSinceMidnight(LocalTime.of(10, 0)))
         .partyName("Bob Johnson")
         .title("Updated Title Only")
         .description("Original description")
@@ -138,12 +141,14 @@ class UpdateLoanEndpointTest {
   void givenUpdateRequestWithAllFields_WhenRequested_ThenShouldReturn200() {
     // Given
     var loanId = "loan-789";
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2027, 3, 10));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(15, 45));
     var updateLoanResult = LoanResult.builder()
         .id(loanId)
         .user("user@email.com")
         .type("BORROW")
-        .date("2027-03-10")
-        .time("15:45")
+        .date(date)
+        .time(time)
         .partyName("Alice Cooper")
         .title("Comprehensive Update")
         .description("All fields updated")
@@ -163,10 +168,10 @@ class UpdateLoanEndpointTest {
           "amount":12000.00,
           "currency":"EUR",
           "interestRate":4.2,
-          "date":"2027-03-10",
-          "time":"15:45:30"
+          "date":%d,
+          "time":%d
         }
-        """;
+        """.formatted(date, time);
 
     // When
     var response = Unirest.put(baseUrl + "/v1/loans/" + loanId).body(requestBody).asString();
@@ -179,7 +184,7 @@ class UpdateLoanEndpointTest {
     assertTrue(responseBody.contains("\"partyName\":\"Alice Cooper\""));
     assertTrue(responseBody.contains("\"amount\":12000"));
     assertTrue(responseBody.contains("\"currency\":\"EUR\""));
-    assertTrue(responseBody.contains("\"date\":\"2027-03-10\""));
+    assertTrue(responseBody.contains("\"date\":1804636800000"));
   }
 
   @Test
@@ -305,8 +310,8 @@ class UpdateLoanEndpointTest {
         .id(loanId)
         .user("user@email.com")
         .type("BORROW")
-        .date("2026-01-15")
-        .time("10:00")
+        .date(DateTimeConverter.epochMilli(LocalDate.of(2026, 1, 15)))
+        .time(DateTimeConverter.minutesSinceMidnight(LocalTime.of(14, 30)))
         .partyName("Test Party")
         .title("Currency Update Test")
         .description("Testing currency update")
@@ -340,12 +345,14 @@ class UpdateLoanEndpointTest {
   void givenUpdateWithNewDateAndTime_WhenRequested_ThenShouldReturn200() {
     // Given
     var loanId = "loan-datetime";
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2026, 12, 25));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(23, 59));
     var updateLoanResult = LoanResult.builder()
         .id(loanId)
         .user("user@email.com")
         .type("LEND")
-        .date("2026-12-25")
-        .time("23:59")
+        .date(date)
+        .time(time)
         .partyName("Holiday Party")
         .title("Holiday Loan")
         .description("Special holiday loan")
@@ -362,10 +369,10 @@ class UpdateLoanEndpointTest {
           "partyName":"Holiday Party",
           "title":"Holiday Loan",
           "description":"Special holiday loan",
-          "date":"2026-12-25",
-          "time":"23:59:00"
+          "date":%d,
+          "time":%d
         }
-        """;
+        """.formatted(date, time);
 
     // When
     var response = Unirest.put(baseUrl + "/v1/loans/" + loanId).body(requestBody).asString();
@@ -373,7 +380,7 @@ class UpdateLoanEndpointTest {
     // Then
     assertEquals(200, response.getStatus());
     var responseBody = response.getBody();
-    assertTrue(responseBody.contains("\"date\":\"2026-12-25\""));
-    assertTrue(responseBody.contains("\"time\":\"23:59\""));
+    assertTrue(responseBody.contains("\"date\":1798156800000"));
+    assertTrue(responseBody.contains("\"time\":1439"));
   }
 }

@@ -24,6 +24,7 @@ import io.dkakunsi.bitapp.account.entity.Account;
 import io.dkakunsi.bitapp.account.repository.AccountRepository;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
+import io.dkakunsi.bitapp.common.DateTimeConverter;
 import io.dkakunsi.bitapp.database.SessionManager;
 import io.dkakunsi.bitapp.domain.entity.EntityStatus;
 import io.dkakunsi.bitapp.domain.entity.Id;
@@ -67,10 +68,12 @@ public final class CreateLoanTest {
   @Test
   void givenValidCreateLoanRequestWhenProcessedThenShouldSuccessfullyCreateLoan() {
     // Given
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2026, 1, 15));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(14, 30));
     final var createRequest = CreateLoanInput.builder()
         .type("BORROW")
-        .date("2026-01-15")
-        .time("14:30:00")
+        .date(date)
+        .time(time)
         .partyName("John Doe")
         .title("Personal Loan")
         .description("Emergency loan")
@@ -93,8 +96,8 @@ public final class CreateLoanTest {
     assertNotNull(resultData.id());
     assertEquals(REQUESTER, resultData.user());
     assertEquals("BORROW", resultData.type());
-    assertEquals("2026-01-15", resultData.date());
-    assertEquals("14:30", resultData.time());
+    assertEquals(1768435200000L, resultData.date());
+    assertEquals(870, resultData.time());
     assertEquals("John Doe", resultData.partyName());
     assertEquals("Personal Loan", resultData.title());
     assertEquals("Emergency loan", resultData.description());
@@ -110,8 +113,8 @@ public final class CreateLoanTest {
     assertNotNull(capturedLoan.id());
     assertEquals(REQUESTER, capturedLoan.user().value());
     assertEquals(Loan.Type.BORROW, capturedLoan.type());
-    assertEquals(LocalDate.parse("2026-01-15"), capturedLoan.date());
-    assertEquals(LocalTime.parse("14:30:00"), capturedLoan.time());
+    assertEquals(LocalDate.of(2026, 1, 15), capturedLoan.date());
+    assertEquals(LocalTime.of(14, 30), capturedLoan.time());
     assertEquals("John Doe", capturedLoan.partyName());
     assertEquals("Personal Loan", capturedLoan.title());
     assertEquals("Emergency loan", capturedLoan.description());
@@ -291,46 +294,6 @@ public final class CreateLoanTest {
         .type("BORROW")
         .title("Test Loan")
         .amount(new BigDecimal("-100.00"))
-        .interestRate(5.0)
-        .build();
-
-    // When
-    final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
-
-    // Then
-    assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-    assertEquals(Code.BAD_REQUEST, result.error().get().code());
-  }
-
-  @Test
-  void givenInvalidCreateLoanRequestWithInvalidDateFormatWhenProcessedThenShouldFail() {
-    // Given
-    final var createRequest = CreateLoanInput.builder()
-        .type("BORROW")
-        .date("invalid-date")
-        .title("Test Loan")
-        .amount(new BigDecimal("1000.00"))
-        .interestRate(5.0)
-        .build();
-
-    // When
-    final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
-
-    // Then
-    assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-    assertEquals(Code.BAD_REQUEST, result.error().get().code());
-  }
-
-  @Test
-  void givenInvalidCreateLoanRequestWithInvalidTimeFormatWhenProcessedThenShouldFail() {
-    // Given
-    final var createRequest = CreateLoanInput.builder()
-        .type("BORROW")
-        .time("invalid-time")
-        .title("Test Loan")
-        .amount(new BigDecimal("1000.00"))
         .interestRate(5.0)
         .build();
 

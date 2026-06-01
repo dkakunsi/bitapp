@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import org.apache.commons.lang3.StringUtils;
 
+import io.dkakunsi.bitapp.common.DateTimeConverter;
 import io.dkakunsi.bitapp.common.Validatable;
 import lombok.Builder;
 
@@ -17,12 +18,8 @@ public final record UpdateLoanInput(
     BigDecimal amount,
     String currency,
     Double interestRate,
-    String date,
-    String time) implements Validatable {
-
-  private static final String DATE_REGEX = "^(\\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$";
-
-  private static final String TIME_REGEX = "^([01]\\d|2[0-3]):([0-5]\\d):([0-5]\\d)?$";
+    Long date,
+    Integer time) implements Validatable, DateTimeConverter {
 
   @Override
   public void validate() throws IllegalArgumentException {
@@ -37,11 +34,19 @@ public final record UpdateLoanInput(
     if (title != null && StringUtils.isBlank(title)) {
       errors.add("title: invalid value: " + title);
     }
-    if (date != null && (StringUtils.isBlank(date) || !date.matches(DATE_REGEX))) {
-      errors.add("date: invalid value: " + date);
+    if (date != null) {
+      try {
+        parseDate(date);
+      } catch (IllegalArgumentException e) {
+        errors.add("date: invalid value: " + date);
+      }
     }
-    if (time != null && (StringUtils.isBlank(time) || !time.matches(TIME_REGEX))) {
-      errors.add("time: invalid value: " + time);
+    if (time != null) {
+      try {
+        parseTime(time);
+      } catch (IllegalArgumentException e) {
+        errors.add("time: invalid value: " + time);
+      }
     }
     if (amount != null && amount.compareTo(new BigDecimal("0.01")) < 0) {
       errors.add("amount: invalid value: " + amount);

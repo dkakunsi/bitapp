@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.AppLauncher;
+import io.dkakunsi.bitapp.common.DateTimeConverter;
 import io.dkakunsi.bitapp.jwt.JWTAuthorizer;
 import io.dkakunsi.bitapp.test.AppTestUtil;
 import io.dkakunsi.bitapp.test.SecureTestUtil;
@@ -127,8 +128,8 @@ public class CreateTransactionIT extends AppTestUtil {
    */
   @Test
   public void createDebitTransactionShouldBeOk() {
-    var date = LocalDate.of(2024, 6, 15).toEpochDay() * 24 * 60 * 60; // Convert to seconds
-    var time = LocalTime.of(14, 30).toSecondOfDay(); //
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2024, 6, 15));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(14, 30));
     var body = String.format("""
         {
           "type": "DEBIT",
@@ -154,8 +155,8 @@ public class CreateTransactionIT extends AppTestUtil {
     assertEquals("DEBIT", responseBody.getString("type"));
     assertEquals("Grocery Shopping", responseBody.getString("title"));
     assertEquals("Weekly groceries at supermarket", responseBody.getString("description"));
-    assertEquals("2024-06-15", responseBody.getString("date"));
-    assertEquals("14:30", responseBody.getString("time"));
+    assertEquals(1718409600000L, responseBody.getLong("date"));
+    assertEquals(870, responseBody.getInt("time"));
     assertEquals(sourceAccountId, responseBody.getString("source"));
     assertEquals(50000, responseBody.getLong("amount"));
     assertEquals("IDR", responseBody.getString("currency"));
@@ -178,8 +179,8 @@ public class CreateTransactionIT extends AppTestUtil {
    */
   @Test
   public void createCreditTransactionShouldBeOk() {
-    var date = LocalDate.of(2024, 6, 1).toEpochDay() * 24 * 60 * 60; // Convert to seconds
-    var time = LocalTime.of(9, 0).toSecondOfDay(); //
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2024, 6, 1)); // Convert to milliseconds
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(9, 0)); //
     var body = String.format("""
         {
           "type": "CREDIT",
@@ -205,8 +206,8 @@ public class CreateTransactionIT extends AppTestUtil {
     assertEquals("CREDIT", responseBody.getString("type"));
     assertEquals("Salary Payment", responseBody.getString("title"));
     assertEquals("Monthly salary", responseBody.getString("description"));
-    assertEquals("2024-06-01", responseBody.getString("date"));
-    assertEquals("09:00", responseBody.getString("time"));
+    assertEquals(1717200000000L, responseBody.getLong("date"));
+    assertEquals(540, responseBody.getLong("time"));
     assertEquals(destinationAccountId, responseBody.getString("destination"));
     assertEquals(5000000, responseBody.getLong("amount"));
     assertEquals("IDR", responseBody.getString("currency"));
@@ -229,8 +230,8 @@ public class CreateTransactionIT extends AppTestUtil {
    */
   @Test
   public void createTransferTransactionShouldBeOk() {
-    var date = LocalDate.of(2024, 6, 10).toEpochDay() * 24 * 60 * 60; // Convert to seconds
-    var time = LocalTime.of(16, 45).toSecondOfDay(); //
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2024, 6, 10));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(16, 45));
     var body = String.format("""
         {
           "type": "TRANSFER",
@@ -256,8 +257,8 @@ public class CreateTransactionIT extends AppTestUtil {
     assertEquals("TRANSFER", responseBody.getString("type"));
     assertEquals("Transfer to Savings", responseBody.getString("title"));
     assertEquals("Moving money to savings account", responseBody.getString("description"));
-    assertEquals("2024-06-10", responseBody.getString("date"));
-    assertEquals("16:45", responseBody.getString("time"));
+    assertEquals(1717977600000L, responseBody.getLong("date"));
+    assertEquals(1005, responseBody.getInt("time"));
     assertEquals(sourceAccountId, responseBody.getString("source"));
     assertEquals(destinationAccountId, responseBody.getString("destination"));
     assertEquals(100000, responseBody.getLong("amount"));
@@ -289,8 +290,8 @@ public class CreateTransactionIT extends AppTestUtil {
   public void createTransactionWithLoanShouldBeOk() {
     var loanId = createLoan("BORROW", "John Doe", "Personal Loan", 2000000, 5.0, sourceAccountId);
 
-    var date = LocalDate.of(2024, 6, 5).toEpochDay() * 24 * 60 * 60; // Convert to seconds
-    var time = LocalTime.of(10, 0).toSecondOfDay(); //
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2024, 6, 5));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(10, 0));
     var body = String.format("""
         {
           "type": "DEBIT",
@@ -699,62 +700,6 @@ public class CreateTransactionIT extends AppTestUtil {
         .asString();
 
     assertEquals(400, response.getStatus());
-  }
-
-  /**
-   * <b>Given</b> a transaction creation request with invalid date format<br>
-   * <b>When</b> the POST /transactions endpoint is called<br>
-   * <b>Then</b> the request should fail with status 400
-   */
-  @Test
-  public void createTransactionWithInvalidDateShouldFail() {
-    var body = String.format("""
-        {
-          "type": "DEBIT",
-          "title": "Test Transaction",
-          "description": "Test description",
-          "source": "%s",
-          "amount": 50000,
-          "currency": "IDR",
-          "date": "invalid-date"
-        }
-        """, sourceAccountId);
-
-    var response = Unirest.post(baseUrl + "/v1/transactions")
-        .header("Authorization", "Bearer " + token)
-        .body(body)
-        .asString();
-
-    assertEquals(400, response.getStatus());
-    assertTrue(response.getBody().startsWith("date: invalid value"));
-  }
-
-  /**
-   * <b>Given</b> a transaction creation request with invalid time format<br>
-   * <b>When</b> the POST /transactions endpoint is called<br>
-   * <b>Then</b> the request should fail with status 400
-   */
-  @Test
-  public void createTransactionWithInvalidTimeShouldFail() {
-    var body = String.format("""
-        {
-          "type": "DEBIT",
-          "title": "Test Transaction",
-          "description": "Test description",
-          "source": "%s",
-          "amount": 50000,
-          "currency": "IDR",
-          "time": "invalid-time"
-        }
-        """, sourceAccountId);
-
-    var response = Unirest.post(baseUrl + "/v1/transactions")
-        .header("Authorization", "Bearer " + token)
-        .body(body)
-        .asString();
-
-    assertEquals(400, response.getStatus());
-    assertTrue(response.getBody().startsWith("time: invalid value"));
   }
 
   /**

@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.AppLauncher;
+import io.dkakunsi.bitapp.common.DateTimeConverter;
 import io.dkakunsi.bitapp.jwt.JWTAuthorizer;
 import io.dkakunsi.bitapp.test.AppTestUtil;
 import io.dkakunsi.bitapp.test.SecureTestUtil;
@@ -74,20 +75,22 @@ public class UpdateLoanIT extends AppTestUtil {
   }
 
   private static String createTestLoan(String accountId) throws Exception {
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2024, 6, 15));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(14, 30));
     var body = """
         {
           "type": "BORROW",
           "partyName": "John Doe",
           "account": "%s",
-          "date": "2024-06-15",
-          "time": "14:30:00",
+          "date": %d,
+          "time": %d,
           "title": "Original Loan",
           "description": "Original description",
           "amount": 500000000,
           "currency": "IDR",
           "interestRate": 5.5
         }
-        """.formatted(accountId);
+        """.formatted(accountId, date, time);
 
     var response = Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
@@ -275,12 +278,14 @@ public class UpdateLoanIT extends AppTestUtil {
    */
   @Test
   public void updateLoanDateAndTimeShouldBeOk() throws Exception {
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2025, 12, 31));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(23, 59));
     var body = """
         {
-          "date": "2025-12-31",
-          "time": "23:59:59"
+          "date": %d,
+          "time": %d
         }
-        """;
+        """.formatted(date, time);
 
     var response = Unirest.put(baseUrl + "/v1/loans/" + loanId)
         .header("Authorization", "Bearer " + token)
@@ -290,8 +295,8 @@ public class UpdateLoanIT extends AppTestUtil {
     assertEquals(200, response.getStatus());
     var responseBody = new JSONObject(response.getBody());
     assertEquals(loanId, responseBody.getString("id"));
-    assertEquals("2025-12-31", responseBody.getString("date"));
-    assertEquals("23:59", responseBody.getString("time"));
+    assertEquals(1767139200000L, responseBody.getLong("date"));
+    assertEquals(1439, responseBody.getInt("time"));
   }
 
   /**
@@ -301,6 +306,8 @@ public class UpdateLoanIT extends AppTestUtil {
    */
   @Test
   public void updateMultipleLoanFieldsShouldBeOk() throws Exception {
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2026, 1, 15));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(10, 0));
     var body = """
         {
           "partyName": "Jane Smith",
@@ -309,10 +316,10 @@ public class UpdateLoanIT extends AppTestUtil {
           "amount": 1000000000,
           "currency": "USD",
           "interestRate": 3.5,
-          "date": "2026-01-15",
-          "time": "10:00:00"
+          "date": %d,
+          "time": %d
         }
-        """;
+        """.formatted(date, time);
 
     var response = Unirest.put(baseUrl + "/v1/loans/" + loanId)
         .header("Authorization", "Bearer " + token)
@@ -329,8 +336,8 @@ public class UpdateLoanIT extends AppTestUtil {
     assertEquals(1000000000, responseBody.getLong("amount"));
     assertEquals("USD", responseBody.getString("currency"));
     assertEquals(3.5, responseBody.getDouble("interestRate"));
-    assertEquals("2026-01-15", responseBody.getString("date"));
-    assertEquals("10:00", responseBody.getString("time"));
+    assertEquals(1768435200000L, responseBody.getLong("date"));
+    assertEquals(600, responseBody.getInt("time"));
   }
 
   /**
@@ -475,118 +482,6 @@ public class UpdateLoanIT extends AppTestUtil {
   }
 
   /**
-   * <b>Given</b> a loan update request with invalid date format<br>
-   * <b>When</b> the PUT /loans/{id} endpoint is called<br>
-   * <b>Then</b> the request should fail with a 400 status code
-   */
-  @Test
-  public void shouldFailOnInvalidDateFormat() throws Exception {
-    var body = """
-        {
-          "date": "2024-13-45"
-        }
-        """;
-
-    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId)
-        .header("Authorization", "Bearer " + token)
-        .body(body)
-        .asString();
-
-    assertEquals(400, response.getStatus());
-    assertTrue(response.getBody().startsWith("date: invalid value"));
-  }
-
-  /**
-   * <b>Given</b> a loan update request with invalid date string<br>
-   * <b>When</b> the PUT /loans/{id} endpoint is called<br>
-   * <b>Then</b> the request should fail with a 400 status code
-   */
-  @Test
-  public void shouldFailOnInvalidDateString() throws Exception {
-    var body = """
-        {
-          "date": "invalid-date"
-        }
-        """;
-
-    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId)
-        .header("Authorization", "Bearer " + token)
-        .body(body)
-        .asString();
-
-    assertEquals(400, response.getStatus());
-    assertTrue(response.getBody().startsWith("date: invalid value"));
-  }
-
-  /**
-   * <b>Given</b> a loan update request with invalid time format<br>
-   * <b>When</b> the PUT /loans/{id} endpoint is called<br>
-   * <b>Then</b> the request should fail with a 400 status code
-   */
-  @Test
-  public void shouldFailOnInvalidTimeFormat() throws Exception {
-    var body = """
-        {
-          "time": "25:99:99"
-        }
-        """;
-
-    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId)
-        .header("Authorization", "Bearer " + token)
-        .body(body)
-        .asString();
-
-    assertEquals(400, response.getStatus());
-    assertTrue(response.getBody().startsWith("time: invalid value"));
-  }
-
-  /**
-   * <b>Given</b> a loan update request with invalid time string<br>
-   * <b>When</b> the PUT /loans/{id} endpoint is called<br>
-   * <b>Then</b> the request should fail with a 400 status code
-   */
-  @Test
-  public void shouldFailOnInvalidTimeString() throws Exception {
-    var body = """
-        {
-          "time": "invalid-time"
-        }
-        """;
-
-    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId)
-        .header("Authorization", "Bearer " + token)
-        .body(body)
-        .asString();
-
-    assertEquals(400, response.getStatus());
-    assertTrue(response.getBody().startsWith("time: invalid value"));
-  }
-
-  /**
-   * <b>Given</b> a loan update request with both invalid date and time<br>
-   * <b>When</b> the PUT /loans/{id} endpoint is called<br>
-   * <b>Then</b> the request should fail with a 400 status code
-   */
-  @Test
-  public void shouldFailOnInvalidDateAndTime() throws Exception {
-    var body = """
-        {
-          "date": "not-a-date",
-          "time": "not-a-time"
-        }
-        """;
-
-    var response = Unirest.put(baseUrl + "/v1/loans/" + loanId)
-        .header("Authorization", "Bearer " + token)
-        .body(body)
-        .asString();
-
-    assertEquals(400, response.getStatus());
-    assertTrue(response.getBody().contains("date: invalid value"));
-    assertTrue(response.getBody().contains("time: invalid value"));
-  }
-
-  /**
    * <b>Given</b> a loan update request with non-existent loan ID<br>
    * <b>When</b> the PUT /loans/{id} endpoint is called<br>
    * <b>Then</b> the request should fail with a 404 status code
@@ -681,8 +576,8 @@ public class UpdateLoanIT extends AppTestUtil {
     assertEquals(200, creditResponse.getStatus());
 
     // Make a partial payment of 200,000,000 (40% of 500,000,000) via transaction
-    var date = LocalDate.of(2024, 7, 1).toEpochDay() * 24 * 60 * 60; // Convert to seconds
-    var time = LocalTime.of(10, 0).toSecondOfDay(); //
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2024, 7, 1)); // Convert to milliseconds
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(10, 0)); //
     var transactionBody = """
         {
           "type": "DEBIT",
@@ -783,8 +678,8 @@ public class UpdateLoanIT extends AppTestUtil {
 
     // Make a large partial payment of 400,000,000 (80% of 500,000,000) via
     // transaction
-    var date = LocalDate.of(2024, 7, 1).toEpochDay() * 24 * 60 * 60; // Convert to seconds
-    var time = LocalTime.of(10, 0).toSecondOfDay(); //
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2024, 7, 1));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(10, 0));
     var transactionBody = """
         {
           "type": "DEBIT",

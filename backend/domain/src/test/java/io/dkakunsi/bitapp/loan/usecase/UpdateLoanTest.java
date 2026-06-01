@@ -23,6 +23,7 @@ import org.mockito.ArgumentCaptor;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
+import io.dkakunsi.bitapp.common.DateTimeConverter;
 import io.dkakunsi.bitapp.domain.entity.EntityStatus;
 import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.loan.dto.UpdateLoanInput;
@@ -192,8 +193,8 @@ public final class UpdateLoanTest {
         .partyName("John Doe")
         .title("Personal Loan")
         .description("Test loan")
-        .date("2026-12-31")
-        .time("23:59:59")
+        .date(DateTimeConverter.epochMilli(LocalDate.of(2026, 12, 31)))
+        .time(DateTimeConverter.minutesSinceMidnight(LocalTime.of(23, 59)))
         .build();
 
     when(loanRepository.findById(LOAN)).thenReturn(Optional.of(existingLoan));
@@ -207,15 +208,15 @@ public final class UpdateLoanTest {
     assertTrue(result.data().isPresent());
 
     var resultData = result.data().get();
-    assertEquals("2026-12-31", resultData.date());
-    assertEquals("23:59", resultData.time());
+    assertEquals(1798675200000L, resultData.date());
+    assertEquals(1439, resultData.time());
 
     // Verify date and time updated
     var loanCaptor = ArgumentCaptor.forClass(Loan.class);
     verify(loanRepository).update(loanCaptor.capture());
     var capturedLoan = loanCaptor.getValue();
     assertEquals(LocalDate.parse("2026-12-31"), capturedLoan.date());
-    assertEquals(LocalTime.parse("23:59:59"), capturedLoan.time());
+    assertEquals(LocalTime.parse("23:59"), capturedLoan.time());
   }
 
   @Test
@@ -230,8 +231,8 @@ public final class UpdateLoanTest {
         .amount(new BigDecimal("20000.00"))
         .currency("GBP")
         .interestRate(4.5)
-        .date("2027-06-15")
-        .time("12:00:00")
+        .date(DateTimeConverter.epochMilli(LocalDate.of(2027, 6, 15)))
+        .time(DateTimeConverter.minutesSinceMidnight(LocalTime.of(12, 0)))
         .build();
 
     when(loanRepository.findById(LOAN)).thenReturn(Optional.of(existingLoan));
@@ -251,8 +252,8 @@ public final class UpdateLoanTest {
     assertEquals(new BigDecimal("20000.00"), resultData.amount());
     assertEquals("GBP", resultData.currency());
     assertEquals(4.5, resultData.interestRate());
-    assertEquals("2027-06-15", resultData.date());
-    assertEquals("12:00", resultData.time());
+    assertEquals(1813017600000L, resultData.date());
+    assertEquals(720, resultData.time());
   }
 
   @Test

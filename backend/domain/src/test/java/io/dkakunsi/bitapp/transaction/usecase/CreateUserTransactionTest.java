@@ -11,7 +11,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ import org.mockito.ArgumentCaptor;
 import io.dkakunsi.bitapp.account.repository.AccountRepository;
 import io.dkakunsi.bitapp.common.AppError.Code;
 import io.dkakunsi.bitapp.common.Context;
+import io.dkakunsi.bitapp.common.DateTimeConverter;
 import io.dkakunsi.bitapp.database.SessionManager;
 import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.loan.repository.LoanRepository;
@@ -65,8 +67,8 @@ public final class CreateUserTransactionTest {
     var createRequest = CreateUserTransactionInput.builder()
         .title("Grocery Shopping")
         .description("Monthly groceries")
-        .date(Instant.now().toEpochMilli())
-        .time(Instant.now().atZone(java.time.ZoneId.systemDefault()).toLocalTime().toSecondOfDay() / 60)
+        .date(DateTimeConverter.epochMilli(LocalDate.now()))
+        .time(DateTimeConverter.minutesSinceMidnight(LocalTime.now()))
         .source(ACCOUNT_ID_1)
         .amount(BigDecimal.valueOf(50000))
         .currency("IDR")
@@ -98,8 +100,8 @@ public final class CreateUserTransactionTest {
     var createRequest = CreateUserTransactionInput.builder()
         .title("Salary")
         .description("Monthly salary")
-        .date(Instant.now().toEpochMilli())
-        .time(Instant.now().atZone(java.time.ZoneId.systemDefault()).toLocalTime().toSecondOfDay() / 60)
+        .date(DateTimeConverter.epochMilli(LocalDate.now()))
+        .time(DateTimeConverter.minutesSinceMidnight(LocalTime.now()))
         .destination(ACCOUNT_ID_1)
         .amount(BigDecimal.valueOf(5000000))
         .currency("IDR")
@@ -129,8 +131,8 @@ public final class CreateUserTransactionTest {
     var createRequest = CreateUserTransactionInput.builder()
         .title("Transfer to Savings")
         .description("Monthly savings")
-        .date(Instant.now().toEpochMilli())
-        .time(Instant.now().atZone(java.time.ZoneId.systemDefault()).toLocalTime().toSecondOfDay() / 60)
+        .date(DateTimeConverter.epochMilli(LocalDate.now()))
+        .time(DateTimeConverter.minutesSinceMidnight(LocalTime.now()))
         .source(ACCOUNT_ID_1)
         .destination(ACCOUNT_ID_2)
         .amount(BigDecimal.valueOf(100000))
@@ -162,8 +164,8 @@ public final class CreateUserTransactionTest {
     var createRequest = CreateUserTransactionInput.builder()
         .title("Loan Payment")
         .description("Monthly loan payment")
-        .date(Instant.now().toEpochMilli())
-        .time(Instant.now().atZone(java.time.ZoneId.systemDefault()).toLocalTime().toSecondOfDay() / 60)
+        .date(DateTimeConverter.epochMilli(LocalDate.now()))
+        .time(DateTimeConverter.minutesSinceMidnight(LocalTime.now()))
         .source(ACCOUNT_ID_1)
         .loan(LOAN_ID)
         .amount(BigDecimal.valueOf(100000))

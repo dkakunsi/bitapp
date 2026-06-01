@@ -16,6 +16,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
+import io.dkakunsi.bitapp.common.DateTimeConverter;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.transaction.dto.TransactionResult;
@@ -53,8 +54,8 @@ class GetTransactionEndpointTest {
   void givenValidTransactionId_WhenRequested_ThenShouldReturnTransaction() {
     // Given
     var transactionId = "trans-123";
-    var date = LocalDate.of(2026, 1, 23).toEpochDay() * 24 * 60 * 60; // Convert to seconds
-    var time = LocalTime.of(14, 30).toSecondOfDay(); //
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2026, 1, 23));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(14, 30));
     var getResult = TransactionResult.builder()
         .id(transactionId)
         .user(USER_ID)
@@ -87,8 +88,8 @@ class GetTransactionEndpointTest {
     assertEquals("DEBIT", resultBody.getString("type"));
     assertEquals("Grocery Shopping", resultBody.getString("title"));
     assertEquals("Weekly groceries", resultBody.getString("description"));
-    assertEquals(1769126400, resultBody.getLong("date"));
-    assertEquals(52200, resultBody.getInt("time"));
+    assertEquals(1769126400000L, resultBody.getLong("date"));
+    assertEquals(870, resultBody.getInt("time"));
     assertEquals("account-1", resultBody.getString("source"));
     assertEquals(150000, resultBody.getBigDecimal("amount").intValue());
     assertEquals("IDR", resultBody.getString("currency"));
@@ -99,8 +100,8 @@ class GetTransactionEndpointTest {
   void givenValidCreditTransactionId_WhenRequested_ThenShouldReturnCreditTransaction() {
     // Given
     var transactionId = "trans-456";
-    var date = LocalDate.of(2026, 1, 23).toEpochDay() * 24 * 60 * 60; // Convert to seconds
-    var time = LocalTime.of(9, 0).toSecondOfDay(); //
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2026, 1, 23));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(9, 0));
     var getResult = TransactionResult.builder()
         .id(transactionId)
         .user(USER_ID)
@@ -140,8 +141,8 @@ class GetTransactionEndpointTest {
   void givenValidTransferTransactionId_WhenRequested_ThenShouldReturnTransferTransaction() {
     // Given
     var transactionId = "trans-789";
-    var date = LocalDate.of(2026, 1, 23).toEpochDay() * 24 * 60 * 60; // Convert to seconds
-    var time = LocalTime.of(15, 45).toSecondOfDay(); //
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2026, 1, 23));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(15, 45));
     var getResult = TransactionResult.builder()
         .id(transactionId)
         .user(USER_ID)
@@ -181,8 +182,8 @@ class GetTransactionEndpointTest {
     // Given
     var transactionId = "trans-loan";
     var loanId = "loan-123";
-    var date = LocalDate.of(2026, 1, 23).toEpochDay() * 24 * 60 * 60; // Convert to seconds
-    var time = LocalTime.of(11, 0).toSecondOfDay(); //
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2026, 1, 23));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(11, 0));
     var getResult = TransactionResult.builder()
         .id(transactionId)
         .user(USER_ID)

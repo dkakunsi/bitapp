@@ -59,6 +59,6 @@ final record UpdateLoanRequest(
     BigDecimal amount,
     String currency,
     Double interestRate,
-    String date,
-    String time) {
+    Long date,
+    Integer time) {
 }

@@ -34,7 +34,7 @@ public final class CreateLoan implements UseCase<CreateLoanInput, LoanResult> {
   @Override
   public Result<LoanResult> execute(CreateLoanInput input) {
     var requester = getRequester();
-    final var loan = Loan.from(input, requester);
+    final var loan = input.toLoan(requester);
     if (input.account() == null) {
       var createdLoan = this.loanRepository.create(loan);
       return Result.success(createdLoan.toResult());

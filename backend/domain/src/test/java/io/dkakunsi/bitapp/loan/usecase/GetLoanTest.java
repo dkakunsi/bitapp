@@ -71,8 +71,8 @@ public final class GetLoanTest {
     assertEquals("user@email.com", loan.user());
     assertEquals("account-456", loan.account());
     assertEquals("BORROW", loan.type());
-    assertEquals("2026-01-15", loan.date());
-    assertEquals("10:30", loan.time());
+    assertEquals(1768435200000L, loan.date());
+    assertEquals(630, loan.time());
     assertEquals("John Doe", loan.partyName());
     assertEquals("Personal Loan", loan.title());
     assertEquals("Loan for personal use", loan.description());

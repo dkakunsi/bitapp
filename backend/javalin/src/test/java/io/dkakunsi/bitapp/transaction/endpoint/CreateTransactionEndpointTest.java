@@ -16,6 +16,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.common.AppError.Code;
+import io.dkakunsi.bitapp.common.DateTimeConverter;
 import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.transaction.dto.CreateTransactionInput;
@@ -51,8 +52,8 @@ class CreateTransactionEndpointTest {
   @Test
   void givenValidDebitTransactionRequest_WhenRequested_ThenShouldReturn200AndTransaction() {
     // Given
-    var date = LocalDate.of(2026, 1, 22).toEpochDay() * 24 * 60 * 60; // Convert to seconds
-    var time = LocalTime.of(8, 0).toSecondOfDay(); //
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2026, 1, 22));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(8, 0));
 
     var transactionResult = TransactionResult.builder()
         .id("transaction-123")
@@ -101,8 +102,8 @@ class CreateTransactionEndpointTest {
   @Test
   void givenValidCreditTransactionRequest_WhenRequested_ThenShouldReturn200AndTransaction() {
     // Given
-    var date = LocalDate.of(2026, 1, 22).toEpochDay() * 24 * 60 * 60; // Convert to seconds
-    var time = LocalTime.of(8, 0).toSecondOfDay(); //
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2026, 1, 22));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(8, 0));
 
     var transactionResult = TransactionResult.builder()
         .id("transaction-456")
@@ -151,8 +152,8 @@ class CreateTransactionEndpointTest {
   @Test
   void givenValidTransferTransactionRequest_WhenRequested_ThenShouldReturn200AndTransaction() {
     // Given
-    var date = LocalDate.of(2026, 1, 22).toEpochDay() * 24 * 60 * 60; // Convert to seconds
-    var time = LocalTime.of(8, 0).toSecondOfDay(); //
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2026, 1, 22));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(8, 0));
 
     var transactionResult = TransactionResult.builder()
         .id("transaction-789")

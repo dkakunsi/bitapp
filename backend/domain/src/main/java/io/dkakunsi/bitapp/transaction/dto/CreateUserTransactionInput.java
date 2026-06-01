@@ -1,18 +1,13 @@
 package io.dkakunsi.bitapp.transaction.dto;
 
 import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.DateTimeException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Currency;
 
 import org.apache.commons.lang3.StringUtils;
 
+import io.dkakunsi.bitapp.common.DateTimeConverter;
 import io.dkakunsi.bitapp.common.Validatable;
 import io.dkakunsi.bitapp.domain.entity.EntityStatus;
 import io.dkakunsi.bitapp.domain.entity.Id;
@@ -31,7 +26,7 @@ public record CreateUserTransactionInput(
     BigDecimal amount,
     String currency,
     String category,
-    String type) implements Validatable, CreateTransactionInput {
+    String type) implements Validatable, CreateTransactionInput, DateTimeConverter {
 
   @Override
   public void validate() {
@@ -124,31 +119,5 @@ public record CreateUserTransactionInput(
         .createdBy(executor)
         .updatedBy(executor)
         .build();
-  }
-
-  private LocalDate parseDate(Long epochMilli) {
-    if (epochMilli == null) {
-      return Instant.now().atZone(ZoneId.systemDefault()).toLocalDate();
-    }
-
-    try {
-      return Instant.ofEpochMilli(epochMilli).atZone(ZoneId.systemDefault()).toLocalDate();
-    } catch (DateTimeParseException e) {
-      throw new IllegalArgumentException("date: invalid value: " + epochMilli);
-    }
-  }
-
-  private LocalTime parseTime(Integer timeSinceMidnight) {
-    if (timeSinceMidnight == null) {
-      return Instant.now().atZone(ZoneId.systemDefault()).toLocalTime();
-    }
-
-    var hour = timeSinceMidnight / 60;
-    var minute = timeSinceMidnight % 60;
-    try {
-      return LocalTime.of(hour, minute);
-    } catch (DateTimeException e) {
-      throw new IllegalArgumentException("time: invalid value: " + timeSinceMidnight);
-    }
   }
 }

@@ -8,6 +8,7 @@ import java.util.Currency;
 
 import org.apache.commons.lang3.StringUtils;
 
+import io.dkakunsi.bitapp.common.DateTimeConverter;
 import io.dkakunsi.bitapp.domain.entity.EntityStatus;
 import io.dkakunsi.bitapp.domain.entity.Id;
 import io.dkakunsi.bitapp.transaction.dto.TransactionResult;
@@ -34,7 +35,7 @@ public final record Transaction(
     LocalDateTime createdAt,
     LocalDateTime updatedAt,
     String createdBy,
-    String updatedBy) {
+    String updatedBy) implements DateTimeConverter {
 
   public static final Currency DEFAULT_CURRENCY = Currency.getInstance("IDR");
 
@@ -90,8 +91,8 @@ public final record Transaction(
         .user(this.user().value())
         .title(this.title())
         .description(this.description())
-        .date(this.date().toEpochDay() * 24 * 60 * 60)
-        .time(this.time().toSecondOfDay())
+        .date(this.toEpochMilli(this.date()))
+        .time(this.toMinutesSinceMidnight(this.time()))
         .source(this.source() != null ? this.source().value() : null)
         .destination(this.destination() != null ? this.destination().value() : null)
         .loan(this.loan() != null ? this.loan().value() : null)

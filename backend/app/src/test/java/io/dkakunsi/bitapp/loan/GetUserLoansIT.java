@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -14,6 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.AppLauncher;
+import io.dkakunsi.bitapp.common.DateTimeConverter;
 import io.dkakunsi.bitapp.jwt.JWTAuthorizer;
 import io.dkakunsi.bitapp.test.AppTestUtil;
 import io.dkakunsi.bitapp.test.SecureTestUtil;
@@ -66,19 +69,21 @@ public class GetUserLoansIT extends AppTestUtil {
 
   private void createLoan(String token, String type, String partyName, String title, String description,
       long amount, String currency, double interestRate) {
+        var date = DateTimeConverter.epochMilli(LocalDate.of(2024, 6, 15));
+        var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(14, 30));
     var body = String.format("""
         {
           "type": "%s",
           "partyName": "%s",
-          "date": "2024-06-15",
-          "time": "14:30:00",
+          "date": %d,
+          "time": %d,
           "title": "%s",
           "description": "%s",
           "amount": %d,
           "currency": "%s",
           "interestRate": %.1f
         }
-        """, type, partyName, title, description, amount, currency, interestRate);
+        """, type, partyName, date, time, title, description, amount, currency, interestRate);
 
     Unirest.post(baseUrl + "/v1/loans")
         .header("Authorization", "Bearer " + token)
@@ -118,8 +123,8 @@ public class GetUserLoansIT extends AppTestUtil {
       assertNotNull(loan.getString("id"));
       assertNotNull(loan.getString("type"));
       assertNotNull(loan.getString("partyName"));
-      assertNotNull(loan.getString("date"));
-      assertNotNull(loan.getString("time"));
+      assertNotNull(loan.getLong("date"));
+      assertNotNull(loan.getInt("time"));
       assertNotNull(loan.getString("title"));
       assertNotNull(loan.getString("description"));
       assertNotNull(loan.getBigDecimal("amount"));

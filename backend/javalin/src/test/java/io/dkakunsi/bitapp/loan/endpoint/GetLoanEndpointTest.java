@@ -7,6 +7,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterAll;
@@ -18,6 +20,7 @@ import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.loan.dto.LoanResult;
 import io.dkakunsi.bitapp.loan.usecase.GetLoan;
+import io.dkakunsi.bitapp.common.DateTimeConverter;
 import kong.unirest.Unirest;
 
 class GetLoanEndpointTest {
@@ -49,12 +52,14 @@ class GetLoanEndpointTest {
   void givenValidLoanId_WhenRequested_ThenShouldReturnLoan() {
     // Given
     var loanId = "loan-123";
+    var date = DateTimeConverter.epochMilli(LocalDate.of(2026, 1, 15));
+    var time = DateTimeConverter.minutesSinceMidnight(LocalTime.of(10, 30));
     var getResult = LoanResult.builder()
         .id(loanId)
         .user("user@email.com")
         .type("BORROW")
-        .date("2026-01-15")
-        .time("10:30")
+        .date(date)
+        .time(time)
         .partyName("John Doe")
         .title("Personal Loan")
         .description("Loan for personal use")
@@ -78,8 +83,8 @@ class GetLoanEndpointTest {
     assertEquals(loanId, resultBody.getString("id"));
     assertEquals("user@email.com", resultBody.getString("user"));
     assertEquals("BORROW", resultBody.getString("type"));
-    assertEquals("2026-01-15", resultBody.getString("date"));
-    assertEquals("10:30", resultBody.getString("time"));
+    assertEquals(1768435200000L, resultBody.getLong("date"));
+    assertEquals(630, resultBody.getInt("time"));
     assertEquals("John Doe", resultBody.getString("partyName"));
     assertEquals("Personal Loan", resultBody.getString("title"));
     assertEquals("Loan for personal use", resultBody.getString("description"));
