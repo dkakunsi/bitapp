@@ -31,8 +31,6 @@ public class GetLoanTransactionsIT extends AppTestUtil {
 
   private String accountId;
 
-  private String destinationAccountId;
-
   @BeforeAll
   static void setup() throws Exception {
     var port = getPort();
@@ -54,7 +52,7 @@ public class GetLoanTransactionsIT extends AppTestUtil {
   void setupTestData() {
     loanId = createLoan("BORROW", "John Doe", "Personal Loan", 2000000, 5.0);
     accountId = createAccount("Main Account", "BANK", 1000000);
-    destinationAccountId = createAccount("Destination Account", "BANK", 500000);
+    createAccount("Destination Account", "BANK", 500000);
   }
 
   private String createAccount(String name, String type, long initialBalance) {

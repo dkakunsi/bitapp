@@ -25,7 +25,6 @@ import io.dkakunsi.bitapp.domain.usecase.Result;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.loan.dto.LoanResult;
 import io.dkakunsi.bitapp.loan.usecase.GetUserLoans;
-import io.dkakunsi.bitapp.common.DateTimeConverter;
 import kong.unirest.Unirest;
 
 class GetUserLoansEndpointTest {

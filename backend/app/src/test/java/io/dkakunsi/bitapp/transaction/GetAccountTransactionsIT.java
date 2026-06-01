@@ -29,8 +29,6 @@ public class GetAccountTransactionsIT extends AppTestUtil {
 
   private String accountId;
 
-  private String sourceAccountId;
-
   private String destinationAccountId;
 
   private String loanId;
@@ -55,7 +53,7 @@ public class GetAccountTransactionsIT extends AppTestUtil {
   @BeforeEach
   void setupTestData() {
     accountId = createAccount("Main Account", "BANK", 1000000);
-    sourceAccountId = createAccount("Source Account", "BANK", 1000000);
+    createAccount("Source Account", "BANK", 1000000);
     destinationAccountId = createAccount("Destination Account", "BANK", 500000);
     loanId = createLoan("BORROW", "John Doe", "Personal Loan", 2000000, 5.0);
   }
