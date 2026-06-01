@@ -406,8 +406,8 @@ public class GetUserTransactionsIT extends AppTestUtil {
     for (int i = 0; i < transactions.length(); i++) {
       var transaction = transactions.getJSONObject(i);
       // Date and time might be optional in some cases, but check they exist
-      assertNotNull(transaction.getString("date"));
-      assertNotNull(transaction.getString("time"));
+      assertNotNull(transaction.getLong("date"));
+      assertNotNull(transaction.getInt("time"));
       // At minimum, verify the structure is correct
       assertNotNull(transaction.getString("id"));
       assertTrue(transaction.has("type"));

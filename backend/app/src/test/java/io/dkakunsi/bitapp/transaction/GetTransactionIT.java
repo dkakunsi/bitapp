@@ -164,8 +164,8 @@ public class GetTransactionIT extends AppTestUtil {
     assertEquals(150000, responseBody.getBigDecimal("amount").intValue());
     assertEquals("IDR", responseBody.getString("currency"));
     assertEquals("FOOD", responseBody.getString("category"));
-    assertNotNull(responseBody.getString("date"));
-    assertNotNull(responseBody.getString("time"));
+    assertNotNull(responseBody.getLong("date"));
+    assertNotNull(responseBody.getInt("time"));
   }
 
   /**
@@ -214,8 +214,8 @@ public class GetTransactionIT extends AppTestUtil {
     assertEquals(5000000, responseBody.getBigDecimal("amount").intValue());
     assertEquals("IDR", responseBody.getString("currency"));
     assertEquals("INCOME", responseBody.getString("category"));
-    assertNotNull(responseBody.getString("date"));
-    assertNotNull(responseBody.getString("time"));
+    assertNotNull(responseBody.getLong("date"));
+    assertNotNull(responseBody.getInt("time"));
   }
 
   /**
@@ -264,8 +264,8 @@ public class GetTransactionIT extends AppTestUtil {
     assertEquals(destinationAccountId, responseBody.getString("destination"));
     assertEquals(200000, responseBody.getBigDecimal("amount").intValue());
     assertEquals("IDR", responseBody.getString("currency"));
-    assertNotNull(responseBody.getString("date"));
-    assertNotNull(responseBody.getString("time"));
+    assertNotNull(responseBody.getLong("date"));
+    assertNotNull(responseBody.getInt("time"));
   }
 
   /**

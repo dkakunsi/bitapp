@@ -7,6 +7,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterAll;
@@ -51,14 +53,16 @@ class GetTransactionEndpointTest {
   void givenValidTransactionId_WhenRequested_ThenShouldReturnTransaction() {
     // Given
     var transactionId = "trans-123";
+    var date = LocalDate.of(2026, 1, 23).toEpochDay() * 24 * 60 * 60; // Convert to seconds
+    var time = LocalTime.of(14, 30).toSecondOfDay(); //
     var getResult = TransactionResult.builder()
         .id(transactionId)
         .user(USER_ID)
         .type("DEBIT")
         .title("Grocery Shopping")
         .description("Weekly groceries")
-        .date("2026-01-23")
-        .time("14:30")
+        .date(date)
+        .time(time)
         .source("account-1")
         .destination(null)
         .loan(null)
@@ -83,8 +87,8 @@ class GetTransactionEndpointTest {
     assertEquals("DEBIT", resultBody.getString("type"));
     assertEquals("Grocery Shopping", resultBody.getString("title"));
     assertEquals("Weekly groceries", resultBody.getString("description"));
-    assertEquals("2026-01-23", resultBody.getString("date"));
-    assertEquals("14:30", resultBody.getString("time"));
+    assertEquals(1769126400, resultBody.getLong("date"));
+    assertEquals(52200, resultBody.getInt("time"));
     assertEquals("account-1", resultBody.getString("source"));
     assertEquals(150000, resultBody.getBigDecimal("amount").intValue());
     assertEquals("IDR", resultBody.getString("currency"));
@@ -95,14 +99,16 @@ class GetTransactionEndpointTest {
   void givenValidCreditTransactionId_WhenRequested_ThenShouldReturnCreditTransaction() {
     // Given
     var transactionId = "trans-456";
+    var date = LocalDate.of(2026, 1, 23).toEpochDay() * 24 * 60 * 60; // Convert to seconds
+    var time = LocalTime.of(9, 0).toSecondOfDay(); //
     var getResult = TransactionResult.builder()
         .id(transactionId)
         .user(USER_ID)
         .type("CREDIT")
         .title("Salary Payment")
         .description("Monthly salary")
-        .date("2026-01-23")
-        .time("09:00")
+        .date(date)
+        .time(time)
         .source(null)
         .destination("account-2")
         .loan(null)
@@ -134,14 +140,16 @@ class GetTransactionEndpointTest {
   void givenValidTransferTransactionId_WhenRequested_ThenShouldReturnTransferTransaction() {
     // Given
     var transactionId = "trans-789";
+    var date = LocalDate.of(2026, 1, 23).toEpochDay() * 24 * 60 * 60; // Convert to seconds
+    var time = LocalTime.of(15, 45).toSecondOfDay(); //
     var getResult = TransactionResult.builder()
         .id(transactionId)
         .user(USER_ID)
         .type("TRANSFER")
         .title("Internal Transfer")
         .description("Moving funds")
-        .date("2026-01-23")
-        .time("15:45")
+        .date(date)
+        .time(time)
         .source("account-1")
         .destination("account-2")
         .loan(null)
@@ -173,14 +181,16 @@ class GetTransactionEndpointTest {
     // Given
     var transactionId = "trans-loan";
     var loanId = "loan-123";
+    var date = LocalDate.of(2026, 1, 23).toEpochDay() * 24 * 60 * 60; // Convert to seconds
+    var time = LocalTime.of(11, 0).toSecondOfDay(); //
     var getResult = TransactionResult.builder()
         .id(transactionId)
         .user(USER_ID)
         .type("DEBIT")
         .title("Loan Payment")
         .description("Monthly loan payment")
-        .date("2026-01-23")
-        .time("11:00")
+        .date(date)
+        .time(time)
         .source("account-1")
         .destination(null)
         .loan(loanId)

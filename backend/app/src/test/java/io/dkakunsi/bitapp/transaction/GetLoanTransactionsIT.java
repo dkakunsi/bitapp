@@ -330,8 +330,8 @@ public class GetLoanTransactionsIT extends AppTestUtil {
     // Verify transactions have date/time fields
     for (int i = 0; i < transactions.length(); i++) {
       var transaction = transactions.getJSONObject(i);
-      assertNotNull(transaction.getString("date"));
-      assertNotNull(transaction.getString("time"));
+      assertNotNull(transaction.getLong("date"));
+      assertNotNull(transaction.getInt("time"));
       assertNotNull(transaction.getString("id"));
       assertTrue(transaction.has("type"));
       assertTrue(transaction.has("title"));

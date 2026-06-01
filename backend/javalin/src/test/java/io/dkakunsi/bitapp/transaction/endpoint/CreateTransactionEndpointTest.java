@@ -8,6 +8,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -49,13 +51,16 @@ class CreateTransactionEndpointTest {
   @Test
   void givenValidDebitTransactionRequest_WhenRequested_ThenShouldReturn200AndTransaction() {
     // Given
+    var date = LocalDate.of(2026, 1, 22).toEpochDay() * 24 * 60 * 60; // Convert to seconds
+    var time = LocalTime.of(8, 0).toSecondOfDay(); //
+
     var transactionResult = TransactionResult.builder()
         .id("transaction-123")
         .user("test@email.com")
         .title("Grocery Shopping")
         .description("Monthly groceries")
-        .date("2026-01-22")
-        .time("10:30")
+        .date(date)
+        .time(time)
         .source("account-1")
         .amount(BigDecimal.valueOf(50000))
         .currency("IDR")
@@ -69,15 +74,15 @@ class CreateTransactionEndpointTest {
         {
           "title":"Grocery Shopping",
           "description":"Monthly groceries",
-          "date":"2026-01-22",
-          "time":"10:30",
+          "date":%d,
+          "time":%d,
           "source":"account-1",
           "amount":50000,
           "currency":"IDR",
           "category":"FOOD",
           "type":"DEBIT"
         }
-        """;
+        """.formatted(date, time);
 
     // When
     var response = Unirest.post(baseUrl + "/v1/transactions").body(requestBody).asString();
@@ -96,13 +101,16 @@ class CreateTransactionEndpointTest {
   @Test
   void givenValidCreditTransactionRequest_WhenRequested_ThenShouldReturn200AndTransaction() {
     // Given
+    var date = LocalDate.of(2026, 1, 22).toEpochDay() * 24 * 60 * 60; // Convert to seconds
+    var time = LocalTime.of(8, 0).toSecondOfDay(); //
+
     var transactionResult = TransactionResult.builder()
         .id("transaction-456")
         .user("test@email.com")
         .title("Salary")
         .description("Monthly salary")
-        .date("2026-01-22")
-        .time("08:00")
+        .date(date)
+        .time(time)
         .destination("account-1")
         .amount(BigDecimal.valueOf(5000000))
         .currency("IDR")
@@ -116,15 +124,15 @@ class CreateTransactionEndpointTest {
         {
           "title":"Salary",
           "description":"Monthly salary",
-          "date":"2026-01-22",
-          "time":"08:00",
+          "date":%d,
+          "time":%d,
           "destination":"account-1",
           "amount":5000000,
           "currency":"IDR",
           "category":"INCOME",
           "type":"CREDIT"
         }
-        """;
+        """.formatted(date, time);
 
     // When
     var response = Unirest.post(baseUrl + "/v1/transactions").body(requestBody).asString();
@@ -143,13 +151,16 @@ class CreateTransactionEndpointTest {
   @Test
   void givenValidTransferTransactionRequest_WhenRequested_ThenShouldReturn200AndTransaction() {
     // Given
+    var date = LocalDate.of(2026, 1, 22).toEpochDay() * 24 * 60 * 60; // Convert to seconds
+    var time = LocalTime.of(8, 0).toSecondOfDay(); //
+
     var transactionResult = TransactionResult.builder()
         .id("transaction-789")
         .user("test@email.com")
         .title("Transfer to Savings")
         .description("Monthly savings")
-        .date("2026-01-22")
-        .time("12:00")
+        .date(date)
+        .time(time)
         .source("account-1")
         .destination("account-2")
         .amount(BigDecimal.valueOf(100000))
@@ -164,8 +175,8 @@ class CreateTransactionEndpointTest {
         {
           "title":"Transfer to Savings",
           "description":"Monthly savings",
-          "date":"2026-01-22",
-          "time":"12:00",
+          "date":%d,
+          "time":%d,
           "source":"account-1",
           "destination":"account-2",
           "amount":100000,
@@ -173,7 +184,7 @@ class CreateTransactionEndpointTest {
           "category":"OTHER",
           "type":"TRANSFER"
         }
-        """;
+        """.formatted(date, time);
 
     // When
     var response = Unirest.post(baseUrl + "/v1/transactions").body(requestBody).asString();

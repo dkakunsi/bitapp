@@ -3,6 +3,8 @@ package io.dkakunsi.bitapp.loan;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Map;
 
 import org.json.JSONObject;
@@ -679,11 +681,13 @@ public class UpdateLoanIT extends AppTestUtil {
     assertEquals(200, creditResponse.getStatus());
 
     // Make a partial payment of 200,000,000 (40% of 500,000,000) via transaction
+    var date = LocalDate.of(2024, 7, 1).toEpochDay() * 24 * 60 * 60; // Convert to seconds
+    var time = LocalTime.of(10, 0).toSecondOfDay(); //
     var transactionBody = """
         {
           "type": "DEBIT",
-          "date": "2024-07-01",
-          "time": "10:00:00",
+          "date": %d,
+          "time": %d,
           "title": "Partial Repayment",
           "description": "Partial loan repayment",
           "amount": 200000000,
@@ -692,7 +696,7 @@ public class UpdateLoanIT extends AppTestUtil {
           "loan": "%s",
           "category": "LOAN"
         }
-        """.formatted(sourceAccountId, loanId);
+        """.formatted(date, time, sourceAccountId, loanId);
 
     var transactionResponse = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
@@ -779,11 +783,13 @@ public class UpdateLoanIT extends AppTestUtil {
 
     // Make a large partial payment of 400,000,000 (80% of 500,000,000) via
     // transaction
+    var date = LocalDate.of(2024, 7, 1).toEpochDay() * 24 * 60 * 60; // Convert to seconds
+    var time = LocalTime.of(10, 0).toSecondOfDay(); //
     var transactionBody = """
         {
           "type": "DEBIT",
-          "date": "2024-07-01",
-          "time": "10:00:00",
+          "date": %d,
+          "time": %d,
           "title": "Large Partial Repayment",
           "description": "Large partial loan repayment",
           "amount": 400000000,
@@ -792,7 +798,7 @@ public class UpdateLoanIT extends AppTestUtil {
           "loan": "%s",
           "category": "LOAN"
         }
-        """.formatted(sourceAccountId, loanId);
+        """.formatted(date, time, sourceAccountId, loanId);
 
     var transactionResponse = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)

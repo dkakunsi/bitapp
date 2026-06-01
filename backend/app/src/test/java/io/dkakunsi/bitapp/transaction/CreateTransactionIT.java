@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Map;
 
 import org.json.JSONObject;
@@ -125,19 +127,21 @@ public class CreateTransactionIT extends AppTestUtil {
    */
   @Test
   public void createDebitTransactionShouldBeOk() {
+    var date = LocalDate.of(2024, 6, 15).toEpochDay() * 24 * 60 * 60; // Convert to seconds
+    var time = LocalTime.of(14, 30).toSecondOfDay(); //
     var body = String.format("""
         {
           "type": "DEBIT",
           "title": "Grocery Shopping",
           "description": "Weekly groceries at supermarket",
-          "date": "2024-06-15",
-          "time": "14:30:00",
+          "date": %d,
+          "time": %d,
           "source": "%s",
           "amount": 50000,
           "currency": "IDR",
           "category": "FOOD"
         }
-        """, sourceAccountId);
+        """, date, time, sourceAccountId);
 
     var response = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
@@ -174,19 +178,21 @@ public class CreateTransactionIT extends AppTestUtil {
    */
   @Test
   public void createCreditTransactionShouldBeOk() {
+    var date = LocalDate.of(2024, 6, 1).toEpochDay() * 24 * 60 * 60; // Convert to seconds
+    var time = LocalTime.of(9, 0).toSecondOfDay(); //
     var body = String.format("""
         {
           "type": "CREDIT",
           "title": "Salary Payment",
           "description": "Monthly salary",
-          "date": "2024-06-01",
-          "time": "09:00:00",
+          "date": %d,
+          "time": %d,
           "destination": "%s",
           "amount": 5000000,
           "currency": "IDR",
           "category": "INCOME"
         }
-        """, destinationAccountId);
+        """, date, time, destinationAccountId);
 
     var response = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
@@ -223,19 +229,21 @@ public class CreateTransactionIT extends AppTestUtil {
    */
   @Test
   public void createTransferTransactionShouldBeOk() {
+    var date = LocalDate.of(2024, 6, 10).toEpochDay() * 24 * 60 * 60; // Convert to seconds
+    var time = LocalTime.of(16, 45).toSecondOfDay(); //
     var body = String.format("""
         {
           "type": "TRANSFER",
           "title": "Transfer to Savings",
           "description": "Moving money to savings account",
-          "date": "2024-06-10",
-          "time": "16:45:00",
+          "date": %d,
+          "time": %d,
           "source": "%s",
           "destination": "%s",
           "amount": 100000,
           "currency": "IDR"
         }
-        """, sourceAccountId, destinationAccountId);
+        """, date, time, sourceAccountId, destinationAccountId);
 
     var response = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
@@ -281,20 +289,22 @@ public class CreateTransactionIT extends AppTestUtil {
   public void createTransactionWithLoanShouldBeOk() {
     var loanId = createLoan("BORROW", "John Doe", "Personal Loan", 2000000, 5.0, sourceAccountId);
 
+    var date = LocalDate.of(2024, 6, 5).toEpochDay() * 24 * 60 * 60; // Convert to seconds
+    var time = LocalTime.of(10, 0).toSecondOfDay(); //
     var body = String.format("""
         {
           "type": "DEBIT",
           "title": "Loan Repayment",
           "description": "Monthly loan installment",
-          "date": "2024-06-05",
-          "time": "10:00:00",
+          "date": %d,
+          "time": %d,
           "source": "%s",
           "loan": "%s",
           "amount": 500000,
           "currency": "IDR",
           "category": "LOAN"
         }
-        """, sourceAccountId, loanId);
+        """, date, time, sourceAccountId, loanId);
 
     var response = Unirest.post(baseUrl + "/v1/transactions")
         .header("Authorization", "Bearer " + token)
@@ -608,8 +618,8 @@ public class CreateTransactionIT extends AppTestUtil {
 
     assertEquals(200, response.getStatus());
     var responseBody = new JSONObject(response.getBody());
-    assertNotNull(responseBody.getString("date"));
-    assertNotNull(responseBody.getString("time"));
+    assertNotNull(responseBody.getLong("date"));
+    assertNotNull(responseBody.getInt("time"));
   }
 
   /**

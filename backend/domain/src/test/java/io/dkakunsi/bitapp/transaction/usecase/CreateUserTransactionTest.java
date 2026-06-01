@@ -11,8 +11,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.Instant;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,8 +65,8 @@ public final class CreateUserTransactionTest {
     var createRequest = CreateUserTransactionInput.builder()
         .title("Grocery Shopping")
         .description("Monthly groceries")
-        .date(LocalDate.now())
-        .time(LocalTime.now())
+        .date(Instant.now().toEpochMilli())
+        .time(Instant.now().atZone(java.time.ZoneId.systemDefault()).toLocalTime().toSecondOfDay() / 60)
         .source(ACCOUNT_ID_1)
         .amount(BigDecimal.valueOf(50000))
         .currency("IDR")
@@ -99,8 +98,8 @@ public final class CreateUserTransactionTest {
     var createRequest = CreateUserTransactionInput.builder()
         .title("Salary")
         .description("Monthly salary")
-        .date(LocalDate.now())
-        .time(LocalTime.now())
+        .date(Instant.now().toEpochMilli())
+        .time(Instant.now().atZone(java.time.ZoneId.systemDefault()).toLocalTime().toSecondOfDay() / 60)
         .destination(ACCOUNT_ID_1)
         .amount(BigDecimal.valueOf(5000000))
         .currency("IDR")
@@ -130,8 +129,8 @@ public final class CreateUserTransactionTest {
     var createRequest = CreateUserTransactionInput.builder()
         .title("Transfer to Savings")
         .description("Monthly savings")
-        .date(LocalDate.now())
-        .time(LocalTime.now())
+        .date(Instant.now().toEpochMilli())
+        .time(Instant.now().atZone(java.time.ZoneId.systemDefault()).toLocalTime().toSecondOfDay() / 60)
         .source(ACCOUNT_ID_1)
         .destination(ACCOUNT_ID_2)
         .amount(BigDecimal.valueOf(100000))
@@ -163,8 +162,8 @@ public final class CreateUserTransactionTest {
     var createRequest = CreateUserTransactionInput.builder()
         .title("Loan Payment")
         .description("Monthly loan payment")
-        .date(LocalDate.now())
-        .time(LocalTime.now())
+        .date(Instant.now().toEpochMilli())
+        .time(Instant.now().atZone(java.time.ZoneId.systemDefault()).toLocalTime().toSecondOfDay() / 60)
         .source(ACCOUNT_ID_1)
         .loan(LOAN_ID)
         .amount(BigDecimal.valueOf(100000))

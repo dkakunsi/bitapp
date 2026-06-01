@@ -55,18 +55,19 @@ public final class CreateTransactionEndpoint extends JavalinEndpoint<CreateTrans
   @Override
   protected CreateTransactionInput buildInput(io.javalin.http.Context ctx) {
     var body = ctx.bodyAsClass(CreateTransactionRequest.class);
-    return CreateUserTransactionInput.fromRequest(
-        body.title(),
-        body.description(),
-        body.date(),
-        body.time(),
-        body.source(),
-        body.destination(),
-        body.loan(),
-        body.amount(),
-        body.currency(),
-        body.category(),
-        body.type());
+    return CreateUserTransactionInput.builder()
+        .title(body.title())
+        .description(body.description())
+        .date(body.date())
+        .time(body.time())
+        .source(body.source())
+        .destination(body.destination())
+        .loan(body.loan())
+        .amount(body.amount())
+        .currency(body.currency())
+        .category(body.category())
+        .type(body.type())
+        .build();
   }
 }
 
@@ -74,8 +75,8 @@ public final class CreateTransactionEndpoint extends JavalinEndpoint<CreateTrans
 record CreateTransactionRequest(
     String title,
     String description,
-    String date,
-    String time,
+    Long date,
+    Integer time,
     String source,
     String destination,
     String loan,

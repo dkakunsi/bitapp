@@ -7,6 +7,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterAll;
@@ -49,13 +51,15 @@ class RemoveTransactionEndpointTest {
   void givenValidTransactionId_WhenDeleted_ThenShouldReturnTransactionDetails() {
     // Given
     var transactionId = "trans-123";
+    var date = LocalDate.of(2026, 1, 24).toEpochDay() * 24 * 60 * 60; // Convert to seconds
+    var time = LocalTime.of(10, 0).toSecondOfDay(); //
     var transactionResult = TransactionResult.builder()
         .id(transactionId)
         .user("user@email.com")
         .title("Grocery Shopping")
         .description("Weekly groceries")
-        .date("2026-01-24")
-        .time("10:00")
+        .date(date)
+        .time(time)
         .source("account-1")
         .amount(BigDecimal.valueOf(150000))
         .currency("IDR")

@@ -8,6 +8,8 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -61,28 +63,32 @@ class GetUserTransactionsEndpointTest {
   @Test
   void givenValidUserIdWithMultipleTransactions_WhenRequested_ThenShouldReturn200AndTransactionsList() {
     // Given
+    var date1 = LocalDate.of(2026, 1, 23).toEpochDay() * 24 * 60 * 60; // Convert to seconds
+    var time1 = LocalTime.of(10, 30).toSecondOfDay(); //
     var transactionItem1 = TransactionResult.builder()
         .id("trans1")
         .user(USER_ID)
         .type("DEBIT")
         .title("Grocery Shopping")
         .description("Weekly groceries")
-        .date("2026-01-23")
-        .time("10:30")
+        .date(date1)
+        .time(time1)
         .source("account-1")
         .amount(BigDecimal.valueOf(150000))
         .currency("IDR")
         .category("FOOD")
         .build();
 
+    var date2 = LocalDate.of(2026, 1, 23).toEpochDay() * 24 * 60 * 60; // Convert to seconds
+    var time2 = LocalTime.of(8, 0).toSecondOfDay(); //
     var transactionItem2 = TransactionResult.builder()
         .id("trans2")
         .user(USER_ID)
         .type("CREDIT")
         .title("Salary")
         .description("Monthly salary")
-        .date("2026-01-23")
-        .time("08:00")
+        .date(date2)
+        .time(time2)
         .destination("account-2")
         .amount(BigDecimal.valueOf(5000000))
         .currency("IDR")
@@ -140,14 +146,16 @@ class GetUserTransactionsEndpointTest {
   @Test
   void givenValidUserIdWithSingleTransaction_WhenRequested_ThenShouldReturn200AndSingleTransactionList() {
     // Given
+    var date = LocalDate.of(2026, 1, 23).toEpochDay() * 24 * 60 * 60; // Convert to seconds
+    var time = LocalTime.of(14, 30).toSecondOfDay(); //
     var transactionItem = TransactionResult.builder()
         .id("trans1")
         .user(USER_ID)
         .type("TRANSFER")
         .title("Transfer to Savings")
         .description("Monthly savings")
-        .date("2026-01-23")
-        .time("14:30")
+        .date(date)
+        .time(time)
         .source("account-1")
         .destination("account-2")
         .amount(BigDecimal.valueOf(100000))

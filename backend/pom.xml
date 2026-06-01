@@ -190,8 +190,8 @@
             <threadCount>10</threadCount>
             <skipTests>${skipTestCondition}</skipTests>
             <!-- Use this if using Jacoco
-    <argLine>@{argLine} -javaagent:${org.mockito:mockito-core:jar}</argLine>
-    -->
+            <argLine>@{argLine} -javaagent:${org.mockito:mockito-core:jar}</argLine>
+            -->
             <argLine> -javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar </argLine>
           </configuration>
         </plugin>

@@ -1,9 +1,12 @@
 package io.dkakunsi.bitapp.transaction.dto;
 
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Currency;
@@ -20,8 +23,8 @@ import lombok.Builder;
 public record CreateUserTransactionInput(
     String title,
     String description,
-    LocalDate date,
-    LocalTime time,
+    Long date,
+    Integer time,
     String source,
     String destination,
     String loan,
@@ -50,6 +53,22 @@ public record CreateUserTransactionInput(
       errors.add("category: invalid value: " + category);
     }
 
+    if (date != null) {
+      try {
+        parseDate(date);
+      } catch (IllegalArgumentException e) {
+        errors.add("date: invalid value: " + date);
+      }
+    }
+
+    if (time != null) {
+      try {
+        parseTime(time);
+      } catch (IllegalArgumentException e) {
+        errors.add("time: invalid value: " + time);
+      }
+    }
+
     // Only validate source/destination if type is valid
     if (Transaction.Type.isValid(type)) {
       var transactionType = Transaction.Type.valueOf(type);
@@ -76,51 +95,12 @@ public record CreateUserTransactionInput(
     }
   }
 
-  public static CreateUserTransactionInput fromRequest(String title, String description,
-      String dateStr, String timeStr, String source, String destination, String loan,
-      BigDecimal amount, String currency, String category, String type) {
-    LocalDate parsedDate = null;
-    LocalTime parsedTime = null;
-
-    if (dateStr != null) {
-      try {
-        parsedDate = LocalDate.parse(dateStr);
-      } catch (DateTimeParseException _) {
-        throw new IllegalArgumentException("date: invalid value: " + dateStr);
-      }
-    }
-
-    if (timeStr != null) {
-      try {
-        parsedTime = LocalTime.parse(timeStr);
-      } catch (DateTimeParseException _) {
-        throw new IllegalArgumentException("time: invalid value: " + timeStr);
-      }
-    }
-
-    return CreateUserTransactionInput.builder()
-        .title(title)
-        .description(description)
-        .date(parsedDate)
-        .time(parsedTime)
-        .source(source)
-        .destination(destination)
-        .loan(loan)
-        .amount(amount)
-        .currency(currency)
-        .category(category)
-        .type(type)
-        .build();
-  }
-
   @Override
   public Transaction toTransaction(String requester) {
     final var userId = Id.of(requester);
     final var now = LocalDateTime.now();
     final var executor = requester;
 
-    var transactionDate = this.date() != null ? this.date() : LocalDate.now();
-    var transactionTime = this.time() != null ? this.time() : LocalTime.now();
     var currency = this.currency() != null ? Currency.getInstance(this.currency()) : Transaction.DEFAULT_CURRENCY;
     var category = this.category() != null ? Transaction.Category.valueOf(this.category()) : null;
 
@@ -129,8 +109,8 @@ public record CreateUserTransactionInput(
         .user(userId)
         .title(this.title())
         .description(this.description())
-        .date(transactionDate)
-        .time(transactionTime)
+        .date(parseDate(this.date()))
+        .time(parseTime(this.time()))
         .source(this.source() != null ? Id.of(this.source()) : null)
         .destination(this.destination() != null ? Id.of(this.destination()) : null)
         .loan(this.loan() != null ? Id.of(this.loan()) : null)
@@ -144,5 +124,31 @@ public record CreateUserTransactionInput(
         .createdBy(executor)
         .updatedBy(executor)
         .build();
+  }
+
+  private LocalDate parseDate(Long epochMilli) {
+    if (epochMilli == null) {
+      return Instant.now().atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    try {
+      return Instant.ofEpochMilli(epochMilli).atZone(ZoneId.systemDefault()).toLocalDate();
+    } catch (DateTimeParseException e) {
+      throw new IllegalArgumentException("date: invalid value: " + epochMilli);
+    }
+  }
+
+  private LocalTime parseTime(Integer timeSinceMidnight) {
+    if (timeSinceMidnight == null) {
+      return Instant.now().atZone(ZoneId.systemDefault()).toLocalTime();
+    }
+
+    var hour = timeSinceMidnight / 60;
+    var minute = timeSinceMidnight % 60;
+    try {
+      return LocalTime.of(hour, minute);
+    } catch (DateTimeException e) {
+      throw new IllegalArgumentException("time: invalid value: " + timeSinceMidnight);
+    }
   }
 }
