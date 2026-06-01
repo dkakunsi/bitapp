@@ -105,7 +105,7 @@ public final class CreateUserTransactionTest {
         .destination(ACCOUNT_ID_1)
         .amount(BigDecimal.valueOf(5000000))
         .currency("IDR")
-        .category("INCOME")
+        .category("SALARY")
         .type("CREDIT")
         .build();
 
@@ -222,7 +222,7 @@ public final class CreateUserTransactionTest {
         .title("Transaction")
         .destination(nonExistentAccountId)
         .amount(BigDecimal.valueOf(50000))
-        .category("INCOME")
+        .category("SALARY")
         .type("CREDIT")
         .build();
 
