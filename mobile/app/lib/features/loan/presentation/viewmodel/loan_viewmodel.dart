@@ -10,38 +10,38 @@ class LoanViewModel
         CategoryViewModel,
         IconViewModel,
         AmountViewModel {
-  final Loan _loan;
+  final Loan loan;
 
-  LoanViewModel(this._loan);
+  LoanViewModel(this.loan);
 
-  String? get id => _loan.id;
+  String? get id => loan.id;
 
-  double get principalAmount => _loan.amount;
+  double get principalAmount => loan.amount;
 
-  String get description => _loan.description ?? '';
+  String get description => loan.description ?? '';
 
-  String get partyName => _loan.partyName ?? '';
+  String get partyName => loan.partyName ?? '';
 
-  TimeOfDay get time => _loan.time;
+  TimeOfDay get time => loan.time;
 
-  LoanType get type => _loan.type;
+  LoanType get type => loan.type;
 
-  bool get isPaid => _loan.remainingAmount == 0;
+  bool get isPaid => loan.remainingAmount == 0;
 
   Color get loanColor => isPaid ? AppColor.green : categoryColor;
 
   @override
-  String? get objectType => _loan.type.value;
+  String? get objectType => loan.type.value;
 
   @override
-  String get subtitle => _loan.partyName ?? '';
+  String get subtitle => loan.partyName ?? '';
 
   @override
-  String get category => _loan.type.value;
+  String get category => loan.type.value;
 
   @override
   Color get categoryColor =>
-      _loan.type == LoanType.debt ? AppColor.red : AppColor.green;
+      loan.type == LoanType.debt ? AppColor.red : AppColor.green;
 
   @override
   IconData get icon =>
@@ -59,17 +59,17 @@ class LoanViewModel
   }
 
   @override
-  DateTime get date => _loan.date;
+  DateTime get date => loan.date;
 
   @override
-  String get title => _loan.title;
+  String get title => loan.title;
 
   @override
-  double get amount => _loan.remainingAmount ?? _loan.amount;
+  double get amount => loan.remainingAmount ?? loan.amount;
 
   @override
   Color get amountColor =>
-      _loan.type == LoanType.debt ? AppColor.red : AppColor.green;
+      loan.type == LoanType.debt ? AppColor.red : AppColor.green;
 
   @override
   bool get showPaid => true;

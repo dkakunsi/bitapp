@@ -2,12 +2,16 @@ import 'dart:async';
 
 import 'package:bitapp/common/presentation/bloc/state.dart';
 import 'package:bitapp/common/presentation/viewmodel/viewmodel.dart';
+import 'package:bitapp/features/account/data/account.dart';
 import 'package:bitapp/features/account/presentation/bloc/account_bloc.dart';
 import 'package:bitapp/features/configuration/domain/usecase/configuration_usecase.dart';
+import 'package:bitapp/features/loan/data/loan.dart';
 import 'package:bitapp/features/loan/presentation/bloc/loan_bloc.dart';
+import 'package:bitapp/features/transaction/domain/transaction_category.dart';
+import 'package:bitapp/features/transaction/domain/transaction_type.dart';
 import 'package:bitapp/features/transaction/presentation/viewmodel/transaction_viewmodel.dart';
-import 'package:bitapp/features/transaction/domain/usecase/transaction_usecase.dart';
-import 'package:bitapp/features/transaction/data/transaction.dart';
+import 'package:bitapp/features/transaction/domain/transaction_usecase.dart';
+import 'package:bitapp/features/transaction/domain/transaction.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -47,11 +51,11 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
       amount: event.amount,
       date: event.date,
       time: event.time,
-      transactionType: event.transactionType,
-      category: event.category,
-      sourceAccountId: event.sourceAccountId,
-      destinationAccountId: event.destinationAccountId,
-      loanId: event.loanId,
+      type: event.transactionType,
+      transactionCategory: event.category,
+      sourceAccount: event.sourceAccount,
+      destinationAccount: event.destinationAccount,
+      loan: event.loan,
     );
     final result = await _transactionUseCase.addTransaction(transaction);
     if (result.isFailure) {

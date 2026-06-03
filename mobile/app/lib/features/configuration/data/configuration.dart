@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 class Configuration extends StoreData {
   static const String storeId = 'configuration';
 
+  @override
+  final String id;
+
   // UI configs
   final Color startColor;
   final Color endColor;
@@ -28,7 +31,7 @@ class Configuration extends StoreData {
   final String? token;
 
   Configuration({
-    super.id = storeId,
+    this.id = storeId,
     required this.appName,
     required this.appMotto,
     required this.language,

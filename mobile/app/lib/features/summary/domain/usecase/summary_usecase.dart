@@ -1,10 +1,10 @@
 import 'package:bitapp/common/util/processing_result.dart';
 import 'package:bitapp/features/loan/data/loan.dart';
 import 'package:bitapp/features/summary/data/summary.dart';
-import 'package:bitapp/features/transaction/data/transaction.dart';
 import 'package:bitapp/features/account/data/account_store.dart';
 import 'package:bitapp/features/loan/data/loan_store.dart';
 import 'package:bitapp/features/transaction/data/transaction_store.dart';
+import 'package:bitapp/features/transaction/domain/transaction_type.dart';
 import 'package:logging/logging.dart';
 
 class SummaryUseCase {

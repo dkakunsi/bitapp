@@ -11,51 +11,51 @@ class AccountViewModel
         IconViewModel,
         ColorViewModel,
         AmountViewModel {
-  final Account _account;
+  final Account account;
 
-  AccountViewModel(this._account);
-
-  @override
-  String? get category => _account.type.value;
+  AccountViewModel(this.account);
 
   @override
-  Color get categoryColor => colorFromString(_account.themeColor);
+  String? get category => account.type.value;
+
+  @override
+  Color get categoryColor => colorFromString(account.themeColor);
 
   @override
   IconData get icon {
-    if (_account.type == AccountType.ewallet) {
+    if (account.type == AccountType.ewallet) {
       return Icons.account_balance_wallet;
     }
-    if (_account.type == AccountType.bank) {
+    if (account.type == AccountType.bank) {
       return Icons.account_balance;
     }
     return Icons.wallet;
   }
 
   @override
-  Color get color => colorFromString(_account.themeColor);
+  Color get color => colorFromString(account.themeColor);
 
   @override
-  String? get objectType => _account.type.value;
+  String? get objectType => account.type.value;
 
   @override
-  String get title => _account.name;
+  String get title => account.name;
 
   @override
   String get subtitle => title;
 
-  String get name => _account.name;
+  String get name => account.name;
 
-  AccountType get type => _account.type;
+  AccountType get type => account.type;
 
-  String get themeColor => _account.themeColor;
+  String get themeColor => account.themeColor;
 
-  String? get id => _account.id;
+  String? get id => account.id;
 
-  double get balance => _account.balance ?? 0;
+  double get balance => account.balance ?? 0;
 
   @override
-  double get amount => _account.balance ?? 0;
+  double get amount => account.balance ?? 0;
 
   @override
   Color get amountColor => AppColor.mainDark;

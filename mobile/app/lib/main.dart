@@ -13,6 +13,7 @@ import 'package:bitapp/features/authentication/presentation/screen/authenticatio
 import 'package:bitapp/features/configuration/data/configuration_store.dart';
 import 'package:bitapp/features/configuration/domain/usecase/configuration_usecase.dart';
 import 'package:bitapp/features/configuration/presentation/bloc/configuration_bloc.dart';
+import 'package:bitapp/features/transaction/domain/local_tansaction_service.dart';
 import 'package:bitapp/features/user/data/user_api.dart';
 import 'package:bitapp/features/user/data/user_store.dart';
 import 'package:bitapp/features/user/domain/usecase/user_usecase.dart';
@@ -41,7 +42,7 @@ import 'package:bitapp/features/account/domain/usecase/account_usecase.dart';
 import 'package:bitapp/features/loan/domain/usecase/loan_usecase.dart';
 import 'package:bitapp/features/summary/domain/usecase/summary_usecase.dart';
 import 'package:bitapp/features/transaction_analytic/domain/usecase/transaction_analytic_usecase.dart';
-import 'package:bitapp/features/transaction/domain/usecase/transaction_usecase.dart';
+import 'package:bitapp/features/transaction/domain/transaction_usecase.dart';
 import 'package:bitapp/features/app/constant.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';

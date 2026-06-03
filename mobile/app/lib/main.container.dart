@@ -54,6 +54,6 @@ Future<void> registerIocContainer() async {
     SummaryUseCase(accountStore, loanStore, transactionStore),
   );
   addInstance<TransactionAnalyticUseCase>(
-    TransactionAnalyticUseCase(transactionStore),
+    TransactionAnalyticUseCase(transactionStore, localTransactionService),
   );
 }

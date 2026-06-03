@@ -51,9 +51,9 @@ class AddTransaction extends TransactionEvent {
   final TimeOfDay time;
   final TransactionType transactionType;
   final TransactionCategory category;
-  final String? sourceAccountId;
-  final String? destinationAccountId;
-  final String? loanId;
+  final Account? sourceAccount;
+  final Account? destinationAccount;
+  final Loan? loan;
 
   const AddTransaction({
     required this.userId,
@@ -64,9 +64,9 @@ class AddTransaction extends TransactionEvent {
     required this.time,
     required this.transactionType,
     required this.category,
-    this.sourceAccountId,
-    this.destinationAccountId,
-    this.loanId,
+    this.sourceAccount,
+    this.destinationAccount,
+    this.loan,
   });
 
   @override

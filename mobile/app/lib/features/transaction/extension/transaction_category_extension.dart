@@ -1,5 +1,5 @@
+import 'package:bitapp/features/transaction/domain/transaction_category.dart';
 import 'package:bitapp/l10n/localization_extension.dart';
-import 'package:bitapp/features/transaction/data/transaction.dart';
 import 'package:flutter/material.dart';
 
 extension TransactionCategoryExtension on BuildContext {

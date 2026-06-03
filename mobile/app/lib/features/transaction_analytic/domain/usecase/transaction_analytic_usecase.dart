@@ -1,5 +1,7 @@
 import 'package:bitapp/common/util/processing_result.dart';
-import 'package:bitapp/features/transaction/data/transaction.dart';
+import 'package:bitapp/features/transaction/domain/local_tansaction_service.dart';
+import 'package:bitapp/features/transaction/domain/transaction.dart';
+import 'package:bitapp/features/transaction/domain/transaction_type.dart';
 import 'package:bitapp/features/transaction_analytic/data/transaction_analytics.dart';
 import 'package:bitapp/features/transaction/data/transaction_store.dart';
 import 'package:logging/logging.dart';
@@ -7,8 +9,12 @@ import 'package:logging/logging.dart';
 class TransactionAnalyticUseCase {
   final _logger = Logger("TransactionAnalyticUseCase");
   final TransactionStore _transactionStore;
+  final LocalTansactionService _localTansactionService;
 
-  TransactionAnalyticUseCase(this._transactionStore);
+  TransactionAnalyticUseCase(
+    this._transactionStore,
+    this._localTansactionService,
+  );
 
   Future<ProcessingResult<TransactionAnalytics>> analyzeTransactions(
     String userId,
@@ -61,11 +67,16 @@ class TransactionAnalyticUseCase {
   ) async {
     final startOfMonth = DateTime(date.year, date.month, 1, 0, 0, 0, 0);
     final endOfMonth = DateTime(date.year, date.month + 1, 0, 23, 59, 59, 999);
-    return await _transactionStore.getListByTypeAndDateRange(
+    final transactionModels = await _transactionStore.getListByTypeAndDateRange(
       userId,
       type,
       startOfMonth.millisecondsSinceEpoch,
       endOfMonth.millisecondsSinceEpoch,
+    );
+    return await Future.wait(
+      transactionModels.map(
+        (model) => _localTansactionService.buildTransaction(model),
+      ),
     );
   }
 }

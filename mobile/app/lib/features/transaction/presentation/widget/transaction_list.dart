@@ -61,7 +61,7 @@ class TransactionList extends StatelessWidget {
               modalContent: TransactionForm(
                 key: key,
                 transaction: l,
-                transactionType: l.transactionType,
+                transactionType: l.type,
                 title: context.locale.transaction,
               ),
               deleteLabel: context.locale.delete,

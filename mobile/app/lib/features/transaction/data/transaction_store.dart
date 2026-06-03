@@ -1,17 +1,17 @@
 import 'package:bitapp/common/data/app_store.dart';
-import 'package:bitapp/features/transaction/data/transaction.dart'
-    as app_transaction;
+import 'package:bitapp/features/transaction/data/transaction_model.dart';
+import 'package:bitapp/features/transaction/domain/transaction_type.dart' as app_transaction;
 import 'package:sembast/sembast_io.dart';
 
-class TransactionStore extends AppStore<app_transaction.Transaction> {
+class TransactionStore extends AppStore<TransactionModel> {
   TransactionStore(Database database) : super(database, 'transaction');
 
   @override
-  app_transaction.Transaction from(Map<String, dynamic> data) {
-    return app_transaction.Transaction.from(data);
+  TransactionModel from(Map<String, dynamic> data) {
+    return TransactionModel.from(data);
   }
 
-  Future<List<app_transaction.Transaction>> getListByAccount(
+  Future<List<TransactionModel>> getListByAccount(
     String accountId,
   ) async {
     var finder = Finder(
@@ -23,13 +23,13 @@ class TransactionStore extends AppStore<app_transaction.Transaction> {
     return records.map((record) => from(record.value)).toList();
   }
 
-  Future<List<app_transaction.Transaction>> getListByLoan(String loanId) async {
+  Future<List<TransactionModel>> getListByLoan(String loanId) async {
     var finder = Finder(filter: Filter.equals('loanId', loanId));
     final records = await store.find(database, finder: finder);
     return records.map((record) => from(record.value)).toList();
   }
 
-  Future<List<app_transaction.Transaction>> getListByTypeAndDateRange(
+  Future<List<TransactionModel>> getListByTypeAndDateRange(
     String user,
     app_transaction.TransactionType type,
     int start,
