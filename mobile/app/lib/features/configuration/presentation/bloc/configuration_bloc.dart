@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:bitapp/common/presentation/bloc/state.dart';
-import 'package:bitapp/features/user/data/user.dart';
+import 'package:bitapp/features/user/domain/user.dart';
 import 'package:bitapp/features/configuration/presentation/viewmodel/configuration_viewmodel.dart';
-import 'package:bitapp/features/configuration/domain/usecase/configuration_usecase.dart';
+import 'package:bitapp/features/configuration/domain/configuration_usecase.dart';
 import 'package:bitapp/common/util/language.dart';
-import 'package:bitapp/features/configuration/data/configuration.dart';
+import 'package:bitapp/features/configuration/domain/configuration.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

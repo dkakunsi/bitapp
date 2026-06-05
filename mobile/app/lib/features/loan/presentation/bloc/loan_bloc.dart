@@ -2,9 +2,10 @@ import 'dart:async';
 
 import 'package:bitapp/common/presentation/bloc/state.dart';
 import 'package:bitapp/common/presentation/viewmodel/viewmodel.dart';
-import 'package:bitapp/features/loan/data/loan.dart';
+import 'package:bitapp/features/loan/domain/loan.dart';
+import 'package:bitapp/features/loan/domain/loan_type.dart';
 import 'package:bitapp/features/loan/presentation/viewmodel/loan_viewmodel.dart';
-import 'package:bitapp/features/loan/domain/usecase/loan_usecase.dart';
+import 'package:bitapp/features/loan/domain/loan_usecase.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

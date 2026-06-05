@@ -1,4 +1,4 @@
-import 'package:bitapp/features/user/data/user.dart';
+import 'package:bitapp/features/user/domain/user.dart';
 
 class Session {
   final String token;

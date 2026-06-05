@@ -1,6 +1,6 @@
 import 'package:bitapp/common/util/processing_result.dart';
 import 'package:bitapp/features/authentication/data/google_authentication_api.dart';
-import 'package:bitapp/features/authentication/data/session.dart';
+import 'package:bitapp/features/authentication/domain/session.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:logging/logging.dart';
 

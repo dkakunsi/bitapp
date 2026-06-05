@@ -1,7 +1,7 @@
 import 'package:bitapp/common/presentation/viewmodel/viewmodel.dart';
-import 'package:bitapp/features/user/data/user.dart';
+import 'package:bitapp/features/user/domain/user.dart';
 
-class UserViewModel extends ViewModel {
+class UserViewModel implements ViewModel {
   final User _user;
 
   UserViewModel(this._user);
@@ -12,5 +12,5 @@ class UserViewModel extends ViewModel {
 
   String get phone => _user.phone ?? '-';
 
-  String? get id => _user.id;
+  User get user => _user;
 }

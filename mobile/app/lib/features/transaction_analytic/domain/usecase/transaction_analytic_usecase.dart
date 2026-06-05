@@ -9,12 +9,13 @@ import 'package:logging/logging.dart';
 class TransactionAnalyticUseCase {
   final _logger = Logger("TransactionAnalyticUseCase");
   final TransactionStore _transactionStore;
-  final LocalTansactionService _localTansactionService;
+  final LocalTransactionService _localTransactionService;
 
-  TransactionAnalyticUseCase(
-    this._transactionStore,
-    this._localTansactionService,
-  );
+  TransactionAnalyticUseCase({
+    required TransactionStore transactionStore,
+    required LocalTransactionService localTransactionService,
+  }) : _transactionStore = transactionStore,
+       _localTransactionService = localTransactionService;
 
   Future<ProcessingResult<TransactionAnalytics>> analyzeTransactions(
     String userId,
@@ -75,7 +76,7 @@ class TransactionAnalyticUseCase {
     );
     return await Future.wait(
       transactionModels.map(
-        (model) => _localTansactionService.buildTransaction(model),
+        (model) => _localTransactionService.buildTransaction(model),
       ),
     );
   }

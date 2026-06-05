@@ -4,8 +4,8 @@ import 'package:bitapp/common/presentation/widget/app_modal.dart';
 import 'package:bitapp/common/util/formatter.dart';
 import 'package:bitapp/l10n/localization_extension.dart';
 import 'package:bitapp/features/loan/presentation/bloc/loan_bloc.dart';
-import 'package:bitapp/features/loan/data/loan.dart';
 import 'package:bitapp/features/loan/presentation/viewmodel/loan_viewmodel.dart';
+import 'package:bitapp/features/loan/domain/loan_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

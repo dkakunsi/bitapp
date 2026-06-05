@@ -1,32 +1,28 @@
 import 'package:bitapp/common/util/processing_result.dart';
 import 'package:bitapp/features/configuration/data/configuration_store.dart';
-import 'package:bitapp/features/loan/data/loan_api.dart';
-import 'package:bitapp/features/loan/data/loan.dart';
-import 'package:bitapp/features/loan/data/loan_store.dart';
+import 'package:bitapp/features/loan/data/loan_model.dart';
+import 'package:bitapp/features/loan/data/loan_repository.dart';
+import 'package:bitapp/features/loan/domain/loan.dart';
+import 'package:bitapp/features/loan/domain/local_loan_service.dart';
 import 'package:logging/logging.dart';
-import 'package:uuid/uuid.dart';
 
 class LoanUseCase {
   final _logger = Logger("LoanUseCase");
-  final LoanApi _loanApi;
-  final LoanStore _loanStore;
+  final LoanRepository _loanRepository;
   final ConfigurationStore _configurationStore;
   final LocalLoanService _localLoanService;
 
-  LoanUseCase(
-    this._loanApi,
-    this._loanStore,
-    this._configurationStore,
-    this._localLoanService,
-  );
+  LoanUseCase({
+    required ConfigurationStore configurationStore,
+    required LocalLoanService localLoanService,
+    required LoanRepository loanRepository,
+  }) : _configurationStore = configurationStore,
+       _localLoanService = localLoanService,
+       _loanRepository = loanRepository;
 
   Future<ProcessingResult<void>> addLoan(Loan loan) async {
     try {
-      Loan? result;
-      if (await _configurationStore.isRemoteEnabled) {
-        result = await _loanApi.add(loan);
-      }
-      await _loanStore.save(result ?? loan.copyWith(id: Uuid().v4()));
+      await _loanRepository.addLoan(loan.toModel());
       return ProcessingResult();
     } on Exception catch (e) {
       _logger.warning('Error creating loan: $e');
@@ -36,10 +32,8 @@ class LoanUseCase {
 
   Future<ProcessingResult<void>> updateLoan(String id, Loan loan) async {
     try {
-      Loan? result;
       if (await _configurationStore.isRemoteEnabled) {
-        result = await _loanApi.update(id, loan);
-        await _loanStore.save(result);
+        await _loanRepository.updateLoan(id, loan.toModel());
       } else {
         await _localLoanService.update(id, loan);
       }
@@ -52,10 +46,7 @@ class LoanUseCase {
 
   Future<ProcessingResult<void>> deleteLoan(String id) async {
     try {
-      if (await _configurationStore.isRemoteEnabled) {
-        await _loanApi.delete(id);
-      }
-      await _loanStore.delete(id);
+      await _loanRepository.deleteLoan(id);
       return ProcessingResult();
     } on Exception catch (e) {
       _logger.warning('Error deleting loan: $e');
@@ -65,16 +56,8 @@ class LoanUseCase {
 
   Future<ProcessingResult<List<Loan>>> fetchLoans(String userId) async {
     try {
-      List<Loan> loans;
-      if (await _configurationStore.isRemoteEnabled) {
-        loans = await _loanApi.fetchByUser(userId);
-        if (loans.isNotEmpty) {
-          await _loanStore.clear();
-          await _loanStore.addAll(loans);
-        }
-      } else {
-        loans = await _loanStore.getList(userId);
-      }
+      List<LoanModel> loanModels = await _loanRepository.fetchByUser(userId);
+      final loans = loanModels.map((model) => Loan.fromModel(model)).toList();
       return ProcessingResult(data: loans);
     } on Exception catch (e) {
       _logger.warning('Error fetching loans: $e');
@@ -84,7 +67,8 @@ class LoanUseCase {
 
   Future<ProcessingResult<List<Loan>>> getLoans(String userId) async {
     try {
-      final loans = await _loanStore.getList(userId);
+      final loanModels = await _loanRepository.getByUser(userId);
+      final loans = loanModels.map((model) => Loan.fromModel(model)).toList();
       return ProcessingResult(data: loans);
     } on Exception catch (e) {
       _logger.warning('Error getting loans from store: $e');
@@ -94,33 +78,15 @@ class LoanUseCase {
 
   Future<ProcessingResult<Loan>> getLoan(String id) async {
     try {
-      final loan = await _loanStore.get(id);
+      final loanModel = await _loanRepository.getById(id);
+      if (loanModel == null) {
+        return ProcessingResult(exception: Exception('Loan not found'));
+      }
+      final loan = Loan.fromModel(loanModel);
       return ProcessingResult(data: loan);
     } on Exception catch (e) {
       _logger.warning('Error getting loan from store: $e');
       return ProcessingResult(exception: e);
-    }
-  }
-}
-
-class LocalLoanService {
-  final LoanStore _loanStore;
-
-  LocalLoanService(this._loanStore);
-
-  Future<void> update(String id, Loan updatingLoan) async {
-    final currentLoan = await _loanStore.get(id);
-    if (currentLoan != null && currentLoan.amount != updatingLoan.amount) {
-      // the loan amount is changed, remaining amount should be re-calculated
-      _loanStore.save(
-        updatingLoan.copyWith(
-          remainingAmount:
-              (currentLoan.remainingAmount ?? 0) +
-              (updatingLoan.amount - currentLoan.amount),
-        ),
-      );
-    } else {
-      _loanStore.save(updatingLoan);
     }
   }
 }

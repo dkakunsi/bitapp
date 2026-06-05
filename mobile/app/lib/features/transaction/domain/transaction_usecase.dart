@@ -12,14 +12,17 @@ class TransactionUseCase {
   final TransactionApi _transactionApi;
   final TransactionStore _transactionStore;
   final ConfigurationStore _configurationStore;
-  final LocalTansactionService _localTansactionService;
+  final LocalTransactionService _localTransactionService;
 
-  TransactionUseCase(
-    this._transactionApi,
-    this._transactionStore,
-    this._configurationStore,
-    this._localTansactionService,
-  );
+  TransactionUseCase({
+    required TransactionApi transactionApi,
+    required TransactionStore transactionStore,
+    required ConfigurationStore configurationStore,
+    required LocalTransactionService localTransactionService,
+  }) : _transactionApi = transactionApi,
+       _transactionStore = transactionStore,
+       _configurationStore = configurationStore,
+       _localTransactionService = localTransactionService;
 
   Future<ProcessingResult<void>> addTransaction(Transaction transaction) async {
     try {
@@ -27,7 +30,7 @@ class TransactionUseCase {
         final result = await _transactionApi.add(transaction.toModel());
         await _transactionStore.save(result);
       } else {
-        await _localTansactionService.save(transaction);
+        await _localTransactionService.save(transaction);
       }
       return ProcessingResult();
     } on Exception catch (e) {
@@ -44,7 +47,7 @@ class TransactionUseCase {
       } else {
         final transactionModel = await _transactionStore.get(id);
         await _transactionStore.delete(id);
-        await _localTansactionService.postDeletion(transactionModel!);
+        await _localTransactionService.postDeletion(transactionModel!);
       }
       return ProcessingResult();
     } on Exception catch (e) {
@@ -69,7 +72,9 @@ class TransactionUseCase {
       }
 
       final transactions = await Future.wait(
-        transactionModels.map((model) => _localTansactionService.buildTransaction(model)),
+        transactionModels.map(
+          (model) => _localTransactionService.buildTransaction(model),
+        ),
       );
       return ProcessingResult(data: transactions);
     } on Exception catch (e) {
@@ -84,7 +89,9 @@ class TransactionUseCase {
     try {
       final transactionModels = await _transactionStore.getList(userId);
       final transactions = await Future.wait(
-        transactionModels.map((model) => _localTansactionService.buildTransaction(model)),
+        transactionModels.map(
+          (model) => _localTransactionService.buildTransaction(model),
+        ),
       );
       return ProcessingResult(data: transactions);
     } on Exception catch (e) {
@@ -97,9 +104,13 @@ class TransactionUseCase {
     required String accountId,
   }) async {
     try {
-      final transactionModels = await _transactionStore.getListByAccount(accountId);
+      final transactionModels = await _transactionStore.getListByAccount(
+        accountId,
+      );
       final transactions = await Future.wait(
-        transactionModels.map((model) => _localTansactionService.buildTransaction(model)),
+        transactionModels.map(
+          (model) => _localTransactionService.buildTransaction(model),
+        ),
       );
       return ProcessingResult(data: transactions);
     } on Exception catch (e) {
@@ -116,7 +127,9 @@ class TransactionUseCase {
     try {
       final transactionModels = await _transactionStore.getListByLoan(loanId);
       final transactions = await Future.wait(
-        transactionModels.map((model) => _localTansactionService.buildTransaction(model)),
+        transactionModels.map(
+          (model) => _localTransactionService.buildTransaction(model),
+        ),
       );
       return ProcessingResult(data: transactions);
     } on Exception catch (e) {

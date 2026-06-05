@@ -1,6 +1,6 @@
 import 'package:bitapp/common/data/model/object_status.dart';
-import 'package:bitapp/features/account/data/account.dart';
-import 'package:bitapp/features/loan/data/loan.dart';
+import 'package:bitapp/features/account/domain/account.dart';
+import 'package:bitapp/features/loan/domain/loan.dart';
 import 'package:bitapp/features/transaction/data/transaction_model.dart';
 import 'package:bitapp/features/transaction/domain/transaction_category.dart';
 import 'package:bitapp/features/transaction/domain/transaction_type.dart';

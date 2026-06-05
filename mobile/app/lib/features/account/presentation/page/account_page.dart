@@ -59,7 +59,7 @@ class AccountPage extends AppTabPage {
 
   @override
   void onLoad(BuildContext context) {
-    context.read<AccountBloc>().add(GetAccounts(userId: context.userId));
+    context.read<AccountBloc>().add(GetAccounts(user: context.user!));
     context.read<SummaryBloc>().add(CalculateSummary(userId: context.userId));
   }
 

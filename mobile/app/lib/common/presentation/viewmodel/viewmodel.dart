@@ -25,15 +25,6 @@ abstract class DateViewModel extends ViewModel {
   DateTime? get date;
 }
 
-@Deprecated('Use context etension instead')
-abstract class ImageViewModel extends ViewModel {
-  ImageProvider get image;
-
-  static ImageProvider defaultImage = const AssetImage(
-    'assets/images/default.png',
-  );
-}
-
 abstract class ListViewModel extends ViewModel
     implements Comparable<ListViewModel> {
   String get title;

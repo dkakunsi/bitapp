@@ -2,10 +2,10 @@ import 'package:bitapp/common/presentation/app_style.dart';
 import 'package:bitapp/common/presentation/widget/app_button.dart';
 import 'package:bitapp/common/presentation/widget/app_form.dart';
 import 'package:bitapp/common/presentation/widget/app_modal.dart';
+import 'package:bitapp/features/account/domain/account_type.dart';
 import 'package:bitapp/features/authentication/extension/session_extension.dart';
 import 'package:bitapp/l10n/localization_extension.dart';
 import 'package:bitapp/features/account/presentation/bloc/account_bloc.dart';
-import 'package:bitapp/features/account/data/account.dart';
 import 'package:bitapp/features/account/presentation/viewmodel/account_viewmodel.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
@@ -143,7 +143,7 @@ class AccountFormState extends AppFormState<AccountForm, AccountViewModel> {
   void _createAccount(BuildContext context) {
     context.read<AccountBloc>().add(
       AddAccount(
-        userId: context.userId,
+        user: context.user!,
         name: _nameController.text,
         type: _accountType,
         themeColor: _selectedColor.value.toRadixString(16),
@@ -155,7 +155,7 @@ class AccountFormState extends AppFormState<AccountForm, AccountViewModel> {
     context.read<AccountBloc>().add(
       UpdateAccount(
         id: viewModel!.id!,
-        userId: context.userId,
+        user: context.user!,
         name: _nameController.text,
         type: _accountType,
         themeColor: _selectedColor.value.toRadixString(16),

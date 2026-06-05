@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:bitapp/features/authentication/domain/usecase/authentication_usecase.dart';
+import 'package:bitapp/features/authentication/domain/authentication_usecase.dart';
 import 'package:bitapp/features/configuration/presentation/bloc/configuration_bloc.dart';
 import 'package:bitapp/features/user/presentation/bloc/user_bloc.dart';
 import 'package:equatable/equatable.dart';

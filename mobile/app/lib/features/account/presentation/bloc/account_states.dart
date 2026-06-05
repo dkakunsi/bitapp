@@ -41,7 +41,7 @@ class AccountsRetrieved extends AccountState implements ListState {
 
   @override
   List<ListViewModel> get items =>
-      _accounts.map((e) => AccountViewModel(e)).toList();
+      _accounts.map((e) => AccountViewModel(account: e)).toList();
 }
 
 class AccountRetrieved extends AccountState implements ObjectState {
@@ -50,5 +50,5 @@ class AccountRetrieved extends AccountState implements ObjectState {
   const AccountRetrieved(this._account);
 
   @override
-  AccountViewModel get object => AccountViewModel(_account);
+  AccountViewModel get object => AccountViewModel(account: _account);
 }

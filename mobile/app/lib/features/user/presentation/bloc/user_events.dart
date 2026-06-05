@@ -8,11 +8,11 @@ abstract class UserEvent extends Equatable {
 }
 
 class RegisterUser extends UserEvent {
+  final String userId;
   final String name;
   final String email;
   final String? phone;
   final String? photoUrl;
-  final String userId;
 
   const RegisterUser({
     required this.userId,

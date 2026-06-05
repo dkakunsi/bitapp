@@ -4,7 +4,6 @@ import 'package:bitapp/common/data/model/api_data.dart';
 import 'package:bitapp/common/data/model/object_status.dart';
 import 'package:bitapp/common/data/model/store_data.dart';
 import 'package:bitapp/common/util/formatter.dart';
-import 'package:bitapp/features/transaction/data/transaction_model.dart';
 import 'package:bitapp/features/transaction/domain/transaction_category.dart';
 import 'package:bitapp/features/transaction/domain/transaction_type.dart';
 import 'package:flutter/material.dart';

@@ -92,7 +92,7 @@ class UserScreenContent extends AppScreenContent {
 
   @override
   Widget build(BuildContext context) {
-    final user = context.user;
+    final user = context.userViewModel;
     if (user == null) {
       return Container();
     }

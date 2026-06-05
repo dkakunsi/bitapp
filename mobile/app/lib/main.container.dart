@@ -17,43 +17,68 @@ Future<void> registerIocContainer() async {
   final loanApi = LoanApi(configurationStore: configurationStore);
   final transactionApi = TransactionApi(configurationStore: configurationStore);
 
-  final localTransactionService = LocalTansactionService(
-    transactionStore,
-    accountStore,
-    loanStore,
+  final userRepository = UserRepository(
+    userApi: userApi,
+    userStore: userStore,
+    configurationStore: configurationStore,
+  );
+  final accountRepository = AccountRepository(
+    accountApi: accountApi,
+    accountStore: accountStore,
+    configurationStore: configurationStore,
+  );
+  final loanRepository = LoanRepository(
+    loanApi: loanApi,
+    loanStore: loanStore,
+    configurationStore: configurationStore,
+  );
+
+  final localTransactionService = LocalTransactionService(
+    transactionStore: transactionStore,
+    accountStore: accountStore,
+    loanStore: loanStore,
   );
   final localLoanService = LocalLoanService(loanStore);
 
   addInstance<ConfigurationStore>(configurationStore);
 
   addInstance<ConfigurationUseCase>(ConfigurationUseCase(configurationStore));
-  addInstance<UserUseCase>(UserUseCase(userApi, userStore, configurationStore));
+  addInstance<UserUseCase>(UserUseCase(userRepository));
   addInstance<AuthenticationUseCase>(
     AuthenticationUseCase(authenticationApi: googleAuthApi),
   );
   addInstance<AccountUseCase>(
     AccountUseCase(
-      accountApi,
-      accountStore,
-      transactionStore,
-      configurationStore,
+      accountRepository: accountRepository,
+      transactionStore: transactionStore,
     ),
   );
   addInstance<TransactionUseCase>(
     TransactionUseCase(
-      transactionApi,
-      transactionStore,
-      configurationStore,
-      localTransactionService,
+      transactionApi: transactionApi,
+      transactionStore: transactionStore,
+      configurationStore: configurationStore,
+      localTransactionService: localTransactionService,
     ),
   );
   addInstance<LoanUseCase>(
-    LoanUseCase(loanApi, loanStore, configurationStore, localLoanService),
+    LoanUseCase(
+      configurationStore: configurationStore,
+      localLoanService: localLoanService,
+      loanRepository: loanRepository,
+    ),
   );
   addInstance<SummaryUseCase>(
-    SummaryUseCase(accountStore, loanStore, transactionStore),
+    SummaryUseCase(
+      accountStore: accountStore,
+      loanStore: loanStore,
+      transactionStore: transactionStore,
+    ),
   );
   addInstance<TransactionAnalyticUseCase>(
-    TransactionAnalyticUseCase(transactionStore, localTransactionService),
+    TransactionAnalyticUseCase(
+      transactionStore: transactionStore,
+      localTransactionService: localTransactionService,
+    ),
   );
 }

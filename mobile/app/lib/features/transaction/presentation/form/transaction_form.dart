@@ -3,15 +3,16 @@ import 'package:bitapp/common/presentation/widget/app_form.dart';
 import 'package:bitapp/common/presentation/widget/app_modal.dart';
 import 'package:bitapp/common/presentation/widget/app_select_dialog.dart';
 import 'package:bitapp/common/util/formatter.dart';
-import 'package:bitapp/features/account/data/account.dart';
+import 'package:bitapp/features/account/domain/account.dart';
 import 'package:bitapp/features/authentication/extension/session_extension.dart';
+import 'package:bitapp/features/loan/domain/loan.dart';
+import 'package:bitapp/features/loan/domain/loan_type.dart';
 import 'package:bitapp/features/transaction/domain/transaction_category.dart';
 import 'package:bitapp/features/transaction/domain/transaction_type.dart';
 import 'package:bitapp/l10n/localization_extension.dart';
 import 'package:bitapp/features/account/presentation/bloc/account_bloc.dart';
 import 'package:bitapp/features/loan/presentation/bloc/loan_bloc.dart';
 import 'package:bitapp/features/transaction/presentation/bloc/transaction_bloc.dart';
-import 'package:bitapp/features/loan/data/loan.dart';
 import 'package:bitapp/features/transaction/extension/transaction_category_extension.dart';
 import 'package:bitapp/features/account/presentation/viewmodel/account_viewmodel.dart';
 import 'package:bitapp/features/loan/presentation/viewmodel/loan_viewmodel.dart';
@@ -177,7 +178,7 @@ class TransactionFormState
 
     context.read<TransactionBloc>().add(
       AddTransaction(
-        userId: context.userId,
+        user: context.user!,
         title: _titleController.text,
         description: _descriptionController.text,
         amount: _parsingAmount.isEmpty ? 0 : double.parse(_parsingAmount),
@@ -374,7 +375,7 @@ class TransactionFormState
       >(
         loadData:
             (context) => context.read<AccountBloc>().add(
-              GetAccounts(userId: context.userId),
+              GetAccounts(user: context.user!),
             ),
       ),
     );
@@ -385,7 +386,7 @@ class TransactionFormState
       child: AppSelectDialog<LoanBloc, LoanEvent, LoanState, LoansRetrieved>(
         loadData:
             (context) =>
-                context.read<LoanBloc>().add(GetLoans(userId: context.userId)),
+                context.read<LoanBloc>().add(GetLoans(userId: context.user!.id)),
         filter: (l) {
           l as LoanViewModel;
           return (l.type == LoanType.debt &&

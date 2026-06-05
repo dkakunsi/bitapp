@@ -1,8 +1,8 @@
 import 'package:bitapp/common/util/processing_result.dart';
-import 'package:bitapp/features/loan/data/loan.dart';
 import 'package:bitapp/features/summary/data/summary.dart';
 import 'package:bitapp/features/account/data/account_store.dart';
 import 'package:bitapp/features/loan/data/loan_store.dart';
+import 'package:bitapp/features/loan/domain/loan_type.dart';
 import 'package:bitapp/features/transaction/data/transaction_store.dart';
 import 'package:bitapp/features/transaction/domain/transaction_type.dart';
 import 'package:logging/logging.dart';
@@ -13,7 +13,13 @@ class SummaryUseCase {
   final LoanStore _loanStore;
   final TransactionStore _transactionStore;
 
-  SummaryUseCase(this._accountStore, this._loanStore, this._transactionStore);
+  SummaryUseCase({
+    required AccountStore accountStore,
+    required LoanStore loanStore,
+    required TransactionStore transactionStore,
+  }) : _accountStore = accountStore,
+       _loanStore = loanStore,
+       _transactionStore = transactionStore;
 
   Future<ProcessingResult<Summary>> calculateSummary(String userId) async {
     _logger.info('Summarizing transactions for user');

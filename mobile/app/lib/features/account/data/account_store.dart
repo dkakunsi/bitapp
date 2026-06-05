@@ -1,12 +1,12 @@
 import 'package:bitapp/common/data/app_store.dart';
-import 'package:bitapp/features/account/data/account.dart';
+import 'package:bitapp/features/account/data/account_model.dart';
 import 'package:sembast/sembast_io.dart';
 
-class AccountStore extends AppStore<Account> {
+class AccountStore extends AppStore<AccountModel> {
   AccountStore(Database database) : super(database, 'account');
 
   @override
-  Account from(Map<String, dynamic> data) {
-    return Account.from(data);
+  AccountModel from(Map<String, dynamic> data) {
+    return AccountModel.from(data);
   }
 }

@@ -1,11 +1,9 @@
 import 'package:bitapp/common/data/model/store_data.dart';
-import 'package:bitapp/features/user/data/user.dart';
 import 'package:bitapp/common/util/language.dart';
+import 'package:bitapp/features/user/data/user_model.dart';
 import 'package:flutter/material.dart';
 
-class Configuration extends StoreData {
-  static const String storeId = 'configuration';
-
+class ConfigurationModel implements StoreData {
   @override
   final String id;
 
@@ -27,44 +25,30 @@ class Configuration extends StoreData {
   final bool remoteEnabled;
 
   // User configs
-  final User? user;
+  final UserModel? userModel;
   final String? token;
 
-  Configuration({
-    this.id = storeId,
-    required this.appName,
-    required this.appMotto,
-    required this.language,
-    required this.backendBaseUrl,
-    required this.remoteEnabled,
+  ConfigurationModel({
+    required this.id,
     required this.startColor,
     required this.endColor,
     required this.appLogoUrl,
+    required this.appName,
+    required this.appMotto,
     required this.appVersion,
     required this.buildNumber,
     required this.contact,
     required this.developerName,
-    this.user,
-    this.token,
+    required this.language,
+    required this.backendBaseUrl,
+    required this.remoteEnabled,
+    required this.userModel,
+    required this.token,
   });
 
-  static Configuration defaultConfiguration = Configuration(
-    language: Language.defaultLanguage,
-    backendBaseUrl: 'http://localhost:8081',
-    remoteEnabled: false,
-    startColor: Colors.white,
-    endColor: Colors.cyanAccent,
-    appLogoUrl: 'assets/images/default.png',
-    appName: 'Cortech App',
-    appMotto: 'My Cortech App',
-    appVersion: '1.0.0',
-    buildNumber: '1',
-    contact: 'contact@cortech.com',
-    developerName: 'Cortech',
-  );
-
-  static Configuration from(Map<String, dynamic> json) {
-    return Configuration(
+  static ConfigurationModel from(Map<String, dynamic> json) {
+    return ConfigurationModel(
+      id: json['id'] as String,
       appName: json['appName'] as String,
       appMotto: json['appMotto'] as String,
       appLogoUrl: json['appLogoUrl'] as String,
@@ -77,9 +61,9 @@ class Configuration extends StoreData {
       language: Language.valueOf(json['language'] as String),
       backendBaseUrl: json['backendBaseUrl'] as String,
       remoteEnabled: json['remoteEnabled'] as bool,
-      user:
+      userModel:
           json['user'] != null
-              ? User.from(json['user'] as Map<String, dynamic>)
+              ? UserModel.from(json['user'] as Map<String, dynamic>)
               : null,
       token: json['token'] as String?,
     );
@@ -100,19 +84,19 @@ class Configuration extends StoreData {
       'startColor': startColor.toARGB32(),
       'endColor': endColor.toARGB32(),
       'appLogoUrl': appLogoUrl,
-      'user': user?.toStoreJson(),
+      'user': userModel?.toStoreJson(),
       'token': token,
     };
   }
 
-  Configuration copyWith({
+  ConfigurationModel copyWith({
     String? newAppLogoUrl,
     Color? newStartColor,
     Color? newEndColor,
     Language? newLanguage,
     String? newBackendBaseUrl,
     bool? newRemoteEnabled,
-    User? newUser,
+    UserModel? newUserModel,
     String? newToken,
     String? newAppName,
     String? newAppMotto,
@@ -121,14 +105,15 @@ class Configuration extends StoreData {
     String? newContact,
     String? newDeveloperName,
   }) {
-    return Configuration(
+    return ConfigurationModel(
+      id: id,
       appLogoUrl: newAppLogoUrl ?? appLogoUrl,
       startColor: newStartColor ?? startColor,
       endColor: newEndColor ?? endColor,
       language: newLanguage ?? language,
       backendBaseUrl: newBackendBaseUrl ?? backendBaseUrl,
       remoteEnabled: newRemoteEnabled ?? remoteEnabled,
-      user: newUser ?? user,
+      userModel: newUserModel ?? userModel,
       token: newToken ?? token,
       appName: newAppName ?? appName,
       appMotto: newAppMotto ?? appMotto,
@@ -139,8 +124,9 @@ class Configuration extends StoreData {
     );
   }
 
-  Configuration copyWithoutSession() {
-    return Configuration(
+  ConfigurationModel copyWithoutSession() {
+    return ConfigurationModel(
+      id: id,
       appName: appName,
       appLogoUrl: appLogoUrl,
       startColor: startColor,
@@ -153,7 +139,7 @@ class Configuration extends StoreData {
       buildNumber: buildNumber,
       contact: contact,
       developerName: developerName,
-      user: null,
+      userModel: null,
       token: null,
     );
   }
