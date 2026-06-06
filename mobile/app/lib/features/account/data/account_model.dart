@@ -46,8 +46,7 @@ class AccountModel implements ApiData, StoreData {
   };
 
   static List<AccountModel> fromListResponsePayload(String s) {
-    final Map<String, dynamic> data = jsonDecode(s);
-    final List<dynamic> accounts = data['accounts'];
+    final List<dynamic> accounts = jsonDecode(s);
     return accounts.isNotEmpty ? accounts.map((e) => from(e)).toList() : [];
   }
 
@@ -66,7 +65,7 @@ class AccountModel implements ApiData, StoreData {
             : ObjectStatus.active;
     return AccountModel(
       id: data['id'],
-      userId: data['userId'],
+      userId: data['user'],
       name: data['name'],
       balance: balance,
       type: type,

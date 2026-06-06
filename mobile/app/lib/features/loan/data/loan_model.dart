@@ -84,8 +84,7 @@ class LoanModel implements ApiData, StoreData {
   };
 
   static List<LoanModel> fromListResponsePayload(String s) {
-    final Map<String, dynamic> data = jsonDecode(s);
-    final List<dynamic> loans = data['loans'];
+    final List<dynamic> loans = jsonDecode(s);
     return loans.isNotEmpty ? loans.map((e) => from(e)).toList() : [];
   }
 

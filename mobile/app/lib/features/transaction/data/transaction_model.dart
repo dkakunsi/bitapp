@@ -80,8 +80,7 @@ class TransactionModel implements ApiData, StoreData {
   }
 
   static List<TransactionModel> fromListResponsePayload(String response) {
-    final Map<String, dynamic> data = jsonDecode(response);
-    final List<dynamic> transactions = data['transactions'];
+    final List<dynamic> transactions = jsonDecode(response);
     return transactions.isNotEmpty
         ? transactions.map((e) => from(e)).toList()
         : [];
@@ -94,7 +93,7 @@ class TransactionModel implements ApiData, StoreData {
 
   static TransactionModel from(dynamic data) => TransactionModel(
     id: data['id'],
-    userId: data['userId'],
+    userId: data['user'],
     title: data['title'],
     description: data['description'],
     amount: (data['amount'] as num).toDouble(),
