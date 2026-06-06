@@ -10,10 +10,10 @@
   ],
   "mounts": [
     "type=volume,source=docker,target=/var/lib/docker",
-    "type=volume,source=pub-cache,target=/root/.pub-cache",
     "type=volume,source=android-sdk,target=/opt/android-sdk",
-    "type=volume,source=gradle-cache,target=/home/vscode/.gradle",
-    "type=volume,source=android-keystore,target=/home/vscode/.android"
+    "type=volume,source=pub-cache,target=/root/.pub-cache",
+    "type=volume,source=gradle-cache,target=/root/.gradle",
+    "type=volume,source=android-keystore,target=/root/.android"
   ],
   "forwardPorts": [
     8081,
