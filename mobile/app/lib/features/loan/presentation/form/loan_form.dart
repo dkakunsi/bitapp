@@ -50,11 +50,11 @@ class LoanFormState extends AppFormState<LoanForm, LoanViewModel> {
 
     if (viewModel != null) {
       _titleController.text = viewModel!.title;
-      _descriptionController.text = viewModel!.description;
+      _descriptionController.text = viewModel!.description ?? '';
       _amountController.text = viewModel!.principalAmount.toCurrencyFormat(
         context,
       );
-      _partyNameController.text = viewModel!.partyName;
+      _partyNameController.text = viewModel!.partyName ?? '';
       _loanDate = viewModel!.date;
       _loanTime = viewModel!.time;
     }

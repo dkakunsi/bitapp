@@ -59,10 +59,10 @@ class LoanSummary extends StatelessWidget {
                                       ),
                                     )
                                     : CurrencyAmount(
-                                      amount: state.object.amount,
+                                      amount: state.object.listAmount,
                                       currency: context.locale.idr,
                                       fontSize: getCurrencyFontSize(
-                                        state.object.amount,
+                                        state.object.listAmount,
                                       ),
                                       color: state.object.categoryColor,
                                     ),

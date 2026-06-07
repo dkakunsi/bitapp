@@ -93,19 +93,19 @@ class TransactionFormState
     _transactionTime = TimeOfDay.now();
 
     if (_loanViewModel != null) {
-      _loan = _loanViewModel!.loan;
+      _loan = _loanViewModel!;
       _loanType = _loanViewModel!.type;
       _loanController.text = _loanViewModel!.title;
-      _amountController.text = _loanViewModel!.amount.toCurrencyFormat(context);
+      _amountController.text = _loanViewModel!.listAmount.toCurrencyFormat(context);
     }
 
     if (_sourceAccountViewModel != null) {
-      _sourceAccount = _sourceAccountViewModel!.account;
+      _sourceAccount = _sourceAccountViewModel!;
       _sourceController.text = _sourceAccountViewModel!.name;
     }
 
     if (_destinationAccountViewModel != null) {
-      _destinationAccount = _destinationAccountViewModel!.account;
+      _destinationAccount = _destinationAccountViewModel!;
       _destinationController.text = _destinationAccountViewModel!.name;
     }
 
@@ -302,7 +302,7 @@ class TransactionFormState
             if (pickedAccount != null) {
               _sourceController.text = pickedAccount.name;
               setState(() {
-                _sourceAccount = pickedAccount.account;
+                _sourceAccount = pickedAccount;
               });
             }
           },
@@ -324,7 +324,7 @@ class TransactionFormState
             if (pickedAccount != null) {
               _destinationController.text = pickedAccount.name;
               setState(() {
-                _destinationAccount = pickedAccount.account;
+                _destinationAccount = pickedAccount;
               });
             }
           },
@@ -349,10 +349,10 @@ class TransactionFormState
             if (pickedLoan != null) {
               _loanController.text = pickedLoan.title;
               _amountController.text =
-                  await pickedLoan.amount.toCurrencyFormatAsync();
-              _amount = pickedLoan.amount.toString();
+                  await pickedLoan.listAmount.toCurrencyFormatAsync();
+              _amount = pickedLoan.listAmount.toString();
               setState(() {
-                _loan = pickedLoan.loan;
+                _loan = pickedLoan;
               });
             }
           },

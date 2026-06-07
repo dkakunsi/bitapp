@@ -2,6 +2,7 @@ import 'package:bitapp/features/configuration/data/configuration_store.dart';
 import 'package:bitapp/features/loan/data/loan_api.dart';
 import 'package:bitapp/features/loan/data/loan_model.dart';
 import 'package:bitapp/features/loan/data/loan_store.dart';
+import 'package:bitapp/features/loan/domain/loan.dart';
 import 'package:uuid/uuid.dart';
 
 class LoanRepository {
@@ -17,17 +18,19 @@ class LoanRepository {
        _loanStore = loanStore,
        _configurationStore = configurationStore;
 
-  Future<LoanModel> addLoan(LoanModel loan) async {
+  Future<Loan> addLoan(Loan loan) async {
+    final model = LoanModel.fromEntity(loan);
     LoanModel? result;
     if (await _configurationStore.isRemoteEnabled) {
-      result = await _loanApi.add(loan);
+      result = await _loanApi.add(model);
     }
-    await _loanStore.save(result ?? loan.copyWith(id: Uuid().v4()));
+    await _loanStore.save(result ?? model.copyWith(id: Uuid().v4()));
     return result!;
   }
 
-  Future<LoanModel> updateLoan(String id, LoanModel loan) async {
-    final result = await _loanApi.update(id, loan);
+  Future<Loan> updateLoan(String id, Loan loan) async {
+    final model = LoanModel.fromEntity(loan);
+    final result = await _loanApi.update(id, model);
     await _loanStore.save(result);
     return result;
   }
@@ -39,7 +42,7 @@ class LoanRepository {
     await _loanStore.delete(id);
   }
 
-  Future<List<LoanModel>> fetchByUser(String userId) async {
+  Future<List<Loan>> fetchByUser(String userId) async {
       List<LoanModel> loans;
       if (await _configurationStore.isRemoteEnabled) {
         loans = await _loanApi.fetchByUser(userId);
@@ -53,11 +56,11 @@ class LoanRepository {
       return loans;
   }
 
-  Future<List<LoanModel>> getByUser(String userId) async {
+  Future<List<Loan>> getByUser(String userId) async {
     return await _loanStore.getList(userId);
   }
 
-  Future<LoanModel?> getById(String id) async {
+  Future<Loan?> getById(String id) async {
     return await _loanStore.get(id);
   }
 }

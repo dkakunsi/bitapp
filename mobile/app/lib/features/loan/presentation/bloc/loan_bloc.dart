@@ -27,32 +27,32 @@ class LoanBloc extends Bloc<LoanEvent, LoanState> {
 
   void _fetchLoans(FetchLoans event, Emitter<LoanState> emit) async {
     emit(LoanProcessing());
-    final loadingResult = await _loanUseCase.fetchLoans(event.userId);
-    if (loadingResult.isFailure) {
+    final fetchResult = await _loanUseCase.fetchLoans(event.userId);
+    if (fetchResult.isFailure) {
       emit(LoansFetchingFailed());
       return;
     }
-    emit(LoansRetrieved(loadingResult.data));
+    emit(LoansRetrieved(fetchResult.data));
   }
 
   void _getLoans(GetLoans event, Emitter<LoanState> emit) async {
     emit(LoanProcessing());
-    final loadingResult = await _loanUseCase.getLoans(event.userId);
-    if (loadingResult.isFailure) {
+    final fetchResult = await _loanUseCase.getLoans(event.userId);
+    if (fetchResult.isFailure) {
       emit(LoansRetrievalFailed());
       return;
     }
-    emit(LoansRetrieved(loadingResult.data));
+    emit(LoansRetrieved(fetchResult.data));
   }
 
   Future<void> _getLoan(GetLoan event, Emitter<LoanState> emit) async {
     emit(LoanProcessing());
-    final loadingResult = await _loanUseCase.getLoan(event.id);
-    if (loadingResult.isFailure) {
+    final fetchResult = await _loanUseCase.getLoan(event.id);
+    if (fetchResult.isFailure) {
       emit(LoanRetrievalFailed());
       return;
     }
-    emit(LoanRetrieved(loadingResult.data));
+    emit(LoanRetrieved(fetchResult.data));
   }
 
   Future<void> _addLoan(AddLoan event, Emitter<LoanState> emit) async {

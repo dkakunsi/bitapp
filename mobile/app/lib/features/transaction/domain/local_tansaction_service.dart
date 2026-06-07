@@ -141,10 +141,6 @@ class LocalTransactionService {
     if (loanId == null) {
       return null;
     }
-    final loanModel = await _loanStore.get(loanId);
-    if (loanModel == null) {
-      return null;
-    }
-    return Loan.fromModel(loanModel);
+    return await _loanStore.get(loanId);
   }
 }

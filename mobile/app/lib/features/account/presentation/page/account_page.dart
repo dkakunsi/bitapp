@@ -104,16 +104,15 @@ class AccountList extends StatelessWidget {
       },
       showSubtitle: true,
       showCategory: true,
-      getIcon: (pl) => (pl as AccountViewModel).icon,
+      getIcon: (pl) => pl.icon,
       hightlight: (item) {
-        item as AccountViewModel;
         return [
-          ColoredCategory(color: item.categoryColor),
+          ColoredCategory(color: item.categoryColor!),
           SizedBox(width: 8),
           CurrencyAmount(
-            amount: item.amount,
+            amount: item.listAmount,
             currency: context.locale.idr,
-            color: item.amountColor,
+            color: item.listAmountColor,
             fontWeight: FontWeight.bold,
           ),
         ];

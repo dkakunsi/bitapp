@@ -4,35 +4,24 @@ import 'package:bitapp/common/data/model/api_data.dart';
 import 'package:bitapp/common/data/model/object_status.dart';
 import 'package:bitapp/common/data/model/store_data.dart';
 import 'package:bitapp/common/util/formatter.dart';
+import 'package:bitapp/features/loan/domain/loan.dart';
 import 'package:bitapp/features/loan/domain/loan_type.dart';
 import 'package:flutter/material.dart';
 
-class LoanModel implements ApiData, StoreData {
-  @override
-  final String? id;
-  final String title;
-  final double amount;
-  final DateTime date;
-  final TimeOfDay time;
-  final String? partyName;
-  final String? description;
-  final LoanType type;
-  final String userId;
-  final double? remainingAmount;
-  final ObjectStatus? status;
-
+class LoanModel extends Loan implements ApiData, StoreData {
+  
   LoanModel({
-    required this.id,
-    required this.title,
-    required this.amount,
-    required this.date,
-    required this.time,
-    required this.partyName,
-    required this.description,
-    required this.type,
-    required this.userId,
-    required this.remainingAmount,
-    required this.status,
+    required super.id,
+    required super.title,
+    required super.amount,
+    required super.date,
+    required super.time,
+    required super.partyName,
+    required super.description,
+    required super.type,
+    required super.userId,
+    required super.remainingAmount,
+    required super.status,
   });
 
   LoanModel copyWith({
@@ -85,15 +74,15 @@ class LoanModel implements ApiData, StoreData {
 
   static List<LoanModel> fromListResponsePayload(String s) {
     final List<dynamic> loans = jsonDecode(s);
-    return loans.isNotEmpty ? loans.map((e) => from(e)).toList() : [];
+    return loans.isNotEmpty ? loans.map((e) => LoanModel.from(e)).toList() : [];
   }
 
-  static LoanModel fromResponsePayload(String s) {
+  factory LoanModel.fromResponsePayload(String s) {
     final data = jsonDecode(s);
-    return from(data);
+    return LoanModel.from(data);
   }
 
-  static LoanModel from(dynamic data) {
+  factory LoanModel.from(dynamic data) {
     final remainingAmount =
         data['remainingAmount'] != null
             ? (data['remainingAmount'] as num).toDouble()
@@ -116,4 +105,18 @@ class LoanModel implements ApiData, StoreData {
       status: status,
     );
   }
+
+  factory LoanModel.fromEntity(Loan loan) => LoanModel(
+    id: loan.id,
+    title: loan.title,
+    description: loan.description,
+    amount: loan.amount,
+    partyName: loan.partyName,
+    date: loan.date,
+    time: loan.time,
+    type: loan.type,
+    userId: loan.userId,
+    remainingAmount: loan.remainingAmount,
+    status: loan.status,
+  );
 }

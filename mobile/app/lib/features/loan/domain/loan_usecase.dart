@@ -22,7 +22,7 @@ class LoanUseCase {
 
   Future<ProcessingResult<void>> addLoan(Loan loan) async {
     try {
-      await _loanRepository.addLoan(loan.toModel());
+      await _loanRepository.addLoan(LoanModel.fromEntity(loan));
       return ProcessingResult();
     } on Exception catch (e) {
       _logger.warning('Error creating loan: $e');
@@ -33,7 +33,7 @@ class LoanUseCase {
   Future<ProcessingResult<void>> updateLoan(String id, Loan loan) async {
     try {
       if (await _configurationStore.isRemoteEnabled) {
-        await _loanRepository.updateLoan(id, loan.toModel());
+        await _loanRepository.updateLoan(id, LoanModel.fromEntity(loan));
       } else {
         await _localLoanService.update(id, loan);
       }
@@ -56,8 +56,7 @@ class LoanUseCase {
 
   Future<ProcessingResult<List<Loan>>> fetchLoans(String userId) async {
     try {
-      List<LoanModel> loanModels = await _loanRepository.fetchByUser(userId);
-      final loans = loanModels.map((model) => Loan.fromModel(model)).toList();
+      List<Loan> loans = await _loanRepository.fetchByUser(userId);
       return ProcessingResult(data: loans);
     } on Exception catch (e) {
       _logger.warning('Error fetching loans: $e');
@@ -67,8 +66,7 @@ class LoanUseCase {
 
   Future<ProcessingResult<List<Loan>>> getLoans(String userId) async {
     try {
-      final loanModels = await _loanRepository.getByUser(userId);
-      final loans = loanModels.map((model) => Loan.fromModel(model)).toList();
+      final loans = await _loanRepository.getByUser(userId);
       return ProcessingResult(data: loans);
     } on Exception catch (e) {
       _logger.warning('Error getting loans from store: $e');
@@ -78,11 +76,10 @@ class LoanUseCase {
 
   Future<ProcessingResult<Loan>> getLoan(String id) async {
     try {
-      final loanModel = await _loanRepository.getById(id);
-      if (loanModel == null) {
+      final loan = await _loanRepository.getById(id);
+      if (loan == null) {
         return ProcessingResult(exception: Exception('Loan not found'));
       }
-      final loan = Loan.fromModel(loanModel);
       return ProcessingResult(data: loan);
     } on Exception catch (e) {
       _logger.warning('Error getting loan from store: $e');

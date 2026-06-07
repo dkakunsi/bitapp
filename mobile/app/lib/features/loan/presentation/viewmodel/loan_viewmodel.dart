@@ -4,49 +4,57 @@ import 'package:bitapp/features/loan/domain/loan.dart';
 import 'package:bitapp/features/loan/domain/loan_type.dart';
 import 'package:flutter/material.dart';
 
-class LoanViewModel
-    implements
-        ListViewModel,
-        DateViewModel,
-        CategoryViewModel,
-        IconViewModel,
-        AmountViewModel {
-  final Loan loan;
+class LoanViewModel extends Loan implements ListViewModel {
 
-  LoanViewModel(this.loan);
+  LoanViewModel({
+    super.id,
+    required super.userId,
+    required super.title,
+    required super.amount,
+    required super.date,
+    required super.time,
+    required super.type,
+    super.description,
+    super.partyName,
+    super.remainingAmount,
+  });
+        
+  LoanViewModel.fromLoan(Loan loan)
+    : this(
+        id: loan.id,
+        userId: loan.userId,
+        title: loan.title,
+        amount: loan.amount,
+        date: loan.date,
+        time: loan.time,
+        type: loan.type,
+        description: loan.description,
+        partyName: loan.partyName,
+        remainingAmount: loan.remainingAmount,
+      );
 
-  String? get id => loan.id;
+  double get principalAmount => amount;
 
-  double get principalAmount => loan.amount;
-
-  String get description => loan.description ?? '';
-
-  String get partyName => loan.partyName ?? '';
-
-  TimeOfDay get time => loan.time;
-
-  LoanType get type => loan.type;
-
-  bool get isPaid => loan.remainingAmount == 0;
+  bool get isPaid => remainingAmount == 0;
 
   Color get loanColor => isPaid ? AppColor.green : categoryColor;
 
   @override
-  String? get objectType => loan.type.value;
+  IconData get icon =>
+      type == LoanType.debt ? Icons.assignment_late : Icons.assignment_return;
 
   @override
-  String get subtitle => loan.partyName ?? '';
+  String? get objectType => type.value;
 
   @override
-  String get category => loan.type.value;
+  String get subtitle => partyName ?? '';
+
+  @override
+  String get category => type.value;
 
   @override
   Color get categoryColor =>
-      loan.type == LoanType.debt ? AppColor.red : AppColor.green;
-
-  @override
-  IconData get icon =>
-      type == LoanType.debt ? Icons.assignment_late : Icons.assignment_return;
+      type == LoanType.debt ? AppColor.red : AppColor.green;
 
   @override
   int compareTo(ListViewModel other) {
@@ -60,18 +68,9 @@ class LoanViewModel
   }
 
   @override
-  DateTime get date => loan.date;
+  double get listAmount => remainingAmount ?? amount;
 
   @override
-  String get title => loan.title;
-
-  @override
-  double get amount => loan.remainingAmount ?? loan.amount;
-
-  @override
-  Color get amountColor =>
-      loan.type == LoanType.debt ? AppColor.red : AppColor.green;
-
-  @override
-  bool get showPaid => true;
+  Color get listAmountColor =>
+      type == LoanType.debt ? AppColor.red : AppColor.green;
 }

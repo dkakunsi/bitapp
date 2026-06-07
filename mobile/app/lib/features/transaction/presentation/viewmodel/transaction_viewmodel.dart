@@ -5,13 +5,7 @@ import 'package:bitapp/features/transaction/domain/transaction.dart';
 import 'package:bitapp/features/transaction/domain/transaction_type.dart';
 import 'package:flutter/material.dart';
 
-class TransactionViewModel extends Transaction
-    implements
-        ListViewModel,
-        DateViewModel,
-        CategoryViewModel,
-        IconViewModel,
-        AmountViewModel {
+class TransactionViewModel extends Transaction implements ListViewModel {
   TransactionViewModel({
     super.id,
     required super.userId,
@@ -51,13 +45,13 @@ class TransactionViewModel extends Transaction
   LoanType? get loanType => loan?.type;
 
   @override
+  IconData get icon => transactionCategory?.icon ?? Icons.highlight_off;
+
+  @override
   String get objectType => type.value;
 
   @override
   String get category => type.value;
-
-  @override
-  IconData get icon => transactionCategory?.icon ?? Icons.highlight_off;
 
   @override
   Color get categoryColor =>
@@ -82,13 +76,13 @@ class TransactionViewModel extends Transaction
   }
 
   @override
-  Color get amountColor =>
+  Color get listAmountColor =>
       {
         TransactionType.debit: AppColor.red,
         TransactionType.credit: AppColor.green,
       }[type] ??
       AppColor.black;
-
+  
   @override
-  bool get showPaid => false;
+  double get listAmount => amount;
 }
