@@ -1,67 +1,68 @@
 import 'package:bitapp/common/presentation/app_style.dart';
 import 'package:bitapp/common/presentation/viewmodel/viewmodel.dart';
-import 'package:bitapp/features/loan/data/loan.dart';
-import 'package:bitapp/features/transaction/data/transaction.dart';
+import 'package:bitapp/features/loan/domain/loan_type.dart';
+import 'package:bitapp/features/transaction/domain/transaction.dart';
+import 'package:bitapp/features/transaction/domain/transaction_type.dart';
 import 'package:flutter/material.dart';
 
-class TransactionViewModel
-    implements
-        ListViewModel,
-        DateViewModel,
-        CategoryViewModel,
-        IconViewModel,
-        AmountViewModel {
-  final Transaction _transaction;
+class TransactionViewModel extends Transaction implements ListViewModel {
+  TransactionViewModel({
+    super.id,
+    required super.userId,
+    required super.title,
+    required super.amount,
+    required super.date,
+    required super.time,
+    required super.type,
+    required super.transactionCategory,
+    super.description,
+    super.sourceAccount,
+    super.destinationAccount,
+    super.loan,
+    super.status,
+  });
 
-  TransactionViewModel(this._transaction);
+  TransactionViewModel.fromTransaction(Transaction transaction)
+    : this(
+        id: transaction.id,
+        userId: transaction.userId,
+        title: transaction.title,
+        amount: transaction.amount,
+        date: transaction.date,
+        time: transaction.time,
+        type: transaction.type,
+        transactionCategory: transaction.transactionCategory,
+        description: transaction.description,
+        sourceAccount: transaction.sourceAccount,
+        destinationAccount: transaction.destinationAccount,
+        loan: transaction.loan,
+        status: transaction.status,
+      );
 
-  String? get id => _transaction.id;
-
-  TransactionType get transactionType => _transaction.transactionType;
-
-  String get description => _transaction.description ?? '';
-
-  TimeOfDay get time => _transaction.time;
-
-  String get sourceAccountId => _transaction.sourceAccount?.id ?? '';
-  String get sourceAccountName => _transaction.sourceAccount?.name ?? '';
-  String get destinationAccountId => _transaction.destinationAccount?.id ?? '';
-  String get destinationAccountName =>
-      _transaction.destinationAccount?.name ?? '';
-  String get loanId => _transaction.loan?.id ?? '';
-  String get loanTitle => _transaction.loan?.title ?? '';
-  LoanType? get loanType => _transaction.loan?.type;
-
-  @override
-  String get title => _transaction.title;
-
-  @override
-  DateTime get date => _transaction.date;
-
-  @override
-  String get objectType => _transaction.transactionType.value;
-
-  @override
-  String get category => _transaction.transactionType.value;
-
-  TransactionCategory? get transactionCategory => _transaction.category;
+  String get sourceAccountName => sourceAccount?.name ?? '';
+  String get destinationAccountName => destinationAccount?.name ?? '';
+  String get loanTitle => loan?.title ?? '';
+  LoanType? get loanType => loan?.type;
 
   @override
   IconData get icon => transactionCategory?.icon ?? Icons.highlight_off;
+
+  @override
+  String get objectType => type.value;
+
+  @override
+  String get category => type.value;
 
   @override
   Color get categoryColor =>
       {
         TransactionType.debit: AppColor.red,
         TransactionType.credit: AppColor.green,
-      }[_transaction.transactionType] ??
+      }[type] ??
       AppColor.black;
 
   @override
-  String get subtitle =>
-      _transaction.sourceAccount?.name ??
-      _transaction.destinationAccount?.name ??
-      '';
+  String get subtitle => sourceAccount?.name ?? destinationAccount?.name ?? '';
 
   @override
   int compareTo(ListViewModel other) {
@@ -75,16 +76,13 @@ class TransactionViewModel
   }
 
   @override
-  double get amount => _transaction.amount;
-
-  @override
-  Color get amountColor =>
+  Color get listAmountColor =>
       {
         TransactionType.debit: AppColor.red,
         TransactionType.credit: AppColor.green,
-      }[_transaction.transactionType] ??
+      }[type] ??
       AppColor.black;
-
+  
   @override
-  bool get showPaid => false;
+  double get listAmount => amount;
 }

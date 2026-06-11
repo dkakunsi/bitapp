@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:bitapp/common/presentation/bloc/state.dart';
 import 'package:bitapp/common/presentation/viewmodel/viewmodel.dart';
-import 'package:bitapp/features/account/data/account.dart';
+import 'package:bitapp/features/account/domain/account.dart';
+import 'package:bitapp/features/account/domain/account_type.dart';
+import 'package:bitapp/features/account/domain/account_usecase.dart';
 import 'package:bitapp/features/account/presentation/viewmodel/account_viewmodel.dart';
-import 'package:bitapp/features/account/domain/usecase/account_usecase.dart';
+import 'package:bitapp/features/user/domain/user.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -28,7 +30,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     Emitter<AccountState> emit,
   ) async {
     emit(AccountProcessing());
-    final result = await _accountUseCase.fetchAccounts(event.userId);
+    final result = await _accountUseCase.fetchAccounts(event.user.id);
     if (result.isFailure) {
       emit(AccountsFetchingFailed());
       return;
@@ -41,7 +43,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     Emitter<AccountState> emit,
   ) async {
     emit(AccountProcessing());
-    final result = await _accountUseCase.getAccounts(event.userId);
+    final result = await _accountUseCase.getAccounts(event.user.id);
     if (result.isFailure) {
       emit(AccountsRetrievalFailed());
       return;
@@ -62,7 +64,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
   Future<void> _addAccount(AddAccount event, Emitter<AccountState> emit) async {
     emit(AccountProcessing());
     final account = Account(
-      userId: event.userId,
+      userId: event.user.id,
       name: event.name,
       type: AccountType.valueOf(event.type),
       themeColor: event.themeColor,
@@ -82,7 +84,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     emit(AccountProcessing());
     final account = Account(
       id: event.id,
-      userId: event.userId,
+      userId: event.user.id,
       name: event.name,
       type: AccountType.valueOf(event.type),
       themeColor: event.themeColor,

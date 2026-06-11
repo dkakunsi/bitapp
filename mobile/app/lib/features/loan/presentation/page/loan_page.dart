@@ -8,10 +8,10 @@ import 'package:bitapp/common/presentation/widget/loading_indicator.dart';
 import 'package:bitapp/common/util/formatter.dart';
 import 'package:bitapp/features/app/extension/navigation_extension.dart';
 import 'package:bitapp/features/app/presentation/widget/currency_amount.dart';
+import 'package:bitapp/features/loan/domain/loan_type.dart';
 import 'package:bitapp/features/summary/presentation/bloc/summary_bloc.dart';
 import 'package:bitapp/l10n/localization_extension.dart';
 import 'package:bitapp/features/loan/presentation/bloc/loan_bloc.dart';
-import 'package:bitapp/features/loan/data/loan.dart';
 import 'package:bitapp/features/loan/presentation/screen/loan_screen.dart';
 import 'package:bitapp/features/loan/presentation/form/loan_form.dart';
 import 'package:bitapp/features/loan/presentation/viewmodel/loan_viewmodel.dart';
@@ -120,23 +120,22 @@ class LoanList extends StatelessWidget {
         );
       },
       showSubtitle: true,
-      groupByFunction: (pl) => (pl as LoanViewModel).date.toDateFormat(context),
-      getIcon: (pl) => (pl as LoanViewModel).icon,
+      groupByFunction: (pl) => pl.date?.toDateFormat(context) ?? '',
+      getIcon: (pl) => pl.icon,
       hightlight: (item) {
-        item as LoanViewModel;
         return [
-          (item.amount <= 0 && item.showPaid)
+          (item.listAmount <= 0)
               ? Text(
                 context.locale.paid,
                 style: TextStyles.appDetail(
                   fontWeight: FontWeight.bold,
-                  fontColor: item.amountColor,
+                  fontColor: item.listAmountColor,
                 ),
               )
               : CurrencyAmount(
-                amount: item.amount,
+                amount: item.listAmount,
                 currency: context.locale.idr,
-                color: item.amountColor,
+                color: item.listAmountColor,
                 fontWeight: FontWeight.bold,
               ),
         ];

@@ -1,19 +1,19 @@
 import 'package:bitapp/common/data/app_api.dart';
-import 'package:bitapp/features/account/data/account.dart';
+import 'package:bitapp/features/account/data/account_model.dart';
 
-class AccountApi extends AppApi<Account> {
+class AccountApi extends AppApi<AccountModel> {
   AccountApi({required super.configurationStore});
 
   @override
   String get dataName => 'account';
 
   @override
-  List<Account> fromList(String data) {
-    return Account.fromListResponsePayload(data);
+  List<AccountModel> fromList(String data) {
+    return AccountModel.fromListResponsePayload(data);
   }
 
   @override
-  Account from(String data) {
-    return Account.fromResponsePayload(data);
+  AccountModel from(String data) {
+    return AccountModel.fromResponsePayload(data);
   }
 }

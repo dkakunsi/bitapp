@@ -1,8 +1,8 @@
 import 'package:bitapp/common/util/language.dart';
 import 'package:bitapp/common/util/processing_result.dart';
-import 'package:bitapp/features/configuration/data/configuration.dart';
+import 'package:bitapp/features/configuration/domain/configuration.dart';
 import 'package:bitapp/features/configuration/data/configuration_store.dart';
-import 'package:bitapp/features/user/data/user.dart';
+import 'package:bitapp/features/user/domain/user.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
@@ -14,11 +14,11 @@ class ConfigurationUseCase {
 
   Future<ProcessingResult<Configuration>> getConfiguration() async {
     try {
-      final configuration = await _configurationStore.get(
-        Configuration.storeId,
-      );
-      if (configuration != null) {
-        return ProcessingResult(data: configuration);
+      final model = await _configurationStore.get(Configuration.storeId);
+      if (model != null) {
+        final user =
+            model.userModel != null ? User.fromModel(model.userModel!) : null;
+        return ProcessingResult(data: Configuration.from(model, user));
       } else {
         _logger.warning(
           'Configuration not found, returning default configuration',
@@ -53,7 +53,7 @@ class ConfigurationUseCase {
       );
 
       final updatedConfiguration = (existingConfiguration ??
-              Configuration.defaultConfiguration)
+              Configuration.defaultConfiguration.toModel())
           .copyWith(
             newAppName: appName,
             newBackendBaseUrl: backendBaseUrl,
@@ -62,7 +62,7 @@ class ConfigurationUseCase {
             newStartColor: startColor,
             newEndColor: endColor,
             newAppLogoUrl: appLogoUrl,
-            newUser: user,
+            newUserModel: user?.toModel(),
             newToken: token,
             newAppMotto: appMotto,
             newAppVersion: appVersion,
@@ -71,7 +71,9 @@ class ConfigurationUseCase {
             newDeveloperName: developerName,
           );
       await _configurationStore.save(updatedConfiguration);
-      return ProcessingResult(data: updatedConfiguration);
+      return ProcessingResult(
+        data: Configuration.from(updatedConfiguration, user),
+      );
     } on Exception catch (e) {
       _logger.warning('Error updating configuration: $e');
       return ProcessingResult(exception: e);
@@ -82,10 +84,12 @@ class ConfigurationUseCase {
     try {
       final existingConfiguration =
           await _configurationStore.get(Configuration.storeId) ??
-          Configuration.defaultConfiguration;
+          Configuration.defaultConfiguration.toModel();
       final updatedConfiguration = existingConfiguration.copyWithoutSession();
       await _configurationStore.save(updatedConfiguration);
-      return ProcessingResult(data: updatedConfiguration);
+      return ProcessingResult(
+        data: Configuration.from(updatedConfiguration, null),
+      );
     } on Exception catch (e) {
       _logger.warning('Error clearing token: $e');
       return ProcessingResult(exception: e);

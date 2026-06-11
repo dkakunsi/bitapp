@@ -8,18 +8,18 @@ abstract class AccountEvent extends Equatable {
 }
 
 class FetchAccounts extends AccountEvent {
-  final String userId;
+  final User user;
 
-  const FetchAccounts({required this.userId});
+  const FetchAccounts({required this.user});
 }
 
 class GetAccounts extends AccountEvent {
-  final String userId;
+  final User user;
 
-  const GetAccounts({required this.userId});
+  const GetAccounts({required this.user});
 
   @override
-  List<Object> get props => [userId];
+  List<Object> get props => [user];
 }
 
 class GetAccount extends AccountEvent {
@@ -32,17 +32,17 @@ class AddAccount extends AccountEvent {
   final String name;
   final String type;
   final String themeColor;
-  final String userId;
+  final User user;
 
   const AddAccount({
-    required this.userId,
+    required this.user,
     required this.name,
     required this.type,
     required this.themeColor,
   });
 
   @override
-  List<Object> get props => [userId, name, type, themeColor];
+  List<Object> get props => [user, name, type, themeColor];
 }
 
 class UpdateAccount extends AccountEvent {
@@ -50,18 +50,18 @@ class UpdateAccount extends AccountEvent {
   final String name;
   final String type;
   final String themeColor;
-  final String userId;
+  final User user;
 
   const UpdateAccount({
     required this.id,
-    required this.userId,
+    required this.user,
     required this.name,
     required this.type,
     required this.themeColor,
   });
 
   @override
-  List<Object> get props => [id, userId, name, type, themeColor];
+  List<Object> get props => [id, user, name, type, themeColor];
 }
 
 class DeleteAccount extends AccountEvent {

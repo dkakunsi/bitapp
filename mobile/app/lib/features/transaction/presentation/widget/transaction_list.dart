@@ -61,7 +61,7 @@ class TransactionList extends StatelessWidget {
               modalContent: TransactionForm(
                 key: key,
                 transaction: l,
-                transactionType: l.transactionType,
+                transactionType: l.type,
                 title: context.locale.transaction,
               ),
               deleteLabel: context.locale.delete,
@@ -71,16 +71,14 @@ class TransactionList extends StatelessWidget {
         );
       },
       showSubtitle: true,
-      groupByFunction:
-          (pl) => (pl as TransactionViewModel).date.toDateFormat(context),
-      getIcon: (pl) => (pl as TransactionViewModel).icon,
+      groupByFunction: (pl) => pl.date?.toDateFormat(context) ?? '',
+      getIcon: (pl) => pl.icon,
       hightlight: (item) {
-        item as TransactionViewModel;
         return [
           CurrencyAmount(
-            amount: item.amount,
+            amount: item.listAmount,
             currency: context.locale.idr,
-            color: item.amountColor,
+            color: item.listAmountColor,
             fontWeight: FontWeight.bold,
           ),
         ];

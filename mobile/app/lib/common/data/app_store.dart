@@ -14,7 +14,8 @@ abstract class AppStore<T extends StoreData> {
   T from(Map<String, dynamic> data);
 
   Future<void> save(T t) async {
-    await store.record(t.id ?? Uuid().v4()).put(database, t.toStoreJson());
+    final storeJson = t.toStoreJson();
+    await store.record(t.id ?? Uuid().v4()).put(database, storeJson);
   }
 
   Future<void> addAll(List<T> listOfT) async {

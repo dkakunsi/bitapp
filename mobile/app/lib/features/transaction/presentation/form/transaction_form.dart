@@ -3,13 +3,16 @@ import 'package:bitapp/common/presentation/widget/app_form.dart';
 import 'package:bitapp/common/presentation/widget/app_modal.dart';
 import 'package:bitapp/common/presentation/widget/app_select_dialog.dart';
 import 'package:bitapp/common/util/formatter.dart';
+import 'package:bitapp/features/account/domain/account.dart';
 import 'package:bitapp/features/authentication/extension/session_extension.dart';
+import 'package:bitapp/features/loan/domain/loan.dart';
+import 'package:bitapp/features/loan/domain/loan_type.dart';
+import 'package:bitapp/features/transaction/domain/transaction_category.dart';
+import 'package:bitapp/features/transaction/domain/transaction_type.dart';
 import 'package:bitapp/l10n/localization_extension.dart';
 import 'package:bitapp/features/account/presentation/bloc/account_bloc.dart';
 import 'package:bitapp/features/loan/presentation/bloc/loan_bloc.dart';
-import 'package:bitapp/features/transaction/data/transaction.dart';
 import 'package:bitapp/features/transaction/presentation/bloc/transaction_bloc.dart';
-import 'package:bitapp/features/loan/data/loan.dart';
 import 'package:bitapp/features/transaction/extension/transaction_category_extension.dart';
 import 'package:bitapp/features/account/presentation/viewmodel/account_viewmodel.dart';
 import 'package:bitapp/features/loan/presentation/viewmodel/loan_viewmodel.dart';
@@ -62,9 +65,9 @@ class TransactionFormState
   final TextEditingController _destinationController = TextEditingController();
   final TextEditingController _loanController = TextEditingController();
 
-  String? _sourceAccountId;
-  String? _destinationAccountId;
-  String? _loanId;
+  Account? _sourceAccount;
+  Account? _destinationAccount;
+  Loan? _loan;
   LoanType? _loanType;
   DateTime? _transactionDate;
   TimeOfDay? _transactionTime;
@@ -72,9 +75,9 @@ class TransactionFormState
   TransactionCategory? _category;
 
   TransactionType get _transactionType => widget.transactionType;
-  LoanViewModel? get _loan => widget.loan;
-  AccountViewModel? get _sourceAccount => widget.sourceAccount;
-  AccountViewModel? get _destinationAccount => widget.destinationAccount;
+  LoanViewModel? get _loanViewModel => widget.loan;
+  AccountViewModel? get _sourceAccountViewModel => widget.sourceAccount;
+  AccountViewModel? get _destinationAccountViewModel => widget.destinationAccount;
 
   @override
   void initState() {
@@ -89,34 +92,34 @@ class TransactionFormState
     _transactionDate = DateTime.now();
     _transactionTime = TimeOfDay.now();
 
-    if (_loan != null) {
-      _loanId = _loan!.id;
-      _loanType = _loan!.type;
-      _loanController.text = _loan!.title;
-      _amountController.text = _loan!.amount.toCurrencyFormat(context);
+    if (_loanViewModel != null) {
+      _loan = _loanViewModel!;
+      _loanType = _loanViewModel!.type;
+      _loanController.text = _loanViewModel!.title;
+      _amountController.text = _loanViewModel!.listAmount.toCurrencyFormat(context);
     }
 
-    if (_sourceAccount != null) {
-      _sourceAccountId = _sourceAccount!.id;
-      _sourceController.text = _sourceAccount!.name;
+    if (_sourceAccountViewModel != null) {
+      _sourceAccount = _sourceAccountViewModel!;
+      _sourceController.text = _sourceAccountViewModel!.name;
     }
 
-    if (_destinationAccount != null) {
-      _destinationAccountId = _destinationAccount!.id;
-      _destinationController.text = _destinationAccount!.name;
+    if (_destinationAccountViewModel != null) {
+      _destinationAccount = _destinationAccountViewModel!;
+      _destinationController.text = _destinationAccountViewModel!.name;
     }
 
     if (viewModel != null) {
       _titleController.text = viewModel!.title;
-      _descriptionController.text = viewModel!.description;
+      _descriptionController.text = viewModel!.description ?? '';
       _amountController.text = viewModel!.amount.toCurrencyFormat(context);
       _transactionDate = viewModel!.date;
       _transactionTime = viewModel!.time;
-      _sourceAccountId = viewModel!.sourceAccountId;
+      _sourceAccount = viewModel!.sourceAccount;
       _sourceController.text = viewModel!.sourceAccountName;
-      _destinationAccountId = viewModel!.destinationAccountId;
+      _destinationAccount = viewModel!.destinationAccount;
       _destinationController.text = viewModel!.destinationAccountName;
-      _loanId = viewModel!.loanId;
+      _loan = viewModel!.loan;
       _loanType = viewModel!.loanType;
       _loanController.text = viewModel!.loanTitle;
       _category = viewModel!.transactionCategory;
@@ -151,14 +154,14 @@ class TransactionFormState
   @override
   String? onSave(BuildContext context) {
     if (_transactionType == TransactionType.credit &&
-        _destinationAccountId == null) {
+        _destinationAccount == null) {
       return context.locale.destinationAccountNotProvided;
     }
-    if (_transactionType == TransactionType.debit && _sourceAccountId == null) {
+    if (_transactionType == TransactionType.debit && _sourceAccount == null) {
       return context.locale.sourceAccountNotProvided;
     }
     if (_transactionType == TransactionType.transfer &&
-        (_sourceAccountId == null || _destinationAccountId == null)) {
+        (_sourceAccount == null || _destinationAccount == null)) {
       return context.locale.accountsNotProvided;
     }
     if (_loanType == LoanType.debt &&
@@ -169,13 +172,13 @@ class TransactionFormState
         _transactionType != TransactionType.credit) {
       return context.locale.creditShouldRelateToReceivableLoan;
     }
-    if (_sourceAccountId == _destinationAccountId) {
+    if (_sourceAccount == _destinationAccount) {
       return context.locale.accountsShouldBeDifferent;
     }
 
     context.read<TransactionBloc>().add(
       AddTransaction(
-        userId: context.userId,
+        user: context.user!,
         title: _titleController.text,
         description: _descriptionController.text,
         amount: _parsingAmount.isEmpty ? 0 : double.parse(_parsingAmount),
@@ -183,9 +186,9 @@ class TransactionFormState
         time: _transactionTime ?? TimeOfDay.now(),
         transactionType: _transactionType,
         category: _category ?? TransactionCategory.other,
-        sourceAccountId: _sourceAccountId,
-        destinationAccountId: _destinationAccountId,
-        loanId: _loanId,
+        sourceAccount: _sourceAccount,
+        destinationAccount: _destinationAccount,
+        loan: _loan,
       ),
     );
 
@@ -288,7 +291,7 @@ class TransactionFormState
           visible:
               (_transactionType == TransactionType.debit ||
                   _transactionType == TransactionType.transfer) &&
-              _sourceAccount == null,
+              _sourceAccountViewModel == null,
           onTap: () async {
             final pickedAccount =
                 await showDialog(
@@ -299,7 +302,7 @@ class TransactionFormState
             if (pickedAccount != null) {
               _sourceController.text = pickedAccount.name;
               setState(() {
-                _sourceAccountId = pickedAccount.id;
+                _sourceAccount = pickedAccount;
               });
             }
           },
@@ -310,7 +313,7 @@ class TransactionFormState
           visible:
               (_transactionType == TransactionType.credit ||
                   _transactionType == TransactionType.transfer) &&
-              _destinationAccount == null,
+              _destinationAccountViewModel == null,
           onTap: () async {
             final pickedAccount =
                 await showDialog(
@@ -321,7 +324,7 @@ class TransactionFormState
             if (pickedAccount != null) {
               _destinationController.text = pickedAccount.name;
               setState(() {
-                _destinationAccountId = pickedAccount.id;
+                _destinationAccount = pickedAccount;
               });
             }
           },
@@ -335,7 +338,7 @@ class TransactionFormState
           visible:
               (_transactionType == TransactionType.credit ||
                   _transactionType == TransactionType.debit) &&
-              _loan == null,
+              _loanViewModel == null,
           onTap: () async {
             final pickedLoan =
                 await showDialog(
@@ -346,10 +349,10 @@ class TransactionFormState
             if (pickedLoan != null) {
               _loanController.text = pickedLoan.title;
               _amountController.text =
-                  await pickedLoan.amount.toCurrencyFormatAsync();
-              _amount = pickedLoan.amount.toString();
+                  await pickedLoan.listAmount.toCurrencyFormatAsync();
+              _amount = pickedLoan.listAmount.toString();
               setState(() {
-                _loanId = pickedLoan.id;
+                _loan = pickedLoan;
               });
             }
           },
@@ -372,7 +375,7 @@ class TransactionFormState
       >(
         loadData:
             (context) => context.read<AccountBloc>().add(
-              GetAccounts(userId: context.userId),
+              GetAccounts(user: context.user!),
             ),
       ),
     );
@@ -383,7 +386,7 @@ class TransactionFormState
       child: AppSelectDialog<LoanBloc, LoanEvent, LoanState, LoansRetrieved>(
         loadData:
             (context) =>
-                context.read<LoanBloc>().add(GetLoans(userId: context.userId)),
+                context.read<LoanBloc>().add(GetLoans(userId: context.user!.id)),
         filter: (l) {
           l as LoanViewModel;
           return (l.type == LoanType.debt &&

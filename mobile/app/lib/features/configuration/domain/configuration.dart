@@ -1,10 +1,12 @@
-import 'package:bitapp/common/data/model/store_data.dart';
-import 'package:bitapp/features/user/data/user.dart';
+import 'package:bitapp/features/configuration/data/configuration_model.dart';
+import 'package:bitapp/features/user/domain/user.dart';
 import 'package:bitapp/common/util/language.dart';
 import 'package:flutter/material.dart';
 
-class Configuration extends StoreData {
+class Configuration {
   static const String storeId = 'configuration';
+
+  final String id;
 
   // UI configs
   final Color startColor;
@@ -28,7 +30,7 @@ class Configuration extends StoreData {
   final String? token;
 
   Configuration({
-    super.id = storeId,
+    this.id = storeId,
     required this.appName,
     required this.appMotto,
     required this.language,
@@ -60,46 +62,44 @@ class Configuration extends StoreData {
     developerName: 'Cortech',
   );
 
-  static Configuration from(Map<String, dynamic> json) {
+  static Configuration from(ConfigurationModel model, User? user) {
     return Configuration(
-      appName: json['appName'] as String,
-      appMotto: json['appMotto'] as String,
-      appLogoUrl: json['appLogoUrl'] as String,
-      appVersion: json['appVersion'] as String,
-      buildNumber: json['buildNumber'] as String,
-      contact: json['contact'] as String,
-      developerName: json['developerName'] as String,
-      startColor: Color(json['startColor'] as int),
-      endColor: Color(json['endColor'] as int),
-      language: Language.valueOf(json['language'] as String),
-      backendBaseUrl: json['backendBaseUrl'] as String,
-      remoteEnabled: json['remoteEnabled'] as bool,
-      user:
-          json['user'] != null
-              ? User.from(json['user'] as Map<String, dynamic>)
-              : null,
-      token: json['token'] as String?,
+      id: model.id,
+      appName: model.appName,
+      appMotto: model.appMotto,
+      appLogoUrl: model.appLogoUrl,
+      appVersion: model.appVersion,
+      buildNumber: model.buildNumber,
+      contact: model.contact,
+      developerName: model.developerName,
+      startColor: model.startColor,
+      endColor: model.endColor,
+      language: model.language,
+      backendBaseUrl: model.backendBaseUrl,
+      remoteEnabled: model.remoteEnabled,
+      user: user,
+      token: model.token,
     );
   }
 
-  @override
-  Map<String, dynamic> toStoreJson() {
-    return {
-      'appName': appName,
-      'appMotto': appMotto,
-      'appVersion': appVersion,
-      'buildNumber': buildNumber,
-      'contact': contact,
-      'developerName': developerName,
-      'language': language.value,
-      'backendBaseUrl': backendBaseUrl,
-      'remoteEnabled': remoteEnabled,
-      'startColor': startColor.toARGB32(),
-      'endColor': endColor.toARGB32(),
-      'appLogoUrl': appLogoUrl,
-      'user': user?.toStoreJson(),
-      'token': token,
-    };
+  ConfigurationModel toModel() {
+    return ConfigurationModel(
+      id: id,
+      appName: appName,
+      appMotto: appMotto,
+      appLogoUrl: appLogoUrl,
+      appVersion: appVersion,
+      buildNumber: buildNumber,
+      contact: contact,
+      developerName: developerName,
+      startColor: startColor,
+      endColor: endColor,
+      language: language,
+      backendBaseUrl: backendBaseUrl,
+      remoteEnabled: remoteEnabled,
+      userModel: user?.toModel(),
+      token: token,
+    );
   }
 
   Configuration copyWith({

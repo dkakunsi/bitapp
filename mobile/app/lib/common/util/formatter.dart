@@ -1,7 +1,7 @@
 import 'package:bitapp/common/util/language.dart';
 import 'package:bitapp/common/util/container.dart';
 import 'package:bitapp/features/app/extension/language_extension.dart';
-import 'package:bitapp/features/configuration/data/configuration.dart';
+import 'package:bitapp/features/configuration/domain/configuration.dart';
 import 'package:bitapp/features/configuration/data/configuration_store.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';

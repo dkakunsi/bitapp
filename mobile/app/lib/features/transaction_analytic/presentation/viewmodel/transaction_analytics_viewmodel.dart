@@ -1,6 +1,7 @@
 import 'package:bitapp/common/presentation/viewmodel/viewmodel.dart';
 import 'package:bitapp/common/util/formatter.dart';
-import 'package:bitapp/features/transaction/data/transaction.dart';
+import 'package:bitapp/features/transaction/domain/transaction.dart';
+import 'package:bitapp/features/transaction/domain/transaction_category.dart';
 import 'package:bitapp/features/transaction_analytic/data/transaction_analytics.dart';
 import 'package:bitapp/features/transaction/presentation/viewmodel/transaction_viewmodel.dart';
 import 'package:flutter/widgets.dart';
@@ -32,10 +33,10 @@ class TransactionAnalyticsViewModel implements ViewModel {
   ) {
     final Map<String, List<Transaction>> groupedTransactions = {};
     for (var t in transactions) {
-      if (groupedTransactions.containsKey(t.category!.name)) {
-        groupedTransactions[t.category!.name]!.add(t);
+      if (groupedTransactions.containsKey(t.transactionCategory!.name)) {
+        groupedTransactions[t.transactionCategory!.name]!.add(t);
       } else {
-        groupedTransactions[t.category!.name] = [t];
+        groupedTransactions[t.transactionCategory!.name] = [t];
       }
     }
     return groupedTransactions.entries
@@ -65,10 +66,12 @@ class ExpenseGroup {
     percentage = (total / totalExpenses) * 100;
   }
 
-  TransactionCategory get category => _transactions[0].category!;
+  TransactionCategory get category => _transactions[0].transactionCategory!;
 
   Color get color => category.color;
 
   List<TransactionViewModel> get transactions =>
-      _transactions.map((t) => TransactionViewModel(t)).toList();
+      _transactions
+          .map((t) => TransactionViewModel.fromTransaction(t))
+          .toList();
 }

@@ -10,10 +10,11 @@
   ],
   "mounts": [
     "type=volume,source=docker,target=/var/lib/docker",
-    "type=volume,source=pub-cache,target=/root/.pub-cache",
     "type=volume,source=android-sdk,target=/opt/android-sdk",
-    "type=volume,source=gradle-cache,target=/home/vscode/.gradle",
-    "type=volume,source=android-keystore,target=/home/vscode/.android"
+    "type=volume,source=pub-cache,target=/root/.pub-cache",
+    "type=volume,source=gradle-cache,target=/root/.gradle",
+    "type=volume,source=android-config,target=/root/.android",
+    "type=bind,source=.devcontainer/debug.keystore,target=/root/.android/debug.keystore"
   ],
   "forwardPorts": [
     8081,
@@ -23,18 +24,14 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "github.copilot",
         "github.copilot-chat",
-        "github.vscode-pull-request-github",
         "github.vscode-github-actions",
         "vscjava.vscode-gradle",
         "dart-code.dart-code",
         "dart-code.flutter",
-        "ms-vscode-remote.remote-containers",
         "sst-dev.opencode",
         "dotjoshjohnson.xml",
-        "mhutchie.git-graph",
-        "ms-azuretools.vscode-docker"
+        "mhutchie.git-graph"
       ],
       "settings": {
         "java.jdt.ls.java.home": "/opt/.sdkman/candidates/java/current"

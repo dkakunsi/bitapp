@@ -2,12 +2,17 @@ import 'dart:async';
 
 import 'package:bitapp/common/presentation/bloc/state.dart';
 import 'package:bitapp/common/presentation/viewmodel/viewmodel.dart';
+import 'package:bitapp/features/account/domain/account.dart';
 import 'package:bitapp/features/account/presentation/bloc/account_bloc.dart';
-import 'package:bitapp/features/configuration/domain/usecase/configuration_usecase.dart';
+import 'package:bitapp/features/configuration/domain/configuration_usecase.dart';
+import 'package:bitapp/features/loan/domain/loan.dart';
 import 'package:bitapp/features/loan/presentation/bloc/loan_bloc.dart';
+import 'package:bitapp/features/transaction/domain/transaction_category.dart';
+import 'package:bitapp/features/transaction/domain/transaction_type.dart';
 import 'package:bitapp/features/transaction/presentation/viewmodel/transaction_viewmodel.dart';
-import 'package:bitapp/features/transaction/domain/usecase/transaction_usecase.dart';
-import 'package:bitapp/features/transaction/data/transaction.dart';
+import 'package:bitapp/features/transaction/domain/transaction_usecase.dart';
+import 'package:bitapp/features/transaction/domain/transaction.dart';
+import 'package:bitapp/features/user/domain/user.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -41,25 +46,25 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
   ) async {
     emit(TransactionProcessing());
     final transaction = Transaction(
-      userId: event.userId,
+      userId: event.user.id,
       title: event.title,
       description: event.description,
       amount: event.amount,
       date: event.date,
       time: event.time,
-      transactionType: event.transactionType,
-      category: event.category,
-      sourceAccountId: event.sourceAccountId,
-      destinationAccountId: event.destinationAccountId,
-      loanId: event.loanId,
+      type: event.transactionType,
+      transactionCategory: event.category,
+      sourceAccount: event.sourceAccount,
+      destinationAccount: event.destinationAccount,
+      loan: event.loan,
     );
     final result = await _transactionUseCase.addTransaction(transaction);
     if (result.isFailure) {
       emit(TransactionAdditionFailed());
       return;
     }
-    _accountBloc.add(FetchAccounts(userId: event.userId));
-    _loanBloc.add(FetchLoans(userId: event.userId));
+    _accountBloc.add(FetchAccounts(user: event.user));
+    _loanBloc.add(FetchLoans(userId: event.user.id));
     emit(TransactionAdded());
   }
 
@@ -80,8 +85,8 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
       emit(TransactionSynchronizationFailed());
       return;
     }
-    _accountBloc.add(FetchAccounts(userId: configResult.data.user!.id!));
-    _loanBloc.add(FetchLoans(userId: configResult.data.user!.id!));
+    _accountBloc.add(FetchAccounts(user: configResult.data.user!));
+    _loanBloc.add(FetchLoans(userId: configResult.data.user!.id));
   }
 
   Future<void> _fetchTransactions(

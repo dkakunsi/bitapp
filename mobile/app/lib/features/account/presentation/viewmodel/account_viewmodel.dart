@@ -1,67 +1,70 @@
 import 'package:bitapp/common/presentation/app_style.dart';
 import 'package:bitapp/common/presentation/viewmodel/viewmodel.dart';
 import 'package:bitapp/common/util/formatter.dart';
-import 'package:bitapp/features/account/data/account.dart';
+import 'package:bitapp/features/account/domain/account.dart';
+import 'package:bitapp/features/account/domain/account_type.dart';
 import 'package:flutter/material.dart';
 
-class AccountViewModel
-    implements
-        ListViewModel,
-        CategoryViewModel,
-        IconViewModel,
-        ColorViewModel,
-        AmountViewModel {
-  final Account _account;
+class AccountViewModel extends Account implements ListViewModel {
+  AccountViewModel({
+    super.id,
+    required super.name,
+    required super.type,
+    required super.userId,
+    required super.themeColor,
+    super.balance,
+  });
 
-  AccountViewModel(this._account);
+  AccountViewModel.fromAccount(Account account)
+    : this(
+        id: account.id,
+        name: account.name,
+        type: account.type,
+        balance: account.balance,
+        themeColor: account.themeColor,
+        userId: account.userId,
+      );
+
+  Color get color => colorFromString(themeColor);
 
   @override
-  String? get category => _account.type.value;
-
-  @override
-  Color get categoryColor => colorFromString(_account.themeColor);
+    double get balance => super.balance ?? 0;
 
   @override
   IconData get icon {
-    if (_account.type == AccountType.ewallet) {
+    if (type == AccountType.ewallet) {
       return Icons.account_balance_wallet;
     }
-    if (_account.type == AccountType.bank) {
+    if (type == AccountType.bank) {
       return Icons.account_balance;
     }
     return Icons.wallet;
   }
 
   @override
-  Color get color => colorFromString(_account.themeColor);
+  String? get category => type.value;
 
   @override
-  String? get objectType => _account.type.value;
+  Color get categoryColor => colorFromString(themeColor);
 
   @override
-  String get title => _account.name;
+  String? get objectType => type.value;
+
+  @override
+  String get title => name;
 
   @override
   String get subtitle => title;
 
-  String get name => _account.name;
-
-  AccountType get type => _account.type;
-
-  String get themeColor => _account.themeColor;
-
-  String? get id => _account.id;
-
-  double get balance => _account.balance ?? 0;
+  @override
+  double get listAmount => balance ?? 0;
 
   @override
-  double get amount => _account.balance ?? 0;
+  Color get listAmountColor => AppColor.mainDark;
 
   @override
-  Color get amountColor => AppColor.mainDark;
+  DateTime? get date => null;
 
-  @override
-  bool get showPaid => false;
   @override
   int compareTo(ListViewModel other) =>
       other is AccountViewModel ? title.compareTo(other.title) : 0;

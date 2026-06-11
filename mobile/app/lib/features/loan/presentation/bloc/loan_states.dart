@@ -40,7 +40,8 @@ class LoansRetrieved extends LoanState implements ListState {
   List<Object> get props => [_loans];
 
   @override
-  List<ListViewModel> get items => _loans.map((e) => LoanViewModel(e)).toList();
+  List<ListViewModel> get items =>
+      _loans.map((e) => LoanViewModel.fromLoan(e)).toList();
 }
 
 class LoanRetrieved extends LoanState implements ObjectState {
@@ -49,5 +50,5 @@ class LoanRetrieved extends LoanState implements ObjectState {
   const LoanRetrieved(this._loan);
 
   @override
-  LoanViewModel get object => LoanViewModel(_loan);
+  LoanViewModel get object => LoanViewModel.fromLoan(_loan);
 }

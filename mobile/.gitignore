@@ -13,4 +13,5 @@
 /android/app/profile
 /android/app/release
 
-key.jks
+signing-key.jks
+.devcontainer/debug.keystore

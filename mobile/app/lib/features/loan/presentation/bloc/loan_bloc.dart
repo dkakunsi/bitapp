@@ -2,9 +2,10 @@ import 'dart:async';
 
 import 'package:bitapp/common/presentation/bloc/state.dart';
 import 'package:bitapp/common/presentation/viewmodel/viewmodel.dart';
-import 'package:bitapp/features/loan/data/loan.dart';
+import 'package:bitapp/features/loan/domain/loan.dart';
+import 'package:bitapp/features/loan/domain/loan_type.dart';
 import 'package:bitapp/features/loan/presentation/viewmodel/loan_viewmodel.dart';
-import 'package:bitapp/features/loan/domain/usecase/loan_usecase.dart';
+import 'package:bitapp/features/loan/domain/loan_usecase.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,32 +27,32 @@ class LoanBloc extends Bloc<LoanEvent, LoanState> {
 
   void _fetchLoans(FetchLoans event, Emitter<LoanState> emit) async {
     emit(LoanProcessing());
-    final loadingResult = await _loanUseCase.fetchLoans(event.userId);
-    if (loadingResult.isFailure) {
+    final fetchResult = await _loanUseCase.fetchLoans(event.userId);
+    if (fetchResult.isFailure) {
       emit(LoansFetchingFailed());
       return;
     }
-    emit(LoansRetrieved(loadingResult.data));
+    emit(LoansRetrieved(fetchResult.data));
   }
 
   void _getLoans(GetLoans event, Emitter<LoanState> emit) async {
     emit(LoanProcessing());
-    final loadingResult = await _loanUseCase.getLoans(event.userId);
-    if (loadingResult.isFailure) {
+    final fetchResult = await _loanUseCase.getLoans(event.userId);
+    if (fetchResult.isFailure) {
       emit(LoansRetrievalFailed());
       return;
     }
-    emit(LoansRetrieved(loadingResult.data));
+    emit(LoansRetrieved(fetchResult.data));
   }
 
   Future<void> _getLoan(GetLoan event, Emitter<LoanState> emit) async {
     emit(LoanProcessing());
-    final loadingResult = await _loanUseCase.getLoan(event.id);
-    if (loadingResult.isFailure) {
+    final fetchResult = await _loanUseCase.getLoan(event.id);
+    if (fetchResult.isFailure) {
       emit(LoanRetrievalFailed());
       return;
     }
-    emit(LoanRetrieved(loadingResult.data));
+    emit(LoanRetrieved(fetchResult.data));
   }
 
   Future<void> _addLoan(AddLoan event, Emitter<LoanState> emit) async {

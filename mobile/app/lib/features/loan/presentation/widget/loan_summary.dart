@@ -2,9 +2,9 @@ import 'package:bitapp/common/presentation/app_style.dart';
 import 'package:bitapp/common/presentation/widget/container.dart';
 import 'package:bitapp/common/presentation/widget/loading_indicator.dart';
 import 'package:bitapp/features/app/presentation/widget/currency_amount.dart';
+import 'package:bitapp/features/loan/domain/loan_type.dart';
 import 'package:bitapp/l10n/localization_extension.dart';
 import 'package:bitapp/features/loan/presentation/bloc/loan_bloc.dart';
-import 'package:bitapp/features/loan/data/loan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -59,10 +59,10 @@ class LoanSummary extends StatelessWidget {
                                       ),
                                     )
                                     : CurrencyAmount(
-                                      amount: state.object.amount,
+                                      amount: state.object.listAmount,
                                       currency: context.locale.idr,
                                       fontSize: getCurrencyFontSize(
-                                        state.object.amount,
+                                        state.object.listAmount,
                                       ),
                                       color: state.object.categoryColor,
                                     ),

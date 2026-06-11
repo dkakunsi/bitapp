@@ -1,6 +1,7 @@
 import 'package:bitapp/common/presentation/viewmodel/viewmodel.dart';
 import 'package:bitapp/common/util/language.dart';
-import 'package:bitapp/features/configuration/data/configuration.dart';
+import 'package:bitapp/features/configuration/domain/configuration.dart';
+import 'package:bitapp/features/user/domain/user.dart';
 import 'package:bitapp/features/user/presentation/viewmodel/user_viewmodel.dart';
 import 'package:flutter/material.dart';
 
@@ -42,6 +43,8 @@ class ConfigurationViewModel extends ViewModel {
 
   String get userId => _configuration.user?.id ?? '';
 
-  UserViewModel? get user =>
+  User? get user => _configuration.user;
+
+  UserViewModel? get userViewModel =>
       _configuration.user != null ? UserViewModel(_configuration.user!) : null;
 }

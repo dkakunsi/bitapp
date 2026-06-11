@@ -39,7 +39,9 @@ abstract class TransactionsRetrieved extends TransactionState
 
   @override
   List<ListViewModel> get items =>
-      _transactions.map((e) => TransactionViewModel(e)).toList();
+      _transactions
+          .map((t) => TransactionViewModel.fromTransaction(t))
+          .toList();
 }
 
 class UserTransactionsRetrieved extends TransactionsRetrieved

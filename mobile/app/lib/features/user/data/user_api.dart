@@ -1,23 +1,23 @@
 import 'package:bitapp/common/data/app_api.dart';
+import 'package:bitapp/features/user/data/user_model.dart';
 import 'package:http/http.dart' as http;
-import 'package:bitapp/features/user/data/user.dart';
 import 'package:bitapp/common/util/language.dart';
 
-class UserApi extends AppApi<User> {
+class UserApi extends AppApi<UserModel> {
   UserApi({required super.configurationStore});
 
   @override
   String get dataName => 'user';
 
   @override
-  User from(String data) {
-    return User.fromJson(data)!;
+  UserModel from(String data) {
+    return UserModel.fromJson(data);
   }
 
   @override
-  List<User> fromList(String data) => throw UnimplementedError();
+  List<UserModel> fromList(String data) => throw UnimplementedError();
 
-  Future<User> updateUserLanguage(String userId, Language language) async {
+  Future<UserModel> updateUserLanguage(String userId, Language language) async {
     final response = await http.put(
       Uri.parse('${await baseUrl}/v1/users/$userId'),
       headers: await buildRequestHeaders(),
@@ -25,7 +25,7 @@ class UserApi extends AppApi<User> {
     );
 
     if (response.statusCode == 200) {
-      return User.fromJson(response.body)!;
+      return UserModel.fromJson(response.body);
     } else {
       throw Exception(
         'Failed to update user preferred language. Response: ${response.statusCode} ${response.request?.url}',

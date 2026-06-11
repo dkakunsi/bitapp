@@ -39,7 +39,7 @@ class MoneyScreenContent extends AppScreenContent {
 
   @override
   Future<void> reload(BuildContext context) async {
-    context.read<AccountBloc>().add(FetchAccounts(userId: context.userId));
+    context.read<AccountBloc>().add(FetchAccounts(user: context.user!));
     context.read<LoanBloc>().add(FetchLoans(userId: context.userId));
     context.read<TransactionBloc>().add(
       FetchTransactions(userId: context.userId),

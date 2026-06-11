@@ -1,9 +1,9 @@
 import 'package:bitapp/common/presentation/app_style.dart';
 import 'package:bitapp/common/presentation/widget/app_button.dart';
 import 'package:bitapp/common/presentation/widget/app_modal.dart';
+import 'package:bitapp/features/transaction/domain/transaction_type.dart';
 import 'package:bitapp/l10n/localization_extension.dart';
 import 'package:bitapp/features/account/presentation/bloc/account_bloc.dart';
-import 'package:bitapp/features/transaction/data/transaction.dart';
 import 'package:bitapp/features/account/presentation/form/account_form.dart';
 import 'package:bitapp/features/transaction/presentation/form/transaction_form.dart';
 import 'package:bitapp/features/app/presentation/screen/money_screen.dart';

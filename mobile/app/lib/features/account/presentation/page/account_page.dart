@@ -59,7 +59,7 @@ class AccountPage extends AppTabPage {
 
   @override
   void onLoad(BuildContext context) {
-    context.read<AccountBloc>().add(GetAccounts(userId: context.userId));
+    context.read<AccountBloc>().add(GetAccounts(user: context.user!));
     context.read<SummaryBloc>().add(CalculateSummary(userId: context.userId));
   }
 
@@ -104,16 +104,15 @@ class AccountList extends StatelessWidget {
       },
       showSubtitle: true,
       showCategory: true,
-      getIcon: (pl) => (pl as AccountViewModel).icon,
+      getIcon: (pl) => pl.icon,
       hightlight: (item) {
-        item as AccountViewModel;
         return [
-          ColoredCategory(color: item.categoryColor),
+          ColoredCategory(color: item.categoryColor!),
           SizedBox(width: 8),
           CurrencyAmount(
-            amount: item.amount,
+            amount: item.listAmount,
             currency: context.locale.idr,
-            color: item.amountColor,
+            color: item.listAmountColor,
             fontWeight: FontWeight.bold,
           ),
         ];

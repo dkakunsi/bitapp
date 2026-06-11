@@ -1,4 +1,4 @@
-import 'package:bitapp/features/transaction/data/transaction.dart';
+import 'package:bitapp/features/transaction/domain/transaction.dart';
 
 class TransactionAnalytics {
   final DateTime period;

@@ -43,7 +43,7 @@ class GetLoanTransactions extends TransactionEvent {
 }
 
 class AddTransaction extends TransactionEvent {
-  final String userId;
+  final User user;
   final String title;
   final String description;
   final double amount;
@@ -51,12 +51,12 @@ class AddTransaction extends TransactionEvent {
   final TimeOfDay time;
   final TransactionType transactionType;
   final TransactionCategory category;
-  final String? sourceAccountId;
-  final String? destinationAccountId;
-  final String? loanId;
+  final Account? sourceAccount;
+  final Account? destinationAccount;
+  final Loan? loan;
 
   const AddTransaction({
-    required this.userId,
+    required this.user,
     required this.title,
     required this.description,
     required this.amount,
@@ -64,14 +64,14 @@ class AddTransaction extends TransactionEvent {
     required this.time,
     required this.transactionType,
     required this.category,
-    this.sourceAccountId,
-    this.destinationAccountId,
-    this.loanId,
+    this.sourceAccount,
+    this.destinationAccount,
+    this.loan,
   });
 
   @override
   List<Object> get props => [
-    userId,
+    user,
     title,
     description,
     amount,
