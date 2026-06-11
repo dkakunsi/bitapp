@@ -46,6 +46,15 @@ jobs:
           storeFile=../../../key.jks
           EOF
 
+      # Buat gradle.properties
+      - name: Create gradle.properties
+        run: |
+          cat <<EOF > mobile/app/android/gradle.properties
+          android.useAndroidX=true
+          android.enableJetifier=true
+          org.gradle.java.home=${JAVA_HOME}
+          EOF
+
       - name: Build APK (release)
         working-directory: mobile/app
         run: flutter build apk --release
