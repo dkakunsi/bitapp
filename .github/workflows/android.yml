@@ -61,11 +61,8 @@ jobs:
         id: versioning
         working-directory: mobile/app
         run: |
-          FULL_VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //; s/+.*//')
-          PUBSPEC_VERSION=$(echo $FULL_VERSION | awk -F. '{print $1"."$2}')
-          SHORT_COMMIT=$(git rev-parse --short HEAD)
+          VERSION_NAME=$(grep '^version:' pubspec.yaml | sed 's/version: //; s/+.*//')
           VERSION_CODE=${{ github.run_number }}
-          VERSION_NAME="${PUBSPEC_VERSION}.${SHORT_COMMIT}"
 
           echo "Using versionName=$VERSION_NAME"
           echo "Using versionCode=$VERSION_CODE"
