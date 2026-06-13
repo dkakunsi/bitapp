@@ -57,16 +57,46 @@ jobs:
           org.gradle.java.home=${JAVA_HOME}
           EOF
 
-      - name: Build APK (release)
+      - name: Set versionName and versionCode
+        id: versioning
         working-directory: mobile/app
-        run: flutter build apk --release
+        run: |
+          PUBSPEC_VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //; s/+.*//')
+          SHORT_COMMIT=$(git rev-parse --short HEAD)
+          VERSION_CODE=${{ github.run_number }}
+          VERSION_NAME="${PUBSPEC_VERSION}+${SHORT_COMMIT}"
 
-      # Buat GitHub Release otomatis
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+          echo "Using versionName=$VERSION_NAME"
+          echo "Using versionCode=$VERSION_CODE"
+
+          sed -i "s/^version: .*/version: ${VERSION_NAME}+${VERSION_CODE}/" pubspec.yaml
+
+          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+          echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
+
+      # - name: Build APK (release)
+      #   working-directory: mobile/app
+      #   run: flutter build apk --release
+
+      # # Buat GitHub Release otomatis
+      # - name: Create GitHub Release
+      #   uses: softprops/action-gh-release@v2
+      #   with:
+      #     tag_name: v${{ github.run_number }}
+      #     name: "BitApp Build ${{ github.run_number }}"
+      #     files: mobile/app/build/app/outputs/flutter-apk/app-release.apk
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build AAB (release)
+        working-directory: mobile/app
+        run: flutter build appbundle --release
+
+      - name: Upload AAB to Google Play
+        uses: r0adkll/upload-google-play@v1
         with:
-          tag_name: v${{ github.run_number }}
-          name: "BitApp Build ${{ github.run_number }}"
-          files: mobile/app/build/app/outputs/flutter-apk/app-release.apk
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          serviceAccountJsonPlainText: ${{ secrets.GCP_SA_KEY }}
+          packageName: io.dkakunsi.bitapp
+          releaseFiles: mobile/app/build/app/outputs/bundle/release/app-release.aab
+          track: internal
+          status: completed
