@@ -71,9 +71,6 @@ jobs:
 
           sed -i "s/^version: .*/version: ${BUILD_VERSION}/" pubspec.yaml
 
-          echo "version_name=$BASE_VERSION" >> $GITHUB_OUTPUT
-          echo "version_code=$RUN_NUMBER" >> $GITHUB_OUTPUT
-
       - name: Clean
         working-directory: mobile/app
         run: |
