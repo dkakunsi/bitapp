@@ -72,6 +72,12 @@ jobs:
           echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
           echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
 
+      - name: Clean
+        working-directory: mobile/app
+        run: |
+          flutter clean
+          rm -rf build
+
       # - name: Build APK (release)
       #   working-directory: mobile/app
       #   run: flutter build apk --release
