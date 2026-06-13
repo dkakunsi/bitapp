@@ -35,7 +35,7 @@ jobs:
           PUBSPEC_VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //; s/+.*//')
           SHORT_COMMIT=$(git rev-parse --short HEAD)
           VERSION_CODE=${{ github.run_number }}
-          VERSION_NAME="${PUBSPEC_VERSION}+${SHORT_COMMIT}"
+          VERSION_NAME="${PUBSPEC_VERSION}.${SHORT_COMMIT}"
 
           echo "Using versionName=$VERSION_NAME"
           echo "Using versionCode=$VERSION_CODE"
