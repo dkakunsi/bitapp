@@ -32,7 +32,7 @@ android {
 
     defaultConfig {
         applicationId = "io.dkakunsi.bitapp"
-        minSdk = 34
+        minSdk = 21
         targetSdk = 34
         versionCode = flutter.versionCode
         versionName = flutter.versionName
