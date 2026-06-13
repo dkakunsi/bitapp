@@ -75,6 +75,9 @@ jobs:
 
           sed -i "s/^version: .*/version: ${VERSION_NAME}+${VERSION_CODE}/" pubspec.yaml
 
+          echo "version_name=${VERSION_NAME}" >> "$GITHUB_OUTPUT"
+          echo "version_code=${VERSION_CODE}" >> "$GITHUB_OUTPUT"
+
       - name: Clean
         working-directory: mobile/app
         run: |
@@ -97,7 +100,38 @@ jobs:
 
       - name: Build AAB (release)
         working-directory: mobile/app
-        run: flutter build appbundle --release
+        run: |
+          flutter build appbundle --release \
+            --build-name "${{ steps.versioning.outputs.version_name }}" \
+            --build-number "${{ steps.versioning.outputs.version_code }}"
+
+      - name: Validate merged manifest SDK
+        working-directory: mobile/app
+        run: |
+          MANIFEST_PATH="build/app/intermediates/merged_manifest/release/processReleaseMainManifest/AndroidManifest.xml"
+
+          if [ ! -f "$MANIFEST_PATH" ]; then
+            echo "Merged manifest not found: $MANIFEST_PATH"
+            exit 1
+          fi
+
+          TARGET_SDK=$(grep -o 'targetSdkVersion="[0-9]*"' "$MANIFEST_PATH" | head -n1 | tr -dc '0-9')
+          MIN_SDK=$(grep -o 'minSdkVersion="[0-9]*"' "$MANIFEST_PATH" | head -n1 | tr -dc '0-9')
+          VERSION_CODE=$(grep -o 'android:versionCode="[0-9]*"' "$MANIFEST_PATH" | head -n1 | tr -dc '0-9')
+
+          echo "Merged manifest minSdkVersion: ${MIN_SDK}"
+          echo "Merged manifest targetSdkVersion: ${TARGET_SDK}"
+          echo "Merged manifest versionCode: ${VERSION_CODE}"
+
+          if [ -z "$TARGET_SDK" ]; then
+            echo "Failed to detect targetSdkVersion from merged manifest"
+            exit 1
+          fi
+
+          if [ "$TARGET_SDK" -lt 34 ]; then
+            echo "targetSdkVersion is too low: ${TARGET_SDK}"
+            exit 1
+          fi
 
       - name: Upload AAB to Google Play
         uses: r0adkll/upload-google-play@v1
