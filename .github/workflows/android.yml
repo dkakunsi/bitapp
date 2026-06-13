@@ -61,15 +61,19 @@ jobs:
         id: versioning
         working-directory: mobile/app
         run: |
-          BASE_VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //; s/+.*//')
-          RUN_NUMBER=${{ github.run_number }}
-          BUILD_VERSION="${BASE_VERSION}+${RUN_NUMBER}"
+          FULL_VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //; s/+.*//')
 
-          echo "Using versionName=$BASE_VERSION"
-          echo "Using versionCode=$RUN_NUMBER"
-          echo "Setting version in pubspec.yaml to $BUILD_VERSION"
+          MAJOR=$(echo $FULL_VERSION | cut -d. -f1)
+          MINOR=$(echo $FULL_VERSION | cut -d. -f2)
+          PATCH=$(echo $FULL_VERSION | cut -d. -f3)
 
-          sed -i "s/^version: .*/version: ${BUILD_VERSION}/" pubspec.yaml
+          VERSION_NAME="${MAJOR}.${MINOR}.${PATCH}"
+          VERSION_CODE=${{ github.run_number }}
+
+          echo "Using versionName=$VERSION_NAME"
+          echo "Using versionCode=$VERSION_CODE"
+
+          sed -i "s/^version: .*/version: ${VERSION_NAME}+${VERSION_CODE}/" pubspec.yaml
 
       - name: Clean
         working-directory: mobile/app
