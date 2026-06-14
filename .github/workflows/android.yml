@@ -133,6 +133,8 @@ jobs:
             exit 1
           fi
 
+          unzip -p mobile/app/build/app/outputs/bundle/release/app-release.aab base/manifest/AndroidManifest.xml | grep -E "minSdkVersion|targetSdkVersion"
+
       - name: Upload AAB to Google Play
         uses: r0adkll/upload-google-play@v1
         with:
