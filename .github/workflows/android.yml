@@ -35,7 +35,7 @@ jobs:
       # Decode keystore dari GitHub Secrets
       - name: Decode keystore
         run: |
-          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > mobile/key.jks
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > mobile/app/android/app/key.jks
 
       # Buat key.properties
       - name: Create key.properties
@@ -44,7 +44,7 @@ jobs:
           storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}
           keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}
-          storeFile=../../../../key.jks
+          storeFile=key.jks
           EOF
 
       # Buat gradle.properties
@@ -104,6 +104,9 @@ jobs:
           flutter build appbundle --release \
             --build-name "${{ steps.versioning.outputs.version_name }}" \
             --build-number "${{ steps.versioning.outputs.version_code }}"
+
+      - name: Verify AAB is signed
+        run: jarsigner -verify -verbose -certs app/build/app/outputs/bundle/release/app-release.aab
 
       - name: Validate merged manifest SDK
         working-directory: mobile/app
