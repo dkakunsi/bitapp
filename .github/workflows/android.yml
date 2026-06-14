@@ -106,7 +106,7 @@ jobs:
             --build-number "${{ steps.versioning.outputs.version_code }}"
 
       - name: Verify AAB is signed
-        run: jarsigner -verify -verbose -certs app/build/app/outputs/bundle/release/app-release.aab
+        run: jarsigner -verify -verbose -certs mobile/app/build/app/outputs/bundle/release/app-release.aab
 
       - name: Validate merged manifest SDK
         working-directory: mobile/app
