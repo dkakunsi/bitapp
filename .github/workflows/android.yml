@@ -40,7 +40,7 @@ jobs:
       # Buat key.properties
       - name: Create key.properties
         run: |
-          cat <<EOF > mobile/app/android/app/key.properties
+          cat <<EOF > mobile/app/android/key.properties
           storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}
           keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}

@@ -10,17 +10,16 @@ on:
   workflow_dispatch:
     inputs:
       deploy_only:
-        description: 'Just Deploy'
+        description: "Just Deploy"
         required: false
         type: boolean
         default: false
       version:
-        description: 'Version to deploy'
+        description: "Version to deploy"
         required: false
         type: string
 
 jobs:
-
   build:
     if: ${{ !github.event.inputs.deploy_only }}
     runs-on: ubuntu-22.04
@@ -61,7 +60,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Release Helm Chart
         run: make backend-chart TOKEN="${{ secrets.HELM_CHARTS_TOKEN }}" VERSION="${{ steps.version.outputs.version }}"
-      
+
       ## Since GCP Cloud Run doesn't support private registries, we need to push the image to Docker Hub as well
       - name: Docker Hub - Prepare artifacts
         run: |
@@ -97,7 +96,7 @@ jobs:
         uses: google-github-actions/setup-gcloud@v2
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v1
-        with: 
+        with:
           service: bitapp
           image: docker.io/dkakunsi/bitapp:${{ env.VERSION }}
           region: asia-southeast2
@@ -106,7 +105,6 @@ jobs:
           service_account: ${{ vars.GCP_SA }}
           env_vars: |-
             app.port=${{ vars.APP_PORT }}
-            JWT_PUBLIC_KEY=${{ vars.JWT_PUBLIC_KEY }}
             MONGO_DATABASE=${{ vars.MONGO_DATABASE_NAME }}
             MONGO_SECURE=${{ vars.MONGO_SECURE }}
             MONGO_CONNECTION_STRING=${{ secrets.MONGO_CONNECTION_STRING_DEV }}
