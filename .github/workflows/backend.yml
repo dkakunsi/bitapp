@@ -105,6 +105,7 @@ jobs:
           service_account: ${{ vars.GCP_SA }}
           env_vars: |-
             app.port=${{ vars.APP_PORT }}
+            JWK_URL=${{ vars.JWK_URL }}
             MONGO_DATABASE=${{ vars.MONGO_DATABASE_NAME }}
             MONGO_SECURE=${{ vars.MONGO_SECURE }}
             MONGO_CONNECTION_STRING=${{ secrets.MONGO_CONNECTION_STRING_DEV }}

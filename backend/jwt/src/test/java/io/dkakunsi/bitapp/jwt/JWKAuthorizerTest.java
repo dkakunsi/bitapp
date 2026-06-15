@@ -45,7 +45,7 @@ class JWKAuthorizerTest {
     when(jwk.getPublicKey()).thenReturn(toPublicKey(SecureTestUtil.PUBLIC_KEY));
     when(jwkProvider.get(TEST_KID)).thenReturn(jwk);
 
-    authorizer = new JWKAuthorizer(jwkProvider);
+    authorizer = new JWKAuthorizer(jwkProvider, null);
   }
 
   @Test
@@ -58,7 +58,7 @@ class JWKAuthorizerTest {
     var ex = assertThrows(IllegalArgumentException.class, () -> JWKAuthorizer.of(configuration));
 
     // Then
-    assertEquals("JWK_URL is not configured correctly", ex.getMessage());
+    assertEquals("jwkUrl is not valid: invalid-url", ex.getMessage());
   }
 
   @Test
