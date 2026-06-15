@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "159272058870-cbpgqdjqa94e1ogm7vjdq0oikqq9hrsa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.dkakunsi.bitapp",
+            "certificate_hash": "08aba5a040c88f69071f4fba8d85ee6a55ecd91d"
+          }
+        },
+        {
           "client_id": "159272058870-i83mdabckc9nb1mlh2mk9ac3ub03ej83.apps.googleusercontent.com",
           "client_type": 3
         }
