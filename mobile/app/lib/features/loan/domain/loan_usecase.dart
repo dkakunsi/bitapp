@@ -20,13 +20,17 @@ class LoanUseCase {
        _localLoanService = localLoanService,
        _loanRepository = loanRepository;
 
+  Exception _toException(Object error) {
+    return error is Exception ? error : Exception(error.toString());
+  }
+
   Future<ProcessingResult<void>> addLoan(Loan loan) async {
     try {
       await _loanRepository.addLoan(LoanModel.fromEntity(loan));
       return ProcessingResult();
-    } on Exception catch (e) {
-      _logger.warning('Error creating loan: $e');
-      return ProcessingResult(exception: e);
+    } catch (e, stackTrace) {
+      _logger.warning('Error creating loan', e, stackTrace);
+      return ProcessingResult(exception: _toException(e));
     }
   }
 
@@ -38,9 +42,9 @@ class LoanUseCase {
         await _localLoanService.update(id, loan);
       }
       return ProcessingResult();
-    } on Exception catch (e) {
-      _logger.warning('Error updating loan: $e');
-      return ProcessingResult(exception: e);
+    } catch (e, stackTrace) {
+      _logger.warning('Error updating loan', e, stackTrace);
+      return ProcessingResult(exception: _toException(e));
     }
   }
 
@@ -48,9 +52,9 @@ class LoanUseCase {
     try {
       await _loanRepository.deleteLoan(id);
       return ProcessingResult();
-    } on Exception catch (e) {
-      _logger.warning('Error deleting loan: $e');
-      return ProcessingResult(exception: e);
+    } catch (e, stackTrace) {
+      _logger.warning('Error deleting loan', e, stackTrace);
+      return ProcessingResult(exception: _toException(e));
     }
   }
 
@@ -58,9 +62,9 @@ class LoanUseCase {
     try {
       List<Loan> loans = await _loanRepository.fetchByUser(userId);
       return ProcessingResult(data: loans);
-    } on Exception catch (e) {
-      _logger.warning('Error fetching loans: $e');
-      return ProcessingResult(exception: e);
+    } catch (e, stackTrace) {
+      _logger.warning('Error fetching loans', e, stackTrace);
+      return ProcessingResult(exception: _toException(e));
     }
   }
 
@@ -68,9 +72,9 @@ class LoanUseCase {
     try {
       final loans = await _loanRepository.getByUser(userId);
       return ProcessingResult(data: loans);
-    } on Exception catch (e) {
-      _logger.warning('Error getting loans from store: $e');
-      return ProcessingResult(exception: e);
+    } catch (e, stackTrace) {
+      _logger.warning('Error getting loans from store', e, stackTrace);
+      return ProcessingResult(exception: _toException(e));
     }
   }
 
@@ -81,9 +85,9 @@ class LoanUseCase {
         return ProcessingResult(exception: Exception('Loan not found'));
       }
       return ProcessingResult(data: loan);
-    } on Exception catch (e) {
-      _logger.warning('Error getting loan from store: $e');
-      return ProcessingResult(exception: e);
+    } catch (e, stackTrace) {
+      _logger.warning('Error getting loan from store', e, stackTrace);
+      return ProcessingResult(exception: _toException(e));
     }
   }
 }

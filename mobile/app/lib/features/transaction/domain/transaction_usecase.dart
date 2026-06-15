@@ -24,6 +24,10 @@ class TransactionUseCase {
        _configurationStore = configurationStore,
        _localTransactionService = localTransactionService;
 
+  Exception _toException(Object error) {
+    return error is Exception ? error : Exception(error.toString());
+  }
+
   Future<ProcessingResult<void>> addTransaction(Transaction transaction) async {
     try {
       if (await _configurationStore.isRemoteEnabled) {
@@ -33,9 +37,9 @@ class TransactionUseCase {
         await _localTransactionService.save(transaction);
       }
       return ProcessingResult();
-    } on Exception catch (e) {
-      _logger.warning('Error creating transaction: $e');
-      return ProcessingResult(exception: e);
+    } catch (e, stackTrace) {
+      _logger.warning('Error creating transaction', e, stackTrace);
+      return ProcessingResult(exception: _toException(e));
     }
   }
 
@@ -50,9 +54,9 @@ class TransactionUseCase {
         await _localTransactionService.postDeletion(transactionModel!);
       }
       return ProcessingResult();
-    } on Exception catch (e) {
-      _logger.warning('Error deleting transaction: $e');
-      return ProcessingResult(exception: e);
+    } catch (e, stackTrace) {
+      _logger.warning('Error deleting transaction', e, stackTrace);
+      return ProcessingResult(exception: _toException(e));
     }
   }
 
@@ -77,9 +81,9 @@ class TransactionUseCase {
         ),
       );
       return ProcessingResult(data: transactions);
-    } on Exception catch (e) {
-      _logger.warning('Error fetching transactions: $e');
-      return ProcessingResult(exception: e);
+    } catch (e, stackTrace) {
+      _logger.warning('Error fetching transactions', e, stackTrace);
+      return ProcessingResult(exception: _toException(e));
     }
   }
 
@@ -94,9 +98,9 @@ class TransactionUseCase {
         ),
       );
       return ProcessingResult(data: transactions);
-    } on Exception catch (e) {
-      _logger.warning('Error retrieving transactions from store: $e');
-      return ProcessingResult(exception: e);
+    } catch (e, stackTrace) {
+      _logger.warning('Error retrieving transactions from store', e, stackTrace);
+      return ProcessingResult(exception: _toException(e));
     }
   }
 
@@ -113,11 +117,13 @@ class TransactionUseCase {
         ),
       );
       return ProcessingResult(data: transactions);
-    } on Exception catch (e) {
+    } catch (e, stackTrace) {
       _logger.warning(
-        'Error retrieving transactions by account from store: $e',
+        'Error retrieving transactions by account from store',
+        e,
+        stackTrace,
       );
-      return ProcessingResult(exception: e);
+      return ProcessingResult(exception: _toException(e));
     }
   }
 
@@ -132,9 +138,13 @@ class TransactionUseCase {
         ),
       );
       return ProcessingResult(data: transactions);
-    } on Exception catch (e) {
-      _logger.warning('Error retrieving transactions by loan from store: $e');
-      return ProcessingResult(exception: e);
+    } catch (e, stackTrace) {
+      _logger.warning(
+        'Error retrieving transactions by loan from store',
+        e,
+        stackTrace,
+      );
+      return ProcessingResult(exception: _toException(e));
     }
   }
 }

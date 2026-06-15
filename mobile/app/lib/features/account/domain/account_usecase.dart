@@ -16,14 +16,18 @@ class AccountUseCase {
   }) : _accountRepository = accountRepository,
        _transactionStore = transactionStore;
 
+  Exception _toException(Object error) {
+    return error is Exception ? error : Exception(error.toString());
+  }
+
   Future<ProcessingResult<Account>> saveAccount(Account account) async {
     try {
       final accountModel = await _accountRepository.save(account.toModel());
       final currentAccount = Account.fromModel(accountModel);
       return ProcessingResult(data: currentAccount);
-    } on Exception catch (e) {
-      _logger.warning('Error saving account: $e');
-      return ProcessingResult(exception: e);
+    } catch (e, stackTrace) {
+      _logger.warning('Error saving account', e, stackTrace);
+      return ProcessingResult(exception: _toException(e));
     }
   }
 
@@ -32,9 +36,9 @@ class AccountUseCase {
       await _accountRepository.delete(id);
       await _transactionStore.deleteByAccountId(id);
       return ProcessingResult();
-    } on Exception catch (e) {
-      _logger.warning('Error deleting account: $e');
-      return ProcessingResult(exception: e);
+    } catch (e, stackTrace) {
+      _logger.warning('Error deleting account', e, stackTrace);
+      return ProcessingResult(exception: _toException(e));
     }
   }
 
@@ -43,9 +47,9 @@ class AccountUseCase {
       final accountModels = await _accountRepository.fetchByUser(userId);
       final accounts = await convertToAccounts(accountModels);
       return ProcessingResult(data: accounts);
-    } on Exception catch (e) {
-      _logger.warning('Error fetching accounts: $e');
-      return ProcessingResult(exception: e);
+    } catch (e, stackTrace) {
+      _logger.warning('Error fetching accounts', e, stackTrace);
+      return ProcessingResult(exception: _toException(e));
     }
   }
 
@@ -62,9 +66,9 @@ class AccountUseCase {
       final accountModels = await _accountRepository.getByUserId(userId);
       final accounts = await convertToAccounts(accountModels);
       return ProcessingResult(data: accounts);
-    } on Exception catch (e) {
-      _logger.warning('Error getting accounts from store: $e');
-      return ProcessingResult(exception: e);
+    } catch (e, stackTrace) {
+      _logger.warning('Error getting accounts from store', e, stackTrace);
+      return ProcessingResult(exception: _toException(e));
     }
   }
 
@@ -76,9 +80,9 @@ class AccountUseCase {
       }
       final account = Account.fromModel(accountModel);
       return ProcessingResult(data: account);
-    } on Exception catch (e) {
-      _logger.warning('Error getting account from store: $e');
-      return ProcessingResult(exception: e);
+    } catch (e, stackTrace) {
+      _logger.warning('Error getting account from store', e, stackTrace);
+      return ProcessingResult(exception: _toException(e));
     }
   }
 }

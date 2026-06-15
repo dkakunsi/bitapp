@@ -12,6 +12,10 @@ class ConfigurationUseCase {
 
   ConfigurationUseCase(this._configurationStore);
 
+  Exception _toException(Object error) {
+    return error is Exception ? error : Exception(error.toString());
+  }
+
   Future<ProcessingResult<Configuration>> getConfiguration() async {
     try {
       final model = await _configurationStore.get(Configuration.storeId);
@@ -25,8 +29,8 @@ class ConfigurationUseCase {
         );
         return ProcessingResult(data: Configuration.defaultConfiguration);
       }
-    } catch (e) {
-      _logger.warning('Error getting configuration: $e');
+    } catch (e, stackTrace) {
+      _logger.warning('Error getting configuration', e, stackTrace);
       return ProcessingResult(data: Configuration.defaultConfiguration);
     }
   }
@@ -74,9 +78,9 @@ class ConfigurationUseCase {
       return ProcessingResult(
         data: Configuration.from(updatedConfiguration, user),
       );
-    } on Exception catch (e) {
-      _logger.warning('Error updating configuration: $e');
-      return ProcessingResult(exception: e);
+    } catch (e, stackTrace) {
+      _logger.warning('Error updating configuration', e, stackTrace);
+      return ProcessingResult(exception: _toException(e));
     }
   }
 
@@ -90,9 +94,9 @@ class ConfigurationUseCase {
       return ProcessingResult(
         data: Configuration.from(updatedConfiguration, null),
       );
-    } on Exception catch (e) {
-      _logger.warning('Error clearing token: $e');
-      return ProcessingResult(exception: e);
+    } catch (e, stackTrace) {
+      _logger.warning('Error clearing token', e, stackTrace);
+      return ProcessingResult(exception: _toException(e));
     }
   }
 }

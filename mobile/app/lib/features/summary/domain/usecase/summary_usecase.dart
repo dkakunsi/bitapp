@@ -21,6 +21,10 @@ class SummaryUseCase {
        _loanStore = loanStore,
        _transactionStore = transactionStore;
 
+  Exception _toException(Object error) {
+    return error is Exception ? error : Exception(error.toString());
+  }
+
   Future<ProcessingResult<Summary>> calculateSummary(String userId) async {
     _logger.info('Summarizing transactions for user');
     try {
@@ -37,9 +41,9 @@ class SummaryUseCase {
         totalExpense: results[3],
       );
       return ProcessingResult(data: summary);
-    } on Exception catch (e) {
-      _logger.warning('Error calculating summary: $e');
-      return ProcessingResult(exception: e);
+    } catch (e, stackTrace) {
+      _logger.warning('Error calculating summary', e, stackTrace);
+      return ProcessingResult(exception: _toException(e));
     }
   }
 

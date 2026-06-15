@@ -17,6 +17,10 @@ class TransactionAnalyticUseCase {
   }) : _transactionStore = transactionStore,
        _localTransactionService = localTransactionService;
 
+  Exception _toException(Object error) {
+    return error is Exception ? error : Exception(error.toString());
+  }
+
   Future<ProcessingResult<TransactionAnalytics>> analyzeTransactions(
     String userId,
     DateTime date,
@@ -28,9 +32,9 @@ class TransactionAnalyticUseCase {
         period: date,
       );
       return ProcessingResult(data: expenseAnalysis);
-    } on Exception catch (e) {
-      _logger.warning('Error Analyzing Expenses: $e');
-      return ProcessingResult(exception: e);
+    } catch (e, stackTrace) {
+      _logger.warning('Error Analyzing Expenses', e, stackTrace);
+      return ProcessingResult(exception: _toException(e));
     }
   }
 

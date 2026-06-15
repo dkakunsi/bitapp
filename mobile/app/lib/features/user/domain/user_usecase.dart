@@ -10,6 +10,10 @@ class UserUseCase {
 
   UserUseCase(this._userRepository);
 
+  Exception _toException(Object error) {
+    return error is Exception ? error : Exception(error.toString());
+  }
+
   Future<ProcessingResult<User>> createUser({
     required String userId,
     required String name,
@@ -28,9 +32,9 @@ class UserUseCase {
     try {
       await _userRepository.save(user.toModel());
       return ProcessingResult(data: user);
-    } on Exception catch (e) {
-      _logger.warning('Error creating user: $e');
-      return ProcessingResult(exception: e);
+    } catch (e, stackTrace) {
+      _logger.warning('Error creating user', e, stackTrace);
+      return ProcessingResult(exception: _toException(e));
     }
   }
 
@@ -45,8 +49,9 @@ class UserUseCase {
       );
       final updatedUser = User.fromModel(updatedUserModel);
       return ProcessingResult(data: updatedUser);
-    } on Exception catch (e) {
-      return ProcessingResult(exception: e);
+    } catch (e, stackTrace) {
+      _logger.warning('Error updating language for userId=$userId', e, stackTrace);
+      return ProcessingResult(exception: _toException(e));
     }
   }
 }

@@ -57,7 +57,7 @@ class AccountViewModel extends Account implements ListViewModel {
   String get subtitle => title;
 
   @override
-  double get listAmount => balance ?? 0;
+  double get listAmount => balance;
 
   @override
   Color get listAmountColor => AppColor.mainDark;

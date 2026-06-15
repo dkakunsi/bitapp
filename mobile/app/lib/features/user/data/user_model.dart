@@ -51,9 +51,10 @@ class UserModel implements ApiData, StoreData {
         data['language'] != null
             ? Language.valueOf(data['language'] as String)
             : Language.defaultLanguage;
+    final id = data['id'] ?? data['email'] as String;
 
     return UserModel(
-      id: data['id'] as String,
+      id: id,
       name: data['name'] as String,
       email: data['email'] as String,
       phone: data['phone'] as String?,

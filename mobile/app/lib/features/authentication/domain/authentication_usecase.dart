@@ -11,6 +11,10 @@ class AuthenticationUseCase {
   AuthenticationUseCase({required GoogleAuthenticationApi authenticationApi})
     : _authenticationApi = authenticationApi;
 
+  Exception _toException(Object error) {
+    return error is Exception ? error : Exception(error.toString());
+  }
+
   Future<ProcessingResult<Session>> login() async {
     Session? session;
     try {
@@ -18,9 +22,9 @@ class AuthenticationUseCase {
     } on GoogleSignInException catch (e) {
       _logGoogleSignInFailure(e, isSilentLogin: false);
       return ProcessingResult(exception: e);
-    } on Exception catch (e) {
-      _logger.warning('Failed to authenticate. $e');
-      return ProcessingResult(exception: e);
+    } catch (e, stackTrace) {
+      _logger.warning('Failed to authenticate', e, stackTrace);
+      return ProcessingResult(exception: _toException(e));
     }
 
     return ProcessingResult(data: session);
@@ -30,9 +34,9 @@ class AuthenticationUseCase {
     try {
       await _authenticationApi.logout();
       return ProcessingResult();
-    } on Exception catch (e) {
-      _logger.warning('Failed to authenticate. $e');
-      return ProcessingResult(exception: e);
+    } catch (e, stackTrace) {
+      _logger.warning('Failed to authenticate', e, stackTrace);
+      return ProcessingResult(exception: _toException(e));
     }
   }
 
@@ -43,9 +47,9 @@ class AuthenticationUseCase {
     } on GoogleSignInException catch (e) {
       _logGoogleSignInFailure(e, isSilentLogin: true);
       return ProcessingResult(exception: e);
-    } on Exception catch (e) {
-      _logger.warning('Failed to authenticate. $e');
-      return ProcessingResult(exception: e);
+    } catch (e, stackTrace) {
+      _logger.warning('Failed to authenticate', e, stackTrace);
+      return ProcessingResult(exception: _toException(e));
     }
   }
 
