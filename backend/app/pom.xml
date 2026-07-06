@@ -35,24 +35,87 @@
   <dependencies>
     <dependency>
       <groupId>io.dkakunsi.bitapp</groupId>
-      <artifactId>mongo</artifactId>
+      <artifactId>common</artifactId>
       <version>${project.version}</version>
     </dependency>
+
     <dependency>
-      <groupId>io.dkakunsi.bitapp</groupId>
+      <groupId>io.javalin</groupId>
       <artifactId>javalin</artifactId>
-      <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.eclipse.jetty.websocket</groupId>
-          <artifactId>websocket-jetty-server</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
-      <groupId>io.dkakunsi.bitapp</groupId>
-      <artifactId>jwt</artifactId>
-      <version>${project.version}</version>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.mongodb</groupId>
+      <artifactId>mongodb-driver-sync</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>dev.morphia.morphia</groupId>
+      <artifactId>morphia-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.auth0</groupId>
+      <artifactId>java-jwt</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.auth0</groupId>
+      <artifactId>jwks-rsa</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+    </dependency>
+
+    <!-- Testing -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>mongodb</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.konghq</groupId>
+      <artifactId>unirest-java</artifactId>
+      <scope>test</scope>
     </dependency>
 
     <!-- This is excluded by "websocket-jetty-server" exclusion -->
@@ -60,14 +123,6 @@
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-servlet</artifactId>
       <version>11.0.25</version>
-    </dependency>
-
-    <!-- Test Dependencies -->
-    <dependency>
-      <groupId>io.dkakunsi.bitapp</groupId>
-      <artifactId>test</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 

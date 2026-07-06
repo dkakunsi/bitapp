@@ -1,8 +1,5 @@
 package io.dkakunsi.bitapp;
 
-import io.dkakunsi.bitapp.common.Logger;
-import io.dkakunsi.bitapp.common.SystemLogger;
-
 public class Main {
 
   private static final Logger LOGGER = SystemLogger.getLogger(Main.class);
