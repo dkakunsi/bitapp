@@ -11,8 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import io.dkakunsi.bitapp.DateTimeConverter;
 import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
-import io.dkakunsi.bitapp.loan.application.dto.LoanResult;
-import io.dkakunsi.bitapp.loan.application.dto.UpdateLoanInput;
 import lombok.Builder;
 
 @Builder
@@ -31,7 +29,7 @@ public final record Loan(
     BigDecimal amount,
     BigDecimal remainingAmount,
     Currency currency,
-    double interestRate,
+    Double interestRate,
 
     EntityStatus status,
     LocalDateTime createdAt,
@@ -59,51 +57,30 @@ public final record Loan(
     }
   }
 
-  public Loan update(UpdateLoanInput input, String requester) {
-    final var now = LocalDateTime.now();
+  public Long dateInEpochMillis() {
+    return toEpochMilli(this.date);
+  }
 
-    LocalDate updatedDate = this.date;
-    if (input.date() != null) {
-      updatedDate = parseDate(input.date());
-    }
+  public Integer timeInMinutesSinceMidnight() {
+    return toMinutesSinceMidnight(this.time);
+  }
 
-    LocalTime updatedTime = this.time;
-    if (input.time() != null) {
-      updatedTime = parseTime(input.time());
-    }
-
-    Currency updatedCurrency = this.currency;
-    if (input.currency() != null && !input.currency().isBlank()) {
-      updatedCurrency = Currency.getInstance(input.currency());
-    }
+  public Loan update(Loan update, String requester) {
+    var updatedDate = update.date() != null ? update.date() : this.date;
+    var updatedTime = update.time() != null ? update.time() : this.time;
+    var updatedCurrency = update.currency() != null ? update.currency() : this.currency;
+    var updatedInterestRate = update.interestRate() != null ? update.interestRate() : this.interestRate;
+    var updatedPartyName = update.partyName() != null ? update.partyName() : this.partyName;
+    var updatedTitle = update.title() != null ? update.title() : this.title;
+    var updatedDescription = update.description() != null ? update.description() : this.description;
 
     var updatedAmount = this.amount;
     var updatedRemainingAmount = this.remainingAmount;
-    if (input.amount() != null) {
-      updatedAmount = input.amount();
+    if (update.amount() != null && amount.compareTo(update.amount()) != 0) {
+      updatedAmount = update.amount();
       // Calculate repaid amount and adjust remaining amount
       var repaidAmount = this.amount.subtract(this.remainingAmount);
       updatedRemainingAmount = updatedAmount.subtract(repaidAmount);
-    }
-
-    double updatedInterestRate = this.interestRate;
-    if (input.interestRate() != null) {
-      updatedInterestRate = input.interestRate();
-    }
-
-    String updatedPartyName = this.partyName;
-    if (input.partyName() != null) {
-      updatedPartyName = input.partyName();
-    }
-
-    String updatedTitle = this.title;
-    if (input.title() != null) {
-      updatedTitle = input.title();
-    }
-
-    String updatedDescription = this.description;
-    if (input.description() != null) {
-      updatedDescription = input.description();
     }
 
     return Loan.builder()
@@ -122,50 +99,9 @@ public final record Loan(
         .interestRate(updatedInterestRate)
         .status(this.status)
         .createdAt(this.createdAt)
-        .updatedAt(now)
+        .updatedAt(LocalDateTime.now())
         .createdBy(this.createdBy)
         .updatedBy(requester)
-        .build();
-  }
-
-  public Loan updateRemainingAmount(BigDecimal newRemainingAmount) {
-    return Loan.builder()
-        .id(this.id)
-        .user(this.user)
-        .account(this.account)
-        .type(this.type)
-        .date(this.date)
-        .time(this.time)
-        .partyName(this.partyName)
-        .title(this.title)
-        .description(this.description)
-        .amount(this.amount)
-        .remainingAmount(newRemainingAmount)
-        .currency(this.currency)
-        .interestRate(this.interestRate)
-        .status(this.status)
-        .createdAt(this.createdAt)
-        .updatedAt(this.updatedAt)
-        .createdBy(this.createdBy)
-        .updatedBy(this.updatedBy)
-        .build();
-  }
-
-  public LoanResult toResult() {
-    return LoanResult.builder()
-        .id(this.id().value())
-        .user(this.user().value())
-        .account(this.account().value())
-        .type(this.type().name())
-        .date(toEpochMilli(this.date()))
-        .time(toMinutesSinceMidnight(this.time()))
-        .partyName(this.partyName())
-        .title(this.title())
-        .description(this.description())
-        .amount(this.amount())
-        .remainingAmount(this.remainingAmount())
-        .currency(this.currency().getCurrencyCode())
-        .interestRate(this.interestRate())
         .build();
   }
 

@@ -2,38 +2,30 @@ package io.dkakunsi.bitapp.account.application.usecase;
 
 import io.dkakunsi.bitapp.AppError.Code;
 import io.dkakunsi.bitapp.Id;
-import io.dkakunsi.bitapp.Logger;
 import io.dkakunsi.bitapp.Result;
 import io.dkakunsi.bitapp.SessionManager;
-import io.dkakunsi.bitapp.SystemLogger;
 import io.dkakunsi.bitapp.UseCase;
 import io.dkakunsi.bitapp.account.application.dto.AccountResult;
 import io.dkakunsi.bitapp.account.domain.entity.Account;
+import io.dkakunsi.bitapp.account.domain.port.AccountLoanPort;
+import io.dkakunsi.bitapp.account.domain.port.AccountTransactionPort;
 import io.dkakunsi.bitapp.account.domain.repository.AccountRepository;
-import io.dkakunsi.bitapp.loan.application.usecase.RemoveLoan;
-import io.dkakunsi.bitapp.loan.domain.repository.LoanRepository;
-import io.dkakunsi.bitapp.transaction.domain.repository.TransactionRepository;
 
 public final class RemoveAccount implements UseCase<String, AccountResult> {
 
-  private static final Logger LOGGER = SystemLogger.getLogger(RemoveAccount.class);
-
   private final AccountRepository accountRepository;
-  private final TransactionRepository transactionRepository;
-  private final LoanRepository loanRepository;
-  private final RemoveLoan removeLoan;
+  private final AccountTransactionPort accountTransactionAdapter;
+  private final AccountLoanPort accountLoanAdapter;
   private final SessionManager sessionManager;
 
   public RemoveAccount(
       AccountRepository accountRepository,
-      TransactionRepository transactionRepository,
-      LoanRepository loanRepository,
-      RemoveLoan removeLoan,
+      AccountTransactionPort accountTransactionAdapter,
+      AccountLoanPort accountLoanAdapter,
       SessionManager sessionManager) {
     this.accountRepository = accountRepository;
-    this.transactionRepository = transactionRepository;
-    this.loanRepository = loanRepository;
-    this.removeLoan = removeLoan;
+    this.accountTransactionAdapter = accountTransactionAdapter;
+    this.accountLoanAdapter = accountLoanAdapter;
     this.sessionManager = sessionManager;
   }
 
@@ -51,24 +43,14 @@ public final class RemoveAccount implements UseCase<String, AccountResult> {
     }
 
     return sessionManager.executeInSession(() -> {
-      loanRepository.findByAccountId(account.id()).forEach(loan -> {
-        var result = removeLoan.execute(loan.id().value());
-        if (result.isFailed()) {
-          LOGGER.warn("Failed to remove loan with id {}: {}", loan.id(), result.error().get().message());
-        }
-      });
+      accountLoanAdapter.removeByAccountId(account.id());
 
       // this must be done after removing loans to maintain data integrity
       // as we are updating transactions related to loans
-      transactionRepository.findByAccountId(account.id()).forEach(t -> {
-        switch (t.type()) {
-          case DEBIT, CREDIT -> transactionRepository.deleteById(t.id());
-          case TRANSFER -> transactionRepository.update(t.convertFromTransfer(account.id(), requester));
-        }
-      });
+      accountTransactionAdapter.removeOrUpdateByAccountId(account.id());
 
       accountRepository.deleteById(account.id());
-      return Result.success(account.toResult());
+      return Result.success(AccountResult.from(account));
     });
   }
 }

@@ -31,7 +31,7 @@ public final class CreateAccountInputTest {
         .build();
 
     // When
-    var account = Account.from(input, requester);
+    var account = input.toAccount(requester);
 
     // Then
     assertNotNull(account);
@@ -66,7 +66,7 @@ public final class CreateAccountInputTest {
         .build();
 
     // When
-    var account = Account.from(input, requester);
+    var account = input.toAccount(requester);
 
     // Then
     assertNotNull(account);
@@ -91,7 +91,7 @@ public final class CreateAccountInputTest {
         .build();
 
     // When
-    var account = Account.from(input, requester);
+    var account = input.toAccount(requester);
 
     // Then
     assertNotNull(account);
@@ -114,7 +114,7 @@ public final class CreateAccountInputTest {
         .build();
 
     // When
-    var account = Account.from(input, requester);
+    var account = input.toAccount(requester);
 
     // Then
     assertNotNull(account);
@@ -137,7 +137,7 @@ public final class CreateAccountInputTest {
         .build();
 
     // When
-    var account = Account.from(input, requester);
+    var account = input.toAccount(requester);
 
     // Then
     assertNotNull(account);
@@ -159,7 +159,7 @@ public final class CreateAccountInputTest {
         .build();
 
     // When
-    var account = Account.from(input, requester);
+    var account = input.toAccount(requester);
 
     // Then
     assertNotNull(account);
@@ -181,7 +181,7 @@ public final class CreateAccountInputTest {
         .build();
 
     // When
-    var account = Account.from(input, requester);
+    var account = input.toAccount(requester);
 
     // Then
     assertNotNull(account);
@@ -204,8 +204,8 @@ public final class CreateAccountInputTest {
         .build();
 
     // When
-    var account1 = Account.from(input, requester);
-    var account2 = Account.from(input, requester);
+    var account1 = input.toAccount(requester);
+    var account2 = input.toAccount(requester);
 
     // Then
     assertNotNull(account1.id());
@@ -228,7 +228,7 @@ public final class CreateAccountInputTest {
         .build();
 
     // When
-    var account = Account.from(input, requester);
+    var account = input.toAccount(requester);
 
     // Then
     assertNotNull(account.user());
@@ -251,7 +251,7 @@ public final class CreateAccountInputTest {
         .build();
 
     // When
-    var account = Account.from(input, requester);
+    var account = input.toAccount(requester);
 
     // Then
     assertNotNull(account.createdAt());
@@ -275,7 +275,7 @@ public final class CreateAccountInputTest {
         .build();
 
     // When
-    var account = Account.from(input, requester);
+    var account = input.toAccount(requester);
 
     // Then
     assertEquals(requester, account.createdBy());
@@ -308,9 +308,9 @@ public final class CreateAccountInputTest {
         .build();
 
     // When
-    var account1 = Account.from(input1, requester);
-    var account2 = Account.from(input2, requester);
-    var account3 = Account.from(input3, requester);
+    var account1 = input1.toAccount(requester);
+    var account2 = input2.toAccount(requester);
+    var account3 = input3.toAccount(requester);
 
     // Then
     assertEquals("#FF0000", account1.themeColor());
@@ -334,7 +334,7 @@ public final class CreateAccountInputTest {
         .build();
 
     // When
-    var account = Account.from(input, requester);
+    var account = input.toAccount(requester);
 
     // Then
     assertEquals(expectedName, account.name());
@@ -356,8 +356,8 @@ public final class CreateAccountInputTest {
         .build();
 
     // When
-    var account1 = Account.from(input, requester1);
-    var account2 = Account.from(input, requester2);
+    var account1 = input.toAccount(requester1);
+    var account2 = input.toAccount(requester2);
 
     // Then
     assertEquals(requester1, account1.user().value());

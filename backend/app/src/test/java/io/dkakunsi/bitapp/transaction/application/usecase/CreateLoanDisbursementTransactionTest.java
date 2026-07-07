@@ -23,10 +23,10 @@ import io.dkakunsi.bitapp.Context;
 import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.SessionManager;
-import io.dkakunsi.bitapp.account.domain.repository.AccountRepository;
 import io.dkakunsi.bitapp.loan.domain.entity.Loan;
-import io.dkakunsi.bitapp.loan.domain.repository.LoanRepository;
 import io.dkakunsi.bitapp.transaction.application.dto.CreateLoanDisbursementTransactionInput;
+import io.dkakunsi.bitapp.transaction.domain.port.TransactionAccountPort;
+import io.dkakunsi.bitapp.transaction.domain.port.TransactionLoanPort;
 import io.dkakunsi.bitapp.transaction.domain.repository.TransactionRepository;
 
 public class CreateLoanDisbursementTransactionTest {
@@ -42,17 +42,21 @@ public class CreateLoanDisbursementTransactionTest {
   private CreateTransaction underTest;
 
   private TransactionRepository transactionRepository;
-  private AccountRepository accountRepository;
-  private LoanRepository loanRepository;
+  private TransactionAccountPort transactionAccountPort;
+  private TransactionLoanPort transactionLoanPort;
   private SessionManager sessionManager;
 
   @BeforeEach
   void setUp() {
     transactionRepository = mock(TransactionRepository.class);
-    accountRepository = mock(AccountRepository.class);
-    loanRepository = mock(LoanRepository.class);
+    transactionAccountPort = mock(TransactionAccountPort.class);
+    transactionLoanPort = mock(TransactionLoanPort.class);
     sessionManager = mock(SessionManager.class);
-    underTest = new CreateTransaction(transactionRepository, accountRepository, loanRepository, sessionManager);
+    underTest = new CreateTransaction(transactionRepository, transactionAccountPort, transactionLoanPort,
+        sessionManager);
+
+    when(transactionAccountPort.isExistingAccount(any())).thenReturn(true);
+    when(transactionLoanPort.isExistingLoan(any())).thenReturn(true);
 
     when(sessionManager.executeInSession(any())).thenAnswer(invocation -> {
       var function = invocation.getArgument(0, java.util.function.Supplier.class);
@@ -84,7 +88,7 @@ public class CreateLoanDisbursementTransactionTest {
     assertEquals("CREDIT", resultData.type());
     assertEquals("LOAN_DISBURSEMENT", resultData.category());
 
-    verify(accountRepository).creditBalance(ACCOUNT, loan.amount());
+    verify(transactionAccountPort).creditBalance(ACCOUNT, loan.amount());
   }
 
   @Test
@@ -111,7 +115,7 @@ public class CreateLoanDisbursementTransactionTest {
     assertEquals("DEBIT", resultData.type());
     assertEquals("LOAN_DISBURSEMENT", resultData.category());
 
-    verify(accountRepository).debitBalance(ACCOUNT, loan.amount());
+    verify(transactionAccountPort).debitBalance(ACCOUNT, loan.amount());
   }
 
   @Test
@@ -124,7 +128,7 @@ public class CreateLoanDisbursementTransactionTest {
 
     when(transactionRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
     doThrow(new IllegalArgumentException("account not found"))
-        .when(accountRepository).creditBalance(any(), any());
+      .when(transactionAccountPort).creditBalance(any(), any());
 
     // When
     var result = Context.executeInContext(context, () -> underTest.process(createRequest));
@@ -147,7 +151,7 @@ public class CreateLoanDisbursementTransactionTest {
 
     when(transactionRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
     doThrow(new IllegalArgumentException("account not found"))
-        .when(accountRepository).debitBalance(any(), any());
+      .when(transactionAccountPort).debitBalance(any(), any());
 
     // When
     var result = Context.executeInContext(context, () -> underTest.process(createRequest));

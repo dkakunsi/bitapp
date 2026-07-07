@@ -5,8 +5,6 @@ import java.util.Objects;
 
 import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
-import io.dkakunsi.bitapp.user.application.dto.RegisterUserInput;
-import io.dkakunsi.bitapp.user.application.dto.UserResult;
 import lombok.Builder;
 
 @Builder
@@ -22,8 +20,6 @@ public final record User(
     LocalDateTime updatedAt,
     String createdBy,
     String updatedBy) {
-
-  private static final Language DEFAULT_LANGUAGE = Language.EN;
 
   public static enum Language {
     EN,
@@ -44,43 +40,27 @@ public final record User(
 
   }
 
-  public static User from(RegisterUserInput input) {
-    final var userId = Id.of(input.email());
-    final var now = LocalDateTime.now();
-    final var executor = input.email();
-    return User.builder()
-        .id(userId)
-        .name(input.name())
-        .phone(input.phone())
-        .photoUrl(input.photoUrl())
-        .language(DEFAULT_LANGUAGE)
-        .status(EntityStatus.ACTIVE)
-        .createdAt(now)
-        .updatedAt(now)
-        .createdBy(executor)
-        .updatedBy(executor)
-        .build();
+  public boolean needUpdate(User input) {
+    return !Objects.equals(this.name, input.name())
+        || !Objects.equals(this.phone, input.phone())
+        || !Objects.equals(this.photoUrl, input.photoUrl());
   }
 
-  public boolean needUpdate(RegisterUserInput userModel) {
-    return !Objects.equals(this.name, userModel.name())
-        || !Objects.equals(this.phone, userModel.phone())
-        || !Objects.equals(this.photoUrl, userModel.photoUrl());
-  }
-
-  public User update(RegisterUserInput userInput) {
-    var executor = userInput.email();
+  public User update(User input, String requester) {
+    var updatedName = input.name() != null ? input.name() : this.name;
+    var updatedPhone = input.phone() != null ? input.phone() : this.phone;
+    var updatedPhotoUrl = input.photoUrl() != null ? input.photoUrl() : this.photoUrl;
     return User.builder()
         .id(this.id)
         .language(this.language)
-        .name(userInput.name())
-        .phone(userInput.phone())
-        .photoUrl(userInput.photoUrl())
+        .name(updatedName)
+        .phone(updatedPhone)
+        .photoUrl(updatedPhotoUrl)
         .status(this.status)
         .createdAt(this.createdAt)
         .updatedAt(LocalDateTime.now())
         .createdBy(this.createdBy)
-        .updatedBy(executor)
+        .updatedBy(requester)
         .build();
   }
 
@@ -96,16 +76,6 @@ public final record User(
         .updatedAt(LocalDateTime.now())
         .createdBy(this.createdBy)
         .updatedBy(requester)
-        .build();
-  }
-
-  public UserResult toResult() {
-    return UserResult.builder()
-        .email(this.id().value())
-        .name(this.name())
-        .phone(this.phone())
-        .photoUrl(this.photoUrl())
-        .language(this.language().name())
         .build();
   }
 }

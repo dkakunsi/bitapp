@@ -18,7 +18,7 @@ public final class GetAccount implements UseCase<String, AccountResult> {
   @Override
   public Result<AccountResult> execute(String accountId) {
     return accountRepository.findById(Id.of(accountId))
-        .map(account -> Result.success(account.toResult()))
+        .map(account -> Result.success(AccountResult.from(account)))
         .orElse(Result.failure(Code.NOT_FOUND, "Account not found"));
   }
 }

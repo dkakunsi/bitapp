@@ -1,23 +1,23 @@
-package io.dkakunsi.bitapp.transaction.domain.processor;
+package io.dkakunsi.bitapp.transaction.application.processor;
 
-import io.dkakunsi.bitapp.account.domain.repository.AccountRepository;
-import io.dkakunsi.bitapp.loan.domain.repository.LoanRepository;
 import io.dkakunsi.bitapp.transaction.domain.entity.Transaction;
+import io.dkakunsi.bitapp.transaction.domain.port.TransactionAccountPort;
+import io.dkakunsi.bitapp.transaction.domain.port.TransactionLoanPort;
 import io.dkakunsi.bitapp.transaction.domain.repository.TransactionRepository;
 
 public final class UserTransactionProcessor implements TransactionProcessor {
 
   protected final TransactionRepository transactionRepository;
-  protected final AccountRepository accountRepository;
-  protected final LoanRepository loanRepository;
+  protected final TransactionAccountPort transactionAccountService;
+  protected final TransactionLoanPort transactionLoanService;
 
   public UserTransactionProcessor(
       TransactionRepository transactionRepository,
-      AccountRepository accountRepository,
-      LoanRepository loanRepository) {
+      TransactionAccountPort transactionAccountService,
+      TransactionLoanPort transactionLoanService) {
     this.transactionRepository = transactionRepository;
-    this.accountRepository = accountRepository;
-    this.loanRepository = loanRepository;
+    this.transactionAccountService = transactionAccountService;
+    this.transactionLoanService = transactionLoanService;
   }
 
   @Override
@@ -26,20 +26,20 @@ public final class UserTransactionProcessor implements TransactionProcessor {
 
     switch (createdTransaction.type()) {
       case DEBIT -> {
-        accountRepository.debitBalance(
+        transactionAccountService.debitBalance(
             createdTransaction.source(),
             createdTransaction.amount());
       }
       case CREDIT -> {
-        accountRepository.creditBalance(
+        transactionAccountService.creditBalance(
             createdTransaction.destination(),
             createdTransaction.amount());
       }
       case TRANSFER -> {
-        accountRepository.debitBalance(
+        transactionAccountService.debitBalance(
             createdTransaction.source(),
             createdTransaction.amount());
-        accountRepository.creditBalance(
+        transactionAccountService.creditBalance(
             createdTransaction.destination(),
             createdTransaction.amount());
       }
@@ -51,7 +51,7 @@ public final class UserTransactionProcessor implements TransactionProcessor {
        * There are no chances for it to increase the remaining amount through
        * transaction.
        */
-      loanRepository.decreaseRemainingAmount(createdTransaction.loan(), createdTransaction.amount());
+      transactionLoanService.decreaseRemainingAmount(createdTransaction.loan(), createdTransaction.amount());
     }
 
     return createdTransaction;

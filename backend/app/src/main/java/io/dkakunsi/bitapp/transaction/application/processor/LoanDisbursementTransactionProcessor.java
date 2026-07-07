@@ -1,18 +1,18 @@
-package io.dkakunsi.bitapp.transaction.domain.processor;
+package io.dkakunsi.bitapp.transaction.application.processor;
 
-import io.dkakunsi.bitapp.account.domain.repository.AccountRepository;
 import io.dkakunsi.bitapp.transaction.domain.entity.Transaction;
+import io.dkakunsi.bitapp.transaction.domain.port.TransactionAccountPort;
 import io.dkakunsi.bitapp.transaction.domain.repository.TransactionRepository;
 
 public final class LoanDisbursementTransactionProcessor implements TransactionProcessor {
 
   private final TransactionRepository transactionRepository;
-  private final AccountRepository accountRepository;
+  private final TransactionAccountPort transactionAccountService;
 
   public LoanDisbursementTransactionProcessor(TransactionRepository transactionRepository,
-      AccountRepository accountRepository) {
+      TransactionAccountPort transactionAccountService) {
     this.transactionRepository = transactionRepository;
-    this.accountRepository = accountRepository;
+    this.transactionAccountService = transactionAccountService;
   }
 
   @Override
@@ -21,12 +21,12 @@ public final class LoanDisbursementTransactionProcessor implements TransactionPr
 
     switch (createdTransaction.type()) {
       case CREDIT -> {
-        accountRepository.creditBalance(
+        transactionAccountService.creditBalance(
             createdTransaction.destination(),
             createdTransaction.amount());
       }
       case DEBIT -> {
-        accountRepository.debitBalance(
+        transactionAccountService.debitBalance(
             createdTransaction.source(),
             createdTransaction.amount());
       }

@@ -5,30 +5,28 @@ import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.Result;
 import io.dkakunsi.bitapp.SessionManager;
 import io.dkakunsi.bitapp.UseCase;
-import io.dkakunsi.bitapp.account.domain.repository.AccountRepository;
 import io.dkakunsi.bitapp.loan.application.dto.CreateLoanInput;
 import io.dkakunsi.bitapp.loan.application.dto.LoanResult;
-import io.dkakunsi.bitapp.loan.domain.entity.Loan;
+import io.dkakunsi.bitapp.loan.domain.port.LoanAccountPort;
+import io.dkakunsi.bitapp.loan.domain.port.LoanTransactionPort;
 import io.dkakunsi.bitapp.loan.domain.repository.LoanRepository;
-import io.dkakunsi.bitapp.transaction.application.dto.CreateLoanDisbursementTransactionInput;
-import io.dkakunsi.bitapp.transaction.application.usecase.CreateTransaction;
 
 public final class CreateLoan implements UseCase<CreateLoanInput, LoanResult> {
 
-  private final LoanRepository loanRepository;
-  private final AccountRepository accountRepository;
   private final SessionManager sessionManager;
-  private final CreateTransaction createTransaction;
+  private final LoanRepository loanRepository;
+  private final LoanAccountPort loanAccountAdapter;
+  private final LoanTransactionPort loanTransactionAdapter;
 
   public CreateLoan(
-      LoanRepository loanRepository,
-      AccountRepository accountRepository,
       SessionManager sessionManager,
-      CreateTransaction createTransaction) {
+      LoanRepository loanRepository,
+      LoanAccountPort loanAccountAdapter,
+      LoanTransactionPort loanTransactionAdapter) {
     this.loanRepository = loanRepository;
-    this.accountRepository = accountRepository;
+    this.loanAccountAdapter = loanAccountAdapter;
+    this.loanTransactionAdapter = loanTransactionAdapter;
     this.sessionManager = sessionManager;
-    this.createTransaction = createTransaction;
   }
 
   @Override
@@ -37,10 +35,10 @@ public final class CreateLoan implements UseCase<CreateLoanInput, LoanResult> {
     final var loan = input.toLoan(requester);
     if (input.account() == null) {
       var createdLoan = this.loanRepository.create(loan);
-      return Result.success(createdLoan.toResult());
+      return Result.success(LoanResult.from(createdLoan));
     }
 
-    var account = accountRepository.findById(Id.of(input.account()))
+    var account = loanAccountAdapter.findById(Id.of(input.account()))
         .orElse(null);
 
     if (account == null) {
@@ -53,25 +51,12 @@ public final class CreateLoan implements UseCase<CreateLoanInput, LoanResult> {
 
     return sessionManager.executeInSession(() -> {
       var createdLoan = this.loanRepository.create(loan);
-      var disbursementResult = createDisbursementTransaction(createdLoan, account.id().value());
+      var disbursementResult = loanTransactionAdapter.disburseTransaction(createdLoan);
       if (disbursementResult.isFailed()) {
         var error = disbursementResult.error().get();
         return Result.failure(error.code(), error.message());
       }
-      return Result.success(createdLoan.toResult());
+      return Result.success(LoanResult.from(createdLoan));
     });
-  }
-
-  private Result<Void> createDisbursementTransaction(Loan loan, String accountId) {
-    var transactionInput = CreateLoanDisbursementTransactionInput.builder()
-        .loan(loan)
-        .build();
-
-    var result = createTransaction.execute(transactionInput);
-    if (result.isFailed()) {
-      var error = result.error().get();
-      return Result.failure(error.code(), error.message());
-    }
-    return Result.success();
   }
 }

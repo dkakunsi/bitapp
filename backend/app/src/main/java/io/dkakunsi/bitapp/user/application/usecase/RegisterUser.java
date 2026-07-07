@@ -20,14 +20,17 @@ public final class RegisterUser implements UseCase<RegisterUserInput, UserResult
     User user = userRepository.findByEmail(input.email())
         .map(existing -> update(existing, input))
         .orElseGet(() -> create(input));
-    return Result.success(user.toResult());
+    return Result.success(UserResult.from(user));
   }
 
   private User update(User existingUser, RegisterUserInput userInput) {
-    return existingUser.needUpdate(userInput) ? userRepository.save(existingUser.update(userInput)) : existingUser;
+    var updatingUser = userInput.toUser();
+    return existingUser.needUpdate(updatingUser)
+        ? userRepository.save(existingUser.update(updatingUser, userInput.email()))
+        : existingUser;
   }
 
   private User create(RegisterUserInput userInput) {
-    return userRepository.save(User.from(userInput));
+    return userRepository.save(userInput.toUser());
   }
 }

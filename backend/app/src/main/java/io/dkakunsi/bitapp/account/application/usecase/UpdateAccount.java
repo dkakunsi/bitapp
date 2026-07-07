@@ -30,7 +30,9 @@ public final class UpdateAccount implements UseCase<UpdateAccountInput, AccountR
       return Result.failure(Code.UNAUTHORIZED, "User can only update their own account");
     }
 
-    var updatedAccount = accountRepository.update(account.updateDetails(input, requester));
-    return Result.success(updatedAccount.toResult());
+    var accountType = input.type() != null ? Account.Type.valueOf(input.type()) : null;
+    var updatingAccount = account.updateDetails(input.name(), accountType, input.themeColor(), requester);
+    var updatedAccount = accountRepository.update(updatingAccount);
+    return Result.success(AccountResult.from(updatedAccount));
   }
 }

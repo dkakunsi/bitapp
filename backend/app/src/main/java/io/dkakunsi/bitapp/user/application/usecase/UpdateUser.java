@@ -27,7 +27,7 @@ public final class UpdateUser implements UseCase<UpdateUserInput, UserResult> {
         .map(user -> {
           var updatedUser = user.updateLanguage(User.Language.valueOf(input.language()), requester);
           var savedUser = userRepository.save(updatedUser);
-          return Result.success(savedUser.toResult());
+          return Result.success(UserResult.from(savedUser));
         })
         .orElse(Result.failure(Code.NOT_FOUND, "User not found"));
   }

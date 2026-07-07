@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -23,9 +22,9 @@ import io.dkakunsi.bitapp.Context;
 import io.dkakunsi.bitapp.DateTimeConverter;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.SessionManager;
-import io.dkakunsi.bitapp.account.domain.repository.AccountRepository;
-import io.dkakunsi.bitapp.loan.domain.repository.LoanRepository;
 import io.dkakunsi.bitapp.transaction.application.dto.CreateUserTransactionInput;
+import io.dkakunsi.bitapp.transaction.domain.port.TransactionAccountPort;
+import io.dkakunsi.bitapp.transaction.domain.port.TransactionLoanPort;
 import io.dkakunsi.bitapp.transaction.domain.repository.TransactionRepository;
 
 public final class CreateUserTransactionTest {
@@ -37,8 +36,8 @@ public final class CreateUserTransactionTest {
   private CreateTransaction underTest;
 
   private TransactionRepository transactionRepository;
-  private AccountRepository accountRepository;
-  private LoanRepository loanRepository;
+  private TransactionAccountPort transactionAccountPort;
+  private TransactionLoanPort transactionLoanPort;
   private SessionManager sessionManager;
 
   private static final String ACCOUNT_ID_1 = "account-1";
@@ -50,10 +49,14 @@ public final class CreateUserTransactionTest {
   @BeforeEach
   void setUp() {
     transactionRepository = mock(TransactionRepository.class);
-    accountRepository = mock(AccountRepository.class);
-    loanRepository = mock(LoanRepository.class);
+    transactionAccountPort = mock(TransactionAccountPort.class);
+    transactionLoanPort = mock(TransactionLoanPort.class);
     sessionManager = mock(SessionManager.class);
-    underTest = new CreateTransaction(transactionRepository, accountRepository, loanRepository, sessionManager);
+    underTest = new CreateTransaction(transactionRepository, transactionAccountPort, transactionLoanPort,
+        sessionManager);
+
+    when(transactionAccountPort.isExistingAccount(any())).thenReturn(true);
+    when(transactionLoanPort.isExistingLoan(any())).thenReturn(true);
 
     when(sessionManager.executeInSession(any())).thenAnswer(invocation -> {
       var function = invocation.getArgument(0, java.util.function.Supplier.class);
@@ -91,7 +94,7 @@ public final class CreateUserTransactionTest {
     assertEquals(createRequest.amount(), resultData.amount());
     assertEquals("DEBIT", resultData.type());
 
-    verify(accountRepository).debitBalance(ACCOUNT_1, BigDecimal.valueOf(50000));
+    verify(transactionAccountPort).debitBalance(ACCOUNT_1, BigDecimal.valueOf(50000));
   }
 
   @Test
@@ -122,7 +125,7 @@ public final class CreateUserTransactionTest {
     assertEquals(createRequest.title(), resultData.title());
     assertEquals("CREDIT", resultData.type());
 
-    verify(accountRepository).creditBalance(ACCOUNT_1, BigDecimal.valueOf(5000000));
+    verify(transactionAccountPort).creditBalance(ACCOUNT_1, BigDecimal.valueOf(5000000));
   }
 
   @Test
@@ -154,8 +157,8 @@ public final class CreateUserTransactionTest {
     assertEquals(createRequest.title(), resultData.title());
     assertEquals("TRANSFER", resultData.type());
 
-    verify(accountRepository).debitBalance(ACCOUNT_1, BigDecimal.valueOf(100000));
-    verify(accountRepository).creditBalance(ACCOUNT_2, BigDecimal.valueOf(100000));
+    verify(transactionAccountPort).debitBalance(ACCOUNT_1, BigDecimal.valueOf(100000));
+    verify(transactionAccountPort).creditBalance(ACCOUNT_2, BigDecimal.valueOf(100000));
   }
 
   @Test
@@ -184,7 +187,7 @@ public final class CreateUserTransactionTest {
     assertTrue(result.data().isPresent());
 
     var transactionCaptor = ArgumentCaptor.forClass(Id.class);
-    verify(loanRepository).decreaseRemainingAmount(transactionCaptor.capture(), any());
+    verify(transactionLoanPort).decreaseRemainingAmount(transactionCaptor.capture(), any());
   }
 
   @Test
@@ -200,8 +203,7 @@ public final class CreateUserTransactionTest {
         .build();
 
     when(transactionRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
-    doThrow(new IllegalArgumentException("source account not found"))
-        .when(accountRepository).debitBalance(any(), any());
+    when(transactionAccountPort.isExistingAccount(Id.of(nonExistentAccountId))).thenReturn(false);
 
     // When
     var result = Context.executeInContext(context, () -> underTest.process(createRequest));
@@ -211,7 +213,7 @@ public final class CreateUserTransactionTest {
     assertTrue(result.error().isPresent());
     var error = result.error().get();
     assertEquals(Code.BAD_REQUEST, error.code());
-    assertTrue(error.message().contains("source account not found"));
+    assertEquals("source account not found", error.message());
   }
 
   @Test
@@ -227,8 +229,7 @@ public final class CreateUserTransactionTest {
         .build();
 
     when(transactionRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
-    doThrow(new IllegalArgumentException("destination account not found"))
-        .when(accountRepository).creditBalance(any(), any());
+    when(transactionAccountPort.isExistingAccount(Id.of(nonExistentAccountId))).thenReturn(false);
 
     // When
     var result = Context.executeInContext(context, () -> underTest.process(createRequest));
@@ -238,7 +239,7 @@ public final class CreateUserTransactionTest {
     assertTrue(result.error().isPresent());
     var error = result.error().get();
     assertEquals(Code.BAD_REQUEST, error.code());
-    assertTrue(error.message().contains("destination account not found"));
+    assertEquals("destination account not found", error.message());
   }
 
   @Test
@@ -255,8 +256,7 @@ public final class CreateUserTransactionTest {
         .build();
 
     when(transactionRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
-    doThrow(new IllegalArgumentException("loan not found"))
-        .when(loanRepository).decreaseRemainingAmount(any(), any());
+    when(transactionLoanPort.isExistingLoan(Id.of(nonExistentLoanId))).thenReturn(false);
 
     // When
     var result = Context.executeInContext(context, () -> underTest.process(createRequest));
@@ -266,7 +266,7 @@ public final class CreateUserTransactionTest {
     assertTrue(result.error().isPresent());
     var error = result.error().get();
     assertEquals(Code.BAD_REQUEST, error.code());
-    assertTrue(error.message().contains("loan not found"));
+    assertEquals("loan not found", error.message());
   }
 
   @Test

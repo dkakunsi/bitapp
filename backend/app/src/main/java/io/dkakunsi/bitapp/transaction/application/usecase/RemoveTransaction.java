@@ -5,28 +5,28 @@ import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.Result;
 import io.dkakunsi.bitapp.SessionManager;
 import io.dkakunsi.bitapp.UseCase;
-import io.dkakunsi.bitapp.account.domain.repository.AccountRepository;
-import io.dkakunsi.bitapp.loan.domain.repository.LoanRepository;
 import io.dkakunsi.bitapp.transaction.application.dto.TransactionResult;
 import io.dkakunsi.bitapp.transaction.domain.entity.Transaction;
+import io.dkakunsi.bitapp.transaction.domain.port.TransactionAccountPort;
+import io.dkakunsi.bitapp.transaction.domain.port.TransactionLoanPort;
 import io.dkakunsi.bitapp.transaction.domain.repository.TransactionRepository;
 
 public final class RemoveTransaction implements UseCase<String, TransactionResult> {
 
   private final TransactionRepository transactionRepository;
-  private final AccountRepository accountRepository;
-  private final LoanRepository loanRepository;
+  private final TransactionAccountPort transactionAccountPort;
+  private final TransactionLoanPort transactionLoanPort;
 
   private final SessionManager sessionManager;
 
   public RemoveTransaction(
       TransactionRepository transactionRepository,
-      AccountRepository accountRepository,
-      LoanRepository loanRepository,
+      TransactionAccountPort transactionAccountPort,
+      TransactionLoanPort transactionLoanPort,
       SessionManager sessionManager) {
     this.transactionRepository = transactionRepository;
-    this.accountRepository = accountRepository;
-    this.loanRepository = loanRepository;
+    this.transactionAccountPort = transactionAccountPort;
+    this.transactionLoanPort = transactionLoanPort;
     this.sessionManager = sessionManager;
   }
 
@@ -40,18 +40,18 @@ public final class RemoveTransaction implements UseCase<String, TransactionResul
 
   private Result<TransactionResult> removeTransaction(Transaction transaction) {
     if (transaction.source() != null) {
-      accountRepository.creditBalance(transaction.source(), transaction.amount());
+      transactionAccountPort.creditBalance(transaction.source(), transaction.amount());
     }
 
     if (transaction.destination() != null) {
-      accountRepository.debitBalance(transaction.destination(), transaction.amount());
+      transactionAccountPort.debitBalance(transaction.destination(), transaction.amount());
     }
 
     if (transaction.loan() != null) {
-      loanRepository.increaseRemainingAmount(transaction.loan(), transaction.amount());
+      transactionLoanPort.increaseRemainingAmount(transaction.loan(), transaction.amount());
     }
 
     transactionRepository.deleteById(transaction.id());
-    return Result.success(transaction.toResult());
+    return Result.success(TransactionResult.from(transaction));
   }
 }

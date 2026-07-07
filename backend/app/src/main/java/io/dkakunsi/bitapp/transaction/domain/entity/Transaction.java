@@ -11,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import io.dkakunsi.bitapp.DateTimeConverter;
 import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
-import io.dkakunsi.bitapp.transaction.application.dto.TransactionResult;
 import lombok.Builder;
 
 @Builder
@@ -98,24 +97,6 @@ public final record Transaction(
     }
   }
 
-  public TransactionResult toResult() {
-    return TransactionResult.builder()
-        .id(this.id().value())
-        .user(this.user().value())
-        .title(this.title())
-        .description(this.description())
-        .date(this.toEpochMilli(this.date()))
-        .time(this.toMinutesSinceMidnight(this.time()))
-        .source(this.source() != null ? this.source().value() : null)
-        .destination(this.destination() != null ? this.destination().value() : null)
-        .loan(this.loan() != null ? this.loan().value() : null)
-        .amount(this.amount())
-        .currency(this.currency().getCurrencyCode())
-        .category(this.category() != null ? this.category().name() : null)
-        .type(this.type().name())
-        .build();
-  }
-
   public Transaction convertFromTransfer(Id accountId, String requester) {
     var isSourceAccountRemoved = this.source() != null && this.source().equals(accountId);
     var newType = isSourceAccountRemoved ? Transaction.Type.CREDIT : Transaction.Type.DEBIT;
@@ -139,6 +120,29 @@ public final record Transaction(
         .source(isSourceAccountRemoved ? null : this.source())
         .destination(isSourceAccountRemoved ? this.destination() : null)
         .type(newType)
+        .build();
+  }
+
+  public Transaction removeLoanReference(String requester) {
+    return Transaction.builder()
+        .id(this.id())
+        .user(this.user())
+        .title(this.title())
+        .description(this.description())
+        .date(this.date())
+        .time(this.time())
+        .source(this.source())
+        .destination(this.destination())
+        .loan(null)
+        .amount(this.amount())
+        .currency(this.currency())
+        .category(this.category())
+        .type(this.type())
+        .status(this.status())
+        .createdAt(this.createdAt())
+        .updatedAt(LocalDateTime.now())
+        .createdBy(this.createdBy())
+        .updatedBy(requester)
         .build();
   }
 }

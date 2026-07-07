@@ -25,14 +25,14 @@ import io.dkakunsi.bitapp.Context;
 import io.dkakunsi.bitapp.DateTimeConverter;
 import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
+import io.dkakunsi.bitapp.Result;
 import io.dkakunsi.bitapp.SessionManager;
-import io.dkakunsi.bitapp.account.domain.entity.Account;
-import io.dkakunsi.bitapp.account.domain.repository.AccountRepository;
 import io.dkakunsi.bitapp.loan.application.dto.CreateLoanInput;
 import io.dkakunsi.bitapp.loan.domain.entity.Loan;
+import io.dkakunsi.bitapp.loan.domain.port.LoanAccountPort;
+import io.dkakunsi.bitapp.loan.domain.port.LoanAccountPort.LoanAccount;
+import io.dkakunsi.bitapp.loan.domain.port.LoanTransactionPort;
 import io.dkakunsi.bitapp.loan.domain.repository.LoanRepository;
-import io.dkakunsi.bitapp.transaction.application.usecase.CreateTransaction;
-import io.dkakunsi.bitapp.transaction.domain.repository.TransactionRepository;
 
 public final class CreateLoanTest {
 
@@ -45,19 +45,19 @@ public final class CreateLoanTest {
   private CreateLoan underTest;
 
   private LoanRepository loanRepository;
-  private AccountRepository accountRepository;
-  private TransactionRepository transactionRepository;
-  private CreateTransaction createTransaction;
+  private LoanAccountPort loanAccountPort;
+  private LoanTransactionPort loanTransactionPort;
   private SessionManager sessionManager;
 
   @BeforeEach
   void setUp() {
     loanRepository = mock(LoanRepository.class);
-    accountRepository = mock(AccountRepository.class);
-    transactionRepository = mock(TransactionRepository.class);
+    loanAccountPort = mock(LoanAccountPort.class);
+    loanTransactionPort = mock(LoanTransactionPort.class);
     sessionManager = mock(SessionManager.class);
-    createTransaction = new CreateTransaction(transactionRepository, accountRepository, loanRepository, sessionManager);
-    underTest = new CreateLoan(loanRepository, accountRepository, sessionManager, createTransaction);
+    underTest = new CreateLoan(sessionManager, loanRepository, loanAccountPort, loanTransactionPort);
+
+    when(loanTransactionPort.disburseTransaction(any())).thenReturn(Result.success());
 
     when(sessionManager.executeInSession(any())).thenAnswer(invocation -> {
       var function = invocation.getArgument(0, java.util.function.Supplier.class);
@@ -403,10 +403,9 @@ public final class CreateLoanTest {
         .interestRate(6.5)
         .build();
 
-    var account = createAccount(ACCOUNT_ID, REQUESTER, new BigDecimal("10000.00"));
-    when(accountRepository.findById(Id.of(ACCOUNT_ID))).thenReturn(Optional.of(account));
+    var account = new LoanAccount(Id.of(REQUESTER));
+    when(loanAccountPort.findById(Id.of(ACCOUNT_ID))).thenReturn(Optional.of(account));
     when(loanRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
-    when(transactionRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
     final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
@@ -424,8 +423,7 @@ public final class CreateLoanTest {
     verify(loanRepository).create(any(Loan.class));
 
     // Verify disbursement transaction was created with credit to account
-    verify(transactionRepository).create(any());
-    verify(accountRepository).creditBalance(Id.of(ACCOUNT_ID), new BigDecimal("50000.00"));
+    verify(loanTransactionPort).disburseTransaction(any(Loan.class));
   }
 
   @Test
@@ -440,10 +438,9 @@ public final class CreateLoanTest {
         .interestRate(3.0)
         .build();
 
-    var account = createAccount(ACCOUNT_ID, REQUESTER, new BigDecimal("20000.00"));
-    when(accountRepository.findById(Id.of(ACCOUNT_ID))).thenReturn(Optional.of(account));
+    var account = new LoanAccount(Id.of(REQUESTER));
+    when(loanAccountPort.findById(Id.of(ACCOUNT_ID))).thenReturn(Optional.of(account));
     when(loanRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
-    when(transactionRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     // When
     final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
@@ -461,8 +458,7 @@ public final class CreateLoanTest {
     verify(loanRepository).create(any(Loan.class));
 
     // Verify disbursement transaction was created with debit from account
-    verify(transactionRepository).create(any());
-    verify(accountRepository).debitBalance(Id.of(ACCOUNT_ID), new BigDecimal("5000.00"));
+    verify(loanTransactionPort).disburseTransaction(any(Loan.class));
   }
 
   @Test
@@ -493,9 +489,7 @@ public final class CreateLoanTest {
     verify(loanRepository).create(any(Loan.class));
 
     // Verify NO disbursement transaction was created
-    verify(transactionRepository, never()).create(any());
-    verify(accountRepository, never()).creditBalance(any(), any());
-    verify(accountRepository, never()).debitBalance(any(), any());
+    verify(loanTransactionPort, never()).disburseTransaction(any());
   }
 
   @Test
@@ -511,7 +505,7 @@ public final class CreateLoanTest {
         .interestRate(6.5)
         .build();
 
-    when(accountRepository.findById(Id.of(nonExistentAccountId))).thenReturn(Optional.empty());
+    when(loanAccountPort.findById(Id.of(nonExistentAccountId))).thenReturn(Optional.empty());
 
     // When
     final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
@@ -526,7 +520,7 @@ public final class CreateLoanTest {
 
     // Verify loan and transaction were not created
     verify(loanRepository, never()).create(any());
-    verify(transactionRepository, never()).create(any());
+    verify(loanTransactionPort, never()).disburseTransaction(any());
   }
 
   @Test
@@ -542,8 +536,8 @@ public final class CreateLoanTest {
         .interestRate(6.5)
         .build();
 
-    var account = createAccount(ACCOUNT_ID, otherUser, new BigDecimal("10000.00"));
-    when(accountRepository.findById(Id.of(ACCOUNT_ID))).thenReturn(Optional.of(account));
+    var account = new LoanAccount(Id.of(otherUser));
+    when(loanAccountPort.findById(Id.of(ACCOUNT_ID))).thenReturn(Optional.of(account));
 
     // When
     final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
@@ -558,7 +552,7 @@ public final class CreateLoanTest {
 
     // Verify loan and transaction were not created
     verify(loanRepository, never()).create(any());
-    verify(transactionRepository, never()).create(any());
+    verify(loanTransactionPort, never()).disburseTransaction(any());
   }
 
   @Test
@@ -573,10 +567,11 @@ public final class CreateLoanTest {
         .interestRate(6.5)
         .build();
 
-    var account = createAccount(ACCOUNT_ID, REQUESTER, new BigDecimal("10000.00"));
-    when(accountRepository.findById(Id.of(ACCOUNT_ID))).thenReturn(Optional.of(account));
+    var account = new LoanAccount(Id.of(REQUESTER));
+    when(loanAccountPort.findById(Id.of(ACCOUNT_ID))).thenReturn(Optional.of(account));
     when(loanRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
-    when(transactionRepository.create(any())).thenThrow(new RuntimeException("Transaction creation failed"));
+    when(loanTransactionPort.disburseTransaction(any()))
+      .thenReturn(Result.failure(Code.SERVER_ERROR, "Transaction creation failed"));
 
     // When
     final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
@@ -590,16 +585,4 @@ public final class CreateLoanTest {
     assertEquals("Transaction creation failed", error.message());
   }
 
-  private Account createAccount(String id, String owner, BigDecimal balance) {
-    return Account.builder()
-        .id(Id.of(id))
-        .user(Id.of(owner))
-        .name("Test Account")
-        .type(Account.Type.BANK)
-        .balance(balance)
-        .status(EntityStatus.ACTIVE)
-        .createdBy(owner)
-        .updatedBy(owner)
-        .build();
-  }
 }

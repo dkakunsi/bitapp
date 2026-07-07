@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import dev.morphia.Datastore;
+import dev.morphia.DeleteOptions;
 import dev.morphia.UpdateOptions;
 import dev.morphia.query.filters.Filters;
 import dev.morphia.query.updates.UpdateOperators;
@@ -59,5 +60,14 @@ public class MongoLoanRepository extends MongoRepository<LoanModel, Loan> implem
         .stream()
         .map(LoanModel::toLoan)
         .toList();
+  }
+
+  @Override
+  public Long deleteByAccountId(Id id) {
+    var datastore = pickDatastore();
+    var query = datastore.find(LoanModel.class)
+        .filter(Filters.eq("accountId", id.value()));
+    var result = query.delete(new DeleteOptions().multi(true));
+    return result.getDeletedCount();
   }
 }

@@ -8,20 +8,19 @@ import io.dkakunsi.bitapp.SessionManager;
 import io.dkakunsi.bitapp.UseCase;
 import io.dkakunsi.bitapp.loan.application.dto.LoanResult;
 import io.dkakunsi.bitapp.loan.domain.entity.Loan;
+import io.dkakunsi.bitapp.loan.domain.port.LoanTransactionPort;
 import io.dkakunsi.bitapp.loan.domain.repository.LoanRepository;
-import io.dkakunsi.bitapp.transaction.domain.repository.TransactionRepository;
-import io.dkakunsi.bitapp.transaction.util.TransactionUpdateHelper;
 
 public class RemoveLoan implements UseCase<String, LoanResult> {
 
   private final LoanRepository loanRepository;
-  private final TransactionRepository transactionRepository;
+  private final LoanTransactionPort loanTransactionAdapter;
   private final SessionManager sessionManager;
 
-  public RemoveLoan(LoanRepository loanRepository, TransactionRepository transactionRepository,
+  public RemoveLoan(LoanRepository loanRepository, LoanTransactionPort loanTransactionAdapter,
       SessionManager sessionManager) {
     this.loanRepository = loanRepository;
-    this.transactionRepository = transactionRepository;
+    this.loanTransactionAdapter = loanTransactionAdapter;
     this.sessionManager = sessionManager;
   }
 
@@ -39,12 +38,9 @@ public class RemoveLoan implements UseCase<String, LoanResult> {
     }
 
     return sessionManager.executeInSession(() -> {
-      transactionRepository.findByLoanId(loan.id()).forEach(t -> {
-        var ut = TransactionUpdateHelper.removeLoanReference(t, context.requester());
-        transactionRepository.update(ut);
-      });
+      loanTransactionAdapter.updateTransactionByLoanRemoval(loan.id());
       loanRepository.deleteById(loan.id());
-      return Result.success(loan.toResult());
+      return Result.success(LoanResult.from(loan));
     });
   }
 }

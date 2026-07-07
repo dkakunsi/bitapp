@@ -20,4 +20,8 @@ public interface TransactionRepository {
   List<Transaction> findByAccountId(Id accountId);
 
   List<Transaction> findByLoanId(Id loanId);
+
+  void delete(List<String> transactionIds);
+
+  void update(List<Transaction> updateTransactions);
 }

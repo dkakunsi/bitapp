@@ -17,7 +17,7 @@ public final class GetUser implements UseCase<String, UserResult> {
   @Override
   public Result<UserResult> execute(String email) {
     return userRepository.findByEmail(email)
-        .map(user -> Result.success(user.toResult()))
+        .map(user -> Result.success(UserResult.from(user)))
         .orElse(Result.failure(Code.NOT_FOUND, "User not found"));
   }
 }

@@ -8,30 +8,30 @@ import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.Result;
 import io.dkakunsi.bitapp.SessionManager;
 import io.dkakunsi.bitapp.UseCase;
-import io.dkakunsi.bitapp.account.domain.repository.AccountRepository;
-import io.dkakunsi.bitapp.loan.domain.repository.LoanRepository;
 import io.dkakunsi.bitapp.transaction.application.dto.CreateTransactionInput;
 import io.dkakunsi.bitapp.transaction.application.dto.TransactionResult;
+import io.dkakunsi.bitapp.transaction.application.processor.TransactionProcessor;
 import io.dkakunsi.bitapp.transaction.domain.entity.Transaction;
-import io.dkakunsi.bitapp.transaction.domain.processor.TransactionProcessor;
+import io.dkakunsi.bitapp.transaction.domain.port.TransactionAccountPort;
+import io.dkakunsi.bitapp.transaction.domain.port.TransactionLoanPort;
 import io.dkakunsi.bitapp.transaction.domain.repository.TransactionRepository;
 
 public final class CreateTransaction implements UseCase<CreateTransactionInput, TransactionResult> {
 
   private final TransactionRepository transactionRepository;
-  private final AccountRepository accountRepository;
-  private final LoanRepository loanRepository;
+  private final TransactionAccountPort transactionAccountService;
+  private final TransactionLoanPort transactionLoanService;
 
   private final SessionManager sessionManager;
 
   public CreateTransaction(
       TransactionRepository transactionRepository,
-      AccountRepository accountRepository,
-      LoanRepository loanRepository,
+      TransactionAccountPort transactionAccountService,
+      TransactionLoanPort transactionLoanService,
       SessionManager sessionManager) {
     this.transactionRepository = transactionRepository;
-    this.accountRepository = accountRepository;
-    this.loanRepository = loanRepository;
+    this.transactionAccountService = transactionAccountService;
+    this.transactionLoanService = transactionLoanService;
     this.sessionManager = sessionManager;
   }
 
@@ -45,9 +45,9 @@ public final class CreateTransaction implements UseCase<CreateTransactionInput, 
 
   private Result<TransactionResult> execute(CreateTransactionInput input, Transaction transaction) {
     var transactionProcessor = TransactionProcessor.getTransactionProcessor(input.getClass(),
-        transactionRepository, accountRepository, loanRepository);
+        transactionRepository, transactionAccountService, transactionLoanService);
     var processedTransaction = transactionProcessor.process(transaction);
-    return Result.success(processedTransaction.toResult());
+    return Result.success( TransactionResult.from(processedTransaction));
   }
 
   private Optional<AppError> validateRequest(Transaction transaction) {
@@ -76,10 +76,10 @@ public final class CreateTransaction implements UseCase<CreateTransactionInput, 
   }
 
   private boolean isAccountNotExists(Id accountId) {
-    return accountId != null && accountRepository.isNotExistingAccount(accountId);
+    return accountId != null && !transactionAccountService.isExistingAccount(accountId);
   }
 
   private boolean isLoanNotExists(Id loanId) {
-    return loanId != null && loanRepository.isNotExistingLoan(loanId);
+    return loanId != null && !transactionLoanService.isExistingLoan(loanId);
   }
 }

@@ -19,7 +19,7 @@ public final class GetTransaction implements UseCase<String, TransactionResult> 
   public Result<TransactionResult> execute(String transactionId) {
     return transactionRepository.findById(Id.of(transactionId))
         .filter(transaction -> transaction.user().value().equals(getRequester()))
-        .map(transaction -> Result.success(transaction.toResult()))
+        .map(transaction -> Result.success(TransactionResult.from(transaction)))
         .orElse(Result.failure(Code.NOT_FOUND, "Transaction not found"));
   }
 }

@@ -18,6 +18,8 @@ public interface LoanRepository {
 
   void deleteById(Id id);
 
+  Long deleteByAccountId(Id id);
+
   Optional<Loan> findById(Id id);
 
   List<Loan> findByUserId(Id userId);

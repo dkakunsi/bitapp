@@ -7,12 +7,15 @@ import io.dkakunsi.bitapp.account.application.usecase.GetAccount;
 import io.dkakunsi.bitapp.account.application.usecase.GetUserAccounts;
 import io.dkakunsi.bitapp.account.application.usecase.RemoveAccount;
 import io.dkakunsi.bitapp.account.application.usecase.UpdateAccount;
+import io.dkakunsi.bitapp.account.application.usecase.UpdateBalance;
 import io.dkakunsi.bitapp.account.infrastructure.javalin.CreateAccountEndpoint;
 import io.dkakunsi.bitapp.account.infrastructure.javalin.GetAccountEndpoint;
 import io.dkakunsi.bitapp.account.infrastructure.javalin.GetUserAccountsEndpoint;
 import io.dkakunsi.bitapp.account.infrastructure.javalin.RemoveAccountEndpoint;
 import io.dkakunsi.bitapp.account.infrastructure.javalin.UpdateAccountEndpoint;
+import io.dkakunsi.bitapp.account.infrastructure.loan.InProcessAccountLoanAdapter;
 import io.dkakunsi.bitapp.account.infrastructure.mongo.repository.MongoAccountRepository;
+import io.dkakunsi.bitapp.account.infrastructure.transaction.InProcessAccountTransactionAdapter;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.jwt.JWKAuthorizer;
 import io.dkakunsi.bitapp.jwt.JWTAuthorizer;
@@ -20,26 +23,34 @@ import io.dkakunsi.bitapp.loan.application.usecase.CreateLoan;
 import io.dkakunsi.bitapp.loan.application.usecase.GetLoan;
 import io.dkakunsi.bitapp.loan.application.usecase.GetUserLoans;
 import io.dkakunsi.bitapp.loan.application.usecase.RemoveLoan;
+import io.dkakunsi.bitapp.loan.application.usecase.RemoveLoanByAccount;
 import io.dkakunsi.bitapp.loan.application.usecase.UpdateLoan;
+import io.dkakunsi.bitapp.loan.application.usecase.UpdateRemainingAmount;
+import io.dkakunsi.bitapp.loan.infrastructure.account.InProcessLoanAccountAdapter;
 import io.dkakunsi.bitapp.loan.infrastructure.javalin.CreateLoanEndpoint;
 import io.dkakunsi.bitapp.loan.infrastructure.javalin.GetLoanEndpoint;
 import io.dkakunsi.bitapp.loan.infrastructure.javalin.GetUserLoansEndpoint;
 import io.dkakunsi.bitapp.loan.infrastructure.javalin.RemoveLoanEndpoint;
 import io.dkakunsi.bitapp.loan.infrastructure.javalin.UpdateLoanEndpoint;
 import io.dkakunsi.bitapp.loan.infrastructure.mongo.repository.MongoLoanRepository;
+import io.dkakunsi.bitapp.loan.infrastructure.transaction.InProcessLoanTransactionAdapter;
 import io.dkakunsi.bitapp.mongo.MongoConfiguration;
 import io.dkakunsi.bitapp.transaction.application.usecase.CreateTransaction;
 import io.dkakunsi.bitapp.transaction.application.usecase.GetAccountTransactions;
 import io.dkakunsi.bitapp.transaction.application.usecase.GetLoanTransactions;
 import io.dkakunsi.bitapp.transaction.application.usecase.GetTransaction;
 import io.dkakunsi.bitapp.transaction.application.usecase.GetUserTransactions;
+import io.dkakunsi.bitapp.transaction.application.usecase.ProcessTransactionByAccountRemoval;
+import io.dkakunsi.bitapp.transaction.application.usecase.ProcessTransactionByLoanRemoval;
 import io.dkakunsi.bitapp.transaction.application.usecase.RemoveTransaction;
+import io.dkakunsi.bitapp.transaction.infrastructure.account.InProcessTransactionAccountAdapter;
 import io.dkakunsi.bitapp.transaction.infrastructure.javalin.CreateTransactionEndpoint;
 import io.dkakunsi.bitapp.transaction.infrastructure.javalin.GetAccountTransactionsEndpoint;
 import io.dkakunsi.bitapp.transaction.infrastructure.javalin.GetLoanTransactionsEndpoint;
 import io.dkakunsi.bitapp.transaction.infrastructure.javalin.GetTransactionEndpoint;
 import io.dkakunsi.bitapp.transaction.infrastructure.javalin.GetUserTransactionsEndpoint;
 import io.dkakunsi.bitapp.transaction.infrastructure.javalin.RemoveTransactionEndpoint;
+import io.dkakunsi.bitapp.transaction.infrastructure.loan.InProcessTransactionLoanAdapter;
 import io.dkakunsi.bitapp.transaction.infrastructure.mongo.repository.MongoTransactionRepository;
 import io.dkakunsi.bitapp.user.application.usecase.GetUser;
 import io.dkakunsi.bitapp.user.application.usecase.RegisterUser;
@@ -69,30 +80,50 @@ public final class AppLauncher implements Launcher {
     var loanRepository = new MongoLoanRepository(datastore);
     var transactionRepository = new MongoTransactionRepository(datastore);
 
-    // UseCases
+    // UseCases and Adapters
+    var getAccount = new GetAccount(accountRepository);
+    var updateBalance = new UpdateBalance(accountRepository);
+    var transactionAccountPort = new InProcessTransactionAccountAdapter(updateBalance, getAccount);
+
+    var updateRemainingAmount = new UpdateRemainingAmount(loanRepository);
+    var getLoan = new GetLoan(loanRepository);
+    var transactionLoanPort = new InProcessTransactionLoanAdapter(updateRemainingAmount, getLoan);
+
+    var createTransaction = new CreateTransaction(transactionRepository, transactionAccountPort, transactionLoanPort,
+        sessionManager);
+
+    var processTransactionByLoanRemoval = new ProcessTransactionByLoanRemoval(transactionRepository);
+    var loanTransactionAdapter = new InProcessLoanTransactionAdapter(processTransactionByLoanRemoval,
+        createTransaction);
+    var removeLoanByAccount = new RemoveLoanByAccount(loanRepository, loanTransactionAdapter);
+    var accountLoanAdapter = new InProcessAccountLoanAdapter(removeLoanByAccount, loanRepository);
+
+    var processTransactionByAccountRemoval = new ProcessTransactionByAccountRemoval(transactionRepository);
+    var accountTransactionAdapter = new InProcessAccountTransactionAdapter(
+        processTransactionByAccountRemoval);
+
+    var removeTransaction = new RemoveTransaction(transactionRepository, transactionAccountPort, transactionLoanPort,
+        sessionManager);
+
+    var loanAccountPort = new InProcessLoanAccountAdapter(accountRepository);
+    var createLoan = new CreateLoan(sessionManager, loanRepository, loanAccountPort, loanTransactionAdapter);
+
+    var removeAccount = new RemoveAccount(accountRepository, accountTransactionAdapter, accountLoanAdapter,
+        sessionManager);
+
     var registerUser = new RegisterUser(userRepository);
     var getUser = new GetUser(userRepository);
     var updateUser = new UpdateUser(userRepository);
     var createAccount = new CreateAccount(accountRepository);
-    var getAccount = new GetAccount(accountRepository);
     var getUserAccounts = new GetUserAccounts(accountRepository);
     var updateAccount = new UpdateAccount(accountRepository);
-    var getLoan = new GetLoan(loanRepository);
     var getUserLoans = new GetUserLoans(loanRepository);
     var updateLoan = new UpdateLoan(loanRepository);
-    var removeLoan = new RemoveLoan(loanRepository, transactionRepository, sessionManager);
-    var createTransaction = new CreateTransaction(transactionRepository, accountRepository, loanRepository,
-        sessionManager);
+    var removeLoan = new RemoveLoan(loanRepository, loanTransactionAdapter, sessionManager);
     var getTransaction = new GetTransaction(transactionRepository);
     var getUserTransactions = new GetUserTransactions(transactionRepository);
     var getAccountTransactions = new GetAccountTransactions(transactionRepository);
     var getLoanTransactions = new GetLoanTransactions(transactionRepository);
-    var removeTransaction = new RemoveTransaction(transactionRepository, accountRepository, loanRepository,
-        sessionManager);
-
-    var createLoan = new CreateLoan(loanRepository, accountRepository, sessionManager, createTransaction);
-    var removeAccount = new RemoveAccount(accountRepository, transactionRepository, loanRepository, removeLoan,
-        sessionManager);
 
     // endpoints
     var authorizer = createAuthorizer(configuration);

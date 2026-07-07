@@ -24,11 +24,9 @@ import io.dkakunsi.bitapp.Context;
 import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.SessionManager;
-import io.dkakunsi.bitapp.account.domain.entity.Account;
-import io.dkakunsi.bitapp.account.domain.repository.AccountRepository;
-import io.dkakunsi.bitapp.loan.domain.entity.Loan;
-import io.dkakunsi.bitapp.loan.domain.repository.LoanRepository;
 import io.dkakunsi.bitapp.transaction.domain.entity.Transaction;
+import io.dkakunsi.bitapp.transaction.domain.port.TransactionAccountPort;
+import io.dkakunsi.bitapp.transaction.domain.port.TransactionLoanPort;
 import io.dkakunsi.bitapp.transaction.domain.repository.TransactionRepository;
 
 public final class RemoveTransactionUseCaseTest {
@@ -48,17 +46,18 @@ public final class RemoveTransactionUseCaseTest {
   private RemoveTransaction underTest;
 
   private TransactionRepository transactionRepository;
-  private AccountRepository accountRepository;
-  private LoanRepository loanRepository;
+  private TransactionAccountPort transactionAccountPort;
+  private TransactionLoanPort transactionLoanPort;
   private SessionManager sessionManager;
 
   @BeforeEach
   void setUp() {
     transactionRepository = mock(TransactionRepository.class);
-    accountRepository = mock(AccountRepository.class);
-    loanRepository = mock(LoanRepository.class);
+    transactionAccountPort = mock(TransactionAccountPort.class);
+    transactionLoanPort = mock(TransactionLoanPort.class);
     sessionManager = mock(SessionManager.class);
-    underTest = new RemoveTransaction(transactionRepository, accountRepository, loanRepository, sessionManager);
+    underTest = new RemoveTransaction(transactionRepository, transactionAccountPort, transactionLoanPort,
+        sessionManager);
 
     when(sessionManager.executeInSession(any())).thenAnswer(invocation -> {
       var function = invocation.getArgument(0, java.util.function.Supplier.class);
@@ -116,9 +115,7 @@ public final class RemoveTransactionUseCaseTest {
         .amount(BigDecimal.valueOf(100000))
         .build();
 
-    var sourceAccount = createAccount(ACCOUNT_ID_1, new BigDecimal("900000"));
     when(transactionRepository.findById(transactionIdObj)).thenReturn(Optional.of(transaction));
-    when(accountRepository.findById(ACCOUNT_1)).thenReturn(Optional.of(sourceAccount));
 
     // When
     var result = Context.executeInContext(context, () -> underTest.process(transactionId));
@@ -128,7 +125,7 @@ public final class RemoveTransactionUseCaseTest {
     assertTrue(result.data().isPresent());
     assertEquals(transactionId, result.data().get().id());
 
-    verify(accountRepository).creditBalance(sourceAccount.id(), transaction.amount());
+    verify(transactionAccountPort).creditBalance(ACCOUNT_1, transaction.amount());
     verify(transactionRepository).deleteById(transactionIdObj);
   }
 
@@ -142,9 +139,7 @@ public final class RemoveTransactionUseCaseTest {
         .amount(BigDecimal.valueOf(100000))
         .build();
 
-    var destinationAccount = createAccount(ACCOUNT_ID_2, new BigDecimal("600000"));
     when(transactionRepository.findById(transactionIdObj)).thenReturn(Optional.of(transaction));
-    when(accountRepository.findById(ACCOUNT_2)).thenReturn(Optional.of(destinationAccount));
 
     // When
     var result = Context.executeInContext(context, () -> underTest.process(transactionId));
@@ -154,7 +149,7 @@ public final class RemoveTransactionUseCaseTest {
     assertTrue(result.data().isPresent());
     assertEquals(transactionId, result.data().get().id());
 
-    verify(accountRepository).debitBalance(destinationAccount.id(), transaction.amount());
+    verify(transactionAccountPort).debitBalance(ACCOUNT_2, transaction.amount());
     verify(transactionRepository).deleteById(transactionIdObj);
   }
 
@@ -169,11 +164,7 @@ public final class RemoveTransactionUseCaseTest {
         .amount(BigDecimal.valueOf(200000))
         .build();
 
-    var sourceAccount = createAccount(ACCOUNT_ID_1, new BigDecimal("800000"));
-    var destinationAccount = createAccount(ACCOUNT_ID_2, new BigDecimal("700000"));
     when(transactionRepository.findById(transactionIdObj)).thenReturn(Optional.of(transaction));
-    when(accountRepository.findById(ACCOUNT_1)).thenReturn(Optional.of(sourceAccount));
-    when(accountRepository.findById(ACCOUNT_2)).thenReturn(Optional.of(destinationAccount));
 
     // When
     var result = Context.executeInContext(context, () -> underTest.process(transactionId));
@@ -183,8 +174,8 @@ public final class RemoveTransactionUseCaseTest {
     assertTrue(result.data().isPresent());
     assertEquals(transactionId, result.data().get().id());
 
-    verify(accountRepository).creditBalance(sourceAccount.id(), transaction.amount());
-    verify(accountRepository).debitBalance(destinationAccount.id(), transaction.amount());
+    verify(transactionAccountPort).creditBalance(ACCOUNT_1, transaction.amount());
+    verify(transactionAccountPort).debitBalance(ACCOUNT_2, transaction.amount());
     verify(transactionRepository).deleteById(transactionIdObj);
   }
 
@@ -199,11 +190,7 @@ public final class RemoveTransactionUseCaseTest {
         .amount(BigDecimal.valueOf(100000))
         .build();
 
-    var sourceAccount = createAccount(ACCOUNT_ID_1, new BigDecimal("900000"));
-    var loan = createLoan(LOAN_ID, new BigDecimal("1900000"));
     when(transactionRepository.findById(transactionIdObj)).thenReturn(Optional.of(transaction));
-    when(accountRepository.findById(ACCOUNT_1)).thenReturn(Optional.of(sourceAccount));
-    when(loanRepository.findById(LOAN)).thenReturn(Optional.of(loan));
 
     // When
     var result = Context.executeInContext(context, () -> underTest.process(transactionId));
@@ -213,7 +200,7 @@ public final class RemoveTransactionUseCaseTest {
     assertTrue(result.data().isPresent());
     assertEquals(transactionId, result.data().get().id());
 
-    verify(loanRepository).increaseRemainingAmount(loan.id(), transaction.amount());
+    verify(transactionLoanPort).increaseRemainingAmount(LOAN, transaction.amount());
     verify(transactionRepository).deleteById(transactionIdObj);
   }
 
@@ -235,32 +222,4 @@ public final class RemoveTransactionUseCaseTest {
         .updatedBy(user);
   }
 
-  private static Account createAccount(String id, BigDecimal balance) {
-    return Account.builder()
-        .id(Id.of(id))
-        .user(Id.of(REQUESTER))
-        .name("Test Account")
-        .type(Account.Type.BANK)
-        .balance(balance)
-        .status(EntityStatus.ACTIVE)
-        .createdBy(REQUESTER)
-        .updatedBy(REQUESTER)
-        .build();
-  }
-
-  private static Loan createLoan(String id, BigDecimal remainingAmount) {
-    return Loan.builder()
-        .id(Id.of(id))
-        .user(Id.of(REQUESTER))
-        .type(Loan.Type.BORROW)
-        .partyName("Test Lender")
-        .title("Test Loan")
-        .amount(new BigDecimal("2000000"))
-        .remainingAmount(remainingAmount)
-        .currency(Currency.getInstance("IDR"))
-        .status(EntityStatus.ACTIVE)
-        .createdBy(REQUESTER)
-        .updatedBy(REQUESTER)
-        .build();
-  }
 }

@@ -3,6 +3,7 @@ package io.dkakunsi.bitapp.transaction.infrastructure.mongo.repository;
 import java.util.List;
 
 import dev.morphia.Datastore;
+import dev.morphia.DeleteOptions;
 import dev.morphia.query.filters.Filters;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.mongo.MongoRepository;
@@ -54,5 +55,23 @@ public class MongoTransactionRepository extends MongoRepository<TransactionModel
         .stream()
         .map(TransactionModel::toTransaction)
         .toList();
+  }
+
+  @Override
+  public void delete(List<String> transactionIds) {
+    if (transactionIds.isEmpty()) {
+      return;
+    }
+    pickDatastore().find(TransactionModel.class)
+        .filter(Filters.in(MONGO_ID, transactionIds))
+        .delete(new DeleteOptions().multi(true));
+  }
+
+  @Override
+  public void update(List<Transaction> updateTransactions) {
+    updateTransactions.forEach(t -> {
+      var model = TransactionModel.fromTransaction(t);
+      pickDatastore().save(model);
+    }); 
   }
 }

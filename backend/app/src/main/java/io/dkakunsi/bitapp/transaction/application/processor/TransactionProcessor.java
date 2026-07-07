@@ -1,17 +1,18 @@
-package io.dkakunsi.bitapp.transaction.domain.processor;
+package io.dkakunsi.bitapp.transaction.application.processor;
 
-import io.dkakunsi.bitapp.account.domain.repository.AccountRepository;
-import io.dkakunsi.bitapp.loan.domain.repository.LoanRepository;
 import io.dkakunsi.bitapp.transaction.application.dto.CreateLoanDisbursementTransactionInput;
 import io.dkakunsi.bitapp.transaction.application.dto.CreateTransactionInput;
 import io.dkakunsi.bitapp.transaction.application.dto.CreateUserTransactionInput;
 import io.dkakunsi.bitapp.transaction.domain.entity.Transaction;
+import io.dkakunsi.bitapp.transaction.domain.port.TransactionAccountPort;
+import io.dkakunsi.bitapp.transaction.domain.port.TransactionLoanPort;
 import io.dkakunsi.bitapp.transaction.domain.repository.TransactionRepository;
 
 public interface TransactionProcessor {
 
   static <T extends CreateTransactionInput> TransactionProcessor getTransactionProcessor(Class<T> type,
-      TransactionRepository transactionRepository, AccountRepository accountRepository, LoanRepository loanRepository) {
+      TransactionRepository transactionRepository, TransactionAccountPort transactionAccountService,
+      TransactionLoanPort transactionLoanService) {
     if (type == null) {
       throw new IllegalArgumentException("type: invalid value");
     }
@@ -19,10 +20,10 @@ public interface TransactionProcessor {
     if (type == CreateUserTransactionInput.class) {
       return new UserTransactionProcessor(
           transactionRepository,
-          accountRepository,
-          loanRepository);
+          transactionAccountService,
+          transactionLoanService);
     } else if (type == CreateLoanDisbursementTransactionInput.class) {
-      return new LoanDisbursementTransactionProcessor(transactionRepository, accountRepository);
+      return new LoanDisbursementTransactionProcessor(transactionRepository, transactionAccountService);
     } else {
       throw new IllegalArgumentException("type: not supported");
     }

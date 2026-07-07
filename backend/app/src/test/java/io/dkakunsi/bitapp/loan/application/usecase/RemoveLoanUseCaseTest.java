@@ -2,7 +2,6 @@ package io.dkakunsi.bitapp.loan.application.usecase;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -15,12 +14,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Currency;
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 
 import io.dkakunsi.bitapp.AppError.Code;
 import io.dkakunsi.bitapp.Context;
@@ -28,9 +25,8 @@ import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.SessionManager;
 import io.dkakunsi.bitapp.loan.domain.entity.Loan;
+import io.dkakunsi.bitapp.loan.domain.port.LoanTransactionPort;
 import io.dkakunsi.bitapp.loan.domain.repository.LoanRepository;
-import io.dkakunsi.bitapp.transaction.domain.entity.Transaction;
-import io.dkakunsi.bitapp.transaction.domain.repository.TransactionRepository;
 
 public final class RemoveLoanUseCaseTest {
 
@@ -43,15 +39,15 @@ public final class RemoveLoanUseCaseTest {
   private RemoveLoan underTest;
 
   private LoanRepository loanRepository;
-  private TransactionRepository transactionRepository;
+  private LoanTransactionPort loanTransactionPort;
   private SessionManager sessionManager;
 
   @BeforeEach
   void setUp() {
     loanRepository = mock(LoanRepository.class);
-    transactionRepository = mock(TransactionRepository.class);
+    loanTransactionPort = mock(LoanTransactionPort.class);
     sessionManager = mock(SessionManager.class);
-    underTest = new RemoveLoan(loanRepository, transactionRepository, sessionManager);
+    underTest = new RemoveLoan(loanRepository, loanTransactionPort, sessionManager);
 
     when(sessionManager.executeInSession(any())).thenAnswer(invocation -> {
       var function = invocation.getArgument(0, java.util.function.Supplier.class);
@@ -92,14 +88,10 @@ public final class RemoveLoanUseCaseTest {
   }
 
   @Test
-  void removeLoanShouldClearTransactionLoanReferences() {
+  void removeLoanShouldDelegateTransactionUpdateAndDeleteLoan() {
     // Given
     var loan = createLoan(LOAN_ID, REQUESTER);
-    var transaction1 = createTransaction("trans-1", REQUESTER, LOAN_ID);
-    var transaction2 = createTransaction("trans-2", REQUESTER, LOAN_ID);
-
     when(loanRepository.findById(LOAN)).thenReturn(Optional.of(loan));
-    when(transactionRepository.findByLoanId(LOAN)).thenReturn(List.of(transaction1, transaction2));
 
     // When
     var result = Context.executeInContext(context, () -> underTest.process(LOAN_ID));
@@ -109,14 +101,7 @@ public final class RemoveLoanUseCaseTest {
     assertTrue(result.data().isPresent());
     assertEquals(LOAN_ID, result.data().get().id());
 
-    var transactionCaptor = ArgumentCaptor.forClass(Transaction.class);
-    verify(transactionRepository, org.mockito.Mockito.times(2)).update(transactionCaptor.capture());
-    for (var updatedTransaction : transactionCaptor.getAllValues()) {
-      assertNotNull(updatedTransaction);
-      assertEquals(null, updatedTransaction.loan());
-      assertEquals(REQUESTER, updatedTransaction.updatedBy());
-    }
-
+    verify(loanTransactionPort).updateTransactionByLoanRemoval(LOAN);
     verify(loanRepository).deleteById(LOAN);
   }
 
@@ -143,25 +128,4 @@ public final class RemoveLoanUseCaseTest {
         .build();
   }
 
-  private static Transaction createTransaction(String id, String user, String loanId) {
-    return Transaction.builder()
-        .id(Id.of(id))
-        .user(Id.of(user))
-        .title("Payment")
-        .description("Loan repayment")
-        .date(LocalDate.of(2026, 1, 24))
-        .time(LocalTime.of(11, 0))
-        .source(Id.of("account-1"))
-        .loan(Id.of(loanId))
-        .amount(BigDecimal.valueOf(100000))
-        .currency(Currency.getInstance("IDR"))
-        .category(Transaction.Category.LOAN)
-        .type(Transaction.Type.DEBIT)
-        .status(EntityStatus.ACTIVE)
-        .createdAt(LocalDateTime.now())
-        .updatedAt(LocalDateTime.now())
-        .createdBy(user)
-        .updatedBy(user)
-        .build();
-  }
 }

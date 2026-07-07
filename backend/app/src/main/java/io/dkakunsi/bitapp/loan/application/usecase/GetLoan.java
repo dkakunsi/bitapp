@@ -18,7 +18,7 @@ public final class GetLoan implements UseCase<String, LoanResult> {
   @Override
   public Result<LoanResult> execute(String loanId) {
     return loanRepository.findById(Id.of(loanId))
-        .map(loan -> Result.success(loan.toResult()))
+        .map(loan -> Result.success(LoanResult.from(loan)))
         .orElse(Result.failure(Code.NOT_FOUND, "Loan not found"));
   }
 }

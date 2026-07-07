@@ -30,7 +30,8 @@ public final class UpdateLoan implements UseCase<UpdateLoanInput, LoanResult> {
       return Result.failure(AppError.Code.FORBIDDEN, "You are not authorized to update this loan");
     }
 
-    var updatedLoan = loanRepository.update(loan.update(input, requester));
-    return Result.success(updatedLoan.toResult());
+    var updatingLoan = input.toLoan();
+    var updatedLoan = loanRepository.update(loan.update(updatingLoan, requester));
+    return Result.success(LoanResult.from(updatedLoan));
   }
 }
