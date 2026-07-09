@@ -6,7 +6,7 @@ import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.account.application.dto.UpdateBalanceInput;
 import io.dkakunsi.bitapp.account.application.usecase.GetAccount;
 import io.dkakunsi.bitapp.account.application.usecase.UpdateBalance;
-import io.dkakunsi.bitapp.transaction.domain.port.TransactionAccountPort;
+import io.dkakunsi.bitapp.transaction.application.port.TransactionAccountPort;
 
 public class InProcessTransactionAccountAdapter implements TransactionAccountPort {
 

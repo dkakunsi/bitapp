@@ -25,8 +25,8 @@ import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.SessionManager;
 import io.dkakunsi.bitapp.loan.domain.entity.Loan;
 import io.dkakunsi.bitapp.transaction.application.dto.CreateLoanDisbursementTransactionInput;
-import io.dkakunsi.bitapp.transaction.domain.port.TransactionAccountPort;
-import io.dkakunsi.bitapp.transaction.domain.port.TransactionLoanPort;
+import io.dkakunsi.bitapp.transaction.application.port.TransactionAccountPort;
+import io.dkakunsi.bitapp.transaction.application.port.TransactionLoanPort;
 import io.dkakunsi.bitapp.transaction.domain.repository.TransactionRepository;
 
 public class CreateLoanDisbursementTransactionTest {
@@ -128,7 +128,7 @@ public class CreateLoanDisbursementTransactionTest {
 
     when(transactionRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
     doThrow(new IllegalArgumentException("account not found"))
-      .when(transactionAccountPort).creditBalance(any(), any());
+        .when(transactionAccountPort).creditBalance(any(), any());
 
     // When
     var result = Context.executeInContext(context, () -> underTest.process(createRequest));
@@ -151,7 +151,7 @@ public class CreateLoanDisbursementTransactionTest {
 
     when(transactionRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
     doThrow(new IllegalArgumentException("account not found"))
-      .when(transactionAccountPort).debitBalance(any(), any());
+        .when(transactionAccountPort).debitBalance(any(), any());
 
     // When
     var result = Context.executeInContext(context, () -> underTest.process(createRequest));

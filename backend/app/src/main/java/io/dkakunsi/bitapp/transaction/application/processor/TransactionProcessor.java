@@ -3,9 +3,9 @@ package io.dkakunsi.bitapp.transaction.application.processor;
 import io.dkakunsi.bitapp.transaction.application.dto.CreateLoanDisbursementTransactionInput;
 import io.dkakunsi.bitapp.transaction.application.dto.CreateTransactionInput;
 import io.dkakunsi.bitapp.transaction.application.dto.CreateUserTransactionInput;
+import io.dkakunsi.bitapp.transaction.application.port.TransactionAccountPort;
+import io.dkakunsi.bitapp.transaction.application.port.TransactionLoanPort;
 import io.dkakunsi.bitapp.transaction.domain.entity.Transaction;
-import io.dkakunsi.bitapp.transaction.domain.port.TransactionAccountPort;
-import io.dkakunsi.bitapp.transaction.domain.port.TransactionLoanPort;
 import io.dkakunsi.bitapp.transaction.domain.repository.TransactionRepository;
 
 public interface TransactionProcessor {

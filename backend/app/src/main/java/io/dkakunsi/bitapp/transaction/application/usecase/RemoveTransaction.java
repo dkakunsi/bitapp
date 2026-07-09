@@ -6,9 +6,9 @@ import io.dkakunsi.bitapp.Result;
 import io.dkakunsi.bitapp.SessionManager;
 import io.dkakunsi.bitapp.UseCase;
 import io.dkakunsi.bitapp.transaction.application.dto.TransactionResult;
+import io.dkakunsi.bitapp.transaction.application.port.TransactionAccountPort;
+import io.dkakunsi.bitapp.transaction.application.port.TransactionLoanPort;
 import io.dkakunsi.bitapp.transaction.domain.entity.Transaction;
-import io.dkakunsi.bitapp.transaction.domain.port.TransactionAccountPort;
-import io.dkakunsi.bitapp.transaction.domain.port.TransactionLoanPort;
 import io.dkakunsi.bitapp.transaction.domain.repository.TransactionRepository;
 
 public final class RemoveTransaction implements UseCase<String, TransactionResult> {

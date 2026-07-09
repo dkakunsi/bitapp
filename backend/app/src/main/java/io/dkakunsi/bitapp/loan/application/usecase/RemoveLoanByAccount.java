@@ -3,7 +3,7 @@ package io.dkakunsi.bitapp.loan.application.usecase;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.Result;
 import io.dkakunsi.bitapp.UseCase;
-import io.dkakunsi.bitapp.loan.domain.port.LoanTransactionPort;
+import io.dkakunsi.bitapp.loan.application.port.LoanTransactionPort;
 import io.dkakunsi.bitapp.loan.domain.repository.LoanRepository;
 
 public class RemoveLoanByAccount implements UseCase<String, Void> {

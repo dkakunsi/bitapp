@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.account.domain.repository.AccountRepository;
-import io.dkakunsi.bitapp.loan.domain.port.LoanAccountPort;
+import io.dkakunsi.bitapp.loan.application.port.LoanAccountPort;
 
 public class InProcessLoanAccountAdapter implements LoanAccountPort {
 

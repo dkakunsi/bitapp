@@ -1,4 +1,4 @@
-package io.dkakunsi.bitapp.loan.domain.port;
+package io.dkakunsi.bitapp.loan.application.port;
 
 import java.util.Optional;
 

@@ -21,9 +21,9 @@ import io.dkakunsi.bitapp.Context;
 import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.SessionManager;
+import io.dkakunsi.bitapp.account.application.port.AccountLoanPort;
+import io.dkakunsi.bitapp.account.application.port.AccountTransactionPort;
 import io.dkakunsi.bitapp.account.domain.entity.Account;
-import io.dkakunsi.bitapp.account.domain.port.AccountLoanPort;
-import io.dkakunsi.bitapp.account.domain.port.AccountTransactionPort;
 import io.dkakunsi.bitapp.account.domain.repository.AccountRepository;
 
 public final class RemoveAccountUseCaseTest {

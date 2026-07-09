@@ -28,10 +28,10 @@ import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.Result;
 import io.dkakunsi.bitapp.SessionManager;
 import io.dkakunsi.bitapp.loan.application.dto.CreateLoanInput;
+import io.dkakunsi.bitapp.loan.application.port.LoanAccountPort;
+import io.dkakunsi.bitapp.loan.application.port.LoanAccountPort.LoanAccount;
+import io.dkakunsi.bitapp.loan.application.port.LoanTransactionPort;
 import io.dkakunsi.bitapp.loan.domain.entity.Loan;
-import io.dkakunsi.bitapp.loan.domain.port.LoanAccountPort;
-import io.dkakunsi.bitapp.loan.domain.port.LoanAccountPort.LoanAccount;
-import io.dkakunsi.bitapp.loan.domain.port.LoanTransactionPort;
 import io.dkakunsi.bitapp.loan.domain.repository.LoanRepository;
 
 public final class CreateLoanTest {
@@ -571,7 +571,7 @@ public final class CreateLoanTest {
     when(loanAccountPort.findById(Id.of(ACCOUNT_ID))).thenReturn(Optional.of(account));
     when(loanRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
     when(loanTransactionPort.disburseTransaction(any()))
-      .thenReturn(Result.failure(Code.SERVER_ERROR, "Transaction creation failed"));
+        .thenReturn(Result.failure(Code.SERVER_ERROR, "Transaction creation failed"));
 
     // When
     final var result = Context.executeInContext(context, () -> underTest.process(createRequest));

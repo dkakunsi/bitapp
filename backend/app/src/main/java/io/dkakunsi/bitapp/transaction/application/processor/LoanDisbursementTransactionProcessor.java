@@ -1,7 +1,7 @@
 package io.dkakunsi.bitapp.transaction.application.processor;
 
+import io.dkakunsi.bitapp.transaction.application.port.TransactionAccountPort;
 import io.dkakunsi.bitapp.transaction.domain.entity.Transaction;
-import io.dkakunsi.bitapp.transaction.domain.port.TransactionAccountPort;
 import io.dkakunsi.bitapp.transaction.domain.repository.TransactionRepository;
 
 public final class LoanDisbursementTransactionProcessor implements TransactionProcessor {

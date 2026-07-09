@@ -6,7 +6,7 @@ import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.loan.application.dto.UpdateRemainingAmountInput;
 import io.dkakunsi.bitapp.loan.application.usecase.GetLoan;
 import io.dkakunsi.bitapp.loan.application.usecase.UpdateRemainingAmount;
-import io.dkakunsi.bitapp.transaction.domain.port.TransactionLoanPort;
+import io.dkakunsi.bitapp.transaction.application.port.TransactionLoanPort;
 
 public class InProcessTransactionLoanAdapter implements TransactionLoanPort {
 

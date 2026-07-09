@@ -1,4 +1,4 @@
-package io.dkakunsi.bitapp.account.domain.port;
+package io.dkakunsi.bitapp.account.application.port;
 
 import io.dkakunsi.bitapp.Id;
 

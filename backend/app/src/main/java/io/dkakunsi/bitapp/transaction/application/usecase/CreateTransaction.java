@@ -10,10 +10,10 @@ import io.dkakunsi.bitapp.SessionManager;
 import io.dkakunsi.bitapp.UseCase;
 import io.dkakunsi.bitapp.transaction.application.dto.CreateTransactionInput;
 import io.dkakunsi.bitapp.transaction.application.dto.TransactionResult;
+import io.dkakunsi.bitapp.transaction.application.port.TransactionAccountPort;
+import io.dkakunsi.bitapp.transaction.application.port.TransactionLoanPort;
 import io.dkakunsi.bitapp.transaction.application.processor.TransactionProcessor;
 import io.dkakunsi.bitapp.transaction.domain.entity.Transaction;
-import io.dkakunsi.bitapp.transaction.domain.port.TransactionAccountPort;
-import io.dkakunsi.bitapp.transaction.domain.port.TransactionLoanPort;
 import io.dkakunsi.bitapp.transaction.domain.repository.TransactionRepository;
 
 public final class CreateTransaction implements UseCase<CreateTransactionInput, TransactionResult> {
@@ -47,7 +47,7 @@ public final class CreateTransaction implements UseCase<CreateTransactionInput, 
     var transactionProcessor = TransactionProcessor.getTransactionProcessor(input.getClass(),
         transactionRepository, transactionAccountService, transactionLoanService);
     var processedTransaction = transactionProcessor.process(transaction);
-    return Result.success( TransactionResult.from(processedTransaction));
+    return Result.success(TransactionResult.from(processedTransaction));
   }
 
   private Optional<AppError> validateRequest(Transaction transaction) {

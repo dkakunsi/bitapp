@@ -7,8 +7,8 @@ import io.dkakunsi.bitapp.Result;
 import io.dkakunsi.bitapp.SessionManager;
 import io.dkakunsi.bitapp.UseCase;
 import io.dkakunsi.bitapp.loan.application.dto.LoanResult;
+import io.dkakunsi.bitapp.loan.application.port.LoanTransactionPort;
 import io.dkakunsi.bitapp.loan.domain.entity.Loan;
-import io.dkakunsi.bitapp.loan.domain.port.LoanTransactionPort;
 import io.dkakunsi.bitapp.loan.domain.repository.LoanRepository;
 
 public class RemoveLoan implements UseCase<String, LoanResult> {

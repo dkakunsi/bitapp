@@ -7,8 +7,8 @@ import io.dkakunsi.bitapp.SessionManager;
 import io.dkakunsi.bitapp.UseCase;
 import io.dkakunsi.bitapp.loan.application.dto.CreateLoanInput;
 import io.dkakunsi.bitapp.loan.application.dto.LoanResult;
-import io.dkakunsi.bitapp.loan.domain.port.LoanAccountPort;
-import io.dkakunsi.bitapp.loan.domain.port.LoanTransactionPort;
+import io.dkakunsi.bitapp.loan.application.port.LoanAccountPort;
+import io.dkakunsi.bitapp.loan.application.port.LoanTransactionPort;
 import io.dkakunsi.bitapp.loan.domain.repository.LoanRepository;
 
 public final class CreateLoan implements UseCase<CreateLoanInput, LoanResult> {

@@ -1,4 +1,4 @@
-package io.dkakunsi.bitapp.transaction.domain.port;
+package io.dkakunsi.bitapp.transaction.application.port;
 
 import java.math.BigDecimal;
 
@@ -11,5 +11,5 @@ public interface TransactionAccountPort {
   void creditBalance(Id destination, BigDecimal amount);
 
   boolean isExistingAccount(Id accountId);
-  
+
 }

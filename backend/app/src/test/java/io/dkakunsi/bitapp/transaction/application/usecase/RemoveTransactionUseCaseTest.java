@@ -24,9 +24,9 @@ import io.dkakunsi.bitapp.Context;
 import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.SessionManager;
+import io.dkakunsi.bitapp.transaction.application.port.TransactionAccountPort;
+import io.dkakunsi.bitapp.transaction.application.port.TransactionLoanPort;
 import io.dkakunsi.bitapp.transaction.domain.entity.Transaction;
-import io.dkakunsi.bitapp.transaction.domain.port.TransactionAccountPort;
-import io.dkakunsi.bitapp.transaction.domain.port.TransactionLoanPort;
 import io.dkakunsi.bitapp.transaction.domain.repository.TransactionRepository;
 
 public final class RemoveTransactionUseCaseTest {

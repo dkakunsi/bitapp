@@ -23,8 +23,8 @@ import io.dkakunsi.bitapp.DateTimeConverter;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.SessionManager;
 import io.dkakunsi.bitapp.transaction.application.dto.CreateUserTransactionInput;
-import io.dkakunsi.bitapp.transaction.domain.port.TransactionAccountPort;
-import io.dkakunsi.bitapp.transaction.domain.port.TransactionLoanPort;
+import io.dkakunsi.bitapp.transaction.application.port.TransactionAccountPort;
+import io.dkakunsi.bitapp.transaction.application.port.TransactionLoanPort;
 import io.dkakunsi.bitapp.transaction.domain.repository.TransactionRepository;
 
 public final class CreateUserTransactionTest {

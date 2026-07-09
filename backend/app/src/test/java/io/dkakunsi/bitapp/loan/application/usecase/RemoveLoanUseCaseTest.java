@@ -24,8 +24,8 @@ import io.dkakunsi.bitapp.Context;
 import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.SessionManager;
+import io.dkakunsi.bitapp.loan.application.port.LoanTransactionPort;
 import io.dkakunsi.bitapp.loan.domain.entity.Loan;
-import io.dkakunsi.bitapp.loan.domain.port.LoanTransactionPort;
 import io.dkakunsi.bitapp.loan.domain.repository.LoanRepository;
 
 public final class RemoveLoanUseCaseTest {
