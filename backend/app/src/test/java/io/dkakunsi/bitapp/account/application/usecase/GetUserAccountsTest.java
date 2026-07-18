@@ -147,7 +147,7 @@ public final class GetUserAccountsTest {
     assertTrue(result.error().isPresent());
 
     var error = result.error().get();
-    assertEquals(Code.SERVER_ERROR, error.code());
+    assertEquals(Code.INTERNAL_ERROR, error.code());
     assertEquals("Database connection error", error.message());
 
     verify(accountRepository).findByUserId(USER);

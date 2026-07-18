@@ -259,7 +259,7 @@ public final class UpdateAccountTest {
     // Then
     assertFalse(result.isSuccess());
     assertTrue(result.error().isPresent());
-    assertEquals(Code.SERVER_ERROR, result.error().get().code());
+    assertEquals(Code.INTERNAL_ERROR, result.error().get().code());
     assertEquals("Database error", result.error().get().message());
   }
 

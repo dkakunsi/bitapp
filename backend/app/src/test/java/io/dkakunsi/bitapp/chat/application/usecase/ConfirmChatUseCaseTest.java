@@ -154,7 +154,7 @@ public final class ConfirmChatUseCaseTest {
 
     when(draftRepository.findByIdAndNotConfirmed(Id.of(draftId))).thenReturn(Optional.of(draft));
     when(accountPort.createAccount(draft))
-        .thenReturn(Result.failure(Code.SERVER_ERROR, "Account creation failed"));
+        .thenReturn(Result.failure(Code.INTERNAL_ERROR, "Account creation failed"));
 
     // When
     var result = Context.executeInContext(CONTEXT, () -> underTest.execute(draftId));
@@ -162,6 +162,6 @@ public final class ConfirmChatUseCaseTest {
     // Then
     assertFalse(result.isSuccess());
     assertTrue(result.error().isPresent());
-    assertEquals(Code.SERVER_ERROR, result.error().get().code());
+    assertEquals(Code.INTERNAL_ERROR, result.error().get().code());
   }
 }

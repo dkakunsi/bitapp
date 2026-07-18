@@ -135,7 +135,7 @@ public final class UpdateUserTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertEquals(Code.SERVER_ERROR, result.error().get().code());
+    assertEquals(Code.INTERNAL_ERROR, result.error().get().code());
     assertEquals("Database error", result.error().get().message());
   }
 

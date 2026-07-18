@@ -97,7 +97,7 @@ public final class GetUserTest {
     assertTrue(result.isFailed());
     assertTrue(result.error().isPresent());
     var error = result.error().get();
-    assertEquals(Code.SERVER_ERROR, error.code());
+    assertEquals(Code.INTERNAL_ERROR, error.code());
     assertEquals("Database error", error.message());
 
     verify(userRepository).findByEmail(email);

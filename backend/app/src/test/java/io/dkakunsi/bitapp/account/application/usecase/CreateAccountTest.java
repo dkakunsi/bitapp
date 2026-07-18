@@ -94,7 +94,7 @@ public final class CreateAccountTest {
     assertFalse(result.isSuccess());
 
     final var error = result.error().get();
-    assertEquals(Code.SERVER_ERROR, error.code());
+    assertEquals(Code.INTERNAL_ERROR, error.code());
     assertEquals("An error occurred", error.message());
   }
 

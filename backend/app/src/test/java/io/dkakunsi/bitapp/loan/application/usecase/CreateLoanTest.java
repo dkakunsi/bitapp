@@ -326,7 +326,7 @@ public final class CreateLoanTest {
     assertTrue(result.error().isPresent());
 
     final var error = result.error().get();
-    assertEquals(Code.SERVER_ERROR, error.code());
+    assertEquals(Code.INTERNAL_ERROR, error.code());
     assertEquals("Database error", error.message());
   }
 
@@ -571,7 +571,7 @@ public final class CreateLoanTest {
     when(loanAccountPort.findById(Id.of(ACCOUNT_ID))).thenReturn(Optional.of(account));
     when(loanRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
     when(loanTransactionPort.disburseTransaction(any()))
-        .thenReturn(Result.failure(Code.SERVER_ERROR, "Transaction creation failed"));
+        .thenReturn(Result.failure(Code.INTERNAL_ERROR, "Transaction creation failed"));
 
     // When
     final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
@@ -581,7 +581,7 @@ public final class CreateLoanTest {
     assertTrue(result.error().isPresent());
 
     final var error = result.error().get();
-    assertEquals(Code.SERVER_ERROR, error.code());
+    assertEquals(Code.INTERNAL_ERROR, error.code());
     assertEquals("Transaction creation failed", error.message());
   }
 

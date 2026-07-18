@@ -182,7 +182,7 @@ public final class RegisterUserTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertEquals(Code.SERVER_ERROR, result.error().get().code());
+    assertEquals(Code.INTERNAL_ERROR, result.error().get().code());
     assertEquals("An error occured", result.error().get().message());
   }
 
