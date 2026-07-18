@@ -7,9 +7,8 @@ public abstract class PromptMessage {
   protected static final String RESULT_PROMPT = """
       Your reply should be in this format:
       {
-        "success": boolean,
-        "error": string,
-        "data": json
+        "data": json,
+        "error": string // when data cannot be generated
       }
 
       All datetime values should be in UTC timezone and ISO 8601 format.

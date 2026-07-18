@@ -7,7 +7,7 @@ import io.dkakunsi.bitapp.chat.domain.entity.Draft;
 
 public interface DraftRepository {
 
-  Optional<Draft> findById(Id draftId);
+  Optional<Draft> findByIdAndNotConfirmed(Id draftId);
 
   Draft save(Draft draft);
 

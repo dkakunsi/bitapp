@@ -26,8 +26,11 @@ public class DraftModel {
 
   private String userId;
   private String type;
+  private String error;
   private Document data;
   private List<ExternalDataModel> externalData;
+  private Boolean success;
+  private Boolean confirmed;
 
   public Draft toDraft() {
     var externalDataModel = this.externalData
@@ -35,12 +38,16 @@ public class DraftModel {
         .map(ExternalDataModel::toExternalData)
         .toList();
 
-    return new Draft(
-        Id.of(this.id),
-        Id.of(this.userId),
-        Chat.Type.valueOf(this.type),
-        new JSONObject(this.data.toJson()),
-        externalDataModel);
+    return Draft.builder()
+        .id(Id.of(this.id))
+        .userId(Id.of(this.userId))
+        .type(Chat.Type.valueOf(this.type))
+        .error(this.error)
+        .data(new JSONObject(this.data.toJson()))
+        .externalData(externalDataModel)
+        .success(this.success)
+        .confirmed(this.confirmed)
+        .build();
   }
 
   public static DraftModel from(Draft draft) {
@@ -49,11 +56,15 @@ public class DraftModel {
         .map(ExternalDataModel::from)
         .toList();
 
-    return new DraftModel(
-        draft.id().value(),
-        draft.userId().value(),
-        draft.type().name(),
-        Document.parse(draft.data().toString()),
-        externalDataModels);
+    return DraftModel.builder()
+        .id(draft.id().value())
+        .userId(draft.userId().value())
+        .type(draft.type().name())
+        .error(draft.error())
+        .data(Document.parse(draft.data().toString()))
+        .externalData(externalDataModels)
+        .success(draft.success())
+        .confirmed(draft.confirmed())
+        .build();
   }
 }

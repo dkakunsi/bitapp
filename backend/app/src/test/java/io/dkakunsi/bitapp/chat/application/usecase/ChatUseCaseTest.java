@@ -56,9 +56,9 @@ public final class ChatUseCaseTest {
     // Given
     var chat = new Chat(Chat.Type.ACCOUNT, "draft-1", "create account for food", "en");
     var promptMessage = mock(PromptMessage.class);
-    var promptResult = new PromptResult(true, null, "{\"name\":\"Food Account\",\"balance\":50000}");
+    var promptResult = new PromptResult(null, "{\"name\":\"Food Account\",\"balance\":50000}");
 
-    when(draftRepository.findById(Id.of(chat.draftId()))).thenReturn(Optional.empty());
+    when(draftRepository.findByIdAndNotConfirmed(Id.of(chat.draftId()))).thenReturn(Optional.empty());
     when(promptMessageBuilder.build(eq(chat), any(Draft.class))).thenReturn(promptMessage);
     when(languageModelRepository.prompt(promptMessage)).thenReturn(promptResult);
 
@@ -93,12 +93,15 @@ public final class ChatUseCaseTest {
         Id.of("draft-2"),
         Id.of("owner@email.com"),
         Chat.Type.ACCOUNT,
+        null,
         new JSONObject("{\"existing\":\"value\"}"),
-        List.of());
+        List.of(),
+        false,
+        false);
     var promptMessage = mock(PromptMessage.class);
-    var promptResult = new PromptResult(true, null, "{\"title\":\"Updated Draft\"}");
+    var promptResult = new PromptResult(null, "{\"title\":\"Updated Draft\"}");
 
-    when(draftRepository.findById(Id.of(chat.draftId()))).thenReturn(Optional.of(existingDraft));
+    when(draftRepository.findByIdAndNotConfirmed(Id.of(chat.draftId()))).thenReturn(Optional.of(existingDraft));
     when(promptMessageBuilder.build(chat, existingDraft)).thenReturn(promptMessage);
     when(languageModelRepository.prompt(promptMessage)).thenReturn(promptResult);
 
@@ -130,7 +133,7 @@ public final class ChatUseCaseTest {
         draftRepository,
         Map.of(Chat.Type.ACCOUNT, promptMessageBuilder));
 
-    when(draftRepository.findById(Id.of(chat.draftId()))).thenReturn(Optional.empty());
+    when(draftRepository.findByIdAndNotConfirmed(Id.of(chat.draftId()))).thenReturn(Optional.empty());
 
     // When
     var result = Context.executeInContext(CONTEXT, () -> useCaseWithoutLoanBuilder.process(chat));

@@ -29,10 +29,6 @@ public final record Result<DATA>(
     return new Result<>(Optional.of(data), Optional.empty(), Optional.empty());
   }
 
-  public static <DATA> Result<DATA> success(String message) {
-    return new Result<>(Optional.empty(), Optional.empty(), Optional.of(message));
-  }
-
   public static <DATA> Result<DATA> failure(Result<?> other) {
     var error = other.error().orElse(new AppError(Code.INTERNAL_ERROR, "Unknown error"));
     return failure(error);
@@ -40,7 +36,8 @@ public final record Result<DATA>(
 
   public static <DATA> Result<DATA> failure(Exception exception) {
     var message = exception.getMessage() != null ? exception.getMessage() : "Unknown error";
-    return failure(Code.INTERNAL_ERROR, message);
+    final var error = new AppError(Code.INTERNAL_ERROR, message);
+    return failure(error);
   }
 
   public static <DATA> Result<DATA> failure(Code serverError, String message) {

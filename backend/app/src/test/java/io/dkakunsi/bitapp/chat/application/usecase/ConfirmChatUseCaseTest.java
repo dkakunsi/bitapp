@@ -51,7 +51,7 @@ public final class ConfirmChatUseCaseTest {
   void returnNotFoundWhenDraftDoesNotExist() {
     // Given
     var draftId = "draft-123";
-    when(draftRepository.findById(Id.of(draftId))).thenReturn(Optional.empty());
+    when(draftRepository.findByIdAndNotConfirmed(Id.of(draftId))).thenReturn(Optional.empty());
 
     // When
     var result = Context.executeInContext(CONTEXT, () -> underTest.execute(draftId));
@@ -67,10 +67,10 @@ public final class ConfirmChatUseCaseTest {
     // Given
     var draftId = "draft-456";
     var otherUser = "other@email.com";
-    var draft = new Draft(Id.of(draftId), Id.of(otherUser), Chat.Type.ACCOUNT,
-        new JSONObject(), List.of());
+    var draft = new Draft(Id.of(draftId), Id.of(otherUser), Chat.Type.ACCOUNT, null,
+        new JSONObject(), List.of(), false, false);
 
-    when(draftRepository.findById(Id.of(draftId))).thenReturn(Optional.of(draft));
+    when(draftRepository.findByIdAndNotConfirmed(Id.of(draftId))).thenReturn(Optional.of(draft));
 
     // When
     var result = Context.executeInContext(CONTEXT, () -> underTest.execute(draftId));
@@ -89,10 +89,10 @@ public final class ConfirmChatUseCaseTest {
   void delegateToAccountPortWhenDraftTypeIsAccount() {
     // Given
     var draftId = "draft-account";
-    var draft = new Draft(Id.of(draftId), Id.of(REQUESTER), Chat.Type.ACCOUNT,
-        new JSONObject("{\"name\":\"Savings\"}"), List.of());
+    var draft = new Draft(Id.of(draftId), Id.of(REQUESTER), Chat.Type.ACCOUNT, null,
+        new JSONObject("{\"name\":\"Savings\"}"), List.of(), false, false);
 
-    when(draftRepository.findById(Id.of(draftId))).thenReturn(Optional.of(draft));
+    when(draftRepository.findByIdAndNotConfirmed(Id.of(draftId))).thenReturn(Optional.of(draft));
     when(accountPort.createAccount(draft)).thenReturn(Result.success());
 
     // When
@@ -109,10 +109,10 @@ public final class ConfirmChatUseCaseTest {
   void delegateToLoanPortWhenDraftTypeIsLoan() {
     // Given
     var draftId = "draft-loan";
-    var draft = new Draft(Id.of(draftId), Id.of(REQUESTER), Chat.Type.LOAN,
-        new JSONObject("{\"amount\":10000}"), List.of());
+    var draft = new Draft(Id.of(draftId), Id.of(REQUESTER), Chat.Type.LOAN, null,
+        new JSONObject("{\"amount\":10000}"), List.of(), false, false);
 
-    when(draftRepository.findById(Id.of(draftId))).thenReturn(Optional.of(draft));
+    when(draftRepository.findByIdAndNotConfirmed(Id.of(draftId))).thenReturn(Optional.of(draft));
     when(loanPort.createLoan(draft)).thenReturn(Result.success());
 
     // When
@@ -129,10 +129,10 @@ public final class ConfirmChatUseCaseTest {
   void delegateToTransactionPortWhenDraftTypeIsTransaction() {
     // Given
     var draftId = "draft-transaction";
-    var draft = new Draft(Id.of(draftId), Id.of(REQUESTER), Chat.Type.TRANSACTION,
-        new JSONObject("{\"amount\":500}"), List.of());
+    var draft = new Draft(Id.of(draftId), Id.of(REQUESTER), Chat.Type.TRANSACTION, null,
+        new JSONObject("{\"amount\":500}"), List.of(), false, false);
 
-    when(draftRepository.findById(Id.of(draftId))).thenReturn(Optional.of(draft));
+    when(draftRepository.findByIdAndNotConfirmed(Id.of(draftId))).thenReturn(Optional.of(draft));
     when(transactionPort.createTransaction(draft)).thenReturn(Result.success());
 
     // When
@@ -149,10 +149,10 @@ public final class ConfirmChatUseCaseTest {
   void propagateFailureFromAccountPort() {
     // Given
     var draftId = "draft-account-fail";
-    var draft = new Draft(Id.of(draftId), Id.of(REQUESTER), Chat.Type.ACCOUNT,
-        new JSONObject(), List.of());
+    var draft = new Draft(Id.of(draftId), Id.of(REQUESTER), Chat.Type.ACCOUNT, null,
+        new JSONObject(), List.of(), false, false);
 
-    when(draftRepository.findById(Id.of(draftId))).thenReturn(Optional.of(draft));
+    when(draftRepository.findByIdAndNotConfirmed(Id.of(draftId))).thenReturn(Optional.of(draft));
     when(accountPort.createAccount(draft))
         .thenReturn(Result.failure(Code.SERVER_ERROR, "Account creation failed"));
 

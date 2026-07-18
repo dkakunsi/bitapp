@@ -2,8 +2,6 @@ package io.dkakunsi.bitapp.chat.application.usecase;
 
 import java.util.Map;
 
-import org.json.JSONObject;
-
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.Result;
 import io.dkakunsi.bitapp.UseCase;
@@ -31,15 +29,14 @@ public class ChatUseCase implements UseCase<Chat, Draft> {
   @Override
   public Result<Draft> execute(Chat input) {
     var requester = getRequester();
-    var draft = draftRepository.findById(Id.of(input.draftId()))
+    var draft = draftRepository.findByIdAndNotConfirmed(Id.of(input.draftId()))
         .orElse(Draft.from(input, requester));
 
     var promptMessageBuilder = promptMessageBuilders.get(input.type());
     var promptMessage = promptMessageBuilder.build(input, draft);
     var promptResult = languageModelRepository.prompt(promptMessage);
 
-    var promptResultData = new JSONObject(promptResult.data());
-    draft = draft.update(promptResultData, promptMessage.getExternalData());
+    draft = draft.update(promptResult, promptMessage);
     draftRepository.save(draft);
 
     return Result.success(draft);

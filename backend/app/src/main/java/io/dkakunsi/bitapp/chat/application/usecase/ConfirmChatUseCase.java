@@ -31,7 +31,7 @@ public class ConfirmChatUseCase implements UseCase<String, Void> {
 
   @Override
   public Result<Void> execute(String input) {
-    var draftOpt = draftRepository.findById(Id.of(input));
+    var draftOpt = draftRepository.findByIdAndNotConfirmed(Id.of(input));
     if (draftOpt.isEmpty()) {
       return Result.failure(Code.NOT_FOUND, "Draft not found");
     }
@@ -48,6 +48,9 @@ public class ConfirmChatUseCase implements UseCase<String, Void> {
       case TRANSACTION -> transactionPort.createTransaction(draft);
       default -> Result.failure(Code.BAD_REQUEST, "Unsupported draft type");
     };
+
+    draft = draft.confirm(result.isSuccess());
+    draftRepository.save(draft);
 
     return result;
   }
