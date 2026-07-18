@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -54,10 +55,10 @@ public final class ChatUseCaseTest {
   void createDraftWhenNotFoundThenPersistUpdatedData() {
     // Given
     var chat = new Chat(Chat.Type.ACCOUNT, "draft-1", "create account for food", "en");
-    var promptMessage = new PromptMessage("prompt text");
+    var promptMessage = mock(PromptMessage.class);
     var promptResult = new PromptResult(true, null, "{\"name\":\"Food Account\",\"balance\":50000}");
 
-    when(draftRepository.findOne(chat.draftId())).thenReturn(Optional.empty());
+    when(draftRepository.findById(Id.of(chat.draftId()))).thenReturn(Optional.empty());
     when(promptMessageBuilder.build(eq(chat), any(Draft.class))).thenReturn(promptMessage);
     when(languageModelRepository.prompt(promptMessage)).thenReturn(promptResult);
 
@@ -92,11 +93,12 @@ public final class ChatUseCaseTest {
         Id.of("draft-2"),
         Id.of("owner@email.com"),
         Chat.Type.ACCOUNT,
-        new JSONObject("{\"existing\":\"value\"}"));
-    var promptMessage = new PromptMessage("prompt text");
+        new JSONObject("{\"existing\":\"value\"}"),
+        List.of());
+    var promptMessage = mock(PromptMessage.class);
     var promptResult = new PromptResult(true, null, "{\"title\":\"Updated Draft\"}");
 
-    when(draftRepository.findOne(chat.draftId())).thenReturn(Optional.of(existingDraft));
+    when(draftRepository.findById(Id.of(chat.draftId()))).thenReturn(Optional.of(existingDraft));
     when(promptMessageBuilder.build(chat, existingDraft)).thenReturn(promptMessage);
     when(languageModelRepository.prompt(promptMessage)).thenReturn(promptResult);
 
@@ -128,7 +130,7 @@ public final class ChatUseCaseTest {
         draftRepository,
         Map.of(Chat.Type.ACCOUNT, promptMessageBuilder));
 
-    when(draftRepository.findOne(chat.draftId())).thenReturn(Optional.empty());
+    when(draftRepository.findById(Id.of(chat.draftId()))).thenReturn(Optional.empty());
 
     // When
     var result = Context.executeInContext(CONTEXT, () -> useCaseWithoutLoanBuilder.process(chat));
@@ -136,7 +138,7 @@ public final class ChatUseCaseTest {
     // Then
     assertFalse(result.isSuccess());
     assertTrue(result.error().isPresent());
-    assertEquals(Code.SERVER_ERROR, result.error().get().code());
+    assertEquals(Code.INTERNAL_ERROR, result.error().get().code());
     assertTrue(result.data().isEmpty());
   }
 }
