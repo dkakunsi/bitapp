@@ -1,6 +1,38 @@
 package io.dkakunsi.bitapp.chat.domain.entity;
 
-public record PromptMessage(String message) {
+import java.util.List;
+
+public abstract class PromptMessage {
+
+  protected static final String RESULT_PROMPT = """
+      Your reply should be in this format:
+      {
+        "success": boolean,
+        "error": string,
+        "data": json
+      }
+      """;
+
+  protected final Chat chat;
+
+  protected final Draft draft;
+
+  protected PromptMessage(Chat chat, Draft draft) {
+    this.chat = chat;
+    this.draft = draft;
+  }
+
+  public List<ExternalData> getExternalData() {
+    return List.of();
+  }
+
+  public String getPrompt() {
+    return String.format("%s. %s. %s", getDataPrompt(), getStructurePrompt(), RESULT_PROMPT);
+  }
+
+  protected abstract String getDataPrompt();
+
+  protected abstract String getStructurePrompt();
 
   public static abstract class PromptMessageBuilder {
 

@@ -17,7 +17,7 @@ public class LoanAdapter implements LoanPort {
   @Override
   public List<ChatLoan> getUserLoans(Id userId) {
     return loanRepository.findByUserId(userId).stream()
-        .map(loan -> new ChatLoan(loan.id().value(), loan.title()))
+        .map(loan -> new ChatLoan(loan.id(), loan.title()))
         .toList();
   }
 

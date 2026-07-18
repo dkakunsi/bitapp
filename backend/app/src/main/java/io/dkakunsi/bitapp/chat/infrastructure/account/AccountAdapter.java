@@ -17,7 +17,7 @@ public class AccountAdapter implements AccountPort {
   @Override
   public List<ChatAccount> getUserAccounts(Id userId) {
     return accountRepository.findByUserId(userId).stream()
-        .map(account -> new ChatAccount(account.id().value(), account.name()))
+        .map(account -> new ChatAccount(account.id(), account.name()))
         .toList();
   }
 

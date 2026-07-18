@@ -3,23 +3,16 @@ package io.dkakunsi.bitapp.chat.application.port;
 import java.util.List;
 
 import io.dkakunsi.bitapp.Id;
+import io.dkakunsi.bitapp.chat.domain.entity.ExternalData;
 
 public interface AccountPort {
 
   List<ChatAccount> getUserAccounts(Id userId);
 
-  public static final record ChatAccount(
-      String accountId,
-      String accountName) {
+  public static final class ChatAccount extends ExternalData {
 
-    @Override
-    public final String toString() {
-      return """
-          {
-            "accountId": "%s",
-            "accountName": "%s"
-          }
-          """.formatted(accountId, accountName);
+    public ChatAccount(Id accountId, String accountName) {
+      super(accountId, accountName);
     }
   }
 }

@@ -38,7 +38,8 @@ public class ChatUseCase implements UseCase<Chat, Draft> {
     var promptMessage = promptMessageBuilder.build(input, draft);
     var promptResult = languageModelRepository.prompt(promptMessage);
 
-    draft = draft.updateData(new JSONObject(promptResult.data()));
+    var promptResultData = new JSONObject(promptResult.data());
+    draft = draft.update(promptResultData, promptMessage.getExternalData());
     draftRepository.save(draft);
 
     return Result.success(draft);

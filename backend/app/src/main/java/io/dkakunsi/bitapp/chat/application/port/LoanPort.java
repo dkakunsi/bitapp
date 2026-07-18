@@ -3,24 +3,16 @@ package io.dkakunsi.bitapp.chat.application.port;
 import java.util.List;
 
 import io.dkakunsi.bitapp.Id;
+import io.dkakunsi.bitapp.chat.domain.entity.ExternalData;
 
 public interface LoanPort {
 
   public List<ChatLoan> getUserLoans(Id userId);
 
-  public static final record ChatLoan(
-      String loanId,
-      String loanName) {
+  public static final class ChatLoan extends ExternalData {
 
-    @Override
-    public final String toString() {
-      return """
-          {
-            "loanId": "%s",
-            "loanName": "%s"
-          }
-          """.formatted(loanId, loanName);
+    public ChatLoan(Id loanId, String loanName) {
+      super(loanId, loanName);
     }
   }
-
 }

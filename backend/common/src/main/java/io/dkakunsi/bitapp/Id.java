@@ -11,4 +11,9 @@ public final record Id(String value) {
     final var uuid = UUID.randomUUID().toString();
     return Id.of(uuid);
   }
+
+  @Override
+  public final String toString() {
+    return value;
+  }
 }

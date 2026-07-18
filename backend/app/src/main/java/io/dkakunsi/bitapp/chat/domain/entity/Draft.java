@@ -1,5 +1,7 @@
 package io.dkakunsi.bitapp.chat.domain.entity;
 
+import java.util.List;
+
 import org.json.JSONObject;
 
 import io.dkakunsi.bitapp.Id;
@@ -9,22 +11,19 @@ public record Draft(
     Id id,
     Id userId,
     Type type,
-    JSONObject data) {
+    JSONObject data,
+    List<ExternalData> externalData) {
 
-  public static Draft of(String userId, Type type, String message, String language) {
-    return new Draft(
-        Id.generate(),
-        Id.of(userId),
-        type,
-        new JSONObject());
-  }
-
-  public Draft updateData(JSONObject newData) {
-    return new Draft(this.id, this.userId, this.type, newData);
+  public Draft update(JSONObject newData, List<ExternalData> newExternalData) {
+    return new Draft(this.id, this.userId, this.type, newData, newExternalData);
   }
 
   public static Draft from(Chat chat, String requester) {
-    return Draft.of(requester, chat.type(), chat.message(), chat.language());
+    return new Draft(
+        Id.generate(),
+        Id.of(requester),
+        chat.type(),
+        new JSONObject(),
+        List.of());
   }
-
 }
