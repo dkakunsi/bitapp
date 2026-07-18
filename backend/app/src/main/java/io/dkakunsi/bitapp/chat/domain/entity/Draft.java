@@ -26,4 +26,11 @@ public record Draft(
         new JSONObject(),
         List.of());
   }
+
+  public ExternalData getExternalDataByName(String name, Class<? extends ExternalData> type) {
+    return externalData.stream()
+        .filter(data -> data.getName().equals(name) && type.isInstance(data))
+        .findFirst()
+        .orElse(null);
+  }
 }

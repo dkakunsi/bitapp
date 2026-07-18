@@ -33,6 +33,16 @@ public final record Result<DATA>(
     return new Result<>(Optional.empty(), Optional.empty(), Optional.of(message));
   }
 
+  public static <DATA> Result<DATA> failure(Result<?> other) {
+    var error = other.error().orElse(new AppError(Code.INTERNAL_ERROR, "Unknown error"));
+    return failure(error);
+  }
+
+  public static <DATA> Result<DATA> failure(Exception exception) {
+    var message = "An unexpected error occurred: " + exception.getMessage();
+    return failure(Code.INTERNAL_ERROR, message);
+  }
+
   public static <DATA> Result<DATA> failure(Code serverError, String message) {
     final var error = new AppError(serverError, message);
     return failure(error);

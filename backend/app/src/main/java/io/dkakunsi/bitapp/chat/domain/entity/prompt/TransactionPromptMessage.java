@@ -23,8 +23,7 @@ public final class TransactionPromptMessage extends PromptMessage {
       {
         "title": "string",
         "description": "string",
-        "date": "date", // use current date if not available
-        "time": "time", // use current time if not available
+        "datetime": "datetime", // use current date if not available
         "source": "string", // required for type DEBIT & TRANSFER
         "destination": "string", // required for type CREDIT & TRANSFER
         "loan": "string",

@@ -19,8 +19,7 @@ public class LoanPromptMessage extends PromptMessage {
       Generate a JSON object that fulfill this loan data structure with null and empty values stripped off:
       {
         "type": "string", // ['BORROW', 'LEND']
-        "date": "date", // use current date if not available
-        "time": "time", // use current time if not available
+        "datetime": "datetime", // use current date if not available
         "partyName": "string",
         "title": "string",
         "description": "string",

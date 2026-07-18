@@ -11,6 +11,8 @@ public abstract class PromptMessage {
         "error": string,
         "data": json
       }
+
+      All datetime values should be in UTC timezone and ISO 8601 format.
       """;
 
   protected final Chat chat;
