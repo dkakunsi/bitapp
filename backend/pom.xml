@@ -380,6 +380,7 @@
           <version>${spotbugs-maven-plugin.version}</version>
           <configuration>
             <omitVisitors>FindReturnRef</omitVisitors>
+            <excludeFilterFile>spotbugs-exclude.xml</excludeFilterFile>
           </configuration>
           <executions>
             <execution>

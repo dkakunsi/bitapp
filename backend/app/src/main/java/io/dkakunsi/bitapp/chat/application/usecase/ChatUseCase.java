@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
+import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.Result;
 import io.dkakunsi.bitapp.UseCase;
 import io.dkakunsi.bitapp.chat.domain.entity.Chat;
@@ -30,7 +31,7 @@ public class ChatUseCase implements UseCase<Chat, Draft> {
   @Override
   public Result<Draft> execute(Chat input) {
     var requester = getRequester();
-    var draft = draftRepository.findOne(input.draftId())
+    var draft = draftRepository.findById(Id.of(input.draftId()))
         .orElse(Draft.from(input, requester));
 
     var promptMessageBuilder = promptMessageBuilders.get(input.type());

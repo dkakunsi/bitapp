@@ -4,5 +4,4 @@ public record PromptResult(
     Boolean success,
     String message,
     String data) {
-
 }
