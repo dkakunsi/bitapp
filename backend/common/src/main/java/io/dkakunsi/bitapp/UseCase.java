@@ -19,7 +19,7 @@ public interface UseCase<IN, OUT> {
       return Result.failure(Code.BAD_REQUEST, e.getMessage());
     } catch (Exception e) {
       LOGGER.error("Request failed with message: {}", e.getMessage());
-      return Result.failure(Code.SERVER_ERROR, e.getMessage());
+      return Result.failure(e);
     }
   }
 

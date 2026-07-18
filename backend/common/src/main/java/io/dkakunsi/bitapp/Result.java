@@ -39,7 +39,7 @@ public final record Result<DATA>(
   }
 
   public static <DATA> Result<DATA> failure(Exception exception) {
-    var message = "An unexpected error occurred: " + exception.getMessage();
+    var message = exception.getMessage() != null ? exception.getMessage() : "Unknown error";
     return failure(Code.INTERNAL_ERROR, message);
   }
 
