@@ -25,6 +25,11 @@
       <artifactId>commons-lang3</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
@@ -68,6 +73,7 @@
       <artifactId>unirest-java</artifactId>
       <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>io.javalin</groupId>
       <artifactId>javalin</artifactId>
@@ -83,6 +89,7 @@
       <artifactId>jackson-datatype-jsr310</artifactId>
       <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>org.mongodb</groupId>
       <artifactId>mongodb-driver-sync</artifactId>
@@ -93,6 +100,7 @@
       <artifactId>morphia-core</artifactId>
       <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>com.auth0</groupId>
       <artifactId>java-jwt</artifactId>
@@ -103,9 +111,15 @@
       <artifactId>jwks-rsa</artifactId>
       <scope>provided</scope>
     </dependency>
+
     <dependency>
-      <groupId>org.json</groupId>
-      <artifactId>json</artifactId>
+      <groupId>dev.langchain4j</groupId>
+      <artifactId>langchain4j</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>dev.langchain4j</groupId>
+      <artifactId>langchain4j-google-ai-gemini</artifactId>
       <scope>provided</scope>
     </dependency>
   </dependencies>
