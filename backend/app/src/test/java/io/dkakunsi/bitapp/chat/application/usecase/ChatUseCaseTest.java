@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -24,10 +23,10 @@ import io.dkakunsi.bitapp.Context;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.chat.domain.entity.Chat;
 import io.dkakunsi.bitapp.chat.domain.entity.Draft;
-import io.dkakunsi.bitapp.chat.domain.entity.PromptMessage;
-import io.dkakunsi.bitapp.chat.domain.entity.PromptResult;
 import io.dkakunsi.bitapp.chat.domain.repository.DraftRepository;
 import io.dkakunsi.bitapp.chat.domain.repository.LanguageModelRepository;
+import io.dkakunsi.bitapp.langchain.PromptMessage;
+import io.dkakunsi.bitapp.langchain.PromptResult;
 
 public final class ChatUseCaseTest {
 
@@ -37,15 +36,16 @@ public final class ChatUseCaseTest {
   private ChatUseCase underTest;
   private LanguageModelRepository languageModelRepository;
   private DraftRepository draftRepository;
-  private PromptMessage.PromptMessageBuilder promptMessageBuilder;
+  private PromptMessage.PromptMessageBuilder<Draft> promptMessageBuilder;
 
   @BeforeEach
   void setUp() {
     languageModelRepository = mock(LanguageModelRepository.class);
     draftRepository = mock(DraftRepository.class);
     promptMessageBuilder = mock(PromptMessage.PromptMessageBuilder.class);
+    // noinspection unchecked
 
-    Map<Chat.Type, PromptMessage.PromptMessageBuilder> promptMessageBuilders = new EnumMap<>(Chat.Type.class);
+    Map<Chat.Type, PromptMessage.PromptMessageBuilder<Draft>> promptMessageBuilders = new EnumMap<>(Chat.Type.class);
     promptMessageBuilders.put(Chat.Type.ACCOUNT, promptMessageBuilder);
 
     underTest = new ChatUseCase(languageModelRepository, draftRepository, promptMessageBuilders);
@@ -56,10 +56,10 @@ public final class ChatUseCaseTest {
     // Given
     var chat = new Chat(Chat.Type.ACCOUNT, "draft-1", "create account for food", "en");
     var promptMessage = mock(PromptMessage.class);
-    var promptResult = new PromptResult(null, "{\"name\":\"Food Account\",\"balance\":50000}");
+    var promptResult = new PromptResult(null, "{\"name\":\"Food Account\",\"balance\":50000}", List.of());
 
     when(draftRepository.findByIdAndNotConfirmed(Id.of(chat.draftId()))).thenReturn(Optional.empty());
-    when(promptMessageBuilder.build(eq(chat), any(Draft.class))).thenReturn(promptMessage);
+    when(promptMessageBuilder.build(any(Draft.class))).thenReturn(promptMessage);
     when(languageModelRepository.prompt(promptMessage)).thenReturn(promptResult);
 
     // When
@@ -70,7 +70,7 @@ public final class ChatUseCaseTest {
     assertTrue(result.data().isPresent());
 
     var builtDraftCaptor = ArgumentCaptor.forClass(Draft.class);
-    verify(promptMessageBuilder).build(eq(chat), builtDraftCaptor.capture());
+    verify(promptMessageBuilder).build(builtDraftCaptor.capture());
 
     var builtDraft = builtDraftCaptor.getValue();
     assertEquals(Chat.Type.ACCOUNT, builtDraft.type());
@@ -80,8 +80,8 @@ public final class ChatUseCaseTest {
     verify(draftRepository).save(savedDraftCaptor.capture());
 
     var savedDraft = savedDraftCaptor.getValue();
-    assertEquals("Food Account", savedDraft.data().getString("name"));
-    assertEquals(50000, savedDraft.data().getInt("balance"));
+    assertEquals("Food Account", savedDraft.modelResult().getString("name"));
+    assertEquals(50000, savedDraft.modelResult().getInt("balance"));
     assertEquals(savedDraft, result.data().get());
   }
 
@@ -93,16 +93,17 @@ public final class ChatUseCaseTest {
         Id.of("draft-2"),
         Id.of("owner@email.com"),
         Chat.Type.ACCOUNT,
+        List.of(new Chat(Chat.Type.ACCOUNT, "draft-2", "existing draft", "en")),
         null,
         new JSONObject("{\"existing\":\"value\"}"),
         List.of(),
         false,
         false);
     var promptMessage = mock(PromptMessage.class);
-    var promptResult = new PromptResult(null, "{\"title\":\"Updated Draft\"}");
+    var promptResult = new PromptResult(null, "{\"title\":\"Updated Draft\"}", List.of());
 
     when(draftRepository.findByIdAndNotConfirmed(Id.of(chat.draftId()))).thenReturn(Optional.of(existingDraft));
-    when(promptMessageBuilder.build(chat, existingDraft)).thenReturn(promptMessage);
+    when(promptMessageBuilder.build(any(Draft.class))).thenReturn(promptMessage);
     when(languageModelRepository.prompt(promptMessage)).thenReturn(promptResult);
 
     // When
@@ -112,7 +113,12 @@ public final class ChatUseCaseTest {
     assertTrue(result.isSuccess());
     assertTrue(result.data().isPresent());
 
-    verify(promptMessageBuilder).build(chat, existingDraft);
+    var builtDraftCaptor = ArgumentCaptor.forClass(Draft.class);
+    verify(promptMessageBuilder).build(builtDraftCaptor.capture());
+
+    var builtDraft = builtDraftCaptor.getValue();
+    assertEquals(existingDraft.id(), builtDraft.id());
+    assertEquals(existingDraft.userId(), builtDraft.userId());
 
     var savedDraftCaptor = ArgumentCaptor.forClass(Draft.class);
     verify(draftRepository).save(savedDraftCaptor.capture());
@@ -121,7 +127,7 @@ public final class ChatUseCaseTest {
     assertEquals(existingDraft.id(), savedDraft.id());
     assertEquals(existingDraft.userId(), savedDraft.userId());
     assertEquals(existingDraft.type(), savedDraft.type());
-    assertEquals("Updated Draft", savedDraft.data().getString("title"));
+    assertEquals("Updated Draft", savedDraft.modelResult().getString("title"));
   }
 
   @Test

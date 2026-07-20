@@ -1,8 +1,10 @@
-package io.dkakunsi.bitapp.chat.domain.entity;
+package io.dkakunsi.bitapp.langchain;
 
 import java.util.List;
 
-public abstract class PromptMessage {
+import io.dkakunsi.bitapp.CrossDomainReference;
+
+public abstract class PromptMessage<T> {
 
   protected static final String RESULT_PROMPT = """
       Your reply should be in this format:
@@ -14,16 +16,13 @@ public abstract class PromptMessage {
       All datetime values should be in UTC timezone and ISO 8601 format.
       """;
 
-  protected final Chat chat;
+  protected final T data;
 
-  protected final Draft draft;
-
-  protected PromptMessage(Chat chat, Draft draft) {
-    this.chat = chat;
-    this.draft = draft;
+  protected PromptMessage(T data) {
+    this.data = data;
   }
 
-  public List<ExternalData> getExternalData() {
+  public List<CrossDomainReference> getCrossDomainReferences() {
     return List.of();
   }
 
@@ -35,9 +34,9 @@ public abstract class PromptMessage {
 
   protected abstract String getStructurePrompt();
 
-  public static abstract class PromptMessageBuilder {
+  public static abstract class PromptMessageBuilder<T> {
 
-    public abstract PromptMessage build(Chat chat, Draft draft);
+    public abstract PromptMessage<T> build(T data);
 
   }
 }

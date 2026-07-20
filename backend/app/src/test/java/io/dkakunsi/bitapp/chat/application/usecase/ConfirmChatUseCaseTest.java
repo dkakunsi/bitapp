@@ -68,7 +68,7 @@ public final class ConfirmChatUseCaseTest {
     var draftId = "draft-456";
     var otherUser = "other@email.com";
     var draft = new Draft(Id.of(draftId), Id.of(otherUser), Chat.Type.ACCOUNT, null,
-        new JSONObject(), List.of(), false, false);
+        null, new JSONObject(), List.of(), false, false);
 
     when(draftRepository.findByIdAndNotConfirmed(Id.of(draftId))).thenReturn(Optional.of(draft));
 
@@ -90,7 +90,7 @@ public final class ConfirmChatUseCaseTest {
     // Given
     var draftId = "draft-account";
     var draft = new Draft(Id.of(draftId), Id.of(REQUESTER), Chat.Type.ACCOUNT, null,
-        new JSONObject("{\"name\":\"Savings\"}"), List.of(), false, false);
+        null, new JSONObject("{\"name\":\"Savings\"}"), List.of(), false, false);
 
     when(draftRepository.findByIdAndNotConfirmed(Id.of(draftId))).thenReturn(Optional.of(draft));
     when(accountPort.createAccount(draft)).thenReturn(Result.success());
@@ -110,7 +110,7 @@ public final class ConfirmChatUseCaseTest {
     // Given
     var draftId = "draft-loan";
     var draft = new Draft(Id.of(draftId), Id.of(REQUESTER), Chat.Type.LOAN, null,
-        new JSONObject("{\"amount\":10000}"), List.of(), false, false);
+        null, new JSONObject("{\"amount\":10000}"), List.of(), false, false);
 
     when(draftRepository.findByIdAndNotConfirmed(Id.of(draftId))).thenReturn(Optional.of(draft));
     when(loanPort.createLoan(draft)).thenReturn(Result.success());
@@ -130,7 +130,7 @@ public final class ConfirmChatUseCaseTest {
     // Given
     var draftId = "draft-transaction";
     var draft = new Draft(Id.of(draftId), Id.of(REQUESTER), Chat.Type.TRANSACTION, null,
-        new JSONObject("{\"amount\":500}"), List.of(), false, false);
+        null, new JSONObject("{\"amount\":500}"), List.of(), false, false);
 
     when(draftRepository.findByIdAndNotConfirmed(Id.of(draftId))).thenReturn(Optional.of(draft));
     when(transactionPort.createTransaction(draft)).thenReturn(Result.success());
@@ -150,7 +150,7 @@ public final class ConfirmChatUseCaseTest {
     // Given
     var draftId = "draft-account-fail";
     var draft = new Draft(Id.of(draftId), Id.of(REQUESTER), Chat.Type.ACCOUNT, null,
-        new JSONObject(), List.of(), false, false);
+        null, new JSONObject(), List.of(), false, false);
 
     when(draftRepository.findByIdAndNotConfirmed(Id.of(draftId))).thenReturn(Optional.of(draft));
     when(accountPort.createAccount(draft))

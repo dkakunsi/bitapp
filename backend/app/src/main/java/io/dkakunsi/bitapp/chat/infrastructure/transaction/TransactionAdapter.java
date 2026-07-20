@@ -27,7 +27,7 @@ public class TransactionAdapter implements TransactionPort, DateTimeConverter {
   }
 
   private CreateUserTransactionInput toCreateUserTransactionInput(Draft draft) {
-    var jsonData = draft.data();
+    var jsonData = draft.modelResult();
     var title = jsonData.optString("title");
     var description = jsonData.optString("description");
     var datetime = jsonData.optString("datetime");
@@ -42,13 +42,13 @@ public class TransactionAdapter implements TransactionPort, DateTimeConverter {
     var localDate = toEpochMilli(datetime);
     var localTime = toMinutesSinceMidnight(datetime);
 
-    var sourceData = draft.getExternalDataByName(source, ChatAccount.class);
+    var sourceData = draft.getCrossDomainReferenceByName(source, ChatAccount.class);
     var sourceId = sourceData != null ? sourceData.getId().value() : null;
 
-    var destinationData = draft.getExternalDataByName(destination, ChatAccount.class);
+    var destinationData = draft.getCrossDomainReferenceByName(destination, ChatAccount.class);
     var destinationId = destinationData != null ? destinationData.getId().value() : null;
 
-    var loanData = draft.getExternalDataByName(loan, ChatLoan.class);
+    var loanData = draft.getCrossDomainReferenceByName(loan, ChatLoan.class);
     var loanId = loanData != null ? loanData.getId().value() : null;
 
     return CreateUserTransactionInput.builder()

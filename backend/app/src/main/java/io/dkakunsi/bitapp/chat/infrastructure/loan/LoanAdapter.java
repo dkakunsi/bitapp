@@ -39,7 +39,7 @@ public class LoanAdapter implements LoanPort, DateTimeConverter {
   }
 
   private CreateLoanInput toCreateLoanInput(Draft draft) {
-    var jsonData = draft.data();
+    var jsonData = draft.modelResult();
     var type = jsonData.optString("type");
     var datetime = jsonData.optString("datetime");
     var partyName = jsonData.optString("partyName");
@@ -52,7 +52,7 @@ public class LoanAdapter implements LoanPort, DateTimeConverter {
 
     var localDate = toEpochMilli(datetime);
     var localTime = toMinutesSinceMidnight(datetime);
-    var accountData = draft.getExternalDataByName(account, ChatAccount.class);
+    var accountData = draft.getCrossDomainReferenceByName(account, ChatAccount.class);
     var accountId = accountData != null ? accountData.getId().value() : null;
 
     return CreateLoanInput.builder()

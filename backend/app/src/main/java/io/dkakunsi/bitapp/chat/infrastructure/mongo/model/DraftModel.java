@@ -26,43 +26,46 @@ public class DraftModel {
 
   private String userId;
   private String type;
-  private String error;
-  private Document data;
-  private List<ExternalDataModel> externalData;
+  private List<Chat> chats;
+  private String modelError;
+  private Document modelResult;
+  private List<CrossDomainReferenceModel> crossDomainReferences;
   private Boolean success;
   private Boolean confirmed;
 
   public Draft toDraft() {
-    var externalDataModel = this.externalData
+    var crossDomainReferences = this.crossDomainReferences
         .stream()
-        .map(ExternalDataModel::toExternalData)
+        .map(CrossDomainReferenceModel::toCrossDomainReference)
         .toList();
 
     return Draft.builder()
         .id(Id.of(this.id))
         .userId(Id.of(this.userId))
         .type(Chat.Type.valueOf(this.type))
-        .error(this.error)
-        .data(new JSONObject(this.data.toJson()))
-        .externalData(externalDataModel)
+        .chats(chats)
+        .modelError(this.modelError)
+        .modelResult(new JSONObject(this.modelResult.toJson()))
+        .crossDomainReferences(crossDomainReferences)
         .success(this.success)
         .confirmed(this.confirmed)
         .build();
   }
 
   public static DraftModel from(Draft draft) {
-    var externalDataModels = draft.externalData()
+    var crossDomainReferenceModels = draft.crossDomainReferences()
         .stream()
-        .map(ExternalDataModel::from)
+        .map(CrossDomainReferenceModel::from)
         .toList();
 
     return DraftModel.builder()
         .id(draft.id().value())
         .userId(draft.userId().value())
         .type(draft.type().name())
-        .error(draft.error())
-        .data(Document.parse(draft.data().toString()))
-        .externalData(externalDataModels)
+        .chats(draft.chats())
+        .modelError(draft.modelError())
+        .modelResult(Document.parse(draft.modelResult().toString()))
+        .crossDomainReferences(crossDomainReferenceModels)
         .success(draft.success())
         .confirmed(draft.confirmed())
         .build();

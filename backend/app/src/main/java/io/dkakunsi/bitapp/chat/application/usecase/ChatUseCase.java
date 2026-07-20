@@ -7,9 +7,9 @@ import io.dkakunsi.bitapp.Result;
 import io.dkakunsi.bitapp.UseCase;
 import io.dkakunsi.bitapp.chat.domain.entity.Chat;
 import io.dkakunsi.bitapp.chat.domain.entity.Draft;
-import io.dkakunsi.bitapp.chat.domain.entity.PromptMessage;
 import io.dkakunsi.bitapp.chat.domain.repository.DraftRepository;
 import io.dkakunsi.bitapp.chat.domain.repository.LanguageModelRepository;
+import io.dkakunsi.bitapp.langchain.PromptMessage.PromptMessageBuilder;
 
 public class ChatUseCase implements UseCase<Chat, Draft> {
 
@@ -17,10 +17,10 @@ public class ChatUseCase implements UseCase<Chat, Draft> {
 
   private final DraftRepository draftRepository;
 
-  private final Map<Chat.Type, PromptMessage.PromptMessageBuilder> promptMessageBuilders;
+  private final Map<Chat.Type, PromptMessageBuilder<Draft>> promptMessageBuilders;
 
   public ChatUseCase(LanguageModelRepository languageModelRepository, DraftRepository draftRepository,
-      Map<Chat.Type, PromptMessage.PromptMessageBuilder> promptMessageBuilders) {
+      Map<Chat.Type, PromptMessageBuilder<Draft>> promptMessageBuilders) {
     this.languageModelRepository = languageModelRepository;
     this.draftRepository = draftRepository;
     this.promptMessageBuilders = promptMessageBuilders;
@@ -30,13 +30,14 @@ public class ChatUseCase implements UseCase<Chat, Draft> {
   public Result<Draft> execute(Chat input) {
     var requester = getRequester();
     var draft = draftRepository.findByIdAndNotConfirmed(Id.of(input.draftId()))
-        .orElse(Draft.from(input, requester));
+        .map(d -> d.addChat(input))
+        .orElseGet(() -> Draft.from(input, requester));
 
-    var promptMessageBuilder = promptMessageBuilders.get(input.type());
-    var promptMessage = promptMessageBuilder.build(input, draft);
+    var promptMessageBuilder = promptMessageBuilders.get(draft.type());
+    var promptMessage = promptMessageBuilder.build(draft);
     var promptResult = languageModelRepository.prompt(promptMessage);
 
-    draft = draft.update(promptResult, promptMessage);
+    draft = draft.update(promptResult);
     draftRepository.save(draft);
 
     return Result.success(draft);

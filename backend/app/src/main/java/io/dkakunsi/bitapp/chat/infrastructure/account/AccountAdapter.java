@@ -36,7 +36,7 @@ public class AccountAdapter implements AccountPort {
   }
 
   private CreateAccountInput toCreateAccountInput(Draft draft) {
-    var jsonData = draft.data();
+    var jsonData = draft.modelResult();
     var name = jsonData.optString("name");
     var type = jsonData.optString("type");
     var themeColor = jsonData.optString("themeColor", null);

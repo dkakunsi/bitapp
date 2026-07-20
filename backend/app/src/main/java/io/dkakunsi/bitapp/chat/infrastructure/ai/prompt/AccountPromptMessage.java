@@ -1,10 +1,9 @@
-package io.dkakunsi.bitapp.chat.domain.entity.prompt;
+package io.dkakunsi.bitapp.chat.infrastructure.ai.prompt;
 
-import io.dkakunsi.bitapp.chat.domain.entity.Chat;
 import io.dkakunsi.bitapp.chat.domain.entity.Draft;
-import io.dkakunsi.bitapp.chat.domain.entity.PromptMessage;
+import io.dkakunsi.bitapp.langchain.PromptMessage;
 
-public class AccountPromptMessage extends PromptMessage {
+public class AccountPromptMessage extends PromptMessage<Draft> {
 
   private static final String DATA_PROMPT = """
       Given this input %s in language %s and our draft data %s,
@@ -19,13 +18,14 @@ public class AccountPromptMessage extends PromptMessage {
       }
       """;
 
-  public AccountPromptMessage(Chat chat, Draft draft) {
-    super(chat, draft);
+  public AccountPromptMessage(Draft draft) {
+    super(draft);
   }
 
   @Override
   protected String getDataPrompt() {
-    return String.format(DATA_PROMPT, chat.message(), chat.language(), draft.data().toString());
+    return String.format(DATA_PROMPT, data.getLastChat().message(), data.getLastChat().language(),
+        data.modelResult().toString());
   }
 
   @Override
@@ -33,11 +33,11 @@ public class AccountPromptMessage extends PromptMessage {
     return STRUCTURE_PROMPT;
   }
 
-  public static final class AccountPromptMessageBuilder extends PromptMessage.PromptMessageBuilder {
+  public static final class AccountPromptMessageBuilder extends PromptMessage.PromptMessageBuilder<Draft> {
 
     @Override
-    public PromptMessage build(Chat chat, Draft draft) {
-      return new AccountPromptMessage(chat, draft);
+    public PromptMessage<Draft> build(Draft draft) {
+      return new AccountPromptMessage(draft);
     }
   }
 }

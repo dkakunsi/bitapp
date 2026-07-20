@@ -1,10 +1,11 @@
 package io.dkakunsi.bitapp.chat.domain.repository;
 
-import io.dkakunsi.bitapp.chat.domain.entity.PromptMessage;
-import io.dkakunsi.bitapp.chat.domain.entity.PromptResult;
+import io.dkakunsi.bitapp.chat.domain.entity.Draft;
+import io.dkakunsi.bitapp.langchain.PromptMessage;
+import io.dkakunsi.bitapp.langchain.PromptResult;
 
 public interface LanguageModelRepository {
 
-  PromptResult prompt(PromptMessage promptMessage);
+  PromptResult prompt(PromptMessage<Draft> promptMessage);
 
 }

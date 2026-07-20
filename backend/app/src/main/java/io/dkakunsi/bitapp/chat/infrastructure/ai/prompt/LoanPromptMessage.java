@@ -1,15 +1,14 @@
-package io.dkakunsi.bitapp.chat.domain.entity.prompt;
+package io.dkakunsi.bitapp.chat.infrastructure.ai.prompt;
 
 import java.util.List;
 
+import io.dkakunsi.bitapp.CrossDomainReference;
 import io.dkakunsi.bitapp.chat.application.port.AccountPort;
 import io.dkakunsi.bitapp.chat.application.port.AccountPort.ChatAccount;
-import io.dkakunsi.bitapp.chat.domain.entity.Chat;
 import io.dkakunsi.bitapp.chat.domain.entity.Draft;
-import io.dkakunsi.bitapp.chat.domain.entity.ExternalData;
-import io.dkakunsi.bitapp.chat.domain.entity.PromptMessage;
+import io.dkakunsi.bitapp.langchain.PromptMessage;
 
-public class LoanPromptMessage extends PromptMessage {
+public class LoanPromptMessage extends PromptMessage<Draft> {
 
   private static final String DATA_PROMPT = """
       Given this input %s in language %s, our draft data %s, and account data %s
@@ -32,20 +31,21 @@ public class LoanPromptMessage extends PromptMessage {
 
   private final List<ChatAccount> userAccounts;
 
-  public LoanPromptMessage(Chat chat, Draft draft, List<ChatAccount> userAccounts) {
-    super(chat, draft);
+  public LoanPromptMessage(Draft data, List<ChatAccount> userAccounts) {
+    super(data);
     this.userAccounts = userAccounts;
   }
 
   @Override
-  public List<ExternalData> getExternalData() {
+  public List<CrossDomainReference> getCrossDomainReferences() {
     return List.copyOf(userAccounts);
   }
 
   @Override
   protected String getDataPrompt() {
     var accounts = userAccounts.stream().map(ChatAccount::getName).toList();
-    return String.format(DATA_PROMPT, chat.message(), chat.language(), draft.data().toString(),
+    return String.format(DATA_PROMPT, data.getLastChat().message(), data.getLastChat().language(),
+        data.modelResult().toString(),
         accounts.toString());
   }
 
@@ -54,7 +54,7 @@ public class LoanPromptMessage extends PromptMessage {
     return STRUCTURE_PROMPT;
   }
 
-  public static final class LoanPromptMessageBuilder extends PromptMessageBuilder {
+  public static final class LoanPromptMessageBuilder extends PromptMessageBuilder<Draft> {
 
     private final AccountPort accountPort;
 
@@ -63,9 +63,9 @@ public class LoanPromptMessage extends PromptMessage {
     }
 
     @Override
-    public PromptMessage build(Chat chat, Draft draft) {
+    public PromptMessage<Draft> build(Draft draft) {
       var userAccounts = accountPort.getUserAccounts(draft.userId());
-      return new LoanPromptMessage(chat, draft, userAccounts);
+      return new LoanPromptMessage(draft, userAccounts);
     }
   }
 }

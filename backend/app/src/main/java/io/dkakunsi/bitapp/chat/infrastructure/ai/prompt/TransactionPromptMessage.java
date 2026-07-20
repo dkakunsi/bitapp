@@ -1,18 +1,17 @@
-package io.dkakunsi.bitapp.chat.domain.entity.prompt;
+package io.dkakunsi.bitapp.chat.infrastructure.ai.prompt;
 
 import java.util.List;
 import java.util.stream.Stream;
 
+import io.dkakunsi.bitapp.CrossDomainReference;
 import io.dkakunsi.bitapp.chat.application.port.AccountPort;
 import io.dkakunsi.bitapp.chat.application.port.AccountPort.ChatAccount;
 import io.dkakunsi.bitapp.chat.application.port.LoanPort;
 import io.dkakunsi.bitapp.chat.application.port.LoanPort.ChatLoan;
-import io.dkakunsi.bitapp.chat.domain.entity.Chat;
 import io.dkakunsi.bitapp.chat.domain.entity.Draft;
-import io.dkakunsi.bitapp.chat.domain.entity.ExternalData;
-import io.dkakunsi.bitapp.chat.domain.entity.PromptMessage;
+import io.dkakunsi.bitapp.langchain.PromptMessage;
 
-public final class TransactionPromptMessage extends PromptMessage {
+public final class TransactionPromptMessage extends PromptMessage<Draft> {
 
   private static final String DATA_PROMPT = """
       Given this input %s in language %s, our current draft data %s, account data %s, and loan data %s.
@@ -37,14 +36,14 @@ public final class TransactionPromptMessage extends PromptMessage {
   private final List<ChatAccount> userAccounts;
   private final List<ChatLoan> userLoans;
 
-  public TransactionPromptMessage(Chat chat, Draft draft, List<ChatAccount> userAccounts, List<ChatLoan> userLoans) {
-    super(chat, draft);
+  public TransactionPromptMessage(Draft draft, List<ChatAccount> userAccounts, List<ChatLoan> userLoans) {
+    super(draft);
     this.userAccounts = userAccounts;
     this.userLoans = userLoans;
   }
 
   @Override
-  public List<ExternalData> getExternalData() {
+  public List<CrossDomainReference> getCrossDomainReferences() {
     return Stream.concat(userAccounts.stream(), userLoans.stream()).toList();
   }
 
@@ -52,7 +51,8 @@ public final class TransactionPromptMessage extends PromptMessage {
   protected String getDataPrompt() {
     var accounts = userAccounts.stream().map(ChatAccount::getName).toList();
     var loans = userLoans.stream().map(ChatLoan::getName).toList();
-    return String.format(DATA_PROMPT, chat.message(), chat.language(), draft.data().toString(),
+    return String.format(DATA_PROMPT, data.getLastChat().message(), data.getLastChat().language(),
+        data.modelResult().toString(),
         accounts.toString(), loans.toString());
   }
 
@@ -61,7 +61,7 @@ public final class TransactionPromptMessage extends PromptMessage {
     return STRUCTURE_PROMPT;
   }
 
-  public static final class TransactionPromptMessageBuilder extends PromptMessage.PromptMessageBuilder {
+  public static final class TransactionPromptMessageBuilder extends PromptMessageBuilder<Draft> {
 
     private final AccountPort accountPort;
     private final LoanPort loanPort;
@@ -72,10 +72,10 @@ public final class TransactionPromptMessage extends PromptMessage {
     }
 
     @Override
-    public PromptMessage build(Chat chat, Draft draft) {
+    public PromptMessage<Draft> build(Draft draft) {
       var userAccounts = accountPort.getUserAccounts(draft.userId());
       var userLoans = loanPort.getUserLoans(draft.userId());
-      return new TransactionPromptMessage(chat, draft, userAccounts, userLoans);
+      return new TransactionPromptMessage(draft, userAccounts, userLoans);
     }
   }
 }
