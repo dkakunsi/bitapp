@@ -28,12 +28,12 @@ import io.dkakunsi.bitapp.chat.domain.repository.LanguageModelRepository;
 import io.dkakunsi.bitapp.langchain.PromptMessage;
 import io.dkakunsi.bitapp.langchain.PromptResult;
 
-public final class ChatUseCaseTest {
+public final class CreateDraftTest {
 
   private static final String REQUESTER = "user@email.com";
   private static final Context CONTEXT = Context.builder().requester(REQUESTER).build();
 
-  private ChatUseCase underTest;
+  private CreateDraft underTest;
   private LanguageModelRepository languageModelRepository;
   private DraftRepository draftRepository;
   private PromptMessage.PromptMessageBuilder<Draft> promptMessageBuilder;
@@ -48,7 +48,7 @@ public final class ChatUseCaseTest {
     Map<Chat.Type, PromptMessage.PromptMessageBuilder<Draft>> promptMessageBuilders = new EnumMap<>(Chat.Type.class);
     promptMessageBuilders.put(Chat.Type.ACCOUNT, promptMessageBuilder);
 
-    underTest = new ChatUseCase(languageModelRepository, draftRepository, promptMessageBuilders);
+    underTest = new CreateDraft(languageModelRepository, draftRepository, promptMessageBuilders);
   }
 
   @Test
@@ -134,7 +134,7 @@ public final class ChatUseCaseTest {
   void processReturnServerErrorWhenPromptBuilderIsMissing() {
     // Given
     var chat = new Chat(Chat.Type.LOAN, "draft-3", "create loan", "en");
-    var useCaseWithoutLoanBuilder = new ChatUseCase(
+    var useCaseWithoutLoanBuilder = new CreateDraft(
         languageModelRepository,
         draftRepository,
         Map.of(Chat.Type.ACCOUNT, promptMessageBuilder));

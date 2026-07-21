@@ -26,12 +26,12 @@ import io.dkakunsi.bitapp.chat.domain.entity.Chat;
 import io.dkakunsi.bitapp.chat.domain.entity.Draft;
 import io.dkakunsi.bitapp.chat.domain.repository.DraftRepository;
 
-public final class ConfirmChatUseCaseTest {
+public final class COnfirmDraftTest {
 
   private static final String REQUESTER = "user@email.com";
   private static final Context CONTEXT = Context.builder().requester(REQUESTER).build();
 
-  private ConfirmChatUseCase underTest;
+  private ConfirmDraft underTest;
   private DraftRepository draftRepository;
   private AccountPort accountPort;
   private LoanPort loanPort;
@@ -44,7 +44,7 @@ public final class ConfirmChatUseCaseTest {
     loanPort = mock(LoanPort.class);
     transactionPort = mock(TransactionPort.class);
 
-    underTest = new ConfirmChatUseCase(draftRepository, accountPort, loanPort, transactionPort);
+    underTest = new ConfirmDraft(draftRepository, accountPort, loanPort, transactionPort);
   }
 
   @Test

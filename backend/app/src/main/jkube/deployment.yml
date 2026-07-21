@@ -55,6 +55,11 @@ spec:
                 secretKeyRef:
                   name: ${service.name}
                   key: mongo.password
+            - name: GEMINI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ${service.name}
+                  key: gemini.apiKey
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               valueFrom:
                 configMapKeyRef:

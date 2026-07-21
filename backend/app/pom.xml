@@ -81,6 +81,15 @@
       <artifactId>jackson-datatype-jsr310</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>dev.langchain4j</groupId>
+      <artifactId>langchain4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>dev.langchain4j</groupId>
+      <artifactId>langchain4j-google-ai-gemini</artifactId>
+    </dependency>
+
     <!-- Testing -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -300,6 +309,10 @@
                 <parameter>
                   <name>mongo.password</name>
                   <value>{{ .Values.secrets.mongo.password }}</value>
+                </parameter>
+                <parameter>
+                  <name>gemini.apiKey</name>
+                  <value>{{ .Values.secrets.gemini.apiKey }}</value>
                 </parameter>
                 <parameter>
                   <name>otel.otlpExporterEndpoint</name>

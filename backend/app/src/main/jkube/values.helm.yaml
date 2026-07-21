@@ -36,3 +36,5 @@ secrets:
     password: ""
   github:
     credential: ""
+  gemini:
+    apiKey: ""

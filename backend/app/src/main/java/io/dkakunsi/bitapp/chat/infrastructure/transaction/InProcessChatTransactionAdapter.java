@@ -11,11 +11,11 @@ import io.dkakunsi.bitapp.chat.domain.entity.Draft;
 import io.dkakunsi.bitapp.transaction.application.dto.CreateUserTransactionInput;
 import io.dkakunsi.bitapp.transaction.application.usecase.CreateTransaction;
 
-public class TransactionAdapter implements TransactionPort, DateTimeConverter {
+public class InProcessChatTransactionAdapter implements TransactionPort, DateTimeConverter {
 
   private final CreateTransaction createTransactionUseCase;
 
-  public TransactionAdapter(CreateTransaction createTransactionUseCase) {
+  public InProcessChatTransactionAdapter(CreateTransaction createTransactionUseCase) {
     this.createTransactionUseCase = createTransactionUseCase;
   }
 

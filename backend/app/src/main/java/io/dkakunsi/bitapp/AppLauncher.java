@@ -1,5 +1,6 @@
 package io.dkakunsi.bitapp;
 
+import java.util.Map;
 import java.util.function.Function;
 
 import io.dkakunsi.bitapp.Configuration.EnvironmentConfiguration;
@@ -17,9 +18,23 @@ import io.dkakunsi.bitapp.account.infrastructure.javalin.UpdateAccountEndpoint;
 import io.dkakunsi.bitapp.account.infrastructure.loan.InProcessAccountLoanAdapter;
 import io.dkakunsi.bitapp.account.infrastructure.mongo.repository.MongoAccountRepository;
 import io.dkakunsi.bitapp.account.infrastructure.transaction.InProcessAccountTransactionAdapter;
+import io.dkakunsi.bitapp.chat.application.usecase.ConfirmDraft;
+import io.dkakunsi.bitapp.chat.application.usecase.CreateDraft;
+import io.dkakunsi.bitapp.chat.domain.entity.Chat;
+import io.dkakunsi.bitapp.chat.infrastructure.account.InProcessChatAccountAdapter;
+import io.dkakunsi.bitapp.chat.infrastructure.ai.LanguageModelRepositoryImpl;
+import io.dkakunsi.bitapp.chat.infrastructure.ai.prompt.AccountPromptMessage.AccountPromptMessageBuilder;
+import io.dkakunsi.bitapp.chat.infrastructure.ai.prompt.LoanPromptMessage.LoanPromptMessageBuilder;
+import io.dkakunsi.bitapp.chat.infrastructure.ai.prompt.TransactionPromptMessage.TransactionPromptMessageBuilder;
+import io.dkakunsi.bitapp.chat.infrastructure.javalin.ConfirmDraftEndpoint;
+import io.dkakunsi.bitapp.chat.infrastructure.javalin.CreateDraftEndpoint;
+import io.dkakunsi.bitapp.chat.infrastructure.loan.InProcessChatLoanAdapter;
+import io.dkakunsi.bitapp.chat.infrastructure.mongo.repository.MongoDraftRepository;
+import io.dkakunsi.bitapp.chat.infrastructure.transaction.InProcessChatTransactionAdapter;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.jwt.JWKAuthorizer;
 import io.dkakunsi.bitapp.jwt.JWTAuthorizer;
+import io.dkakunsi.bitapp.langchain.GeminiLangChainModel;
 import io.dkakunsi.bitapp.loan.application.usecase.CreateLoan;
 import io.dkakunsi.bitapp.loan.application.usecase.GetLoan;
 import io.dkakunsi.bitapp.loan.application.usecase.GetUserLoans;
@@ -73,6 +88,7 @@ public final class AppLauncher implements Launcher {
     var mongoConfig = new MongoConfiguration(configuration);
 
     var sessionManager = mongoConfig.getSessionManager();
+    var languageModel = GeminiLangChainModel.create(configuration);
 
     // Repositories
     var datastore = mongoConfig.getDatastore();
@@ -80,6 +96,9 @@ public final class AppLauncher implements Launcher {
     var accountRepository = new MongoAccountRepository(datastore);
     var loanRepository = new MongoLoanRepository(datastore);
     var transactionRepository = new MongoTransactionRepository(datastore);
+    var draftRepository = new MongoDraftRepository(datastore);
+
+    var languageModelRepository = new LanguageModelRepositoryImpl(languageModel);
 
     // UseCases and Adapters
     var getAccount = new GetAccount(accountRepository);
@@ -90,7 +109,8 @@ public final class AppLauncher implements Launcher {
     var getLoan = new GetLoan(loanRepository);
     var transactionLoanPort = new InProcessTransactionLoanAdapter(updateRemainingAmount, getLoan);
 
-    var createTransaction = new CreateTransaction(transactionRepository, transactionAccountPort, transactionLoanPort,
+    var createTransaction = new CreateTransaction(transactionRepository, transactionAccountPort,
+        transactionLoanPort,
         sessionManager);
 
     var processTransactionByLoanRemoval = new ProcessTransactionByLoanRemoval(transactionRepository);
@@ -103,7 +123,8 @@ public final class AppLauncher implements Launcher {
     var accountTransactionAdapter = new InProcessAccountTransactionAdapter(
         processTransactionByAccountRemoval);
 
-    var removeTransaction = new RemoveTransaction(transactionRepository, transactionAccountPort, transactionLoanPort,
+    var removeTransaction = new RemoveTransaction(transactionRepository, transactionAccountPort,
+        transactionLoanPort,
         sessionManager);
 
     var loanAccountPort = new InProcessLoanAccountAdapter(accountRepository);
@@ -125,6 +146,18 @@ public final class AppLauncher implements Launcher {
     var getUserTransactions = new GetUserTransactions(transactionRepository);
     var getAccountTransactions = new GetAccountTransactions(transactionRepository);
     var getLoanTransactions = new GetLoanTransactions(transactionRepository);
+
+    var chatAccountPort = new InProcessChatAccountAdapter(accountRepository, createAccount);
+    var chatLoanPort = new InProcessChatLoanAdapter(loanRepository, createLoan);
+    var chatTransactionPort = new InProcessChatTransactionAdapter(createTransaction);
+    var promptMessageBuilders = Map.of(
+        Chat.Type.TRANSACTION, new TransactionPromptMessageBuilder(chatAccountPort, chatLoanPort),
+        Chat.Type.LOAN, new LoanPromptMessageBuilder(chatAccountPort),
+        Chat.Type.ACCOUNT, new AccountPromptMessageBuilder());
+
+    var chatUseCase = new CreateDraft(languageModelRepository, draftRepository, promptMessageBuilders);
+    var confirmChatUseCase = new ConfirmDraft(draftRepository, chatAccountPort, chatLoanPort,
+        chatTransactionPort);
 
     // endpoints
     var authorizer = createAuthorizer(configuration);
@@ -165,6 +198,10 @@ public final class AppLauncher implements Launcher {
         .setAuthorizer(authorizer);
     var removeTransactionEndpoint = new RemoveTransactionEndpoint(removeTransaction)
         .setAuthorizer(authorizer);
+    var chatEndpoint = new CreateDraftEndpoint(chatUseCase)
+        .setAuthorizer(authorizer);
+    var confirmChatEndpoint = new ConfirmDraftEndpoint(confirmChatUseCase)
+        .setAuthorizer(authorizer);
 
     var appPort = configuration.get(APP_PORT).orElse("8080");
     server = JavalinServer.of(Integer.parseInt(appPort))
@@ -187,6 +224,8 @@ public final class AppLauncher implements Launcher {
         .addEndpoint(getAccountTransactionsEndpoint)
         .addEndpoint(getLoanTransactionsEndpoint)
         .addEndpoint(removeTransactionEndpoint)
+        .addEndpoint(chatEndpoint)
+        .addEndpoint(confirmChatEndpoint)
         .start();
   }
 

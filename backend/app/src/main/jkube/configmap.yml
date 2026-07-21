@@ -9,6 +9,4 @@ data:
   mongo.port: ${mongo.port}
   mongo.database: ${mongo.database}
   mongo.secure: ${mongo.secure}
-  mongo.username: ${mongo.username}
-  mongo.password: ${mongo.password}
   otel.otlpExporterEndpoint: ${otel.otlpExporterEndpoint}

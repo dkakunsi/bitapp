@@ -11,7 +11,7 @@ import io.dkakunsi.bitapp.chat.domain.repository.DraftRepository;
 import io.dkakunsi.bitapp.chat.domain.repository.LanguageModelRepository;
 import io.dkakunsi.bitapp.langchain.PromptMessage.PromptMessageBuilder;
 
-public class ChatUseCase implements UseCase<Chat, Draft> {
+public class CreateDraft implements UseCase<Chat, Draft> {
 
   private final LanguageModelRepository languageModelRepository;
 
@@ -19,7 +19,7 @@ public class ChatUseCase implements UseCase<Chat, Draft> {
 
   private final Map<Chat.Type, PromptMessageBuilder<Draft>> promptMessageBuilders;
 
-  public ChatUseCase(LanguageModelRepository languageModelRepository, DraftRepository draftRepository,
+  public CreateDraft(LanguageModelRepository languageModelRepository, DraftRepository draftRepository,
       Map<Chat.Type, PromptMessageBuilder<Draft>> promptMessageBuilders) {
     this.languageModelRepository = languageModelRepository;
     this.draftRepository = draftRepository;

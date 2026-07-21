@@ -8,7 +8,7 @@ import io.dkakunsi.bitapp.chat.application.port.LoanPort;
 import io.dkakunsi.bitapp.chat.application.port.TransactionPort;
 import io.dkakunsi.bitapp.chat.domain.repository.DraftRepository;
 
-public class ConfirmChatUseCase implements UseCase<String, Void> {
+public class ConfirmDraft implements UseCase<String, Void> {
 
   private final DraftRepository draftRepository;
 
@@ -18,7 +18,7 @@ public class ConfirmChatUseCase implements UseCase<String, Void> {
 
   private final TransactionPort transactionPort;
 
-  public ConfirmChatUseCase(DraftRepository draftRepository,
+  public ConfirmDraft(DraftRepository draftRepository,
       AccountPort accountPort,
       LoanPort loanPort,
       TransactionPort transactionPort) {

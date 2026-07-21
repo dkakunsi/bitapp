@@ -12,7 +12,7 @@ import io.dkakunsi.bitapp.mongo.MongoRepository;
 
 public class MongoDraftRepository extends MongoRepository<DraftModel, Draft> implements DraftRepository {
 
-  protected MongoDraftRepository(Datastore datastore) {
+  public MongoDraftRepository(Datastore datastore) {
     super(datastore);
   }
 

@@ -10,13 +10,13 @@ import io.dkakunsi.bitapp.account.domain.repository.AccountRepository;
 import io.dkakunsi.bitapp.chat.application.port.AccountPort;
 import io.dkakunsi.bitapp.chat.domain.entity.Draft;
 
-public class AccountAdapter implements AccountPort {
+public class InProcessChatAccountAdapter implements AccountPort {
 
   private final AccountRepository accountRepository;
 
   private final CreateAccount createAccountUseCase;
 
-  public AccountAdapter(AccountRepository accountRepository, CreateAccount createAccountUseCase) {
+  public InProcessChatAccountAdapter(AccountRepository accountRepository, CreateAccount createAccountUseCase) {
     this.accountRepository = accountRepository;
     this.createAccountUseCase = createAccountUseCase;
   }

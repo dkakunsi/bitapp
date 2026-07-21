@@ -13,13 +13,13 @@ import io.dkakunsi.bitapp.loan.application.dto.CreateLoanInput;
 import io.dkakunsi.bitapp.loan.application.usecase.CreateLoan;
 import io.dkakunsi.bitapp.loan.domain.repository.LoanRepository;
 
-public class LoanAdapter implements LoanPort, DateTimeConverter {
+public class InProcessChatLoanAdapter implements LoanPort, DateTimeConverter {
 
   private final LoanRepository loanRepository;
 
   private final CreateLoan createLoanUseCase;
 
-  public LoanAdapter(LoanRepository loanRepository, CreateLoan createLoanUseCase) {
+  public InProcessChatLoanAdapter(LoanRepository loanRepository, CreateLoan createLoanUseCase) {
     this.loanRepository = loanRepository;
     this.createLoanUseCase = createLoanUseCase;
   }
