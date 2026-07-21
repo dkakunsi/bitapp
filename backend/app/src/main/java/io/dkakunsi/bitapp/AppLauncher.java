@@ -18,19 +18,19 @@ import io.dkakunsi.bitapp.account.infrastructure.javalin.UpdateAccountEndpoint;
 import io.dkakunsi.bitapp.account.infrastructure.loan.InProcessAccountLoanAdapter;
 import io.dkakunsi.bitapp.account.infrastructure.mongo.repository.MongoAccountRepository;
 import io.dkakunsi.bitapp.account.infrastructure.transaction.InProcessAccountTransactionAdapter;
-import io.dkakunsi.bitapp.chat.application.usecase.ConfirmDraft;
-import io.dkakunsi.bitapp.chat.application.usecase.CreateDraft;
-import io.dkakunsi.bitapp.chat.domain.entity.Chat;
-import io.dkakunsi.bitapp.chat.infrastructure.account.InProcessChatAccountAdapter;
-import io.dkakunsi.bitapp.chat.infrastructure.ai.LanguageModelRepositoryImpl;
-import io.dkakunsi.bitapp.chat.infrastructure.ai.prompt.AccountPromptMessage.AccountPromptMessageBuilder;
-import io.dkakunsi.bitapp.chat.infrastructure.ai.prompt.LoanPromptMessage.LoanPromptMessageBuilder;
-import io.dkakunsi.bitapp.chat.infrastructure.ai.prompt.TransactionPromptMessage.TransactionPromptMessageBuilder;
-import io.dkakunsi.bitapp.chat.infrastructure.javalin.ConfirmDraftEndpoint;
-import io.dkakunsi.bitapp.chat.infrastructure.javalin.CreateDraftEndpoint;
-import io.dkakunsi.bitapp.chat.infrastructure.loan.InProcessChatLoanAdapter;
-import io.dkakunsi.bitapp.chat.infrastructure.mongo.repository.MongoDraftRepository;
-import io.dkakunsi.bitapp.chat.infrastructure.transaction.InProcessChatTransactionAdapter;
+import io.dkakunsi.bitapp.draft.application.usecase.ConfirmDraft;
+import io.dkakunsi.bitapp.draft.application.usecase.CreateDraft;
+import io.dkakunsi.bitapp.draft.domain.entity.Chat;
+import io.dkakunsi.bitapp.draft.infrastructure.account.InProcessDraftAccountAdapter;
+import io.dkakunsi.bitapp.draft.infrastructure.ai.LanguageModelRepositoryImpl;
+import io.dkakunsi.bitapp.draft.infrastructure.ai.prompt.AccountPromptMessage.AccountPromptMessageBuilder;
+import io.dkakunsi.bitapp.draft.infrastructure.ai.prompt.LoanPromptMessage.LoanPromptMessageBuilder;
+import io.dkakunsi.bitapp.draft.infrastructure.ai.prompt.TransactionPromptMessage.TransactionPromptMessageBuilder;
+import io.dkakunsi.bitapp.draft.infrastructure.javalin.ConfirmDraftEndpoint;
+import io.dkakunsi.bitapp.draft.infrastructure.javalin.CreateDraftEndpoint;
+import io.dkakunsi.bitapp.draft.infrastructure.loan.InProcessDraftLoanAdapter;
+import io.dkakunsi.bitapp.draft.infrastructure.mongo.repository.MongoDraftRepository;
+import io.dkakunsi.bitapp.draft.infrastructure.transaction.InProcessDraftTransactionAdapter;
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.jwt.JWKAuthorizer;
 import io.dkakunsi.bitapp.jwt.JWTAuthorizer;
@@ -147,9 +147,9 @@ public final class AppLauncher implements Launcher {
     var getAccountTransactions = new GetAccountTransactions(transactionRepository);
     var getLoanTransactions = new GetLoanTransactions(transactionRepository);
 
-    var chatAccountPort = new InProcessChatAccountAdapter(accountRepository, createAccount);
-    var chatLoanPort = new InProcessChatLoanAdapter(loanRepository, createLoan);
-    var chatTransactionPort = new InProcessChatTransactionAdapter(createTransaction);
+    var chatAccountPort = new InProcessDraftAccountAdapter(accountRepository, createAccount);
+    var chatLoanPort = new InProcessDraftLoanAdapter(loanRepository, createLoan);
+    var chatTransactionPort = new InProcessDraftTransactionAdapter(createTransaction);
     var promptMessageBuilders = Map.of(
         Chat.Type.TRANSACTION, new TransactionPromptMessageBuilder(chatAccountPort, chatLoanPort),
         Chat.Type.LOAN, new LoanPromptMessageBuilder(chatAccountPort),
