@@ -8,7 +8,6 @@ import java.util.Currency;
 import org.apache.commons.lang3.StringUtils;
 
 import io.dkakunsi.bitapp.DateTimeConverter;
-import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.Validatable;
 import io.dkakunsi.bitapp.loan.domain.entity.Loan;
@@ -98,7 +97,7 @@ public final record CreateLoanInput(
         .remainingAmount(this.amount()) // remainingAmount equals amount initially
         .currency(curr)
         .interestRate(this.interestRate())
-        .status(EntityStatus.ACTIVE)
+        .active(true)
         .createdAt(now)
         .updatedAt(now)
         .createdBy(executor)

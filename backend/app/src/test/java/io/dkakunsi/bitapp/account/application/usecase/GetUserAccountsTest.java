@@ -18,9 +18,9 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import io.dkakunsi.bitapp.AppError.Code;
 import io.dkakunsi.bitapp.Context;
 import io.dkakunsi.bitapp.Id;
+import io.dkakunsi.bitapp.Result.ErrorCode;
 import io.dkakunsi.bitapp.account.domain.entity.Account;
 import io.dkakunsi.bitapp.account.domain.repository.AccountRepository;
 
@@ -144,11 +144,10 @@ public final class GetUserAccountsTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
+    assertTrue(result.errorCode().isPresent());
 
-    var error = result.error().get();
-    assertEquals(Code.INTERNAL_ERROR, error.code());
-    assertEquals("Database connection error", error.message());
+    assertEquals(ErrorCode.INTERNAL_ERROR, result.errorCode().get());
+    assertEquals("Database connection error", result.errorMessage().get());
 
     verify(accountRepository).findByUserId(USER);
   }

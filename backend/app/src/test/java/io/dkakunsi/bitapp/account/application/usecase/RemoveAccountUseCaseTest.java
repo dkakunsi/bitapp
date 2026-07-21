@@ -16,11 +16,10 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import io.dkakunsi.bitapp.AppError.Code;
 import io.dkakunsi.bitapp.Context;
-import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
-import io.dkakunsi.bitapp.SessionManager;
+import io.dkakunsi.bitapp.Result.ErrorCode;
+import io.dkakunsi.bitapp.Session.SessionManager;
 import io.dkakunsi.bitapp.account.application.port.AccountLoanPort;
 import io.dkakunsi.bitapp.account.application.port.AccountTransactionPort;
 import io.dkakunsi.bitapp.account.domain.entity.Account;
@@ -60,9 +59,9 @@ public final class RemoveAccountUseCaseTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-    assertEquals(Code.NOT_FOUND, result.error().get().code());
-    assertEquals("Account not found", result.error().get().message());
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.NOT_FOUND, result.errorCode().get());
+    assertEquals("Account not found", result.errorMessage().get());
   }
 
   @Test
@@ -76,8 +75,8 @@ public final class RemoveAccountUseCaseTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-    assertEquals(Code.FORBIDDEN, result.error().get().code());
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.FORBIDDEN, result.errorCode().get());
     verify(accountRepository, never()).deleteById(ACCOUNT);
   }
 
@@ -114,7 +113,7 @@ public final class RemoveAccountUseCaseTest {
         .type(Account.Type.BANK)
         .themeColor("#FFFFFF")
         .balance(BigDecimal.ZERO)
-        .status(EntityStatus.ACTIVE)
+        .active(true)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy(user)

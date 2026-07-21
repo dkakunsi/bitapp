@@ -1,6 +1,5 @@
 package io.dkakunsi.bitapp.transaction.application.usecase;
 
-import io.dkakunsi.bitapp.AppError.Code;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.Result;
 import io.dkakunsi.bitapp.UseCase;
@@ -20,6 +19,6 @@ public final class GetTransaction implements UseCase<String, TransactionResult> 
     return transactionRepository.findById(Id.of(transactionId))
         .filter(transaction -> transaction.user().value().equals(getRequester()))
         .map(transaction -> Result.success(TransactionResult.from(transaction)))
-        .orElse(Result.failure(Code.NOT_FOUND, "Transaction not found"));
+        .orElse(Result.notFound("Transaction not found"));
   }
 }

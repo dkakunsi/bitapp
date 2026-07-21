@@ -4,10 +4,9 @@ import java.util.function.Supplier;
 
 import dev.morphia.Datastore;
 import dev.morphia.transactions.MorphiaSession;
-import io.dkakunsi.bitapp.AppError;
 import io.dkakunsi.bitapp.Result;
 import io.dkakunsi.bitapp.Session;
-import io.dkakunsi.bitapp.SessionManager;
+import io.dkakunsi.bitapp.Session.SessionManager;
 
 public class MongoSessionManager implements SessionManager {
 
@@ -38,11 +37,11 @@ public class MongoSessionManager implements SessionManager {
           return functionResult;
         } catch (Exception e) {
           session.rollback();
-          return Result.failure(AppError.Code.INTERNAL_ERROR, e.getMessage());
+          return Result.internalError(e.getMessage());
         }
       });
     } catch (Exception e) {
-      return Result.failure(AppError.Code.INTERNAL_ERROR, e.getMessage());
+      return Result.internalError(e.getMessage());
     }
   }
 

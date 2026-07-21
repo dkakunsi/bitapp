@@ -3,7 +3,6 @@ package io.dkakunsi.bitapp.user.domain.entity;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
 import lombok.Builder;
 
@@ -15,7 +14,7 @@ public final record User(
     String photoUrl,
     Language language,
 
-    EntityStatus status,
+    Boolean active,
     LocalDateTime createdAt,
     LocalDateTime updatedAt,
     String createdBy,
@@ -56,7 +55,7 @@ public final record User(
         .name(updatedName)
         .phone(updatedPhone)
         .photoUrl(updatedPhotoUrl)
-        .status(this.status)
+        .active(this.active)
         .createdAt(this.createdAt)
         .updatedAt(LocalDateTime.now())
         .createdBy(this.createdBy)
@@ -71,7 +70,7 @@ public final record User(
         .phone(this.phone)
         .photoUrl(this.photoUrl)
         .language(newLanguage)
-        .status(this.status)
+        .active(this.active)
         .createdAt(this.createdAt)
         .updatedAt(LocalDateTime.now())
         .createdBy(this.createdBy)

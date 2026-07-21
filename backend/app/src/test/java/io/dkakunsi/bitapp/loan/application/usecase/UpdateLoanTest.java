@@ -21,11 +21,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import io.dkakunsi.bitapp.AppError.Code;
 import io.dkakunsi.bitapp.Context;
 import io.dkakunsi.bitapp.DateTimeConverter;
-import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
+import io.dkakunsi.bitapp.Result.ErrorCode;
 import io.dkakunsi.bitapp.loan.application.dto.UpdateLoanInput;
 import io.dkakunsi.bitapp.loan.domain.entity.Loan;
 import io.dkakunsi.bitapp.loan.domain.repository.LoanRepository;
@@ -276,9 +275,9 @@ public final class UpdateLoanTest {
     // Then
     assertFalse(result.isSuccess());
     assertTrue(result.isFailed());
-    assertTrue(result.error().isPresent());
-    assertEquals(Code.NOT_FOUND, result.error().get().code());
-    assertEquals("Loan not found", result.error().get().message());
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.NOT_FOUND, result.errorCode().get());
+    assertEquals("Loan not found", result.errorMessage().get());
 
     // Verify update was never called
     verify(loanRepository, never()).update(any());
@@ -304,9 +303,9 @@ public final class UpdateLoanTest {
     // Then
     assertFalse(result.isSuccess());
     assertTrue(result.isFailed());
-    assertTrue(result.error().isPresent());
-    assertEquals(Code.FORBIDDEN, result.error().get().code());
-    assertEquals("You are not authorized to update this loan", result.error().get().message());
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.FORBIDDEN, result.errorCode().get());
+    assertEquals("You are not authorized to update this loan", result.errorMessage().get());
 
     // Verify update was never called
     verify(loanRepository, never()).update(any());
@@ -395,7 +394,7 @@ public final class UpdateLoanTest {
         .remainingAmount(BigDecimal.valueOf(10000))
         .currency(Currency.getInstance("USD"))
         .interestRate(5.5)
-        .status(EntityStatus.ACTIVE)
+        .active(true)
         .createdAt(LocalDateTime.now().minusDays(1))
         .updatedAt(LocalDateTime.now().minusDays(1))
         .createdBy(REQUESTER)

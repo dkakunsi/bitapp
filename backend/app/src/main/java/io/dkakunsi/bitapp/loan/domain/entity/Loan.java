@@ -9,7 +9,6 @@ import java.util.Currency;
 import org.apache.commons.lang3.StringUtils;
 
 import io.dkakunsi.bitapp.DateTimeConverter;
-import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
 import lombok.Builder;
 
@@ -31,7 +30,7 @@ public final record Loan(
     Currency currency,
     Double interestRate,
 
-    EntityStatus status,
+    Boolean active,
     LocalDateTime createdAt,
     LocalDateTime updatedAt,
     String createdBy,
@@ -97,7 +96,7 @@ public final record Loan(
         .remainingAmount(updatedRemainingAmount)
         .currency(updatedCurrency)
         .interestRate(updatedInterestRate)
-        .status(this.status)
+        .active(this.active)
         .createdAt(this.createdAt)
         .updatedAt(LocalDateTime.now())
         .createdBy(this.createdBy)

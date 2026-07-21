@@ -6,7 +6,7 @@ import java.util.Optional;
 import dev.morphia.Datastore;
 import dev.morphia.query.filters.Filters;
 import io.dkakunsi.bitapp.Id;
-import io.dkakunsi.bitapp.SessionManager;
+import io.dkakunsi.bitapp.Session.SessionManager;
 
 public abstract class MongoRepository<MODEL, ENTITY> {
 

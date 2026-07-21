@@ -18,7 +18,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.Context;
-import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.transaction.domain.entity.Transaction;
 import io.dkakunsi.bitapp.transaction.domain.repository.TransactionRepository;
@@ -175,7 +174,7 @@ public final class GetUserTransactionsTest {
         .currency(Currency.getInstance("IDR"))
         .category(Transaction.Category.FOOD)
         .type(Transaction.Type.valueOf(type))
-        .status(EntityStatus.ACTIVE)
+        .active(true)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy(REQUESTER)

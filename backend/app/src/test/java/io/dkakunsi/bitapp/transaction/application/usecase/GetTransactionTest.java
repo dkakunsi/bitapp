@@ -17,10 +17,9 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import io.dkakunsi.bitapp.AppError.Code;
 import io.dkakunsi.bitapp.Context;
-import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
+import io.dkakunsi.bitapp.Result.ErrorCode;
 import io.dkakunsi.bitapp.transaction.domain.entity.Transaction;
 import io.dkakunsi.bitapp.transaction.domain.repository.TransactionRepository;
 
@@ -60,7 +59,7 @@ public final class GetTransactionTest {
         .currency(Currency.getInstance("IDR"))
         .category(Transaction.Category.FOOD)
         .type(Transaction.Type.DEBIT)
-        .status(EntityStatus.ACTIVE)
+        .active(true)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy(REQUESTER)
@@ -106,7 +105,7 @@ public final class GetTransactionTest {
         .currency(Currency.getInstance("IDR"))
         .category(Transaction.Category.SALARY)
         .type(Transaction.Type.CREDIT)
-        .status(EntityStatus.ACTIVE)
+        .active(true)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy(REQUESTER)
@@ -149,7 +148,7 @@ public final class GetTransactionTest {
         .currency(Currency.getInstance("IDR"))
         .category(null)
         .type(Transaction.Type.TRANSFER)
-        .status(EntityStatus.ACTIVE)
+        .active(true)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy(REQUESTER)
@@ -192,7 +191,7 @@ public final class GetTransactionTest {
         .currency(Currency.getInstance("IDR"))
         .category(Transaction.Category.LOAN)
         .type(Transaction.Type.DEBIT)
-        .status(EntityStatus.ACTIVE)
+        .active(true)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy(REQUESTER)
@@ -225,10 +224,9 @@ public final class GetTransactionTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-    var error = result.error().get();
-    assertEquals(Code.NOT_FOUND, error.code());
-    assertEquals("Transaction not found", error.message());
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.NOT_FOUND, result.errorCode().get());
+    assertEquals("Transaction not found", result.errorMessage().get());
     verify(transactionRepository).findById(transactionIdObj);
   }
 
@@ -251,7 +249,7 @@ public final class GetTransactionTest {
         .currency(Currency.getInstance("IDR"))
         .category(Transaction.Category.OTHER)
         .type(Transaction.Type.DEBIT)
-        .status(EntityStatus.ACTIVE)
+        .active(true)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy(OTHER_USER)
@@ -264,10 +262,9 @@ public final class GetTransactionTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-    var error = result.error().get();
-    assertEquals(Code.NOT_FOUND, error.code());
-    assertEquals("Transaction not found", error.message());
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.NOT_FOUND, result.errorCode().get());
+    assertEquals("Transaction not found", result.errorMessage().get());
     verify(transactionRepository).findById(transactionIdObj);
   }
 
@@ -283,10 +280,9 @@ public final class GetTransactionTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-    var error = result.error().get();
-    assertEquals(Code.INTERNAL_ERROR, error.code());
-    assertEquals("Database error", error.message());
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.INTERNAL_ERROR, result.errorCode().get());
+    assertEquals("Database error", result.errorMessage().get());
     verify(transactionRepository).findById(transactionIdObj);
   }
 }

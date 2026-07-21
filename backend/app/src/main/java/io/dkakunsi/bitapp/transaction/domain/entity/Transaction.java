@@ -9,7 +9,6 @@ import java.util.Currency;
 import org.apache.commons.lang3.StringUtils;
 
 import io.dkakunsi.bitapp.DateTimeConverter;
-import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
 import lombok.Builder;
 
@@ -30,7 +29,7 @@ public final record Transaction(
     Category category,
     Type type,
 
-    EntityStatus status,
+    Boolean active,
     LocalDateTime createdAt,
     LocalDateTime updatedAt,
     String createdBy,
@@ -112,7 +111,7 @@ public final record Transaction(
         .amount(this.amount())
         .currency(this.currency())
         .category(this.category())
-        .status(this.status())
+        .active(this.active())
         .createdAt(this.createdAt())
         .createdBy(this.createdBy())
         .updatedAt(LocalDateTime.now())
@@ -138,7 +137,7 @@ public final record Transaction(
         .currency(this.currency())
         .category(this.category())
         .type(this.type())
-        .status(this.status())
+        .active(this.active())
         .createdAt(this.createdAt())
         .updatedAt(LocalDateTime.now())
         .createdBy(this.createdBy())

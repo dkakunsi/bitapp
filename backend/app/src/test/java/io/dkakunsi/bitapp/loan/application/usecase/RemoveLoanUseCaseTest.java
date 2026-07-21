@@ -19,11 +19,10 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import io.dkakunsi.bitapp.AppError.Code;
 import io.dkakunsi.bitapp.Context;
-import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
-import io.dkakunsi.bitapp.SessionManager;
+import io.dkakunsi.bitapp.Result.ErrorCode;
+import io.dkakunsi.bitapp.Session.SessionManager;
 import io.dkakunsi.bitapp.loan.application.port.LoanTransactionPort;
 import io.dkakunsi.bitapp.loan.domain.entity.Loan;
 import io.dkakunsi.bitapp.loan.domain.repository.LoanRepository;
@@ -65,9 +64,9 @@ public final class RemoveLoanUseCaseTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-    assertEquals(Code.NOT_FOUND, result.error().get().code());
-    assertEquals("Loan not found", result.error().get().message());
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.NOT_FOUND, result.errorCode().get());
+    assertEquals("Loan not found", result.errorMessage().get());
     verify(loanRepository).findById(LOAN);
   }
 
@@ -82,8 +81,8 @@ public final class RemoveLoanUseCaseTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-    assertEquals(Code.FORBIDDEN, result.error().get().code());
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.FORBIDDEN, result.errorCode().get());
     verify(loanRepository, never()).deleteById(LOAN);
   }
 
@@ -120,7 +119,7 @@ public final class RemoveLoanUseCaseTest {
         .remainingAmount(BigDecimal.valueOf(1000000))
         .currency(Currency.getInstance("IDR"))
         .interestRate(5.0)
-        .status(EntityStatus.ACTIVE)
+        .active(true)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy(user)

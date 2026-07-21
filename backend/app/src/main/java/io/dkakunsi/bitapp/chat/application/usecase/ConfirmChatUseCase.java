@@ -1,6 +1,5 @@
 package io.dkakunsi.bitapp.chat.application.usecase;
 
-import io.dkakunsi.bitapp.AppError.Code;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.Result;
 import io.dkakunsi.bitapp.UseCase;
@@ -33,20 +32,20 @@ public class ConfirmChatUseCase implements UseCase<String, Void> {
   public Result<Void> execute(String input) {
     var draftOpt = draftRepository.findByIdAndNotConfirmed(Id.of(input));
     if (draftOpt.isEmpty()) {
-      return Result.failure(Code.NOT_FOUND, "Draft not found");
+      return Result.notFound("Draft not found");
     }
 
     var draft = draftOpt.get();
     var requester = getRequester();
     if (!requester.equals(draft.userId().value())) {
-      return Result.failure(Code.FORBIDDEN, "Requester does not match");
+      return Result.forbidden("Requester does not match");
     }
 
     Result<Void> result = switch (draft.type()) {
       case ACCOUNT -> accountPort.createAccount(draft);
       case LOAN -> loanPort.createLoan(draft);
       case TRANSACTION -> transactionPort.createTransaction(draft);
-      default -> Result.failure(Code.BAD_REQUEST, "Unsupported draft type");
+      default -> Result.badRequest("Unsupported draft type");
     };
 
     draft = draft.confirm(result.isSuccess());

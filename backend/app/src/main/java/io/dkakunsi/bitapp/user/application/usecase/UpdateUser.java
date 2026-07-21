@@ -1,6 +1,5 @@
 package io.dkakunsi.bitapp.user.application.usecase;
 
-import io.dkakunsi.bitapp.AppError.Code;
 import io.dkakunsi.bitapp.Result;
 import io.dkakunsi.bitapp.UseCase;
 import io.dkakunsi.bitapp.user.application.dto.UpdateUserInput;
@@ -20,7 +19,7 @@ public final class UpdateUser implements UseCase<UpdateUserInput, UserResult> {
   public Result<UserResult> execute(UpdateUserInput input) {
     var requester = getRequester();
     if (!requester.equals(input.email())) {
-      return Result.failure(Code.BAD_REQUEST, "User can only update their own data");
+      return Result.badRequest("User can only update their own data");
     }
 
     return userRepository.findByEmail(input.email())
@@ -29,6 +28,6 @@ public final class UpdateUser implements UseCase<UpdateUserInput, UserResult> {
           var savedUser = userRepository.save(updatedUser);
           return Result.success(UserResult.from(savedUser));
         })
-        .orElse(Result.failure(Code.NOT_FOUND, "User not found"));
+        .orElse(Result.notFound("User not found"));
   }
 }

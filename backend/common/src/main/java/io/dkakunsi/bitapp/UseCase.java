@@ -2,7 +2,8 @@ package io.dkakunsi.bitapp;
 
 import java.util.NoSuchElementException;
 
-import io.dkakunsi.bitapp.AppError.Code;
+import io.dkakunsi.bitapp.Logger.SystemLogger;
+
 
 public interface UseCase<IN, OUT> {
 
@@ -16,7 +17,7 @@ public interface UseCase<IN, OUT> {
       return execute(input);
     } catch (IllegalArgumentException e) {
       LOGGER.info("Request failed with message: {}", e.getMessage());
-      return Result.failure(Code.BAD_REQUEST, e.getMessage());
+      return Result.badRequest(e.getMessage());
     } catch (Exception e) {
       LOGGER.error("Request failed with message: {}", e.getMessage());
       return Result.failure(e);

@@ -1,6 +1,5 @@
 package io.dkakunsi.bitapp.loan.application.usecase;
 
-import io.dkakunsi.bitapp.AppError.Code;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.Result;
 import io.dkakunsi.bitapp.UseCase;
@@ -19,6 +18,6 @@ public final class GetLoan implements UseCase<String, LoanResult> {
   public Result<LoanResult> execute(String loanId) {
     return loanRepository.findById(Id.of(loanId))
         .map(loan -> Result.success(LoanResult.from(loan)))
-        .orElse(Result.failure(Code.NOT_FOUND, "Loan not found"));
+        .orElse(Result.notFound("Loan not found"));
   }
 }

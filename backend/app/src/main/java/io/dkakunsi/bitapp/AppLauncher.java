@@ -2,6 +2,7 @@ package io.dkakunsi.bitapp;
 
 import java.util.function.Function;
 
+import io.dkakunsi.bitapp.Configuration.EnvironmentConfiguration;
 import io.dkakunsi.bitapp.account.application.usecase.CreateAccount;
 import io.dkakunsi.bitapp.account.application.usecase.GetAccount;
 import io.dkakunsi.bitapp.account.application.usecase.GetUserAccounts;

@@ -12,9 +12,9 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import io.dkakunsi.bitapp.AppError.Code;
 import io.dkakunsi.bitapp.Context;
 import io.dkakunsi.bitapp.Id;
+import io.dkakunsi.bitapp.Result.ErrorCode;
 import io.dkakunsi.bitapp.user.domain.entity.User;
 import io.dkakunsi.bitapp.user.domain.entity.User.Language;
 import io.dkakunsi.bitapp.user.domain.repository.UserRepository;
@@ -76,8 +76,8 @@ public final class GetUserTest {
 
     // Then
     assertTrue(result.isFailed());
-    assertEquals(Code.NOT_FOUND, result.error().get().code());
-    assertEquals("User not found", result.error().get().message());
+    assertEquals(ErrorCode.NOT_FOUND, result.errorCode().get());
+    assertEquals("User not found", result.errorMessage().get());
 
     verify(userRepository).findByEmail(email);
   }
@@ -95,10 +95,9 @@ public final class GetUserTest {
     // Then
     assertFalse(result.isSuccess());
     assertTrue(result.isFailed());
-    assertTrue(result.error().isPresent());
-    var error = result.error().get();
-    assertEquals(Code.INTERNAL_ERROR, error.code());
-    assertEquals("Database error", error.message());
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.INTERNAL_ERROR, result.errorCode().get());
+    assertEquals("Database error", result.errorMessage().get());
 
     verify(userRepository).findByEmail(email);
   }

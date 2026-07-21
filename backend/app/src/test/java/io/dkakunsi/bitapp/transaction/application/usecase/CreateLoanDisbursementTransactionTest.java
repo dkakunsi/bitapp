@@ -18,11 +18,10 @@ import java.util.Currency;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import io.dkakunsi.bitapp.AppError.Code;
 import io.dkakunsi.bitapp.Context;
-import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
-import io.dkakunsi.bitapp.SessionManager;
+import io.dkakunsi.bitapp.Result.ErrorCode;
+import io.dkakunsi.bitapp.Session.SessionManager;
 import io.dkakunsi.bitapp.loan.domain.entity.Loan;
 import io.dkakunsi.bitapp.transaction.application.dto.CreateLoanDisbursementTransactionInput;
 import io.dkakunsi.bitapp.transaction.application.port.TransactionAccountPort;
@@ -135,10 +134,9 @@ public class CreateLoanDisbursementTransactionTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-    var error = result.error().get();
-    assertEquals(Code.BAD_REQUEST, error.code());
-    assertTrue(error.message().contains("account not found"));
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.BAD_REQUEST, result.errorCode().get());
+    assertTrue(result.errorMessage().get().contains("account not found"));
   }
 
   @Test
@@ -158,10 +156,9 @@ public class CreateLoanDisbursementTransactionTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-    var error = result.error().get();
-    assertEquals(Code.BAD_REQUEST, error.code());
-    assertTrue(error.message().contains("account not found"));
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.BAD_REQUEST, result.errorCode().get());
+    assertTrue(result.errorMessage().get().contains("account not found"));
   }
 
   @Test
@@ -179,10 +176,9 @@ public class CreateLoanDisbursementTransactionTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-    var error = result.error().get();
-    assertEquals(Code.INTERNAL_ERROR, error.code());
-    assertEquals("Database error", error.message());
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.INTERNAL_ERROR, result.errorCode().get());
+    assertEquals("Database error", result.errorMessage().get());
   }
 
   private Loan createLoan(String id, Loan.Type type, BigDecimal amount) {
@@ -200,7 +196,7 @@ public class CreateLoanDisbursementTransactionTest {
         .remainingAmount(amount)
         .currency(Currency.getInstance("IDR"))
         .interestRate(5.0)
-        .status(EntityStatus.ACTIVE)
+        .active(true)
         .createdBy(REQUESTER)
         .updatedBy(REQUESTER)
         .build();

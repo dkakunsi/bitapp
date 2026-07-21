@@ -1,9 +1,8 @@
 package io.dkakunsi.bitapp.loan.application.usecase;
 
-import io.dkakunsi.bitapp.AppError.Code;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.Result;
-import io.dkakunsi.bitapp.SessionManager;
+import io.dkakunsi.bitapp.Session.SessionManager;
 import io.dkakunsi.bitapp.UseCase;
 import io.dkakunsi.bitapp.loan.application.dto.CreateLoanInput;
 import io.dkakunsi.bitapp.loan.application.dto.LoanResult;
@@ -42,19 +41,18 @@ public final class CreateLoan implements UseCase<CreateLoanInput, LoanResult> {
         .orElse(null);
 
     if (account == null) {
-      return Result.failure(Code.NOT_FOUND, "Account not found");
+      return Result.notFound("Account not found");
     }
 
     if (!account.isOwner(requester)) {
-      return Result.failure(Code.FORBIDDEN, "You are not authorized to use this account");
+      return Result.forbidden("You are not authorized to use this account");
     }
 
     return sessionManager.executeInSession(() -> {
       var createdLoan = this.loanRepository.create(loan);
       var disbursementResult = loanTransactionAdapter.disburseTransaction(createdLoan);
       if (disbursementResult.isFailed()) {
-        var error = disbursementResult.error().get();
-        return Result.failure(error.code(), error.message());
+        return Result.failure(disbursementResult);
       }
       return Result.success(LoanResult.from(createdLoan));
     });

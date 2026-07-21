@@ -1,5 +1,6 @@
 package io.dkakunsi.bitapp;
 
+import io.dkakunsi.bitapp.Authorizer.AuthorizedPrincipal;
 import lombok.Getter;
 
 public abstract class Endpoint<S, T> {

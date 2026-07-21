@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 
 import org.apache.commons.lang3.StringUtils;
 
-import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
 import lombok.Builder;
 
@@ -19,7 +18,7 @@ public final record Account(
     String themeColor,
     BigDecimal balance,
 
-    EntityStatus status,
+    Boolean active,
     LocalDateTime createdAt,
     LocalDateTime updatedAt,
     String createdBy,
@@ -57,7 +56,7 @@ public final record Account(
         .themeColor(themeColor)
         .balance(this.balance)
         .user(this.user)
-        .status(this.status)
+        .active(this.active)
         .createdAt(this.createdAt)
         .updatedAt(LocalDateTime.now())
         .createdBy(this.createdBy)

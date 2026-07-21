@@ -18,9 +18,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import io.dkakunsi.bitapp.AppError.Code;
 import io.dkakunsi.bitapp.Context;
 import io.dkakunsi.bitapp.Id;
+import io.dkakunsi.bitapp.Result.ErrorCode;
 import io.dkakunsi.bitapp.chat.domain.entity.Chat;
 import io.dkakunsi.bitapp.chat.domain.entity.Draft;
 import io.dkakunsi.bitapp.chat.domain.repository.DraftRepository;
@@ -43,7 +43,7 @@ public final class ChatUseCaseTest {
     languageModelRepository = mock(LanguageModelRepository.class);
     draftRepository = mock(DraftRepository.class);
     promptMessageBuilder = mock(PromptMessage.PromptMessageBuilder.class);
-    // noinspection unchecked
+    // noinspection unchecked,rawtypes
 
     Map<Chat.Type, PromptMessage.PromptMessageBuilder<Draft>> promptMessageBuilders = new EnumMap<>(Chat.Type.class);
     promptMessageBuilders.put(Chat.Type.ACCOUNT, promptMessageBuilder);
@@ -146,8 +146,8 @@ public final class ChatUseCaseTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-    assertEquals(Code.INTERNAL_ERROR, result.error().get().code());
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.INTERNAL_ERROR, result.errorCode().get());
     assertTrue(result.data().isEmpty());
   }
 }

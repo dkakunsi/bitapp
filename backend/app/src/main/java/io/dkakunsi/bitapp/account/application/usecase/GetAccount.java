@@ -1,6 +1,5 @@
 package io.dkakunsi.bitapp.account.application.usecase;
 
-import io.dkakunsi.bitapp.AppError.Code;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.Result;
 import io.dkakunsi.bitapp.UseCase;
@@ -19,6 +18,6 @@ public final class GetAccount implements UseCase<String, AccountResult> {
   public Result<AccountResult> execute(String accountId) {
     return accountRepository.findById(Id.of(accountId))
         .map(account -> Result.success(AccountResult.from(account)))
-        .orElse(Result.failure(Code.NOT_FOUND, "Account not found"));
+        .orElse(Result.notFound("Account not found"));
   }
 }

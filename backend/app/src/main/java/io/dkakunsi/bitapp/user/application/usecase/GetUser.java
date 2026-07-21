@@ -1,6 +1,5 @@
 package io.dkakunsi.bitapp.user.application.usecase;
 
-import io.dkakunsi.bitapp.AppError.Code;
 import io.dkakunsi.bitapp.Result;
 import io.dkakunsi.bitapp.UseCase;
 import io.dkakunsi.bitapp.user.application.dto.UserResult;
@@ -18,6 +17,6 @@ public final class GetUser implements UseCase<String, UserResult> {
   public Result<UserResult> execute(String email) {
     return userRepository.findByEmail(email)
         .map(user -> Result.success(UserResult.from(user)))
-        .orElse(Result.failure(Code.NOT_FOUND, "User not found"));
+        .orElse(Result.notFound("User not found"));
   }
 }

@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import dev.morphia.annotations.Entity;
-import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.account.domain.entity.Account;
 import lombok.AllArgsConstructor;
@@ -27,7 +26,7 @@ public class AccountModel {
   private Double balance;
   private String userId;
 
-  private String status;
+  private Boolean active;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
   private String createdBy;
@@ -47,7 +46,7 @@ public class AccountModel {
         .themeColor(this.themeColor)
         .balance(BigDecimal.valueOf(this.balance))
         .user(userIdObj)
-        .status(EntityStatus.valueOf(this.status))
+        .active(this.active)
         .createdAt(this.createdAt)
         .updatedAt(this.updatedAt)
         .createdBy(this.createdBy)
@@ -68,7 +67,7 @@ public class AccountModel {
         account.themeColor(),
         account.balance().doubleValue(),
         account.user().value(),
-        account.status().name(),
+        account.active(),
         account.createdAt(),
         account.updatedAt(),
         account.createdBy(),

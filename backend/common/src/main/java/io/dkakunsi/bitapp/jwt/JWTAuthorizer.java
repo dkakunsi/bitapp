@@ -14,7 +14,6 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 
-import io.dkakunsi.bitapp.AuthorizedPrincipal;
 import io.dkakunsi.bitapp.Authorizer;
 import io.dkakunsi.bitapp.Configuration;
 

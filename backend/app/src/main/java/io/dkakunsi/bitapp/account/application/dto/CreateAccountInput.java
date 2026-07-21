@@ -6,7 +6,6 @@ import java.util.ArrayList;
 
 import org.apache.commons.lang3.StringUtils;
 
-import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.Validatable;
 import io.dkakunsi.bitapp.account.domain.entity.Account;
@@ -46,7 +45,7 @@ public final record CreateAccountInput(
         .themeColor(this.themeColor() != null ? this.themeColor() : DEFAULT_THEME_COLOR)
         .user(userId)
         .balance(BigDecimal.ZERO)
-        .status(EntityStatus.ACTIVE)
+        .active(true)
         .createdAt(now)
         .updatedAt(now)
         .createdBy(executor)

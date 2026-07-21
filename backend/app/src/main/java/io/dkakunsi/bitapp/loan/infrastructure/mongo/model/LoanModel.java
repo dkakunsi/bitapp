@@ -7,7 +7,6 @@ import java.time.LocalTime;
 import java.util.Currency;
 
 import dev.morphia.annotations.Entity;
-import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.loan.domain.entity.Loan;
 import lombok.AllArgsConstructor;
@@ -36,7 +35,7 @@ public class LoanModel {
   private Double remainingAmount;
   private String currency;
   private double interestRate;
-  private String status;
+  private Boolean active;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
   private String createdBy;
@@ -60,7 +59,7 @@ public class LoanModel {
         .remainingAmount(BigDecimal.valueOf(this.remainingAmount))
         .currency(Currency.getInstance(this.currency))
         .interestRate(this.interestRate)
-        .status(EntityStatus.valueOf(this.status))
+        .active(this.active)
         .createdAt(this.createdAt)
         .updatedAt(this.updatedAt)
         .createdBy(this.createdBy)
@@ -72,7 +71,7 @@ public class LoanModel {
    * Creates an entity from a domain Loan model.
    */
   public static LoanModel fromLoan(Loan loan) {
-    // Mrophia is not working properly with builder pattern, so we have to use the
+    // Morphia is not working properly with builder pattern, so we have to use the
     // constructor
     return new LoanModel(
         loan.id().value(),
@@ -88,7 +87,7 @@ public class LoanModel {
         loan.remainingAmount().doubleValue(),
         loan.currency().getCurrencyCode(),
         loan.interestRate(),
-        loan.status().name(),
+        loan.active(),
         loan.createdAt(),
         loan.updatedAt(),
         loan.createdBy(),

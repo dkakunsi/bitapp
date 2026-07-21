@@ -1,9 +1,9 @@
 package io.dkakunsi.bitapp.account.application.usecase;
 
-import io.dkakunsi.bitapp.AppError.Code;
+
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.Result;
-import io.dkakunsi.bitapp.SessionManager;
+import io.dkakunsi.bitapp.Session.SessionManager;
 import io.dkakunsi.bitapp.UseCase;
 import io.dkakunsi.bitapp.account.application.dto.AccountResult;
 import io.dkakunsi.bitapp.account.application.port.AccountLoanPort;
@@ -33,13 +33,13 @@ public final class RemoveAccount implements UseCase<String, AccountResult> {
   public Result<AccountResult> execute(String accountId) {
     return accountRepository.findById(Id.of(accountId))
         .map(account -> onAccount(account))
-        .orElse(Result.failure(Code.NOT_FOUND, "Account not found"));
+        .orElse(Result.notFound("Account not found"));
   }
 
   private Result<AccountResult> onAccount(Account account) {
     var requester = getRequester();
     if (!account.isOwner(requester)) {
-      return Result.failure(Code.FORBIDDEN, "You are not authorized to delete this account");
+      return Result.forbidden("You are not authorized to delete this account");
     }
 
     return sessionManager.executeInSession(() -> {

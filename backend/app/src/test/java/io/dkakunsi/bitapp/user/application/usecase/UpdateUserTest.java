@@ -14,9 +14,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import io.dkakunsi.bitapp.AppError.Code;
 import io.dkakunsi.bitapp.Context;
 import io.dkakunsi.bitapp.Id;
+import io.dkakunsi.bitapp.Result.ErrorCode;
 import io.dkakunsi.bitapp.user.application.dto.UpdateUserInput;
 import io.dkakunsi.bitapp.user.domain.entity.User;
 import io.dkakunsi.bitapp.user.domain.entity.User.Language;
@@ -95,8 +95,8 @@ public final class UpdateUserTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertEquals(Code.BAD_REQUEST, result.error().get().code());
-    assertEquals("User can only update their own data", result.error().get().message());
+    assertEquals(ErrorCode.BAD_REQUEST, result.errorCode().get());
+    assertEquals("User can only update their own data", result.errorMessage().get());
   }
 
   @Test
@@ -115,8 +115,8 @@ public final class UpdateUserTest {
 
     // Then
     assertTrue(result.isFailed());
-    assertEquals(Code.NOT_FOUND, result.error().get().code());
-    assertEquals("User not found", result.error().get().message());
+    assertEquals(ErrorCode.NOT_FOUND, result.errorCode().get());
+    assertEquals("User not found", result.errorMessage().get());
   }
 
   @Test
@@ -135,8 +135,8 @@ public final class UpdateUserTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertEquals(Code.INTERNAL_ERROR, result.error().get().code());
-    assertEquals("Database error", result.error().get().message());
+    assertEquals(ErrorCode.INTERNAL_ERROR, result.errorCode().get());
+    assertEquals("Database error", result.errorMessage().get());
   }
 
   @Test
@@ -155,8 +155,8 @@ public final class UpdateUserTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertEquals(Code.BAD_REQUEST, result.error().get().code());
-    assertEquals("Invalid email format", result.error().get().message());
+    assertEquals(ErrorCode.BAD_REQUEST, result.errorCode().get());
+    assertEquals("Invalid email format", result.errorMessage().get());
   }
 
   @Test
@@ -233,7 +233,7 @@ public final class UpdateUserTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertEquals(Code.BAD_REQUEST, result.error().get().code());
+    assertEquals(ErrorCode.BAD_REQUEST, result.errorCode().get());
   }
 
   @Test

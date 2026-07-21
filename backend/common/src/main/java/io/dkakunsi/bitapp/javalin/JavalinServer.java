@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-import io.dkakunsi.bitapp.Logger;
-import io.dkakunsi.bitapp.SystemLogger;
 import io.dkakunsi.bitapp.Endpoint.Header;
+import io.dkakunsi.bitapp.Logger;
+import io.dkakunsi.bitapp.Logger.SystemLogger;
 import io.javalin.Javalin;
 import io.javalin.config.JavalinConfig;
 import io.javalin.http.ExceptionHandler;

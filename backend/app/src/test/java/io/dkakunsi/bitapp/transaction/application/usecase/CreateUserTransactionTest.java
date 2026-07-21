@@ -17,11 +17,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import io.dkakunsi.bitapp.AppError.Code;
 import io.dkakunsi.bitapp.Context;
 import io.dkakunsi.bitapp.DateTimeConverter;
 import io.dkakunsi.bitapp.Id;
-import io.dkakunsi.bitapp.SessionManager;
+import io.dkakunsi.bitapp.Result.ErrorCode;
+import io.dkakunsi.bitapp.Session.SessionManager;
 import io.dkakunsi.bitapp.transaction.application.dto.CreateUserTransactionInput;
 import io.dkakunsi.bitapp.transaction.application.port.TransactionAccountPort;
 import io.dkakunsi.bitapp.transaction.application.port.TransactionLoanPort;
@@ -210,10 +210,9 @@ public final class CreateUserTransactionTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-    var error = result.error().get();
-    assertEquals(Code.BAD_REQUEST, error.code());
-    assertEquals("source account not found", error.message());
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.BAD_REQUEST, result.errorCode().get());
+    assertEquals("source account not found", result.errorMessage().get());
   }
 
   @Test
@@ -236,10 +235,9 @@ public final class CreateUserTransactionTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-    var error = result.error().get();
-    assertEquals(Code.BAD_REQUEST, error.code());
-    assertEquals("destination account not found", error.message());
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.BAD_REQUEST, result.errorCode().get());
+    assertEquals("destination account not found", result.errorMessage().get());
   }
 
   @Test
@@ -263,10 +261,9 @@ public final class CreateUserTransactionTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-    var error = result.error().get();
-    assertEquals(Code.BAD_REQUEST, error.code());
-    assertEquals("loan not found", error.message());
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.BAD_REQUEST, result.errorCode().get());
+    assertEquals("loan not found", result.errorMessage().get());
   }
 
   @Test
@@ -287,9 +284,8 @@ public final class CreateUserTransactionTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-    var error = result.error().get();
-    assertEquals(Code.INTERNAL_ERROR, error.code());
-    assertEquals("Database error", error.message());
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.INTERNAL_ERROR, result.errorCode().get());
+    assertEquals("Database error", result.errorMessage().get());
   }
 }

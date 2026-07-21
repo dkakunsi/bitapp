@@ -19,11 +19,10 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import io.dkakunsi.bitapp.AppError.Code;
 import io.dkakunsi.bitapp.Context;
-import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
-import io.dkakunsi.bitapp.SessionManager;
+import io.dkakunsi.bitapp.Result.ErrorCode;
+import io.dkakunsi.bitapp.Session.SessionManager;
 import io.dkakunsi.bitapp.transaction.application.port.TransactionAccountPort;
 import io.dkakunsi.bitapp.transaction.application.port.TransactionLoanPort;
 import io.dkakunsi.bitapp.transaction.domain.entity.Transaction;
@@ -77,10 +76,9 @@ public final class RemoveTransactionUseCaseTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-    var error = result.error().get();
-    assertEquals(Code.NOT_FOUND, error.code());
-    assertEquals("Transaction not found", error.message());
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.NOT_FOUND, result.errorCode().get());
+    assertEquals("Transaction not found", result.errorMessage().get());
     verify(transactionRepository).findById(transactionIdObj);
   }
 
@@ -100,8 +98,8 @@ public final class RemoveTransactionUseCaseTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-    assertEquals(Code.NOT_FOUND, result.error().get().code());
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.NOT_FOUND, result.errorCode().get());
     verify(transactionRepository, never()).deleteById(transactionIdObj);
   }
 
@@ -215,7 +213,7 @@ public final class RemoveTransactionUseCaseTest {
         .currency(Currency.getInstance("IDR"))
         .category(Transaction.Category.OTHER)
         .type(type)
-        .status(EntityStatus.ACTIVE)
+        .active(true)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy(user)

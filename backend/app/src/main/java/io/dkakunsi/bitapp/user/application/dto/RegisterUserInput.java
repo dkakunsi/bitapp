@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.Validatable;
 import io.dkakunsi.bitapp.user.domain.entity.User;
@@ -48,7 +47,7 @@ public final record RegisterUserInput(
         .phone(this.phone())
         .photoUrl(this.photoUrl())
         .language(DEFAULT_LANGUAGE)
-        .status(EntityStatus.ACTIVE)
+        .active(true)
         .createdAt(now)
         .updatedAt(now)
         .createdBy(executor)

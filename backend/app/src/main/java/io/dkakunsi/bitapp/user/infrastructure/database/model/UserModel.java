@@ -3,7 +3,6 @@ package io.dkakunsi.bitapp.user.infrastructure.database.model;
 import java.time.LocalDateTime;
 
 import dev.morphia.annotations.Entity;
-import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.user.domain.entity.User;
 import io.dkakunsi.bitapp.user.domain.entity.User.Language;
@@ -25,7 +24,7 @@ public class UserModel {
   private String phone;
   private String photoUrl;
   private String language;
-  private String status;
+  private Boolean active;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
   private String createdBy;
@@ -41,7 +40,7 @@ public class UserModel {
         .phone(this.phone)
         .photoUrl(this.photoUrl)
         .language(Language.valueOf(this.language))
-        .status(EntityStatus.valueOf(this.status))
+        .active(this.active)
         .createdAt(this.createdAt)
         .updatedAt(this.updatedAt)
         .createdBy(this.createdBy)
@@ -61,7 +60,7 @@ public class UserModel {
         user.phone(),
         user.photoUrl(),
         user.language().name(),
-        user.status().name(),
+        user.active(),
         user.createdAt(),
         user.updatedAt(),
         user.createdBy(),

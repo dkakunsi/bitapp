@@ -2,11 +2,9 @@ package io.dkakunsi.bitapp.transaction.application.usecase;
 
 import java.util.Optional;
 
-import io.dkakunsi.bitapp.AppError;
-import io.dkakunsi.bitapp.AppError.Code;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.Result;
-import io.dkakunsi.bitapp.SessionManager;
+import io.dkakunsi.bitapp.Session.SessionManager;
 import io.dkakunsi.bitapp.UseCase;
 import io.dkakunsi.bitapp.transaction.application.dto.CreateTransactionInput;
 import io.dkakunsi.bitapp.transaction.application.dto.TransactionResult;
@@ -38,8 +36,8 @@ public final class CreateTransaction implements UseCase<CreateTransactionInput, 
   @Override
   public Result<TransactionResult> execute(CreateTransactionInput input) {
     var transaction = input.toTransaction(getRequester());
-    return validateRequest(transaction)
-        .map(error -> Result.<TransactionResult>failure(error))
+    return validateRequest(transaction) 
+        .map(error -> error)
         .orElseGet(() -> sessionManager.executeInSession(() -> execute(input, transaction)));
   }
 
@@ -50,21 +48,21 @@ public final class CreateTransaction implements UseCase<CreateTransactionInput, 
     return Result.success(TransactionResult.from(processedTransaction));
   }
 
-  private Optional<AppError> validateRequest(Transaction transaction) {
+  private Optional<Result<TransactionResult>> validateRequest(Transaction transaction) {
     if (isSameSourceAndDestinationAccount(transaction)) {
-      return Optional.of(new AppError(Code.BAD_REQUEST, "source and destination accounts cannot be the same"));
+      return Optional.of(Result.badRequest("source and destination accounts cannot be the same"));
     }
 
     if (isAccountNotExists(transaction.source())) {
-      return Optional.of(new AppError(Code.BAD_REQUEST, "source account not found"));
+      return Optional.of(Result.badRequest("source account not found"));
     }
 
     if (isAccountNotExists(transaction.destination())) {
-      return Optional.of(new AppError(Code.BAD_REQUEST, "destination account not found"));
+      return Optional.of(Result.badRequest("destination account not found"));
     }
 
     if (isLoanNotExists(transaction.loan())) {
-      return Optional.of(new AppError(Code.BAD_REQUEST, "loan not found"));
+      return Optional.of(Result.badRequest("loan not found"));
     }
     return Optional.empty();
   }

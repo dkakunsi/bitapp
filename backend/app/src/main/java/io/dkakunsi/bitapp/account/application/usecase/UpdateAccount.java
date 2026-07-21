@@ -1,6 +1,5 @@
 package io.dkakunsi.bitapp.account.application.usecase;
 
-import io.dkakunsi.bitapp.AppError.Code;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.Result;
 import io.dkakunsi.bitapp.UseCase;
@@ -21,13 +20,13 @@ public final class UpdateAccount implements UseCase<UpdateAccountInput, AccountR
   public Result<AccountResult> execute(UpdateAccountInput input) {
     return accountRepository.findById(Id.of(input.id()))
         .map(account -> onAccount(account, input))
-        .orElse(Result.failure(Code.NOT_FOUND, "Account not found"));
+        .orElse(Result.notFound("Account not found"));
   }
 
   private Result<AccountResult> onAccount(Account account, UpdateAccountInput input) {
     var requester = getRequester();
     if (!account.isOwner(requester)) {
-      return Result.failure(Code.UNAUTHORIZED, "User can only update their own account");
+      return Result.forbidden("User can only update their own account");
     }
 
     var accountType = input.type() != null ? Account.Type.valueOf(input.type()) : null;

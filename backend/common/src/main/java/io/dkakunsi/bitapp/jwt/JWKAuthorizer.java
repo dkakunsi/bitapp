@@ -15,7 +15,6 @@ import com.auth0.jwk.SigningKeyNotFoundException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 
-import io.dkakunsi.bitapp.AuthorizedPrincipal;
 import io.dkakunsi.bitapp.Configuration;
 
 public class JWKAuthorizer extends JWTAuthorizer {

@@ -13,9 +13,9 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import io.dkakunsi.bitapp.AppError.Code;
 import io.dkakunsi.bitapp.Context;
 import io.dkakunsi.bitapp.Id;
+import io.dkakunsi.bitapp.Result.ErrorCode;
 import io.dkakunsi.bitapp.account.domain.entity.Account;
 import io.dkakunsi.bitapp.account.domain.entity.Account.Type;
 import io.dkakunsi.bitapp.account.domain.repository.AccountRepository;
@@ -80,10 +80,9 @@ public final class GetAccountTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-    var error = result.error().get();
-    assertEquals(Code.NOT_FOUND, error.code());
-    assertEquals("Account not found", error.message());
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.NOT_FOUND, result.errorCode().get());
+    assertEquals("Account not found", result.errorMessage().get());
 
     verify(accountRepository).findById(id);
   }
@@ -100,10 +99,9 @@ public final class GetAccountTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-    var error = result.error().get();
-    assertEquals(Code.INTERNAL_ERROR, error.code());
-    assertEquals("Database error", error.message());
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.INTERNAL_ERROR, result.errorCode().get());
+    assertEquals("Database error", result.errorMessage().get());
 
     verify(accountRepository).findById(id);
   }

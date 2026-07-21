@@ -1,7 +1,5 @@
 package io.dkakunsi.bitapp.loan.infrastructure.transaction;
 
-import io.dkakunsi.bitapp.AppError;
-import io.dkakunsi.bitapp.AppError.Code;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.Result;
 import io.dkakunsi.bitapp.loan.application.port.LoanTransactionPort;
@@ -31,10 +29,9 @@ public class InProcessLoanTransactionAdapter implements LoanTransactionPort {
     var transactionInput = CreateLoanDisbursementTransactionInput.builder()
         .loan(loan)
         .build();
-    var result = createTransaction.execute(transactionInput);
-    if (result.isFailed()) {
-      var error = result.error().orElse(new AppError(Code.INTERNAL_ERROR, "Unknown error"));
-      return Result.failure(error);
+    var transactionResult = createTransaction.execute(transactionInput);
+    if (transactionResult.isFailed()) {
+      return Result.failure(transactionResult);
     }
     return Result.success();
   }

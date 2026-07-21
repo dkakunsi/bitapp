@@ -1,6 +1,6 @@
 package io.dkakunsi.bitapp.javalin;
 
-import io.dkakunsi.bitapp.AuthorizedPrincipal;
+import io.dkakunsi.bitapp.Authorizer.AuthorizedPrincipal;
 import io.dkakunsi.bitapp.Context;
 import io.dkakunsi.bitapp.Endpoint.Header;
 import lombok.Builder;

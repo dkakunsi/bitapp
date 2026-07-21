@@ -21,8 +21,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.Context;
-import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
+import io.dkakunsi.bitapp.Result.ErrorCode;
 import io.dkakunsi.bitapp.loan.domain.entity.Loan;
 import io.dkakunsi.bitapp.loan.domain.repository.LoanRepository;
 
@@ -65,7 +65,7 @@ public final class GetUserLoansTest {
         .remainingAmount(BigDecimal.valueOf(500000000))
         .currency(Currency.getInstance("IDR"))
         .interestRate(5.5)
-        .status(EntityStatus.ACTIVE)
+        .active(true)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy(REQUESTER)
@@ -86,7 +86,7 @@ public final class GetUserLoansTest {
         .remainingAmount(BigDecimal.valueOf(10000000))
         .currency(Currency.getInstance("IDR"))
         .interestRate(2.0)
-        .status(EntityStatus.ACTIVE)
+        .active(true)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy(REQUESTER)
@@ -163,8 +163,8 @@ public final class GetUserLoansTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.INTERNAL_ERROR, result.errorCode().get());
     verify(loanRepository).findByUserId(USER);
   }
 
@@ -188,7 +188,7 @@ public final class GetUserLoansTest {
         .remainingAmount(BigDecimal.valueOf(200000000))
         .currency(Currency.getInstance("IDR"))
         .interestRate(4.5)
-        .status(EntityStatus.ACTIVE)
+        .active(true)
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
         .createdBy(REQUESTER)

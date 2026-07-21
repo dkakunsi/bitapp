@@ -8,7 +8,6 @@ import java.util.Currency;
 import org.apache.commons.lang3.StringUtils;
 
 import io.dkakunsi.bitapp.DateTimeConverter;
-import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.Validatable;
 import io.dkakunsi.bitapp.transaction.domain.entity.Transaction;
@@ -113,7 +112,7 @@ public record CreateUserTransactionInput(
         .currency(currency)
         .category(category)
         .type(Transaction.Type.valueOf(this.type()))
-        .status(EntityStatus.ACTIVE)
+        .active(true)
         .createdAt(now)
         .updatedAt(now)
         .createdBy(executor)

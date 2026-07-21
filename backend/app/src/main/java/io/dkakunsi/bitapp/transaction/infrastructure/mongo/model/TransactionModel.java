@@ -7,7 +7,6 @@ import java.time.LocalTime;
 import java.util.Currency;
 
 import dev.morphia.annotations.Entity;
-import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.transaction.domain.entity.Transaction;
 import lombok.AllArgsConstructor;
@@ -37,7 +36,7 @@ public class TransactionModel {
   private String category;
   private String type;
 
-  private String status;
+  private Boolean active;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
   private String createdBy;
@@ -61,7 +60,7 @@ public class TransactionModel {
         .currency(Currency.getInstance(this.currency))
         .category(this.category != null ? Transaction.Category.valueOf(this.category) : null)
         .type(Transaction.Type.valueOf(this.type))
-        .status(EntityStatus.valueOf(this.status))
+        .active(this.active)
         .createdAt(this.createdAt)
         .updatedAt(this.updatedAt)
         .createdBy(this.createdBy)
@@ -84,7 +83,7 @@ public class TransactionModel {
         transaction.currency().getCurrencyCode(),
         transaction.category() != null ? transaction.category().name() : null,
         transaction.type().name(),
-        transaction.status().name(),
+        transaction.active(),
         transaction.createdAt(),
         transaction.updatedAt(),
         transaction.createdBy(),

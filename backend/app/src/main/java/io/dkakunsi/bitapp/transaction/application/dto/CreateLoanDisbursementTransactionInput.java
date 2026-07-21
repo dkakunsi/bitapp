@@ -2,7 +2,6 @@ package io.dkakunsi.bitapp.transaction.application.dto;
 
 import java.time.LocalDateTime;
 
-import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.loan.domain.entity.Loan;
 import io.dkakunsi.bitapp.transaction.domain.entity.Transaction;
@@ -36,7 +35,7 @@ public record CreateLoanDisbursementTransactionInput(
         .currency(currency)
         .category(Transaction.Category.LOAN_DISBURSEMENT)
         .type(transactionType)
-        .status(EntityStatus.ACTIVE)
+        .active(true)
         .createdAt(now)
         .updatedAt(now)
         .createdBy(executor)

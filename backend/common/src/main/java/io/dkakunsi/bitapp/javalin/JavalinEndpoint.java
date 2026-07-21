@@ -2,13 +2,13 @@ package io.dkakunsi.bitapp.javalin;
 
 import java.lang.reflect.Type;
 
-import io.dkakunsi.bitapp.AuthorizedPrincipal;
 import io.dkakunsi.bitapp.Authorizer;
+import io.dkakunsi.bitapp.Authorizer.AuthorizedPrincipal;
 import io.dkakunsi.bitapp.Context;
 import io.dkakunsi.bitapp.Endpoint;
 import io.dkakunsi.bitapp.Logger;
+import io.dkakunsi.bitapp.Logger.SystemLogger;
 import io.dkakunsi.bitapp.Result;
-import io.dkakunsi.bitapp.SystemLogger;
 import io.dkakunsi.bitapp.UseCase;
 import io.javalin.http.Handler;
 import io.javalin.http.HandlerType;
@@ -83,8 +83,9 @@ public abstract class JavalinEndpoint<S, T> extends Endpoint<S, T> {
   }
 
   private void failureResponse(io.javalin.http.Context ctx, Result<T> result) {
-    var error = result.error().get();
-    ctx.status(error.code().getHttpCode()).result(error.message());
+    final var httpCode = result.errorCode().get().getHttpCode();
+    final var errorMessage = result.errorMessage().orElse("An error occurred");
+    ctx.status(httpCode).result(errorMessage);
   }
 
   private void successResponse(io.javalin.http.Context ctx, Result<T> result) {

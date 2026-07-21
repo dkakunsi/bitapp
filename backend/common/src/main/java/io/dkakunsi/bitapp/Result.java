@@ -2,15 +2,17 @@ package io.dkakunsi.bitapp;
 
 import java.util.Optional;
 
-import io.dkakunsi.bitapp.AppError.Code;
+import lombok.Getter;
 
 public final record Result<DATA>(
     Optional<DATA> data,
-    Optional<AppError> error,
-    Optional<String> message) {
+    Optional<ErrorCode> errorCode,
+    Optional<String> errorMessage) {
+
+  public static final String DEFAULT_ERROR_MESSAGE = "Unknown error";
 
   public boolean isSuccess() {
-    return error.isEmpty();
+    return errorCode.isEmpty();
   }
 
   public boolean isFailed() {
@@ -30,22 +32,49 @@ public final record Result<DATA>(
   }
 
   public static <DATA> Result<DATA> failure(Result<?> other) {
-    var error = other.error().orElse(new AppError(Code.INTERNAL_ERROR, "Unknown error"));
-    return failure(error);
+    final var errorCode = other.errorCode().orElse(ErrorCode.INTERNAL_ERROR);
+    final var errorMessage = other.errorMessage().orElse(DEFAULT_ERROR_MESSAGE);
+    return failure(errorCode, errorMessage);
   }
 
   public static <DATA> Result<DATA> failure(Exception exception) {
-    var message = exception.getMessage() != null ? exception.getMessage() : "Unknown error";
-    final var error = new AppError(Code.INTERNAL_ERROR, message);
-    return failure(error);
+    final var message = exception.getMessage() != null
+        ? exception.getMessage()
+        : DEFAULT_ERROR_MESSAGE;
+    return failure(ErrorCode.INTERNAL_ERROR, message);
   }
 
-  public static <DATA> Result<DATA> failure(Code serverError, String message) {
-    final var error = new AppError(serverError, message);
-    return failure(error);
+  public static <DATA> Result<DATA> badRequest(String message) {
+    return failure(ErrorCode.BAD_REQUEST, message);
   }
 
-  public static <DATA> Result<DATA> failure(AppError error) {
-    return new Result<>(Optional.empty(), Optional.of(error), Optional.empty());
+  public static <DATA> Result<DATA> forbidden(String message) {
+    return failure(ErrorCode.FORBIDDEN, message);
+  }
+
+  public static <DATA> Result<DATA> notFound(String message) {
+    return failure(ErrorCode.NOT_FOUND, message);
+  }
+
+  public static <DATA> Result<DATA> internalError(String message) {
+    return failure(ErrorCode.INTERNAL_ERROR, message);
+  }
+
+  private static <DATA> Result<DATA> failure(ErrorCode errorCode, String errorMessage) {
+    return new Result<>(Optional.empty(), Optional.of(errorCode), Optional.of(errorMessage));
+  }
+
+  @Getter
+  public static enum ErrorCode {
+    BAD_REQUEST(400),
+    FORBIDDEN(403),
+    NOT_FOUND(404),
+    INTERNAL_ERROR(500);
+
+    private int httpCode;
+
+    private ErrorCode(int httpCode) {
+      this.httpCode = httpCode;
+    }
   }
 }

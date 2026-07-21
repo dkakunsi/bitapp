@@ -15,8 +15,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import io.dkakunsi.bitapp.AppError.Code;
 import io.dkakunsi.bitapp.Context;
+import io.dkakunsi.bitapp.Result.ErrorCode;
 import io.dkakunsi.bitapp.account.application.dto.CreateAccountInput;
 import io.dkakunsi.bitapp.account.domain.entity.Account;
 import io.dkakunsi.bitapp.account.domain.repository.AccountRepository;
@@ -93,9 +93,8 @@ public final class CreateAccountTest {
     // Then
     assertFalse(result.isSuccess());
 
-    final var error = result.error().get();
-    assertEquals(Code.INTERNAL_ERROR, error.code());
-    assertEquals("An error occurred", error.message());
+    assertEquals(ErrorCode.INTERNAL_ERROR, result.errorCode().get());
+    assertEquals("An error occurred", result.errorMessage().get());
   }
 
   @Test

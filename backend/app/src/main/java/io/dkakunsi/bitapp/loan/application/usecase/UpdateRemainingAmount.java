@@ -1,6 +1,5 @@
 package io.dkakunsi.bitapp.loan.application.usecase;
 
-import io.dkakunsi.bitapp.AppError;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.Result;
 import io.dkakunsi.bitapp.UseCase;
@@ -21,13 +20,13 @@ public class UpdateRemainingAmount implements UseCase<UpdateRemainingAmountInput
   public Result<LoanResult> execute(UpdateRemainingAmountInput input) {
     return loanRepository.findById(Id.of(input.loanId()))
         .map(loan -> onLoan(loan, input))
-        .orElse(Result.failure(AppError.Code.NOT_FOUND, "Loan not found"));
+        .orElse(Result.notFound("Loan not found"));
   }
 
   private Result<LoanResult> onLoan(Loan loan, UpdateRemainingAmountInput input) {
     var requester = getRequester();
     if (!loan.isOwner(requester)) {
-      return Result.failure(AppError.Code.FORBIDDEN, "You are not authorized to update this loan");
+      return Result.forbidden("You are not authorized to update this loan");
     }
 
     var loanId = Id.of(input.loanId());

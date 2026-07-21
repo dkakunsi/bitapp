@@ -16,4 +16,7 @@ public interface Authorizer {
     }
     return token.replace(BEARER, "");
   }
+
+  public static final record AuthorizedPrincipal(String email) {
+  }
 }

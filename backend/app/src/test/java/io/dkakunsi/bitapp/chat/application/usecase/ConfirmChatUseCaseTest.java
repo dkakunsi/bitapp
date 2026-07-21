@@ -15,10 +15,10 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import io.dkakunsi.bitapp.AppError.Code;
 import io.dkakunsi.bitapp.Context;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.Result;
+import io.dkakunsi.bitapp.Result.ErrorCode;
 import io.dkakunsi.bitapp.chat.application.port.AccountPort;
 import io.dkakunsi.bitapp.chat.application.port.LoanPort;
 import io.dkakunsi.bitapp.chat.application.port.TransactionPort;
@@ -58,8 +58,8 @@ public final class ConfirmChatUseCaseTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-    assertEquals(Code.NOT_FOUND, result.error().get().code());
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.NOT_FOUND, result.errorCode().get());
   }
 
   @Test
@@ -77,8 +77,8 @@ public final class ConfirmChatUseCaseTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-    assertEquals(Code.FORBIDDEN, result.error().get().code());
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.FORBIDDEN, result.errorCode().get());
 
     verify(accountPort, never()).createAccount(draft);
     verify(loanPort, never()).createLoan(draft);
@@ -154,14 +154,14 @@ public final class ConfirmChatUseCaseTest {
 
     when(draftRepository.findByIdAndNotConfirmed(Id.of(draftId))).thenReturn(Optional.of(draft));
     when(accountPort.createAccount(draft))
-        .thenReturn(Result.failure(Code.INTERNAL_ERROR, "Account creation failed"));
+        .thenReturn(Result.internalError("Account creation failed"));
 
     // When
     var result = Context.executeInContext(CONTEXT, () -> underTest.execute(draftId));
 
     // Then
     assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-    assertEquals(Code.INTERNAL_ERROR, result.error().get().code());
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.INTERNAL_ERROR, result.errorCode().get());
   }
 }

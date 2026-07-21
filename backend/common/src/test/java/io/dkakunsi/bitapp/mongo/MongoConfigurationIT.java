@@ -7,7 +7,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.Configuration;
-import io.dkakunsi.bitapp.EnvironmentConfiguration;
+import io.dkakunsi.bitapp.Configuration.EnvironmentConfiguration;
 import io.dkakunsi.bitapp.test.MongoServer;
 
 public class MongoConfigurationIT {

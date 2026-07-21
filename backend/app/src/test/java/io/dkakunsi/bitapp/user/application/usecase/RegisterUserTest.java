@@ -16,8 +16,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import io.dkakunsi.bitapp.AppError.Code;
 import io.dkakunsi.bitapp.Id;
+import io.dkakunsi.bitapp.Result.ErrorCode;
 import io.dkakunsi.bitapp.user.application.dto.RegisterUserInput;
 import io.dkakunsi.bitapp.user.domain.entity.User;
 import io.dkakunsi.bitapp.user.domain.entity.User.Language;
@@ -182,8 +182,8 @@ public final class RegisterUserTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertEquals(Code.INTERNAL_ERROR, result.error().get().code());
-    assertEquals("An error occured", result.error().get().message());
+    assertEquals(ErrorCode.INTERNAL_ERROR, result.errorCode().get());
+    assertEquals("An error occured", result.errorMessage().get());
   }
 
   @Test
@@ -202,7 +202,7 @@ public final class RegisterUserTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertEquals(Code.BAD_REQUEST, result.error().get().code());
-    assertEquals("Invalid email format", result.error().get().message());
+    assertEquals(ErrorCode.BAD_REQUEST, result.errorCode().get());
+    assertEquals("Invalid email format", result.errorMessage().get());
   }
 }

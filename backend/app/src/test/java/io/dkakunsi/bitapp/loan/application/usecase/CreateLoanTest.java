@@ -20,13 +20,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import io.dkakunsi.bitapp.AppError.Code;
 import io.dkakunsi.bitapp.Context;
 import io.dkakunsi.bitapp.DateTimeConverter;
-import io.dkakunsi.bitapp.EntityStatus;
 import io.dkakunsi.bitapp.Id;
 import io.dkakunsi.bitapp.Result;
-import io.dkakunsi.bitapp.SessionManager;
+import io.dkakunsi.bitapp.Result.ErrorCode;
+import io.dkakunsi.bitapp.Session.SessionManager;
 import io.dkakunsi.bitapp.loan.application.dto.CreateLoanInput;
 import io.dkakunsi.bitapp.loan.application.port.LoanAccountPort;
 import io.dkakunsi.bitapp.loan.application.port.LoanAccountPort.LoanAccount;
@@ -122,7 +121,7 @@ public final class CreateLoanTest {
     assertEquals(new BigDecimal("5000.00"), capturedLoan.remainingAmount());
     assertEquals(Currency.getInstance("USD"), capturedLoan.currency());
     assertEquals(5.5, capturedLoan.interestRate());
-    assertEquals(EntityStatus.ACTIVE, capturedLoan.status());
+    assertTrue(capturedLoan.active());
     assertNotNull(capturedLoan.createdAt());
     assertNotNull(capturedLoan.updatedAt());
     assertEquals(REQUESTER, capturedLoan.createdBy());
@@ -264,8 +263,8 @@ public final class CreateLoanTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-    assertEquals(Code.BAD_REQUEST, result.error().get().code());
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.BAD_REQUEST, result.errorCode().get());
   }
 
   @Test
@@ -283,8 +282,8 @@ public final class CreateLoanTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-    assertEquals(Code.BAD_REQUEST, result.error().get().code());
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.BAD_REQUEST, result.errorCode().get());
   }
 
   @Test
@@ -302,8 +301,8 @@ public final class CreateLoanTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-    assertEquals(Code.BAD_REQUEST, result.error().get().code());
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.BAD_REQUEST, result.errorCode().get());
   }
 
   @Test
@@ -323,11 +322,9 @@ public final class CreateLoanTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-
-    final var error = result.error().get();
-    assertEquals(Code.INTERNAL_ERROR, error.code());
-    assertEquals("Database error", error.message());
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.INTERNAL_ERROR, result.errorCode().get());
+    assertEquals("Database error", result.errorMessage().get());
   }
 
   @Test
@@ -512,11 +509,10 @@ public final class CreateLoanTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-
-    final var error = result.error().get();
-    assertEquals(Code.NOT_FOUND, error.code());
-    assertEquals("Account not found", error.message());
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.NOT_FOUND, result.errorCode().get());
+    assertTrue(result.errorCode().isPresent());
+    assertEquals("Account not found", result.errorMessage().get());
 
     // Verify loan and transaction were not created
     verify(loanRepository, never()).create(any());
@@ -544,11 +540,9 @@ public final class CreateLoanTest {
 
     // Then
     assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-
-    final var error = result.error().get();
-    assertEquals(Code.FORBIDDEN, error.code());
-    assertEquals("You are not authorized to use this account", error.message());
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.FORBIDDEN, result.errorCode().get());
+    assertEquals("You are not authorized to use this account", result.errorMessage().get());
 
     // Verify loan and transaction were not created
     verify(loanRepository, never()).create(any());
@@ -571,18 +565,16 @@ public final class CreateLoanTest {
     when(loanAccountPort.findById(Id.of(ACCOUNT_ID))).thenReturn(Optional.of(account));
     when(loanRepository.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
     when(loanTransactionPort.disburseTransaction(any()))
-        .thenReturn(Result.failure(Code.INTERNAL_ERROR, "Transaction creation failed"));
+        .thenReturn(Result.internalError("Transaction creation failed"));
 
     // When
     final var result = Context.executeInContext(context, () -> underTest.process(createRequest));
 
     // Then
     assertFalse(result.isSuccess());
-    assertTrue(result.error().isPresent());
-
-    final var error = result.error().get();
-    assertEquals(Code.INTERNAL_ERROR, error.code());
-    assertEquals("Transaction creation failed", error.message());
+    assertTrue(result.errorCode().isPresent());
+    assertEquals(ErrorCode.INTERNAL_ERROR, result.errorCode().get());
+    assertEquals("Transaction creation failed", result.errorMessage().get());
   }
 
 }
