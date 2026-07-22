@@ -34,7 +34,7 @@ import io.dkakunsi.bitapp.draft.infrastructure.transaction.InProcessDraftTransac
 import io.dkakunsi.bitapp.javalin.JavalinServer;
 import io.dkakunsi.bitapp.jwt.JWKAuthorizer;
 import io.dkakunsi.bitapp.jwt.JWTAuthorizer;
-import io.dkakunsi.bitapp.langchain.GeminiLangChainModel;
+import io.dkakunsi.bitapp.langchain.LangChainModelFactory;
 import io.dkakunsi.bitapp.loan.application.usecase.CreateLoan;
 import io.dkakunsi.bitapp.loan.application.usecase.GetLoan;
 import io.dkakunsi.bitapp.loan.application.usecase.GetUserLoans;
@@ -88,7 +88,7 @@ public final class AppLauncher implements Launcher {
     var mongoConfig = new MongoConfiguration(configuration);
 
     var sessionManager = mongoConfig.getSessionManager();
-    var languageModel = GeminiLangChainModel.create(configuration);
+    var languageModel = LangChainModelFactory.createLangChainModel(configuration);
 
     // Repositories
     var datastore = mongoConfig.getDatastore();

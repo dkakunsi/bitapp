@@ -396,20 +396,6 @@
     </plugins>
   </build>
 
-  <repositories>
-    <repository>
-      <id>github</id>
-      <url>${github.package.url}</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-        <updatePolicy>always</updatePolicy>
-      </snapshots>
-    </repository>
-  </repositories>
-
   <profiles>
     <profile>
       <id>innerLoop</id>

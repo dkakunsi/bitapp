@@ -2,7 +2,4 @@
   <Match>
     <Bug pattern="VA_FORMAT_STRING_USES_NEWLINE"/>
   </Match>
-  <Match>
-    <Bug pattern="MS_CANNOT_BE_FINAL"/>
-  </Match>
 </FindBugsFilter>
