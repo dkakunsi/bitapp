@@ -111,6 +111,8 @@ jobs:
             MONGO_CONNECTION_STRING=${{ secrets.MONGO_CONNECTION_STRING_DEV }}
             MONGO_USERNAME=${{ secrets.MONGO_USERNAME_DEV }}
             MONGO_PASSWORD=${{ secrets.MONGO_PASSWORD_DEV }}
+            GEMINI_API_KEY=${{ secrets.AI_GEMINI_APIKEY }}
+            GEMINI_MODEL_NAME=${{ vars.AI_GEMINI_MODELNAME }}
           env_vars_update_strategy: overwrite
           min_instances: 0
           max_instances: 5

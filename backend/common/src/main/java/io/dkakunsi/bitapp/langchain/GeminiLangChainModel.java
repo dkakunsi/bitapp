@@ -8,9 +8,9 @@ import io.dkakunsi.bitapp.test.AppTestUtil;
 
 public class GeminiLangChainModel implements LanguageModel {
 
-  private static final String GEMINI_API_KEY = "ai.gemini.apiKey";
+  private static final String GEMINI_API_KEY = "GEMINI_API_KEY";
 
-  private static final String GEMINI_MODEL_NAME = "api.gemini.modelName";
+  private static final String GEMINI_MODEL_NAME = "GEMINI_MODEL_NAME";
 
   private final ChatModel chatModel;
 
