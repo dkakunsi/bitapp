@@ -3,6 +3,7 @@ package io.dkakunsi.bitapp.transaction.integration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import dev.langchain4j.model.chat.ChatModel;
 import io.dkakunsi.bitapp.AppLauncher;
 import io.dkakunsi.bitapp.jwt.JWTAuthorizer;
 import io.dkakunsi.bitapp.test.AppTestUtil;
@@ -34,6 +36,7 @@ public class GetTransactionIT extends AppTestUtil {
 
   @BeforeAll
   static void setup() throws Exception {
+    AppTestUtil.setTestDependency(ChatModel.class, mock(ChatModel.class));
     var port = getPort();
     var appEnv = Map.of(APP_PORT, Integer.toString(port),
         JWTAuthorizer.JWT_PUBLIC_KEY, SecureTestUtil.PUBLIC_KEY);

@@ -3,6 +3,7 @@ package io.dkakunsi.bitapp.account.integration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import dev.langchain4j.model.chat.ChatModel;
 import io.dkakunsi.bitapp.AppLauncher;
 import io.dkakunsi.bitapp.jwt.JWTAuthorizer;
 import io.dkakunsi.bitapp.test.AppTestUtil;
@@ -29,6 +31,7 @@ public class CreateAccountIT extends AppTestUtil {
   @BeforeAll
   static void setup() throws Exception {
     var port = getPort();
+    AppTestUtil.setTestDependency(ChatModel.class, mock(ChatModel.class));
     var appEnv = Map.of(APP_PORT, Integer.toString(port),
         JWTAuthorizer.JWT_PUBLIC_KEY, SecureTestUtil.PUBLIC_KEY);
     sut.create(appEnv);

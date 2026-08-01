@@ -2,6 +2,7 @@ package io.dkakunsi.bitapp.account.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import dev.langchain4j.model.chat.ChatModel;
 import io.dkakunsi.bitapp.AppLauncher;
 import io.dkakunsi.bitapp.jwt.JWTAuthorizer;
 import io.dkakunsi.bitapp.test.AppTestUtil;
@@ -26,6 +28,7 @@ public class UpdateAccountIT extends AppTestUtil {
 
   @BeforeAll
   static void setup() throws Exception {
+    AppTestUtil.setTestDependency(ChatModel.class, mock(ChatModel.class));
     var port = getPort();
     var appEnv = Map.of(APP_PORT, Integer.toString(port),
         JWTAuthorizer.JWT_PUBLIC_KEY, SecureTestUtil.PUBLIC_KEY);
@@ -791,7 +794,7 @@ public class UpdateAccountIT extends AppTestUtil {
         .asString();
 
     // Then - Should return 401 as user can only update their own account
-    assertEquals(401, response.getStatus());
+    assertEquals(403, response.getStatus());
     assertEquals("User can only update their own account", response.getBody());
   }
 

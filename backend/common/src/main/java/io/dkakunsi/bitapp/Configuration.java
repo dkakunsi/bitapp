@@ -5,7 +5,11 @@ import java.util.function.Function;
 
 public interface Configuration {
 
+  String APP_ENV = "app.env";
+
   Optional<String> get(String key);
+
+  boolean isTest();
 
   public static final class EnvironmentConfiguration implements Configuration {
 
@@ -28,6 +32,11 @@ public interface Configuration {
     public static EnvironmentConfiguration of(Function<String, String> environmentSupplier) {
       return new EnvironmentConfiguration(environmentSupplier);
     }
-  }
 
+    @Override
+    public boolean isTest() {
+      var value = environmentSupplier.apply(APP_ENV);
+      return "test".equalsIgnoreCase(value);
+    }
+  }
 }

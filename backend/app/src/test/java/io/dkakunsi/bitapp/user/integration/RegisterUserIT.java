@@ -2,6 +2,7 @@ package io.dkakunsi.bitapp.user.integration;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 
 import java.util.Map;
 
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import dev.langchain4j.model.chat.ChatModel;
 import io.dkakunsi.bitapp.AppLauncher;
 import io.dkakunsi.bitapp.jwt.JWTAuthorizer;
 import io.dkakunsi.bitapp.test.AppTestUtil;
@@ -26,6 +28,7 @@ public class RegisterUserIT extends AppTestUtil {
 
   @BeforeAll
   static void setup() throws Exception {
+    AppTestUtil.setTestDependency(ChatModel.class, mock(ChatModel.class));
     var port = getPort();
     sut.create(Map.of(APP_PORT, Integer.toString(port),
         JWTAuthorizer.JWT_PUBLIC_KEY, SecureTestUtil.PUBLIC_KEY));
