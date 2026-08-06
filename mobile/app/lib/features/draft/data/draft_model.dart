@@ -21,8 +21,6 @@ class DraftModel {
 
   bool get canConfirm => success && !confirmed;
 
-  bool get canRefine => success && !confirmed;
-
   String get prettyResult =>
       const JsonEncoder.withIndent('  ').convert(modelResult);
 

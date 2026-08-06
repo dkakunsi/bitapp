@@ -209,7 +209,7 @@ class BitApp extends StatelessWidget {
       GoRoute(
         name: DraftScreen.routeName,
         path: DraftScreen.routeName,
-        builder: (context, state) => const DraftScreen(title: 'AI Draft'),
+        builder: (context, state) => DraftScreen(title: context.locale.aiDraft),
       ),
       GoRoute(
         name: UserScreen.routeName,

@@ -413,6 +413,85 @@ class AppLocalizationsEn extends AppLocalizations {
   String get utilities => 'Utilities';
 
   @override
+  String get aiDraft => 'AI Draft';
+
+  @override
+  String get aiDraftTitle => 'Create a draft with AI';
+
+  @override
+  String get aiDraftDescription =>
+      'Describe the account, loan, or transaction you want to create.';
+
+  @override
+  String get aiDraftType => 'Draft type';
+
+  @override
+  String get aiDraftRequest => 'Request';
+
+  @override
+  String get aiDraftRequestHint => 'Type what you want to create';
+
+  @override
+  String get aiDraftSelectImage => 'Select image';
+
+  @override
+  String get aiDraftChangeImage => 'Change image';
+
+  @override
+  String get aiDraftGenerate => 'Generate draft';
+
+  @override
+  String get aiDraftStartNew => 'Start new draft';
+
+  @override
+  String get aiDraftExtractedText => 'Extracted text';
+
+  @override
+  String get aiDraftSelectedImage => 'Selected image';
+
+  @override
+  String get aiDraftUpdateRequest => 'Update request';
+
+  @override
+  String get aiDraftUpdateHint =>
+      'Add more details if the draft is not correct yet';
+
+  @override
+  String get aiDraftUpdate => 'Update draft';
+
+  @override
+  String get aiDraftConfirm => 'Confirm';
+
+  @override
+  String get aiDraftPreview => 'Draft preview';
+
+  @override
+  String get aiDraftNoResponseData => 'No response data available.';
+
+  @override
+  String get aiDraftNoTextFound =>
+      'No text was found in the selected image.';
+
+  @override
+  String get aiDraftUpdateEmpty =>
+      'Add more free text before updating the draft.';
+
+  @override
+  String get aiDraftRequestEmpty =>
+      'Enter a request or choose an image first.';
+
+  @override
+  String get aiDraftConfirmed => 'Draft confirmed';
+
+  @override
+  String get aiDraftFailed =>
+      'The draft could not be completed. Start a new draft with clearer instructions.';
+
+  @override
+  String get aiDraftLocked =>
+      'This draft is no longer editable. Start a new draft to continue.';
+
+  @override
   String get yourApps => 'Your Apps';
 
   @override

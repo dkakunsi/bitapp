@@ -62,7 +62,7 @@ class MoneyScreenContent extends AppScreenContent {
         Align(
           alignment: Alignment.centerLeft,
           child: AppButton(
-            label: 'AI Draft',
+            label: context.locale.aiDraft,
             color: AppColor.mainDark,
             textColor: AppColor.white,
             width: 150,
@@ -72,7 +72,7 @@ class MoneyScreenContent extends AppScreenContent {
             onTap: (context) => context.nextRoute(DraftScreen.routeName),
           ),
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         MoneySummary(),
         SizedBox(height: 24),
         BlocBuilder<MoneyTabBloc, MoneyTabState>(

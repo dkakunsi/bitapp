@@ -424,6 +424,86 @@ class AppLocalizationsId extends AppLocalizations {
   String get utilities => 'Utilitas';
 
   @override
+  String get aiDraft => 'Draf AI';
+
+  @override
+  String get aiDraftTitle => 'Buat draf dengan AI';
+
+  @override
+  String get aiDraftDescription =>
+      'Jelaskan rekening, pinjaman, atau transaksi yang ingin kamu buat.';
+
+  @override
+  String get aiDraftType => 'Tipe draf';
+
+  @override
+  String get aiDraftRequest => 'Permintaan';
+
+  @override
+  String get aiDraftRequestHint => 'Tulis apa yang ingin kamu buat';
+
+  @override
+  String get aiDraftSelectImage => 'Pilih gambar';
+
+  @override
+  String get aiDraftChangeImage => 'Ganti gambar';
+
+  @override
+  String get aiDraftGenerate => 'Buat draf';
+
+  @override
+  String get aiDraftStartNew => 'Mulai draf baru';
+
+  @override
+  String get aiDraftExtractedText => 'Teks hasil ekstraksi';
+
+  @override
+  String get aiDraftSelectedImage => 'Gambar terpilih';
+
+  @override
+  String get aiDraftUpdateRequest => 'Perbarui permintaan';
+
+  @override
+  String get aiDraftUpdateHint =>
+      'Tambahkan detail jika draf masih belum sesuai';
+
+  @override
+  String get aiDraftUpdate => 'Perbarui draf';
+
+  @override
+  String get aiDraftConfirm => 'Konfirmasi';
+
+  @override
+  String get aiDraftPreview => 'Pratinjau draf';
+
+  @override
+  String get aiDraftNoResponseData =>
+      'Tidak ada data respons yang tersedia.';
+
+  @override
+  String get aiDraftNoTextFound =>
+      'Tidak ada teks yang ditemukan pada gambar yang dipilih.';
+
+  @override
+  String get aiDraftUpdateEmpty =>
+      'Tambahkan teks bebas sebelum memperbarui draf.';
+
+  @override
+  String get aiDraftRequestEmpty =>
+      'Masukkan permintaan atau pilih gambar terlebih dahulu.';
+
+  @override
+  String get aiDraftConfirmed => 'Draf berhasil dikonfirmasi';
+
+  @override
+  String get aiDraftFailed =>
+      'Draf tidak dapat diselesaikan. Mulai draf baru dengan instruksi yang lebih jelas.';
+
+  @override
+  String get aiDraftLocked =>
+      'Draf ini tidak dapat diubah lagi. Mulai draf baru untuk melanjutkan.';
+
+  @override
   String get yourApps => 'Aplikasi Anda';
 
   @override

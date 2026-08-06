@@ -61,14 +61,21 @@ class _DraftFeatureState extends State<_DraftFeature> {
   final _feedbackController = TextEditingController();
   final _imagePicker = ImagePicker();
   final _textRecognizer = TextRecognizer();
+  final _uuid = Uuid();
 
   DraftType _selectedType = DraftType.transaction;
   DraftModel? _draft;
   XFile? _selectedImage;
   String _extractedText = '';
-  String _draftId = Uuid().v4();
+  late String _draftId;
   bool _isBusy = false;
   bool _isExtractingText = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _draftId = _uuid.v4();
+  }
 
   @override
   void dispose() {
@@ -84,21 +91,21 @@ class _DraftFeatureState extends State<_DraftFeature> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Create a draft with AI',
+          context.locale.aiDraftTitle,
           style: TextStyles.appMain(fontSize: AppFontSize.large),
         ),
         const SizedBox(height: 8),
         Text(
-          'Describe the account, loan, or transaction you want to create.',
+          context.locale.aiDraftDescription,
           style: TextStyles.appDetail(),
         ),
         const SizedBox(height: 16),
         _buildTypeDropdown(context),
         const SizedBox(height: 12),
         _buildTextField(
-          label: 'Request',
+          label: context.locale.aiDraftRequest,
           controller: _promptController,
-          hintText: 'Type what you want to create',
+          hintText: context.locale.aiDraftRequestHint,
           maxLines: 5,
           enabled: _draft == null,
         ),
@@ -108,7 +115,10 @@ class _DraftFeatureState extends State<_DraftFeature> {
           runSpacing: 8,
           children: [
             AppButton(
-              label: _selectedImage == null ? 'Select image' : 'Change image',
+              label:
+                  _selectedImage == null
+                      ? context.locale.aiDraftSelectImage
+                      : context.locale.aiDraftChangeImage,
               color: AppColor.mainDark,
               textColor: AppColor.white,
               width: 150,
@@ -117,7 +127,10 @@ class _DraftFeatureState extends State<_DraftFeature> {
               onTap: (_) => _pickImage(context),
             ),
             AppButton(
-              label: _draft == null ? 'Generate draft' : 'Start new draft',
+              label:
+                  _draft == null
+                      ? context.locale.aiDraftGenerate
+                      : context.locale.aiDraftStartNew,
               color: AppColor.mainLight,
               textColor: AppColor.white,
               width: 150,
@@ -140,7 +153,7 @@ class _DraftFeatureState extends State<_DraftFeature> {
         if (_extractedText.isNotEmpty) ...[
           const SizedBox(height: 12),
           _buildSection(
-            title: 'Extracted text',
+            title: context.locale.aiDraftExtractedText,
             child: SelectableText(
               _extractedText,
               style: TextStyles.appDetail(),
@@ -151,12 +164,12 @@ class _DraftFeatureState extends State<_DraftFeature> {
           const SizedBox(height: 16),
           _buildDraftPreview(context),
         ],
-        if (_draft?.canRefine == true) ...[
+        if (_draft?.canConfirm == true) ...[
           const SizedBox(height: 16),
           _buildTextField(
-            label: 'Update request',
+            label: context.locale.aiDraftUpdateRequest,
             controller: _feedbackController,
-            hintText: 'Add more details if the draft is not correct yet',
+            hintText: context.locale.aiDraftUpdateHint,
             maxLines: 4,
           ),
           const SizedBox(height: 12),
@@ -165,7 +178,7 @@ class _DraftFeatureState extends State<_DraftFeature> {
             runSpacing: 8,
             children: [
               AppButton(
-                label: 'Update draft',
+                label: context.locale.aiDraftUpdate,
                 color: AppColor.mainDark,
                 textColor: AppColor.white,
                 width: 150,
@@ -173,7 +186,7 @@ class _DraftFeatureState extends State<_DraftFeature> {
                 onTap: (_) => _submitDraft(context, refinement: true),
               ),
               AppButton(
-                label: 'Confirm',
+                label: context.locale.aiDraftConfirm,
                 color: AppColor.green,
                 textColor: AppColor.white,
                 width: 150,
@@ -183,12 +196,12 @@ class _DraftFeatureState extends State<_DraftFeature> {
             ],
           ),
         ],
-        if (_draft != null && _draft!.canRefine == false) ...[
+        if (_draft != null && _draft!.canConfirm == false) ...[
           const SizedBox(height: 12),
           Text(
             _draft!.modelError != null
-                ? 'The draft could not be completed. Start a new draft with clearer instructions.'
-                : 'This draft is no longer editable. Start a new draft to continue.',
+                ? context.locale.aiDraftFailed
+                : context.locale.aiDraftLocked,
             style: TextStyles.appDetail(fontColor: AppColor.red),
           ),
         ],
@@ -204,9 +217,9 @@ class _DraftFeatureState extends State<_DraftFeature> {
     return SizedBox(
       height: 58,
       child: DropdownButtonFormField<DraftType>(
-        initialValue: _selectedType,
+        value: _selectedType,
         style: TextStyles.appDetail(),
-        decoration: _inputDecoration('Draft type'),
+        decoration: _inputDecoration(context.locale.aiDraftType),
         items:
             DraftType.values.map((type) {
               return DropdownMenuItem<DraftType>(
@@ -247,7 +260,7 @@ class _DraftFeatureState extends State<_DraftFeature> {
 
   Widget _buildImagePreview() {
     return _buildSection(
-      title: 'Selected image',
+      title: context.locale.aiDraftSelectedImage,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -274,7 +287,7 @@ class _DraftFeatureState extends State<_DraftFeature> {
     final draft = _draft!;
 
     return _buildSection(
-      title: 'Draft preview',
+      title: context.locale.aiDraftPreview,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -284,7 +297,10 @@ class _DraftFeatureState extends State<_DraftFeature> {
           ),
           const SizedBox(height: 8),
           if (draft.modelResult.isEmpty)
-            Text('No response data available.', style: TextStyles.appDetail()),
+            Text(
+              context.locale.aiDraftNoResponseData,
+              style: TextStyles.appDetail(),
+            ),
           ...draft.modelResult.entries.map(
             (entry) => Padding(
               padding: const EdgeInsets.only(bottom: 8),
@@ -380,7 +396,7 @@ class _DraftFeatureState extends State<_DraftFeature> {
       });
 
       if (_extractedText.isEmpty) {
-        context.infoMessage('No text was found in the selected image.');
+        context.infoMessage(context.locale.aiDraftNoTextFound);
       }
     } catch (e) {
       if (!mounted) {
@@ -408,8 +424,8 @@ class _DraftFeatureState extends State<_DraftFeature> {
     if (message == null) {
       context.errorMessage(
         refinement
-            ? 'Add more free text before updating the draft.'
-            : 'Enter a request or choose an image first.',
+            ? context.locale.aiDraftUpdateEmpty
+            : context.locale.aiDraftRequestEmpty,
       );
       return;
     }
@@ -474,14 +490,14 @@ class _DraftFeatureState extends State<_DraftFeature> {
     context.read<LoanBloc>().add(FetchLoans(userId: context.userId));
     context.read<TransactionBloc>().add(FetchTransactions(userId: context.userId));
     context.read<SummaryBloc>().add(CalculateSummary(userId: context.userId));
-    context.successMessage('Draft confirmed');
+    context.successMessage(context.locale.aiDraftConfirmed);
     context.nextRoute(MoneyScreen.routeName);
   }
 
   void _resetDraft({bool keepInput = false}) {
     setState(() {
       _draft = null;
-      _draftId = Uuid().v4();
+      _draftId = _uuid.v4();
       _feedbackController.clear();
       if (!keepInput) {
         _promptController.clear();
@@ -499,7 +515,7 @@ class _DraftFeatureState extends State<_DraftFeature> {
 
     final parts = <String>[
       _promptController.text.trim(),
-      if (_extractedText.isNotEmpty) 'Extracted text from image:\n$_extractedText',
+      _extractedText.trim(),
     ]..removeWhere((part) => part.isEmpty);
 
     if (parts.isEmpty) {
