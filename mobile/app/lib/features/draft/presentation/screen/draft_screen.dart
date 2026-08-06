@@ -66,7 +66,7 @@ class _DraftFeatureState extends State<_DraftFeature> {
   DraftModel? _draft;
   XFile? _selectedImage;
   String _extractedText = '';
-  String _draftId = const Uuid().v4();
+  String _draftId = Uuid().v4();
   bool _isBusy = false;
   bool _isExtractingText = false;
 
@@ -113,6 +113,7 @@ class _DraftFeatureState extends State<_DraftFeature> {
               textColor: AppColor.white,
               width: 150,
               height: 42,
+              visible: _draft == null,
               onTap: (_) => _pickImage(context),
             ),
             AppButton(
@@ -351,7 +352,7 @@ class _DraftFeatureState extends State<_DraftFeature> {
   );
 
   Future<void> _pickImage(BuildContext context) async {
-    if (_isBusy) {
+    if (_isBusy || _draft != null) {
       return;
     }
 
@@ -399,7 +400,7 @@ class _DraftFeatureState extends State<_DraftFeature> {
     BuildContext context, {
     bool refinement = false,
   }) async {
-    if (_isBusy) {
+    if (_isBusy || _isExtractingText) {
       return;
     }
 
@@ -480,7 +481,7 @@ class _DraftFeatureState extends State<_DraftFeature> {
   void _resetDraft({bool keepInput = false}) {
     setState(() {
       _draft = null;
-      _draftId = const Uuid().v4();
+      _draftId = Uuid().v4();
       _feedbackController.clear();
       if (!keepInput) {
         _promptController.clear();
