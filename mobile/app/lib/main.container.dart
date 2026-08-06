@@ -14,6 +14,7 @@ Future<void> registerIocContainer() async {
   await googleAuthApi.initialize();
   final userApi = UserApi(configurationStore: configurationStore);
   final accountApi = AccountApi(configurationStore: configurationStore);
+  final draftApi = DraftApi(configurationStore: configurationStore);
   final loanApi = LoanApi(configurationStore: configurationStore);
   final transactionApi = TransactionApi(configurationStore: configurationStore);
 
@@ -61,6 +62,7 @@ Future<void> registerIocContainer() async {
       localTransactionService: localTransactionService,
     ),
   );
+  addInstance<DraftUseCase>(DraftUseCase(draftApi: draftApi));
   addInstance<LoanUseCase>(
     LoanUseCase(
       configurationStore: configurationStore,

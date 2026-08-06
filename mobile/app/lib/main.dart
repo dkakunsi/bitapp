@@ -3,6 +3,8 @@ import 'package:bitapp/common/util/container.dart';
 import 'package:bitapp/common/util/database.dart';
 import 'package:bitapp/common/util/logger.dart';
 import 'package:bitapp/features/account/data/account_repository.dart';
+import 'package:bitapp/features/draft/data/draft_api.dart';
+import 'package:bitapp/features/draft/domain/draft_usecase.dart';
 import 'package:bitapp/features/account/domain/account_usecase.dart';
 import 'package:bitapp/features/app/extension/navigation_extension.dart';
 import 'package:bitapp/features/app/presentation/screen/initial_screen.dart';
@@ -36,6 +38,7 @@ import 'package:bitapp/features/transaction/presentation/bloc/transaction_bloc.d
 import 'package:bitapp/features/transaction_analytic/presentation/bloc/transaction_analytics_bloc.dart';
 import 'package:bitapp/features/account/data/account_api.dart';
 import 'package:bitapp/features/loan/data/loan_api.dart';
+import 'package:bitapp/features/draft/presentation/screen/draft_screen.dart';
 import 'package:bitapp/features/transaction/data/transaction_api.dart';
 import 'package:bitapp/features/account/data/account_store.dart';
 import 'package:bitapp/features/loan/data/loan_store.dart';
@@ -202,6 +205,11 @@ class BitApp extends StatelessWidget {
                 ),
           );
         },
+      ),
+      GoRoute(
+        name: DraftScreen.routeName,
+        path: DraftScreen.routeName,
+        builder: (context, state) => const DraftScreen(title: 'AI Draft'),
       ),
       GoRoute(
         name: UserScreen.routeName,

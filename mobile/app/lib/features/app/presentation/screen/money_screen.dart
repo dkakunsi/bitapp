@@ -1,8 +1,10 @@
 import 'package:bitapp/common/presentation/app_style.dart';
+import 'package:bitapp/common/presentation/widget/app_button.dart';
 import 'package:bitapp/common/presentation/widget/app_tab.dart';
 import 'package:bitapp/common/presentation/widget/loading_indicator.dart';
 import 'package:bitapp/features/app/presentation/screen/app_screen.dart';
 import 'package:bitapp/features/authentication/extension/session_extension.dart';
+import 'package:bitapp/features/draft/presentation/screen/draft_screen.dart';
 import 'package:bitapp/l10n/localization_extension.dart';
 import 'package:bitapp/features/account/presentation/bloc/account_bloc.dart';
 import 'package:bitapp/features/loan/presentation/bloc/loan_bloc.dart';
@@ -57,6 +59,20 @@ class MoneyScreenContent extends AppScreenContent {
 
     return Column(
       children: [
+        Align(
+          alignment: Alignment.centerLeft,
+          child: AppButton(
+            label: 'AI Draft',
+            color: AppColor.mainDark,
+            textColor: AppColor.white,
+            width: 150,
+            height: 42,
+            sideIcon: true,
+            icon: const Icon(Icons.auto_awesome, color: AppColor.white),
+            onTap: (context) => context.nextRoute(DraftScreen.routeName),
+          ),
+        ),
+        SizedBox(height: 16),
         MoneySummary(),
         SizedBox(height: 24),
         BlocBuilder<MoneyTabBloc, MoneyTabState>(
