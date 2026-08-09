@@ -11,7 +11,6 @@ import com.auth0.jwk.Jwk;
 import com.auth0.jwk.JwkException;
 import com.auth0.jwk.JwkProvider;
 import com.auth0.jwk.JwkProviderBuilder;
-import com.auth0.jwk.SigningKeyNotFoundException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 
@@ -86,10 +85,6 @@ public class JWKAuthorizer extends JWTAuthorizer {
   }
 
   private Jwk getJwkFromJwkProvider(JwkProvider provider, String keyId) throws JwkException {
-    try {
-      return provider.get(keyId);
-    } catch (SigningKeyNotFoundException ex) {
-      return null;
-    }
+    return provider.get(keyId);
   }
 }
