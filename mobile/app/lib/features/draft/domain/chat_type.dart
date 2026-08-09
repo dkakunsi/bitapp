@@ -1,21 +1,21 @@
-enum DraftType {
+enum ChatType {
   account('ACCOUNT'),
   loan('LOAN'),
   transaction('TRANSACTION');
 
   final String apiValue;
 
-  const DraftType(this.apiValue);
+  const ChatType(this.apiValue);
 
-  static DraftType fromApi(String value) {
+  static ChatType fromApi(String value) {
     switch (value.toUpperCase()) {
       case 'ACCOUNT':
-        return DraftType.account;
+        return ChatType.account;
       case 'LOAN':
-        return DraftType.loan;
+        return ChatType.loan;
       case 'TRANSACTION':
       default:
-        return DraftType.transaction;
+        return ChatType.transaction;
     }
   }
 }

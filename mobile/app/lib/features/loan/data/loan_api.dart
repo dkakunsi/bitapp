@@ -5,7 +5,7 @@ class LoanApi extends AppApi<LoanModel> {
   LoanApi({required super.configurationStore});
 
   @override
-  String get dataName => 'loan';
+  String get dataName => 'loans';
 
   @override
   List<LoanModel> fromList(String data) {

@@ -469,16 +469,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aiDraftNoResponseData => 'No response data available.';
 
   @override
-  String get aiDraftNoTextFound =>
-      'No text was found in the selected image.';
+  String get aiDraftNoTextFound => 'No text was found in the selected image.';
 
   @override
   String get aiDraftUpdateEmpty =>
       'Add more free text before updating the draft.';
 
   @override
-  String get aiDraftRequestEmpty =>
-      'Enter a request or choose an image first.';
+  String get aiDraftRequestEmpty => 'Enter a request or choose an image first.';
 
   @override
   String get aiDraftConfirmed => 'Draft confirmed';

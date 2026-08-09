@@ -6,11 +6,13 @@ import 'package:bitapp/common/presentation/widget/app_button.dart';
 import 'package:bitapp/common/presentation/widget/container.dart';
 import 'package:bitapp/common/util/container.dart';
 import 'package:bitapp/features/account/presentation/bloc/account_bloc.dart';
+import 'package:bitapp/features/app/extension/language_extension.dart';
 import 'package:bitapp/features/app/extension/navigation_extension.dart';
 import 'package:bitapp/features/app/presentation/screen/app_screen.dart';
 import 'package:bitapp/features/app/presentation/screen/money_screen.dart';
-import 'package:bitapp/features/draft/data/draft_model.dart';
-import 'package:bitapp/features/draft/domain/draft_type.dart';
+import 'package:bitapp/features/draft/domain/chat.dart';
+import 'package:bitapp/features/draft/domain/chat_type.dart';
+import 'package:bitapp/features/draft/domain/draft.dart';
 import 'package:bitapp/features/draft/domain/draft_usecase.dart';
 import 'package:bitapp/features/authentication/extension/session_extension.dart';
 import 'package:bitapp/features/loan/presentation/bloc/loan_bloc.dart';
@@ -63,8 +65,8 @@ class _DraftFeatureState extends State<_DraftFeature> {
   final _textRecognizer = TextRecognizer();
   final _uuid = Uuid();
 
-  DraftType _selectedType = DraftType.transaction;
-  DraftModel? _draft;
+  ChatType _selectedType = ChatType.transaction;
+  Draft? _draft;
   XFile? _selectedImage;
   String _extractedText = '';
   late String _draftId;
@@ -216,13 +218,13 @@ class _DraftFeatureState extends State<_DraftFeature> {
   Widget _buildTypeDropdown(BuildContext context) {
     return SizedBox(
       height: 58,
-      child: DropdownButtonFormField<DraftType>(
+      child: DropdownButtonFormField<ChatType>(
         value: _selectedType,
         style: TextStyles.appDetail(),
         decoration: _inputDecoration(context.locale.aiDraftType),
         items:
-            DraftType.values.map((type) {
-              return DropdownMenuItem<DraftType>(
+            ChatType.values.map((type) {
+              return DropdownMenuItem<ChatType>(
                 value: type,
                 child: Text(_typeLabel(context, type)),
               );
@@ -296,12 +298,12 @@ class _DraftFeatureState extends State<_DraftFeature> {
             style: TextStyles.appDetail(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
-          if (draft.modelResult.isEmpty)
+          if (draft.modelResult?.isEmpty ?? true)
             Text(
               context.locale.aiDraftNoResponseData,
               style: TextStyles.appDetail(),
             ),
-          ...draft.modelResult.entries.map(
+          ...?draft.modelResult?.entries.map(
             (entry) => Padding(
               padding: const EdgeInsets.only(bottom: 8),
               child: Column(
@@ -434,12 +436,13 @@ class _DraftFeatureState extends State<_DraftFeature> {
       _isBusy = true;
     });
 
-    final result = await _draftUseCase.createDraft(
+    final chat = Chat(
       type: _selectedType,
       draftId: _draft?.id ?? _draftId,
       message: message,
-      language: context.language.name,
+      language: context.language.name
     );
+    final result = await _draftUseCase.createDraft(chat);
 
     if (!mounted) {
       return;
@@ -525,13 +528,13 @@ class _DraftFeatureState extends State<_DraftFeature> {
     return parts.join('\n\n');
   }
 
-  String _typeLabel(BuildContext context, DraftType type) {
+  String _typeLabel(BuildContext context, ChatType type) {
     switch (type) {
-      case DraftType.account:
+      case ChatType.account:
         return context.locale.account;
-      case DraftType.loan:
+      case ChatType.loan:
         return context.locale.loan;
-      case DraftType.transaction:
+      case ChatType.transaction:
         return context.locale.transaction;
     }
   }

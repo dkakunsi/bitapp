@@ -1,38 +1,27 @@
 import 'dart:convert';
 
-import 'package:bitapp/features/draft/domain/draft_type.dart';
+import 'package:bitapp/features/draft/domain/chat_type.dart';
+import 'package:bitapp/features/draft/domain/draft.dart';
 
-class DraftModel {
-  final String id;
-  final DraftType type;
-  final String? modelError;
-  final Map<String, dynamic> modelResult;
-  final bool success;
-  final bool confirmed;
-
+class DraftModel extends Draft {
   DraftModel({
-    required this.id,
-    required this.type,
-    required this.modelResult,
-    required this.success,
-    required this.confirmed,
-    this.modelError,
+    required super.id,
+    required super.type,
+    super.modelError,
+    super.modelResult,
+    required super.success,
+    required super.confirmed,
   });
 
-  bool get canConfirm => success && !confirmed;
-
-  String get prettyResult =>
-      const JsonEncoder.withIndent('  ').convert(modelResult);
-
-  static DraftModel fromResponsePayload(String response) {
+  factory DraftModel.fromResponsePayload(String response) {
     final data = jsonDecode(response);
-    return from(Map<String, dynamic>.from(data));
+    return DraftModel.from(Map<String, dynamic>.from(data));
   }
 
-  static DraftModel from(Map<String, dynamic> data) {
+  factory DraftModel.from(Map<String, dynamic> data) {
     return DraftModel(
       id: _readId(data['id']),
-      type: DraftType.fromApi(data['type']?.toString() ?? ''),
+      type: ChatType.fromApi(data['type']?.toString() ?? ''),
       modelError: _readNullableString(data['modelError']),
       modelResult: _readMap(data['modelResult']),
       success: data['success'] == true,

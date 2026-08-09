@@ -477,8 +477,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get aiDraftPreview => 'Pratinjau draf';
 
   @override
-  String get aiDraftNoResponseData =>
-      'Tidak ada data respons yang tersedia.';
+  String get aiDraftNoResponseData => 'Tidak ada data respons yang tersedia.';
 
   @override
   String get aiDraftNoTextFound =>

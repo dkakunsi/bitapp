@@ -42,7 +42,7 @@ class WebWriter implements LogWriter {
         timestamp: record.time,
         loggerName: record.loggerName,
       );
-      await logApi.add(log);
+      await logApi.log(log);
     } catch (e) {
       print('Error writing log to web API: $e');
     }

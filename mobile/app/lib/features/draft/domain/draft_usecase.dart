@@ -1,7 +1,7 @@
 import 'package:bitapp/common/util/processing_result.dart';
 import 'package:bitapp/features/draft/data/draft_api.dart';
-import 'package:bitapp/features/draft/data/draft_model.dart';
-import 'package:bitapp/features/draft/domain/draft_type.dart';
+import 'package:bitapp/features/draft/domain/chat.dart';
+import 'package:bitapp/features/draft/domain/draft.dart';
 import 'package:logging/logging.dart';
 
 class DraftUseCase {
@@ -14,19 +14,9 @@ class DraftUseCase {
     return error is Exception ? error : Exception(error.toString());
   }
 
-  Future<ProcessingResult<DraftModel>> createDraft({
-    required DraftType type,
-    required String draftId,
-    required String message,
-    required String language,
-  }) async {
+  Future<ProcessingResult<Draft>> createDraft(Chat chat) async {
     try {
-      final draft = await _draftApi.createDraft(
-        type: type,
-        draftId: draftId,
-        message: message,
-        language: language,
-      );
+      final draft = await _draftApi.createDraft(chat);
       return ProcessingResult(data: draft);
     } catch (e, stackTrace) {
       _logger.warning('Error creating draft', e, stackTrace);

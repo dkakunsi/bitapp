@@ -1,41 +1,23 @@
-import 'dart:convert';
-
-import 'package:bitapp/common/data/app_api.dart';
+import 'package:bitapp/common/data/api.dart';
 import 'package:bitapp/features/draft/data/draft_model.dart';
-import 'package:bitapp/features/draft/domain/draft_type.dart';
+import 'package:bitapp/features/draft/domain/chat.dart';
 import 'package:http/http.dart' as http;
 
-class DraftApi extends AppApi<DraftModel> {
+class DraftApi extends Api {
   DraftApi({required super.configurationStore});
 
   @override
-  String get dataName => 'chat';
+  String get endpoint => 'v1/chats';
 
-  @override
-  List<DraftModel> fromList(String data) => [];
-
-  @override
-  DraftModel from(String data) => DraftModel.fromResponsePayload(data);
-
-  Future<DraftModel> createDraft({
-    required DraftType type,
-    required String draftId,
-    required String message,
-    required String language,
-  }) async {
+  Future<DraftModel> createDraft(Chat chat) async {
     final response = await http.post(
-      Uri.parse(await endpoint),
+      Uri.parse(await url),
       headers: await buildRequestHeaders(),
-      body: jsonEncode({
-        'type': type.apiValue,
-        'draftId': draftId,
-        'message': message,
-        'language': language,
-      }),
+      body: chat.toRequestJson(),
     );
 
     if (response.statusCode == 200) {
-      return from(response.body);
+      return DraftModel.fromResponsePayload(response.body);
     }
 
     throw Exception(
@@ -47,7 +29,7 @@ class DraftApi extends AppApi<DraftModel> {
 
   Future<void> confirmDraft(String draftId) async {
     final response = await http.post(
-      Uri.parse('${await endpoint}/$draftId/confirm'),
+      Uri.parse('${await url}/$draftId/confirm'),
       headers: await buildRequestHeaders(),
     );
 

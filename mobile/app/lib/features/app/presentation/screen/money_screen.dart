@@ -2,6 +2,7 @@ import 'package:bitapp/common/presentation/app_style.dart';
 import 'package:bitapp/common/presentation/widget/app_button.dart';
 import 'package:bitapp/common/presentation/widget/app_tab.dart';
 import 'package:bitapp/common/presentation/widget/loading_indicator.dart';
+import 'package:bitapp/features/app/extension/navigation_extension.dart';
 import 'package:bitapp/features/app/presentation/screen/app_screen.dart';
 import 'package:bitapp/features/authentication/extension/session_extension.dart';
 import 'package:bitapp/features/draft/presentation/screen/draft_screen.dart';
