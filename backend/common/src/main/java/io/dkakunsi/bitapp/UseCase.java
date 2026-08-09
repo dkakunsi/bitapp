@@ -4,7 +4,6 @@ import java.util.NoSuchElementException;
 
 import io.dkakunsi.bitapp.Logger.SystemLogger;
 
-
 public interface UseCase<IN, OUT> {
 
   Logger LOGGER = SystemLogger.getLogger(UseCase.class);
@@ -19,7 +18,7 @@ public interface UseCase<IN, OUT> {
       LOGGER.info("Request failed with message: {}", e.getMessage());
       return Result.badRequest(e.getMessage());
     } catch (Exception e) {
-      LOGGER.error("Request failed with message: {}", e.getMessage());
+      LOGGER.error("Request failed with message: {}", e, e.getMessage());
       return Result.failure(e);
     }
   }
