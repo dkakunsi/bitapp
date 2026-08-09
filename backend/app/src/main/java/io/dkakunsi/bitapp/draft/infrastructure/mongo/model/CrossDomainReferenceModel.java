@@ -1,5 +1,6 @@
 package io.dkakunsi.bitapp.draft.infrastructure.mongo.model;
 
+import dev.morphia.annotations.Entity;
 import io.dkakunsi.bitapp.CrossDomainReference;
 import io.dkakunsi.bitapp.draft.application.port.AccountPort.ChatAccount;
 import io.dkakunsi.bitapp.draft.application.port.LoanPort.ChatLoan;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity(useDiscriminator = true)
 public abstract class CrossDomainReferenceModel {
 
   private String id;
