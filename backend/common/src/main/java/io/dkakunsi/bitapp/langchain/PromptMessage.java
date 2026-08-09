@@ -7,7 +7,7 @@ import io.dkakunsi.bitapp.CrossDomainReference;
 public abstract class PromptMessage<T> {
 
   protected static final String RESULT_PROMPT = """
-      Your reply should be a valid JSON object in this format:
+      Your reply should be a valid JSON object without any additional text, in this format:
       {
         "data": json,
         "error": string // when data cannot be generated
