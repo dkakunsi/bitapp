@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.Context;
 import io.dkakunsi.bitapp.Id;
+import io.dkakunsi.bitapp.Result;
 import io.dkakunsi.bitapp.Result.ErrorCode;
 import io.dkakunsi.bitapp.user.domain.entity.User;
 import io.dkakunsi.bitapp.user.domain.entity.User.Language;
@@ -97,7 +98,7 @@ public final class GetUserTest {
     assertTrue(result.isFailed());
     assertTrue(result.errorCode().isPresent());
     assertEquals(ErrorCode.INTERNAL_ERROR, result.errorCode().get());
-    assertEquals("Database error", result.errorMessage().get());
+    assertEquals(Result.DEFAULT_ERROR_MESSAGE, result.errorMessage().get());
 
     verify(userRepository).findByEmail(email);
   }

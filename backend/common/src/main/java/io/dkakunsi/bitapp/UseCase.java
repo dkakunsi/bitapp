@@ -19,7 +19,7 @@ public interface UseCase<IN, OUT> {
       return Result.badRequest(e.getMessage());
     } catch (Exception e) {
       LOGGER.error("Request failed with message: {}", e, e.getMessage());
-      return Result.internalError("Something went wrong");
+      return Result.internalError(Result.DEFAULT_ERROR_MESSAGE);
     }
   }
 

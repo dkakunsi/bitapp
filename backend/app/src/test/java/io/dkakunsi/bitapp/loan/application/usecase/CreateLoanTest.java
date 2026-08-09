@@ -324,7 +324,7 @@ public final class CreateLoanTest {
     assertFalse(result.isSuccess());
     assertTrue(result.errorCode().isPresent());
     assertEquals(ErrorCode.INTERNAL_ERROR, result.errorCode().get());
-    assertEquals("Database error", result.errorMessage().get());
+    assertEquals(Result.DEFAULT_ERROR_MESSAGE, result.errorMessage().get());
   }
 
   @Test

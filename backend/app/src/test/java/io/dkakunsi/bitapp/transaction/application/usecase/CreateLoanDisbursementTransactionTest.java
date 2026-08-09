@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.Context;
 import io.dkakunsi.bitapp.Id;
+import io.dkakunsi.bitapp.Result;
 import io.dkakunsi.bitapp.Result.ErrorCode;
 import io.dkakunsi.bitapp.Session.SessionManager;
 import io.dkakunsi.bitapp.loan.domain.entity.Loan;
@@ -178,7 +179,7 @@ public class CreateLoanDisbursementTransactionTest {
     assertFalse(result.isSuccess());
     assertTrue(result.errorCode().isPresent());
     assertEquals(ErrorCode.INTERNAL_ERROR, result.errorCode().get());
-    assertEquals("Database error", result.errorMessage().get());
+    assertEquals(Result.DEFAULT_ERROR_MESSAGE, result.errorMessage().get());
   }
 
   private Loan createLoan(String id, Loan.Type type, BigDecimal amount) {

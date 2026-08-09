@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.Context;
 import io.dkakunsi.bitapp.Id;
+import io.dkakunsi.bitapp.Result;
 import io.dkakunsi.bitapp.Result.ErrorCode;
 import io.dkakunsi.bitapp.transaction.domain.entity.Transaction;
 import io.dkakunsi.bitapp.transaction.domain.repository.TransactionRepository;
@@ -282,7 +283,7 @@ public final class GetTransactionTest {
     assertFalse(result.isSuccess());
     assertTrue(result.errorCode().isPresent());
     assertEquals(ErrorCode.INTERNAL_ERROR, result.errorCode().get());
-    assertEquals("Database error", result.errorMessage().get());
+    assertEquals(Result.DEFAULT_ERROR_MESSAGE, result.errorMessage().get());
     verify(transactionRepository).findById(transactionIdObj);
   }
 }

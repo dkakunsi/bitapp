@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 
 import io.dkakunsi.bitapp.Context;
 import io.dkakunsi.bitapp.Id;
+import io.dkakunsi.bitapp.Result;
 import io.dkakunsi.bitapp.Result.ErrorCode;
 import io.dkakunsi.bitapp.account.application.dto.UpdateAccountInput;
 import io.dkakunsi.bitapp.account.domain.entity.Account;
@@ -260,7 +261,7 @@ public final class UpdateAccountTest {
     assertFalse(result.isSuccess());
     assertTrue(result.errorCode().isPresent());
     assertEquals(ErrorCode.INTERNAL_ERROR, result.errorCode().get());
-    assertEquals("Database error", result.errorMessage().get());
+    assertEquals(Result.DEFAULT_ERROR_MESSAGE, result.errorMessage().get());
   }
 
   @Test
