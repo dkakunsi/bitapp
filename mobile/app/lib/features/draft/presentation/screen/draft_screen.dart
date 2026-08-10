@@ -219,7 +219,7 @@ class _DraftFeatureState extends State<_DraftFeature> {
     return SizedBox(
       height: 58,
       child: DropdownButtonFormField<ChatType>(
-        value: _selectedType,
+        initialValue: _selectedType,
         style: TextStyles.appDetail(),
         decoration: _inputDecoration(context.locale.aiDraftType),
         items:
