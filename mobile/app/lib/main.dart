@@ -31,6 +31,7 @@ import 'package:bitapp/firebase_options.dart';
 import 'package:bitapp/l10n/app_localizations.dart';
 import 'package:bitapp/l10n/localization_extension.dart';
 import 'package:bitapp/features/account/presentation/bloc/account_bloc.dart';
+import 'package:bitapp/features/draft/presentation/bloc/draft_bloc.dart';
 import 'package:bitapp/features/loan/presentation/bloc/loan_bloc.dart';
 import 'package:bitapp/features/app/presentation/bloc/money_tab_bloc.dart';
 import 'package:bitapp/features/summary/presentation/bloc/summary_bloc.dart';
@@ -142,6 +143,9 @@ class BitApp extends StatelessWidget {
           create: (context) => SummaryBloc(getInstance<SummaryUseCase>()),
         ),
         BlocProvider(create: (context) => MoneyTabBloc()),
+        BlocProvider(
+          create: (context) => DraftBloc(getInstance<DraftUseCase>()),
+        ),
         BlocProvider(
           create:
               (context) => TransactionAnalyticsBloc(

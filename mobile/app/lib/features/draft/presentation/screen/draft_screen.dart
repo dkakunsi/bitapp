@@ -1,19 +1,16 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:bitapp/common/presentation/app_style.dart';
 import 'package:bitapp/common/presentation/widget/app_button.dart';
 import 'package:bitapp/common/presentation/widget/container.dart';
-import 'package:bitapp/common/util/container.dart';
 import 'package:bitapp/features/account/presentation/bloc/account_bloc.dart';
 import 'package:bitapp/features/app/extension/language_extension.dart';
 import 'package:bitapp/features/app/extension/navigation_extension.dart';
 import 'package:bitapp/features/app/presentation/screen/app_screen.dart';
 import 'package:bitapp/features/app/presentation/screen/money_screen.dart';
-import 'package:bitapp/features/draft/domain/chat.dart';
+import 'package:bitapp/features/draft/presentation/bloc/draft_bloc.dart';
 import 'package:bitapp/features/draft/domain/chat_type.dart';
 import 'package:bitapp/features/draft/domain/draft.dart';
-import 'package:bitapp/features/draft/domain/draft_usecase.dart';
 import 'package:bitapp/features/authentication/extension/session_extension.dart';
 import 'package:bitapp/features/loan/presentation/bloc/loan_bloc.dart';
 import 'package:bitapp/features/summary/presentation/bloc/summary_bloc.dart';
@@ -23,14 +20,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart' as path;
 import 'package:uuid/uuid.dart';
 
 class DraftScreen extends AppScreen {
   static const String routeName = '/draft';
+
   final String title;
 
-  const DraftScreen({super.key, required this.title});
+  const DraftScreen({super.key, super.listener, required this.title});
 
   @override
   String get moduleName => title;
@@ -39,36 +36,81 @@ class DraftScreen extends AppScreen {
   String get backRouteName => MoneyScreen.routeName;
 
   @override
-  AppScreenContent buildContent(BuildContext context) =>
-      const DraftScreenContent();
+  AppScreenContent buildContent(BuildContext context) => DraftScreenContent();
 }
 
 class DraftScreenContent extends AppScreenContent {
-  const DraftScreenContent({super.key});
+  final _DraftComposerController _composerController = _DraftComposerController();
+
+  DraftScreenContent({super.key});
 
   @override
-  Widget build(BuildContext context) => const _DraftFeature();
+  Widget build(BuildContext context) =>
+      _DraftFeature(composerController: _composerController);
+
+  @override
+  Widget? buildNavigationBar(BuildContext context) {
+    return _DraftComposer(composerController: _composerController);
+  }
 }
 
 class _DraftFeature extends StatefulWidget {
-  const _DraftFeature();
+  final _DraftComposerController composerController;
+
+  const _DraftFeature({required this.composerController});
 
   @override
   State<_DraftFeature> createState() => _DraftFeatureState();
 }
 
+enum _ChatRole { user, system }
+
+class _ChatMessage {
+  final _ChatRole role;
+  final String text;
+
+  const _ChatMessage({required this.role, required this.text});
+}
+
+class _DraftComposerController extends ChangeNotifier {
+  final TextEditingController promptController = TextEditingController();
+
+  bool isBusy = false;
+  bool isExtractingText = false;
+  bool canConfirm = false;
+  bool hasDraft = false;
+
+  VoidCallback? onSend;
+  VoidCallback? onPickImage;
+
+  void update({
+    required bool busy,
+    required bool extractingText,
+    required bool confirmable,
+    required bool draft,
+  }) {
+    isBusy = busy;
+    isExtractingText = extractingText;
+    canConfirm = confirmable;
+    hasDraft = draft;
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    promptController.dispose();
+    super.dispose();
+  }
+}
+
 class _DraftFeatureState extends State<_DraftFeature> {
-  final _draftUseCase = getInstance<DraftUseCase>();
-  final _promptController = TextEditingController();
-  final _feedbackController = TextEditingController();
   final _imagePicker = ImagePicker();
   final _textRecognizer = TextRecognizer();
   final _uuid = Uuid();
 
   ChatType _selectedType = ChatType.transaction;
   Draft? _draft;
-  XFile? _selectedImage;
-  String _extractedText = '';
+  final List<_ChatMessage> _messages = [];
   late String _draftId;
   bool _isBusy = false;
   bool _isExtractingText = false;
@@ -77,142 +119,152 @@ class _DraftFeatureState extends State<_DraftFeature> {
   void initState() {
     super.initState();
     _draftId = _uuid.v4();
+    widget.composerController.onSend = _onComposerSend;
+    widget.composerController.onPickImage = _onComposerPickImage;
+    _syncComposerController();
   }
 
   @override
   void dispose() {
-    _promptController.dispose();
-    _feedbackController.dispose();
+    widget.composerController.onSend = null;
+    widget.composerController.onPickImage = null;
     _textRecognizer.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          context.locale.aiDraftTitle,
-          style: TextStyles.appMain(fontSize: AppFontSize.large),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          context.locale.aiDraftDescription,
-          style: TextStyles.appDetail(),
-        ),
-        const SizedBox(height: 16),
-        _buildTypeDropdown(context),
-        const SizedBox(height: 12),
-        _buildTextField(
-          label: context.locale.aiDraftRequest,
-          controller: _promptController,
-          hintText: context.locale.aiDraftRequestHint,
-          maxLines: 5,
-          enabled: _draft == null,
-        ),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
+    return BlocConsumer<DraftBloc, DraftState>(
+      listener: _onDraftStateChanged,
+      builder: (context, state) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AppButton(
-              label:
-                  _selectedImage == null
-                      ? context.locale.aiDraftSelectImage
-                      : context.locale.aiDraftChangeImage,
-              color: AppColor.mainDark,
-              textColor: AppColor.white,
-              width: 150,
-              height: 42,
-              visible: _draft == null,
-              onTap: (_) => _pickImage(context),
+            Text(
+              context.locale.aiDraftTitle,
+              style: TextStyles.appMain(fontSize: AppFontSize.large),
             ),
-            AppButton(
-              label:
-                  _draft == null
-                      ? context.locale.aiDraftGenerate
-                      : context.locale.aiDraftStartNew,
-              color: AppColor.mainLight,
-              textColor: AppColor.white,
-              width: 150,
-              height: 42,
-              onTap:
-                  (_) => _draft == null
-                      ? _submitDraft(context)
-                      : _resetDraft(keepInput: true),
-            ),
-          ],
-        ),
-        if (_selectedImage != null) ...[
-          const SizedBox(height: 12),
-          _buildImagePreview(),
-        ],
-        if (_isExtractingText) ...[
-          const SizedBox(height: 12),
-          const Center(child: CircularProgressIndicator()),
-        ],
-        if (_extractedText.isNotEmpty) ...[
-          const SizedBox(height: 12),
-          _buildSection(
-            title: context.locale.aiDraftExtractedText,
-            child: SelectableText(
-              _extractedText,
+            const SizedBox(height: 8),
+            Text(
+              context.locale.aiDraftDescription,
               style: TextStyles.appDetail(),
             ),
-          ),
-        ],
-        if (_draft != null) ...[
-          const SizedBox(height: 16),
-          _buildDraftPreview(context),
-        ],
-        if (_draft?.canConfirm == true) ...[
-          const SizedBox(height: 16),
-          _buildTextField(
-            label: context.locale.aiDraftUpdateRequest,
-            controller: _feedbackController,
-            hintText: context.locale.aiDraftUpdateHint,
-            maxLines: 4,
-          ),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              AppButton(
-                label: context.locale.aiDraftUpdate,
-                color: AppColor.mainDark,
-                textColor: AppColor.white,
-                width: 150,
-                height: 42,
-                onTap: (_) => _submitDraft(context, refinement: true),
-              ),
-              AppButton(
-                label: context.locale.aiDraftConfirm,
-                color: AppColor.green,
-                textColor: AppColor.white,
-                width: 150,
-                height: 42,
-                onTap: (_) => _confirmDraft(context),
+            const SizedBox(height: 16),
+            _buildTypeDropdown(context),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                AppButton(
+                  label:
+                      _draft == null
+                          ? context.locale.aiDraftStartNew
+                          : context.locale.aiDraftStartNew,
+                  color: AppColor.mainLight,
+                  textColor: AppColor.white,
+                  width: 150,
+                  height: 42,
+                  onTap: (_) => _resetDraft(),
+                ),
+                AppButton(
+                  label: context.locale.aiDraftConfirm,
+                  color: AppColor.green,
+                  textColor: AppColor.white,
+                  width: 150,
+                  height: 42,
+                  visible: _draft?.canConfirm == true,
+                  onTap: (_) => _confirmDraft(context),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            ..._buildMessages(context),
+            if (_isExtractingText) ...[
+              const SizedBox(height: 12),
+              const Center(child: CircularProgressIndicator()),
+            ],
+            if (_draft != null && _draft!.canConfirm == false) ...[
+              const SizedBox(height: 12),
+              Text(
+                _draft!.modelError != null
+                    ? context.locale.aiDraftFailed
+                    : context.locale.aiDraftLocked,
+                style: TextStyles.appDetail(fontColor: AppColor.red),
               ),
             ],
-          ),
-        ],
-        if (_draft != null && _draft!.canConfirm == false) ...[
-          const SizedBox(height: 12),
-          Text(
-            _draft!.modelError != null
-                ? context.locale.aiDraftFailed
-                : context.locale.aiDraftLocked,
-            style: TextStyles.appDetail(fontColor: AppColor.red),
-          ),
-        ],
-        if (_isBusy) ...[
-          const SizedBox(height: 16),
-          const Center(child: CircularProgressIndicator()),
-        ],
-      ],
+            if (_isBusy) ...[
+              const SizedBox(height: 16),
+              const Center(child: CircularProgressIndicator()),
+            ],
+            const SizedBox(height: 80),
+          ],
+        );
+      },
     );
+  }
+
+  void _syncComposerController() {
+    widget.composerController.update(
+      busy: _isBusy,
+      extractingText: _isExtractingText,
+      confirmable: _draft?.canConfirm == true,
+      draft: _draft != null,
+    );
+  }
+
+  void _onComposerSend() {
+    _submitDraft(context, refinement: _draft?.canConfirm == true);
+  }
+
+  void _onComposerPickImage() {
+    _pickImage(context);
+  }
+
+  void _onDraftStateChanged(BuildContext context, DraftState state) {
+    if (state is DraftProcessing) {
+      setState(() {
+        _isBusy = true;
+      });
+      _syncComposerController();
+      return;
+    }
+
+    if (state is DraftFailed) {
+      setState(() {
+        _isBusy = false;
+      });
+      _syncComposerController();
+      context.errorMessage(_errorMessage(state.exception));
+      return;
+    }
+
+    if (state is DraftCreated) {
+      setState(() {
+        _isBusy = false;
+        _draft = state.draft;
+        _draftId = state.draft.id;
+        _selectedType = state.draft.type;
+        _messages.add(_ChatMessage(role: _ChatRole.system, text: _draftToText(state.draft, context)));
+      });
+      _syncComposerController();
+      return;
+    }
+
+    if (state is DraftConfirmed) {
+      setState(() {
+        _isBusy = false;
+      });
+      _syncComposerController();
+      context.read<AccountBloc>().add(FetchAccounts(user: context.user!));
+      context.read<LoanBloc>().add(FetchLoans(userId: context.userId));
+      context.read<TransactionBloc>().add(
+        FetchTransactions(userId: context.userId),
+      );
+      context.read<SummaryBloc>().add(CalculateSummary(userId: context.userId));
+      context.successMessage(context.locale.aiDraftConfirmed);
+      context.nextRoute(MoneyScreen.routeName);
+    }
   }
 
   Widget _buildTypeDropdown(BuildContext context) {
@@ -244,111 +296,56 @@ class _DraftFeatureState extends State<_DraftFeature> {
     );
   }
 
-  Widget _buildTextField({
-    required String label,
-    required TextEditingController controller,
-    required String hintText,
-    int maxLines = 1,
-    bool enabled = true,
-  }) {
-    return TextField(
-      controller: controller,
-      enabled: enabled && !_isBusy,
-      maxLines: maxLines,
-      style: TextStyles.appDetail(),
-      decoration: _inputDecoration(label).copyWith(hintText: hintText),
-    );
-  }
-
-  Widget _buildImagePreview() {
-    return _buildSection(
-      title: context.locale.aiDraftSelectedImage,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            path.basename(_selectedImage!.path),
-            style: TextStyles.appDetail(fontWeight: FontWeight.bold),
+  List<Widget> _buildMessages(BuildContext context) {
+    if (_messages.isEmpty) {
+      return [
+        BoxContainer(
+          width: double.infinity,
+          child: Text(
+            context.locale.aiDraftRequestHint,
+            style: TextStyles.appDetail(fontColor: AppColor.disabledDark),
           ),
-          const SizedBox(height: 8),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Image.file(
-              File(_selectedImage!.path),
-              height: 180,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+      ];
+    }
 
-  Widget _buildDraftPreview(BuildContext context) {
-    final draft = _draft!;
-
-    return _buildSection(
-      title: context.locale.aiDraftPreview,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            _typeLabel(context, draft.type),
-            style: TextStyles.appDetail(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          if (draft.modelResult?.isEmpty ?? true)
-            Text(
-              context.locale.aiDraftNoResponseData,
-              style: TextStyles.appDetail(),
-            ),
-          ...?draft.modelResult?.entries.map(
-            (entry) => Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _formatKey(entry.key),
-                    style: TextStyles.appDetail(fontWeight: FontWeight.bold),
+    return _messages
+        .map(
+          (message) => Align(
+            alignment:
+                message.role == _ChatRole.user
+                    ? Alignment.centerRight
+                    : Alignment.centerLeft,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 320),
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                decoration: BoxDecoration(
+                  color:
+                      message.role == _ChatRole.user
+                          ? AppColor.mainDark
+                          : AppColor.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border:
+                      message.role == _ChatRole.user
+                          ? null
+                          : Border.all(color: AppColor.mainDark, width: 1),
+                ),
+                child: SelectableText(
+                  message.text,
+                  style: TextStyles.appDetail(
+                    fontColor:
+                        message.role == _ChatRole.user
+                            ? AppColor.white
+                            : AppColor.mainDark,
                   ),
-                  const SizedBox(height: 2),
-                  SelectableText(
-                    _formatValue(entry.value),
-                    style: TextStyles.appDetail(),
-                  ),
-                ],
+                ),
               ),
             ),
           ),
-          if (draft.modelError != null) ...[
-            const SizedBox(height: 8),
-            Text(
-              draft.modelError!,
-              style: TextStyles.appDetail(fontColor: AppColor.red),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSection({required String title, required Widget child}) {
-    return BoxContainer(
-      width: double.infinity,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyles.appDetail(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          child,
-        ],
-      ),
-    );
+        )
+        .toList();
   }
 
   InputDecoration _inputDecoration(String label) {
@@ -380,10 +377,9 @@ class _DraftFeatureState extends State<_DraftFeature> {
     }
 
     setState(() {
-      _selectedImage = image;
-      _extractedText = '';
       _isExtractingText = true;
     });
+    _syncComposerController();
 
     try {
       final recognizedText = await _textRecognizer.processImage(
@@ -394,10 +390,25 @@ class _DraftFeatureState extends State<_DraftFeature> {
       }
 
       setState(() {
-        _extractedText = recognizedText.text.trim();
+        final extractedText = recognizedText.text.trim();
+        if (extractedText.isNotEmpty) {
+          final currentText =
+              widget.composerController.promptController.text.trim();
+          widget.composerController.promptController.text =
+              currentText.isEmpty
+                  ? extractedText
+                  : '$currentText\n\n$extractedText';
+          widget.composerController.promptController.selection =
+              TextSelection.fromPosition(
+                TextPosition(
+                  offset:
+                      widget.composerController.promptController.text.length,
+                ),
+              );
+        }
       });
 
-      if (_extractedText.isEmpty) {
+      if (recognizedText.text.trim().isEmpty) {
         context.infoMessage(context.locale.aiDraftNoTextFound);
       }
     } catch (e) {
@@ -410,6 +421,7 @@ class _DraftFeatureState extends State<_DraftFeature> {
         setState(() {
           _isExtractingText = false;
         });
+        _syncComposerController();
       }
     }
   }
@@ -434,34 +446,20 @@ class _DraftFeatureState extends State<_DraftFeature> {
 
     setState(() {
       _isBusy = true;
+      _messages.add(_ChatMessage(role: _ChatRole.user, text: message));
     });
+    _syncComposerController();
 
-    final chat = Chat(
-      type: _selectedType,
-      draftId: _draft?.id ?? _draftId,
-      message: message,
-      language: context.language.name
+    context.read<DraftBloc>().add(
+      CreateDraft(
+        draftId: _draft?.id ?? _draftId,
+        type: _selectedType,
+        message: message,
+        language: context.language.name,
+      ),
     );
-    final result = await _draftUseCase.createDraft(chat);
 
-    if (!mounted) {
-      return;
-    }
-
-    setState(() {
-      _isBusy = false;
-    });
-
-    if (result.isFailure) {
-      context.errorMessage(_errorMessage(result.exception));
-      return;
-    }
-
-    setState(() {
-      _draft = result.data;
-      _draftId = result.data.id;
-      _feedbackController.clear();
-    });
+    widget.composerController.promptController.clear();
   }
 
   Future<void> _confirmDraft(BuildContext context) async {
@@ -473,59 +471,26 @@ class _DraftFeatureState extends State<_DraftFeature> {
     setState(() {
       _isBusy = true;
     });
+    _syncComposerController();
 
-    final result = await _draftUseCase.confirmDraft(draft.id);
-
-    if (!mounted) {
-      return;
-    }
-
-    setState(() {
-      _isBusy = false;
-    });
-
-    if (result.isFailure) {
-      context.errorMessage(_errorMessage(result.exception));
-      return;
-    }
-
-    context.read<AccountBloc>().add(FetchAccounts(user: context.user!));
-    context.read<LoanBloc>().add(FetchLoans(userId: context.userId));
-    context.read<TransactionBloc>().add(FetchTransactions(userId: context.userId));
-    context.read<SummaryBloc>().add(CalculateSummary(userId: context.userId));
-    context.successMessage(context.locale.aiDraftConfirmed);
-    context.nextRoute(MoneyScreen.routeName);
+    context.read<DraftBloc>().add(ConfirmDraft(draftId: draft.id));
   }
 
   void _resetDraft({bool keepInput = false}) {
     setState(() {
       _draft = null;
       _draftId = _uuid.v4();
-      _feedbackController.clear();
+      _messages.clear();
       if (!keepInput) {
-        _promptController.clear();
-        _selectedImage = null;
-        _extractedText = '';
+        widget.composerController.promptController.clear();
       }
     });
+    _syncComposerController();
   }
 
   String? _buildMessage({required bool refinement}) {
-    if (refinement) {
-      final feedback = _feedbackController.text.trim();
-      return feedback.isEmpty ? null : feedback;
-    }
-
-    final parts = <String>[
-      _promptController.text.trim(),
-      _extractedText.trim(),
-    ]..removeWhere((part) => part.isEmpty);
-
-    if (parts.isEmpty) {
-      return null;
-    }
-
-    return parts.join('\n\n');
+    final message = widget.composerController.promptController.text.trim();
+    return message.isEmpty ? null : message;
   }
 
   String _typeLabel(BuildContext context, ChatType type) {
@@ -541,17 +506,13 @@ class _DraftFeatureState extends State<_DraftFeature> {
 
   String _formatKey(String value) {
     return value
-        .replaceAllMapped(
-          RegExp(r'([A-Z])'),
-          (match) => ' ${match.group(1)}',
-        )
+        .replaceAllMapped(RegExp(r'([A-Z])'), (match) => ' ${match.group(1)}')
         .replaceAll('_', ' ')
         .trim()
         .split(' ')
         .where((part) => part.isNotEmpty)
         .map(
-          (part) =>
-              '${part.substring(0, 1).toUpperCase()}${part.substring(1)}',
+          (part) => '${part.substring(0, 1).toUpperCase()}${part.substring(1)}',
         )
         .join(' ');
   }
@@ -566,8 +527,102 @@ class _DraftFeatureState extends State<_DraftFeature> {
     return value.toString();
   }
 
+  String _draftToText(Draft draft, BuildContext context) {
+    if (draft.modelError?.isNotEmpty ?? false) {
+      return draft.modelError!;
+    }
+
+    if (draft.modelResult?.isEmpty ?? true) {
+      return context.locale.aiDraftNoResponseData;
+    }
+
+    return draft.modelResult!.entries
+        .map((entry) => '${_formatKey(entry.key)}: ${_formatValue(entry.value)}')
+        .join('\n');
+  }
+
   String _errorMessage(Object? error) {
     final message = error?.toString() ?? context.locale.unknownError;
     return message.startsWith('Exception: ') ? message.substring(11) : message;
+  }
+}
+
+class _DraftComposer extends StatelessWidget {
+  final _DraftComposerController composerController;
+
+  const _DraftComposer({required this.composerController});
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      top: false,
+      child: AnimatedBuilder(
+        animation: composerController,
+        builder: (context, child) {
+          final isDisabled =
+              composerController.isBusy || composerController.isExtractingText;
+          return Container(
+            color: AppColor.white,
+            padding: const EdgeInsets.fromLTRB(8, 8, 8, 12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                IconButton(
+                  onPressed:
+                      isDisabled ? null : () => composerController.onPickImage?.call(),
+                  icon: const Icon(Icons.photo_library_outlined),
+                  color: AppColor.mainDark,
+                ),
+                Expanded(
+                  child: TextField(
+                    controller: composerController.promptController,
+                    enabled: !isDisabled,
+                    minLines: 1,
+                    maxLines: 5,
+                    style: TextStyles.appDetail(),
+                    decoration: InputDecoration(
+                      hintText: context.locale.aiDraftRequestHint,
+                      hintStyle: TextStyles.appDetail(
+                        fontColor: AppColor.disabledDark,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: AppColor.mainDark,
+                          width: 1,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: AppColor.mainDark,
+                          width: 1,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: AppColor.mainDark,
+                          width: 1,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: isDisabled ? null : () => composerController.onSend?.call(),
+                  icon: const Icon(Icons.send),
+                  color: AppColor.mainDark,
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
   }
 }
