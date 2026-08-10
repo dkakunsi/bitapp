@@ -5,7 +5,7 @@ class AccountApi extends AppApi<AccountModel> {
   AccountApi({required super.configurationStore});
 
   @override
-  String get dataName => 'account';
+  String get dataName => 'accounts';
 
   @override
   List<AccountModel> fromList(String data) {

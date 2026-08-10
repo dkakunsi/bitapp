@@ -3,6 +3,8 @@ import 'package:bitapp/common/util/container.dart';
 import 'package:bitapp/common/util/database.dart';
 import 'package:bitapp/common/util/logger.dart';
 import 'package:bitapp/features/account/data/account_repository.dart';
+import 'package:bitapp/features/draft/data/draft_api.dart';
+import 'package:bitapp/features/draft/domain/draft_usecase.dart';
 import 'package:bitapp/features/account/domain/account_usecase.dart';
 import 'package:bitapp/features/app/extension/navigation_extension.dart';
 import 'package:bitapp/features/app/presentation/screen/initial_screen.dart';
@@ -29,6 +31,7 @@ import 'package:bitapp/firebase_options.dart';
 import 'package:bitapp/l10n/app_localizations.dart';
 import 'package:bitapp/l10n/localization_extension.dart';
 import 'package:bitapp/features/account/presentation/bloc/account_bloc.dart';
+import 'package:bitapp/features/draft/presentation/bloc/draft_bloc.dart';
 import 'package:bitapp/features/loan/presentation/bloc/loan_bloc.dart';
 import 'package:bitapp/features/app/presentation/bloc/money_tab_bloc.dart';
 import 'package:bitapp/features/summary/presentation/bloc/summary_bloc.dart';
@@ -36,6 +39,7 @@ import 'package:bitapp/features/transaction/presentation/bloc/transaction_bloc.d
 import 'package:bitapp/features/transaction_analytic/presentation/bloc/transaction_analytics_bloc.dart';
 import 'package:bitapp/features/account/data/account_api.dart';
 import 'package:bitapp/features/loan/data/loan_api.dart';
+import 'package:bitapp/features/draft/presentation/screen/draft_screen.dart';
 import 'package:bitapp/features/transaction/data/transaction_api.dart';
 import 'package:bitapp/features/account/data/account_store.dart';
 import 'package:bitapp/features/loan/data/loan_store.dart';
@@ -140,6 +144,9 @@ class BitApp extends StatelessWidget {
         ),
         BlocProvider(create: (context) => MoneyTabBloc()),
         BlocProvider(
+          create: (context) => DraftBloc(getInstance<DraftUseCase>()),
+        ),
+        BlocProvider(
           create:
               (context) => TransactionAnalyticsBloc(
                 getInstance<TransactionAnalyticUseCase>(),
@@ -202,6 +209,11 @@ class BitApp extends StatelessWidget {
                 ),
           );
         },
+      ),
+      GoRoute(
+        name: DraftScreen.routeName,
+        path: DraftScreen.routeName,
+        builder: (context, state) => DraftScreen(title: context.locale.aiDraft),
       ),
       GoRoute(
         name: UserScreen.routeName,

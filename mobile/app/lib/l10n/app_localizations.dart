@@ -896,6 +896,150 @@ abstract class AppLocalizations {
   /// **'Utilities'**
   String get utilities;
 
+  /// Label for AI draft feature
+  ///
+  /// In en, this message translates to:
+  /// **'AI Draft'**
+  String get aiDraft;
+
+  /// Title for AI draft screen
+  ///
+  /// In en, this message translates to:
+  /// **'Create a draft with AI'**
+  String get aiDraftTitle;
+
+  /// Description for AI draft screen
+  ///
+  /// In en, this message translates to:
+  /// **'Describe the account, loan, or transaction you want to create.'**
+  String get aiDraftDescription;
+
+  /// Label for draft type
+  ///
+  /// In en, this message translates to:
+  /// **'Draft type'**
+  String get aiDraftType;
+
+  /// Label for initial draft request
+  ///
+  /// In en, this message translates to:
+  /// **'Request'**
+  String get aiDraftRequest;
+
+  /// Hint for initial draft request
+  ///
+  /// In en, this message translates to:
+  /// **'Type what you want to create'**
+  String get aiDraftRequestHint;
+
+  /// Button label to select an image for OCR
+  ///
+  /// In en, this message translates to:
+  /// **'Select image'**
+  String get aiDraftSelectImage;
+
+  /// Button label to change an image for OCR
+  ///
+  /// In en, this message translates to:
+  /// **'Change image'**
+  String get aiDraftChangeImage;
+
+  /// Button label to generate a draft
+  ///
+  /// In en, this message translates to:
+  /// **'Generate draft'**
+  String get aiDraftGenerate;
+
+  /// Button label to reset and start a new draft
+  ///
+  /// In en, this message translates to:
+  /// **'Start new draft'**
+  String get aiDraftStartNew;
+
+  /// Section title for OCR extracted text
+  ///
+  /// In en, this message translates to:
+  /// **'Extracted text'**
+  String get aiDraftExtractedText;
+
+  /// Section title for selected image preview
+  ///
+  /// In en, this message translates to:
+  /// **'Selected image'**
+  String get aiDraftSelectedImage;
+
+  /// Label for follow-up free text
+  ///
+  /// In en, this message translates to:
+  /// **'Update request'**
+  String get aiDraftUpdateRequest;
+
+  /// Hint for follow-up free text
+  ///
+  /// In en, this message translates to:
+  /// **'Add more details if the draft is not correct yet'**
+  String get aiDraftUpdateHint;
+
+  /// Button label to update an existing draft
+  ///
+  /// In en, this message translates to:
+  /// **'Update draft'**
+  String get aiDraftUpdate;
+
+  /// Button label to confirm a generated draft
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get aiDraftConfirm;
+
+  /// Section title for AI draft response preview
+  ///
+  /// In en, this message translates to:
+  /// **'Draft preview'**
+  String get aiDraftPreview;
+
+  /// Message when the draft response has no data
+  ///
+  /// In en, this message translates to:
+  /// **'No response data available.'**
+  String get aiDraftNoResponseData;
+
+  /// Message when OCR finds no text in the image
+  ///
+  /// In en, this message translates to:
+  /// **'No text was found in the selected image.'**
+  String get aiDraftNoTextFound;
+
+  /// Message when no follow-up text is provided
+  ///
+  /// In en, this message translates to:
+  /// **'Add more free text before updating the draft.'**
+  String get aiDraftUpdateEmpty;
+
+  /// Message when the first request is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a request or choose an image first.'**
+  String get aiDraftRequestEmpty;
+
+  /// Message when the draft is confirmed
+  ///
+  /// In en, this message translates to:
+  /// **'Draft confirmed'**
+  String get aiDraftConfirmed;
+
+  /// Message when the AI draft cannot be completed
+  ///
+  /// In en, this message translates to:
+  /// **'The draft could not be completed. Start a new draft with clearer instructions.'**
+  String get aiDraftFailed;
+
+  /// Message when the draft is no longer editable
+  ///
+  /// In en, this message translates to:
+  /// **'This draft is no longer editable. Start a new draft to continue.'**
+  String get aiDraftLocked;
+
   /// Your Apps label
   ///
   /// In en, this message translates to:

@@ -7,7 +7,7 @@ class UserApi extends AppApi<UserModel> {
   UserApi({required super.configurationStore});
 
   @override
-  String get dataName => 'user';
+  String get dataName => 'users';
 
   @override
   UserModel from(String data) {

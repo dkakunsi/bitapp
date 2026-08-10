@@ -6,7 +6,7 @@ class TransactionApi extends AppApi<TransactionModel> {
   TransactionApi({required super.configurationStore});
 
   @override
-  String get dataName => 'transaction';
+  String get dataName => 'transactions';
 
   @override
   List<TransactionModel> fromList(String data) {
